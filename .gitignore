@@ -1,0 +1,14 @@
+client/public/
+
+node_modules
+bower_components
+
+# Windows stuff
+Thumbs.db
+Desktop.ini
+
+# Mac stuff
+.DS_Store
+
+# WebStorm stuff
+.idea
