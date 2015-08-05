@@ -1,0 +1,16 @@
+{
+  "name": "evolutility-server",
+  "version": "0.0.1",
+  "description": "Backend for Evolutility.",
+  "main": [
+    "app.js"
+  ],
+  "homepage": "http://evoluteur.github.io/evolutility-server/",
+  "dependencies": {
+    "evolutility": "master"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/evoluteur/evolutility-server.git"
+  }
+}
