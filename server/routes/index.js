@@ -225,6 +225,13 @@ router.put('/api/v1/evolutility/:objectId/:id', function(req, res) {
                         ns.push(f.attribute+'=($'+idx+')');
                         vs.push(fv?'TRUE':'FALSE');
                         break;
+                    case 'date':
+                    case 'time':
+                    case 'datetime':
+                        if(fv===''){
+                            fv=null;
+                        }
+                        //no break;
                     default:
                         idx++;
                         ns.push(f.attribute+'=($'+idx+')');
