@@ -10,8 +10,11 @@ Evolutility-server is made for Evolutility (client) but can be used with your ow
 ## Installation
 
 1- Download Evolutility-server.
+
 2- Create a PostgreSQL database.
+
 3- In server/config.js set your PostgreSQL connection string to the new database.
+
 4- In the command line type the following:
 
 ```bash
