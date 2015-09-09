@@ -45,9 +45,28 @@ module.exports = function (grunt) {
           }
         },
 
+        // *************************************************************************************
+        //      JSHINT
+        // *************************************************************************************
+        jshint: {
+            main: [
+
+                // --- tools ---
+                'Gruntfile.js',
+                'package.json',
+                'bower.json',
+
+                // --- dist ---
+                'server/models/database.js',
+                'server/routes/index.js'
+
+            ]
+        },
+
+
     });
 
-    grunt.registerTask('evo-build', function () {
+    grunt.registerTask('build-ui', function () {
         var done = this.async();
         grunt.util.spawn({
             grunt: true,
@@ -64,6 +83,7 @@ module.exports = function (grunt) {
     //      GRUNT PLUGIN : tasks
     // *************************************************************************************
     grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-contrib-jshint');
 
 
     // *************************************************************************************
@@ -73,7 +93,7 @@ module.exports = function (grunt) {
     grunt.registerTask('default', ['copy']);
 
     // Rebuild from local client code
-    grunt.registerTask('evol', ['evo-build', 'copy']);
+    grunt.registerTask('evol', ['build-ui', 'copy', 'jshint']);
 
 };
 
