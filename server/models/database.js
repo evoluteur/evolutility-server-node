@@ -2,6 +2,9 @@ var pg = require('pg');
 var path = require('path');
 var _ = require('underscore');
 
+var schema = 'evol_demo',
+    dbuser = 'evol'; // 'postgres'
+
 var uims={
     //-- apps
     'todo': require('../../client/public/ui-models/apps/todo.js'),
@@ -44,34 +47,37 @@ function getFields(uiModel, asObject){
 }
 
 function uim2db(uimid){
-    // -- generates SQL script to create a Postgress DB table for the ui model
-    var uiModel = uims[uimid];
-    var t=(uiModel.table || uiModel.id);
-    var fields=getFields(uiModel);
-    var sql='CREATE TABLE '+t+'\n(\n';
-    sql+=' id serial NOT NULL,\n';
+    // -- generates SQL script to create a Postgres DB table for the ui model
+    var uiModel = uims[uimid],
+        t=schema+'.'+(uiModel.table || uiModel.id),
+        fields=getFields(uiModel),
+        fs=['id serial primary key'],
+        sql0,
+        sql;
+
     _.forEach(fields, function(f, idx){
-        sql+=' "'+(f.attribute || f.id)+'" ';
+        sql0=' "'+(f.attribute || f.id)+'" ';
         switch(f.type){
             case 'boolean':
             case 'integer':
-                sql+=f.type;
+                sql0+=f.type;
                 break;
             case 'date':
             case 'datetime':
             case 'time': 
-                sql+='date';
+                sql0+='date';
                 break;
             default:
-                sql+='text';
+                sql0+='text';
         }
         if(f.required){
-        	sql+=' not null';
+        	sql0+=' not null';
         }
-        sql+=',\n';
+        fs.push(sql0);
     });
-    sql+='CONSTRAINT "'+t+'_pkey" PRIMARY KEY (id)';
-    sql+='\n) WITH (OIDS=FALSE);\n\n';
+
+    //sql = 'CREATE SCHEMA "evol_demo" AUTHORIZATION evol;\n';
+    sql = 'CREATE TABLE '+t+'\n(\n' + fs.join(',\n') + ');\n';
 
     // -- insert sample data
     _.each(uims[uimid+'_data'], function(row){
@@ -80,21 +86,25 @@ function uim2db(uimid){
         for(var p in row){
             var v=row[p];
             if(!_.isArray(v)){
-                ns.push('"'+p+'"');
-                if(_.isString(v)){
-                    v="'"+v.replace(/'/g, "''")+"'";
+                if(p!=='id'){
+                    ns.push('"'+p+'"');
+                    if(_.isString(v)){
+                        v="'"+v.replace(/'/g, "''")+"'";
+                    }
+                    vs.push(v);
                 }
-                vs.push(v);
             }
         }
         sql+='('+ns.join(',')+') values('+vs.join(',')+');\n';
     });
-
-    return sql+'\n';
+    return sql;
 }
 
 var modelNames = ['todo', 'contact', 'winecellar', 'comics'];
 var sql='';
+if(schema){
+    sql='CREATE SCHEMA '+schema+' AUTHORIZATION '+dbuser+';';
+}
 _.forEach(modelNames, function(uimid){
     sql+=uim2db(uimid);
 });

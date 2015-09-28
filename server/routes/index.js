@@ -4,16 +4,19 @@ var path = require('path');
 var pg = require('pg');
 var _ = require('underscore');
 
+var schema='evol_demo';
 var consoleLog = true;
 
 var uims={
-    //-- apps
-    'todo': require('../../client/public/ui-models/apps/todo.js'),
-    'contact': require('../../client/public/ui-models/apps/contacts.js'),
-    'winecellar': require('../../client/public/ui-models/apps/winecellar.js'),
-    'comics': require('../../client/public/ui-models/apps/comics.js'),
-    //'test': require('../../client/public/ui-models/apps/test.js')
-};
+        //-- apps
+        'todo': require('../../client/public/ui-models/apps/todo.js'),
+        'contact': require('../../client/public/ui-models/apps/contacts.js'),
+        'winecellar': require('../../client/public/ui-models/apps/winecellar.js'),
+        'comics': require('../../client/public/ui-models/apps/comics.js'),
+        //'test': require('../../client/public/ui-models/apps/test.js')
+    },
+    uim=null,
+    tableName=null;
 
 var fCache = {};
 
@@ -40,6 +43,7 @@ function getFields(uiModel, asObject){
 
 function loadUIModel(uimId){
     uim = uims[uimId];
+    tableName=(schema?schema+'.':'')+(uim.table || uim.id);
     if(!fCache[uimId]){
         fCache[uimId] = getFields(uim);
     }
@@ -80,7 +84,7 @@ router.get('/api/v1/evolutility/:objectId', function(req, res) {
     pg.connect(connectionString, function(err, client, done) {
 
         // SQL Query > Select Data
-        var sql='SELECT * FROM '+uim.id+' ORDER BY id ASC;';
+        var sql='SELECT * FROM '+tableName+' ORDER BY id ASC;';
         logSQL(sql);
         var query = client.query(sql);
 
@@ -117,7 +121,7 @@ router.get('/api/v1/evolutility/:objectId/:id', function(req, res) {
         logObject('GET ONE', req);
 
         // SQL Query > Select Data
-        var sql='SELECT * FROM '+uim.id+' WHERE id=($1)';
+        var sql='SELECT * FROM '+tableName+' WHERE id=($1)';
         logSQL(sql);
         var query = client.query(sql, [id]);
 
@@ -144,14 +148,14 @@ router.get('/api/v1/evolutility/:objectId/:id', function(req, res) {
 // #########    INSERT ONE   ######
 router.post('/api/v1/evolutility/:objectId', function(req, res) {
     var results = [];
-    var id = req.params.objectId;
-    loadUIModel(id);
+    var mid = req.params.objectId;
+    loadUIModel(mid);
     logObject('INSERT ONE', req);
 
     // Get a Postgres client from the connection pool
     pg.connect(connectionString, function(err, client, done) {
 
-        var sql = 'INSERT INTO '+uim.id,
+        var sql = 'INSERT INTO '+tableName,
             idx=0,
             ns=[],
             ps=[],
@@ -173,11 +177,11 @@ router.post('/api/v1/evolutility/:objectId', function(req, res) {
         client.query(sql, vs);
 
         // SQL Query > Select Data
-        sql='SELECT * FROM '+uim.id+' ORDER BY id DESC limit 1';
+        sql='SELECT * FROM '+tableName+' ORDER BY id DESC limit 1';
         logSQL(sql);
 
         //'SELECT currval(pg_get_serial_sequence('persons','id'));'
-        var query = client.query(sql);
+        var query = client.query(sql,null);
 
         // Stream results back one row at a time
         query.on('row', function(row) {
@@ -210,7 +214,7 @@ router.put('/api/v1/evolutility/:objectId/:id', function(req, res) {
 
     // Get a Postgres client from the connection pool
     pg.connect(connectionString, function(err, client, done) {
-        var sql='UPDATE '+uim.id+' SET ';
+        var sql='UPDATE '+tableName+' SET ';
         var idx=0;
         var ns=[];
         var vs=[];
@@ -242,15 +246,13 @@ router.put('/api/v1/evolutility/:objectId/:id', function(req, res) {
         }); 
         vs.push(id);
         if(ns.length){
-            sql+=ns.join(',')+
-                ' WHERE id=($'+(idx+1)+')';
-
+            sql+=ns.join(',') + ' WHERE id=($'+(idx+1)+')';//'  RETURNING *';
             logSQL(sql);
             client.query(sql, vs);
         }
 
         // SQL Query > Select Data
-        sql='SELECT * FROM '+uim.id+' WHERE id=($1)';
+        sql='SELECT * FROM '+tableName+' WHERE id=($1)';
         logSQL(sql);
         var query = client.query(sql, [id]);
 
@@ -286,7 +288,7 @@ router.delete('/api/v1/evolutility/:objectId/:id', function(req, res) {
     pg.connect(connectionString, function(err, client, done) {
 
         // SQL Query > Delete Data
-        var sql = 'DELETE FROM '+uim.id+' WHERE id=($1)';
+        var sql = 'DELETE FROM '+tableName+' WHERE id=($1)';
         logSQL(sql);
         client.query(sql, [id]);
         return res.json(true);
