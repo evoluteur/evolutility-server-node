@@ -85,15 +85,32 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-jshint');
 
+    grunt.registerTask('header', 'Evolutility version', function(arg1) {
+        var pkg=grunt.file.readJSON('package.json');
+        console.log(
+            (new Date()).toString() + '\n\n' + 
+            '  ______          _           _ _ _   \n'+
+            ' |  ____|        | |      /| (_) (_)/|\n'+
+            ' | |____   _____ | |_   _| |_ _| |_| |_ _   _ \n'+
+            ' |  __\\ \\ / / _ \\| | | | | __| | | | __| | | |\n'+
+            ' | |___\\ V / (_) | | |_| | |_| | | | |_| |_| |\n'+
+            ' |______\\_/ \\___/|_|\\__,_|\\__|_|_|_|\\__|\\__, |\n'+
+            '         ___  ___ _ ____   _____ _ __    __/ |\n'+
+            '  ____  / __|/ _ \\ \'__\\ \\ / / _ \\ \'__|  |___/   \n' + 
+            ' |____| \\__ \\  __/ |   \\ V /  __/ |        \n'+
+            '        |___/\\___|_|    \\_/ \\___|_|  '+ 
+            pkg.version
+        );
+    });
 
     // *************************************************************************************
     //      BUILD TASKS : dev prod
     // *************************************************************************************
     // Default task(s).
-    grunt.registerTask('default', ['copy']);
+    grunt.registerTask('default', ['header','copy']);
 
     // Rebuild from local client code
-    grunt.registerTask('evol', ['build-ui', 'copy', 'jshint']);
+    grunt.registerTask('evol', ['header', 'build-ui', 'copy', 'jshint']);
 
 };
 
