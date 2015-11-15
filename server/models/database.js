@@ -19,7 +19,6 @@ var uims={
     'comics_data': require('../../client/public/ui-models/apps/comics.data.js')
 };
 
-
 var connectionString = require(path.join(__dirname, '../', '../', 'config'));
 
 var client = new pg.Client(connectionString);
@@ -56,24 +55,36 @@ function uim2db(uimid){
         sql;
 
     _.forEach(fields, function(f, idx){
-        sql0=' "'+(f.attribute || f.id)+'" ';
-        switch(f.type){
-            case 'boolean':
-            case 'integer':
-                sql0+=f.type;
-                break;
-            case 'date':
-            case 'datetime':
-            case 'time': 
-                sql0+='date';
-                break;
-            default:
-                sql0+='text';
+        if(f.attribute!='id' && f.type!=='formula'){
+            sql0=' "'+(f.attribute || f.id)+'" ';
+            switch(f.type){
+                case 'boolean':
+                case 'integer':
+                case 'json':
+                case 'money':
+                    sql0+=f.type;
+                    break;
+                case 'decimal': 
+                    sql0+='double precision';
+                    break;
+                case 'date':
+                case 'datetime':
+                    sql0+='date';
+                    break;
+                case 'time': 
+                    sql0+='time with time zone';
+                    break;
+                case 'list': 
+                    sql0+='text[]';
+                    break;
+                default:
+                    sql0+='text';
+            }
+            if(f.required){
+                sql0+=' not null';
+            }
+            fs.push(sql0);
         }
-        if(f.required){
-        	sql0+=' not null';
-        }
-        fs.push(sql0);
     });
 
     //sql = 'CREATE SCHEMA "evol_demo" AUTHORIZATION evol;\n';
@@ -97,9 +108,9 @@ function uim2db(uimid){
         }
         sql+='('+ns.join(',')+') values('+vs.join(',')+');\n';
     });
+    console.log(sql);
     return sql;
 }
-
 var modelNames = ['todo', 'contact', 'winecellar', 'comics'];
 var sql='';
 if(schema){
