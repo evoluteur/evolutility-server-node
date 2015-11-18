@@ -7,16 +7,16 @@ var schema = 'evol_demo',
 
 var uims={
     //-- apps
-    'todo': require('../../client/public/ui-models/apps/todo.js'),
-    'contact': require('../../client/public/ui-models/apps/contacts.js'),
-    'winecellar': require('../../client/public/ui-models/apps/winecellar.js'),
-    'comics': require('../../client/public/ui-models/apps/comics.js'),
-    //'test': require('../../client/public/ui-models/apps/test.js'),
+    'todo': require('../../client/public/ui-models/todo.js'),
+    'contact': require('../../client/public/ui-models/contacts.js'),
+    'winecellar': require('../../client/public/ui-models/winecellar.js'),
+    'comics': require('../../client/public/ui-models/comics.js'),
+    //'test': require('../../client/public/ui-models/test.js'),
 
-    'todo_data': require('../../client/public/ui-models/apps/todo.data.js'),
-    'contact_data': require('../../client/public/ui-models/apps/contacts.data.js'),
-    'winecellar_data': require('../../client/public/ui-models/apps/winecellar.data.js'),
-    'comics_data': require('../../client/public/ui-models/apps/comics.data.js')
+    'todo_data': require('../../client/public/ui-models/todo.data.js'),
+    'contact_data': require('../../client/public/ui-models/contacts.data.js'),
+    'winecellar_data': require('../../client/public/ui-models/winecellar.data.js'),
+    'comics_data': require('../../client/public/ui-models/comics.data.js')
 };
 
 var connectionString = require(path.join(__dirname, '../', '../', 'config'));

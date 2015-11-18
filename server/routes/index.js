@@ -9,11 +9,11 @@ var consoleLog = true;
 
 var uims={
         //-- apps
-        'todo': require('../../client/public/ui-models/apps/todo.js'),
-        'contact': require('../../client/public/ui-models/apps/contacts.js'),
-        'winecellar': require('../../client/public/ui-models/apps/winecellar.js'),
-        'comics': require('../../client/public/ui-models/apps/comics.js'),
-        //'test': require('../../client/public/ui-models/apps/test.js')
+        'todo': require('../../client/public/ui-models/todo.js'),
+        'contact': require('../../client/public/ui-models/contacts.js'),
+        'winecellar': require('../../client/public/ui-models/winecellar.js'),
+        'comics': require('../../client/public/ui-models/comics.js'),
+        //'test': require('../../client/public/ui-models/test.js')
     },
     uim=null,
     tableName=null;

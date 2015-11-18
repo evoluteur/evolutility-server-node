@@ -25,8 +25,8 @@ module.exports = function (grunt) {
                 },
                 {
                     expand: true,
-                    //cwd: 'bower_components/evolutility/js/ui-models/',
-                    cwd: '../evolutility/js/ui-models/',
+                    //cwd: 'bower_components/evolutility/ui-models/',
+                    cwd: '../evolutility/ui-models/',
                     src: '**',
                     dest: 'client/public/ui-models/',
                     flatten: false,
