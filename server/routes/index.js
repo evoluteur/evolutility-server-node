@@ -165,7 +165,7 @@ router.post(apiPath+':objectId', function(req, res) {
 
         //fields
         _.forEach(fields, function(f){
-            if(f.type!='formula' && (!f.readOnly)){
+            if(!(f.type==='formula' || f.readOnly)){
                 idx++;
                 ns.push(f.attribute);
                 ps.push('($'+(idx)+')');
@@ -204,8 +204,8 @@ router.post(apiPath+':objectId', function(req, res) {
     });
 });
 
-// #########    UPDATE ONE    ######
-router.patch(apiPath+':objectId/:id', function(req, res) {
+// #########    INSERT + UPDATE ONE    ######
+var upsert=function(req, res) {
 
     var results = [];
     var mid = req.params.objectId;
@@ -243,7 +243,6 @@ router.patch(apiPath+':objectId/:id', function(req, res) {
                             idx++;
                             ns.push(f.attribute+'=($'+idx+')');
                             vs.push(fv);
-                            break;
                     }
                 }
             }
@@ -278,7 +277,9 @@ router.patch(apiPath+':objectId/:id', function(req, res) {
 
     });
 
-});
+};
+router.patch(apiPath+':objectId/:id', upsert);
+router.put(apiPath+':objectId/:id', upsert);
 
 // #########    DELETE ONE   ######
 router.delete(apiPath+':objectId/:id', function(req, res) {
@@ -296,12 +297,12 @@ router.delete(apiPath+':objectId/:id', function(req, res) {
         logSQL(sql);
         client.query(sql, [id]);
         return res.json(true);
-
+/*
         // Handle Errors
         if(err) {
           console.log(err);
         }
-
+*/
     });
 
 });
