@@ -4,7 +4,9 @@ var path = require('path');
 var pg = require('pg');
 var _ = require('underscore');
 
-var schema='evol_demo';
+var schema='evol_demo',
+    apiPath='/api/v1/evolutility/';
+
 var consoleLog = true;
 
 var uims={
@@ -74,7 +76,7 @@ router.get('/', function(req, res, next) {
 
 
 // #########    GET MANY   ######
-router.get('/api/v1/evolutility/:objectId', function(req, res) {
+router.get(apiPath+':objectId', function(req, res) {
     var results = [];
     var uimid = req.params.objectId;
     loadUIModel(uimid);
@@ -110,7 +112,7 @@ router.get('/api/v1/evolutility/:objectId', function(req, res) {
 });
 
 // #########    GET ONE   ######
-router.get('/api/v1/evolutility/:objectId/:id', function(req, res) {
+router.get(apiPath+':objectId/:id', function(req, res) {
     var result;
 
     // Get a Postgres client from the connection pool 
@@ -146,7 +148,7 @@ router.get('/api/v1/evolutility/:objectId/:id', function(req, res) {
 });
 
 // #########    INSERT ONE   ######
-router.post('/api/v1/evolutility/:objectId', function(req, res) {
+router.post(apiPath+':objectId', function(req, res) {
     var results = [];
     var mid = req.params.objectId;
     loadUIModel(mid);
@@ -203,7 +205,7 @@ router.post('/api/v1/evolutility/:objectId', function(req, res) {
 });
 
 // #########    UPDATE ONE    ######
-router.put('/api/v1/evolutility/:objectId/:id', function(req, res) {
+router.patch(apiPath+':objectId/:id', function(req, res) {
 
     var results = [];
     var mid = req.params.objectId;
@@ -221,26 +223,28 @@ router.put('/api/v1/evolutility/:objectId/:id', function(req, res) {
         _.forEach(fields, function(f){
             if(f.attribute!='id' && f.type!='formula'){
                 var fv=req.body[f.attribute];
-                switch(f.type){
-                    case 'formula':
-                        break;
-                    case 'boolean':
-                        idx++;
-                        ns.push(f.attribute+'=($'+idx+')');
-                        vs.push(fv?'TRUE':'FALSE');
-                        break;
-                    case 'date':
-                    case 'time':
-                    case 'datetime':
-                        if(fv===''){
-                            fv=null;
-                        }
-                        //no break;
-                    default:
-                        idx++;
-                        ns.push(f.attribute+'=($'+idx+')');
-                        vs.push(fv);
-                        break;
+                if(fv!=null){
+                    switch(f.type){
+                        case 'formula':
+                            break;
+                        case 'boolean':
+                            idx++;
+                            ns.push(f.attribute+'=($'+idx+')');
+                            vs.push(fv?'TRUE':'FALSE');
+                            break;
+                        case 'date':
+                        case 'time':
+                        case 'datetime':
+                            if(fv===''){
+                                fv=null;
+                            }
+                            //no break;
+                        default:
+                            idx++;
+                            ns.push(f.attribute+'=($'+idx+')');
+                            vs.push(fv);
+                            break;
+                    }
                 }
             }
         }); 
@@ -277,7 +281,7 @@ router.put('/api/v1/evolutility/:objectId/:id', function(req, res) {
 });
 
 // #########    DELETE ONE   ######
-router.delete('/api/v1/evolutility/:objectId/:id', function(req, res) {
+router.delete(apiPath+':objectId/:id', function(req, res) {
 
     var mid = req.params.objectId;
     var id = req.params.id;

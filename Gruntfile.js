@@ -1,5 +1,8 @@
 module.exports = function (grunt) {
 
+    var uiPath = 'bower_components';
+    //var uiPath = '..';
+
     grunt.initConfig({
 
         // *************************************************************************************
@@ -16,8 +19,7 @@ module.exports = function (grunt) {
             files: [ 
                 {
                     expand: true,
-                    //cwd: 'bower_components/evolutility/dist/',
-                    cwd: '../evolutility/dist/',
+                    cwd: uiPath+'/evolutility/dist/',
                     src: '**',
                     dest: 'client/public/dist/',
                     flatten: false,
@@ -25,8 +27,7 @@ module.exports = function (grunt) {
                 },
                 {
                     expand: true,
-                    //cwd: 'bower_components/evolutility/ui-models/',
-                    cwd: '../evolutility/ui-models/',
+                    cwd: uiPath+'/evolutility/ui-models/',
                     src: '**',
                     dest: 'client/public/ui-models/',
                     flatten: false,
@@ -34,8 +35,7 @@ module.exports = function (grunt) {
                 },
                 {
                     expand: true,
-                    //cwd: 'bower_components/evolutility/demo/pix/',
-                    cwd: '../evolutility/demo/pix/',
+                    cwd: uiPath+'/evolutility/demo/pix/',
                     src: '**',
                     dest: 'client/public/pix/',
                     flatten: false,
