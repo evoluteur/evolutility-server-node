@@ -2,21 +2,22 @@ var pg = require('pg');
 var path = require('path');
 var _ = require('underscore');
 
-var schema = 'evol_demo',
-    dbuser = 'evol'; // 'postgres'
+var schema = 'evol_demo';
+//var dbuser = 'evol';
+var dbuser = 'postgres';
 
-var uims={
-    //-- apps
+var uims = {
     'todo': require('../../client/public/ui-models/todo.js'),
     'contact': require('../../client/public/ui-models/contacts.js'),
     'winecellar': require('../../client/public/ui-models/winecellar.js'),
     'comics': require('../../client/public/ui-models/comics.js'),
     //'test': require('../../client/public/ui-models/test.js'),
-
-    'todo_data': require('../../client/public/ui-models/todo.data.js'),
-    'contact_data': require('../../client/public/ui-models/contacts.data.js'),
-    'winecellar_data': require('../../client/public/ui-models/winecellar.data.js'),
-    'comics_data': require('../../client/public/ui-models/comics.data.js')
+};
+var uims_data = {
+    'todo': require('../../client/public/ui-models/todo.data.js'),
+    'contact': require('../../client/public/ui-models/contacts.data.js'),
+    'winecellar': require('../../client/public/ui-models/winecellar.data.js'),
+    'comics': require('../../client/public/ui-models/comics.data.js')
 };
 
 var connectionString = require(path.join(__dirname, '../', '../', 'config'));
@@ -88,37 +89,36 @@ function uim2db(uimid){
     });
 
     //sql = 'CREATE SCHEMA "evol_demo" AUTHORIZATION evol;\n';
-    sql = 'CREATE TABLE '+t+'\n(\n' + fs.join(',\n') + ');\n';
+    sql = 'CREATE TABLE '+t+'(\n' + fs.join(',\n') + ');\n';
 
     // -- insert sample data
-    _.each(uims[uimid+'_data'], function(row){
+    _.each(uims_data[uimid], function(row){
         sql+='INSERT INTO '+t;
         var ns=[], vs=[];
         for(var p in row){
             var v=row[p];
-            if(!_.isArray(v)){
-                if(p!=='id'){
-                    ns.push('"'+p+'"');
-                    if(_.isString(v)){
-                        v="'"+v.replace(/'/g, "''")+"'";
-                    }
-                    vs.push(v);
+            if(!_.isArray(v) && p!=='id'){
+                ns.push('"'+p+'"');
+                if(_.isString(v)){
+                    v="'"+v.replace(/'/g, "''")+"'";
                 }
+                vs.push(v);
             }
         }
         sql+='('+ns.join(',')+') values('+vs.join(',')+');\n';
     });
     console.log(sql);
+
     return sql;
 }
-var modelNames = ['todo', 'contact', 'winecellar', 'comics'];
+
 var sql='';
 if(schema){
-    sql='CREATE SCHEMA '+schema+' AUTHORIZATION '+dbuser+';';
+    sql='CREATE SCHEMA '+schema+' AUTHORIZATION '+dbuser+';\n';
 }
-_.forEach(modelNames, function(uimid){
+for(var uimid in uims){
     sql+=uim2db(uimid);
-});
+}
 console.log(sql);
 var query = client.query(sql);
 query.on('end', function() { client.end(); });
