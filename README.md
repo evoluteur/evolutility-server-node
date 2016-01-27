@@ -2,9 +2,8 @@
 
 Backend for [Evolutility](http://evoluteur.github.io/evolutility/index.html) using Node.js, Express and PostgreSQL.
 
-It is still a work in progress. 
-
-Evolutility-server is made for Evolutility (client) but can be used with your own client as well.
+This project is still a work in progress. The goal is to make a generic REST server (like [PostgREST](http://postgrest.com)) who will provide CRUD functionality 
+for any database table.
 
 
 ## Installation
@@ -37,3 +36,9 @@ npm start
 
 5- In a web browser go to the url http://localhost:3000/
 
+
+## License
+
+Copyright (c) 2016 Olivier Giulieri.
+
+Evolutility.js is released under the GNU Affero General Public License version 3 [GNU AGPLv3](http://www.gnu.org/licenses/agpl-3.0.html).
