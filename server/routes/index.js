@@ -10,7 +10,6 @@ var schema='evol_demo',
 var consoleLog = true;
 
 var uims={
-        //-- apps
         'todo': require('../../client/public/ui-models/todo.js'),
         'contact': require('../../client/public/ui-models/contacts.js'),
         'winecellar': require('../../client/public/ui-models/winecellar.js'),
@@ -45,7 +44,7 @@ function getFields(uiModel, asObject){
 
 function loadUIModel(uimId){
     uim = uims[uimId];
-    tableName=(schema?schema+'.':'')+(uim.table || uim.id);
+    tableName=(schema?'"'+schema+'".':'')+'"'+(uim.table || uim.id)+'"';
     if(!fCache[uimId]){
         fCache[uimId] = getFields(uim);
     }
@@ -148,6 +147,45 @@ router.get(apiPath+':objectId/:id', function(req, res) {
 });
 
 // #########    INSERT ONE   ######
+function _prepData(req, fnName){
+    var idx=0,
+        ns=[],
+        vs=[];
+
+    _.forEach(fields, function(f){
+        if(f.attribute!='id' && f.type!='formula' && !f.readOnly){
+            var fv=req.body[f.attribute];
+            if(fv!=null){
+                switch(f.type){
+                    case 'boolean':
+                        idx++;
+                        ns.push(fnName(f, idx));
+                        vs.push(fv?'TRUE':'FALSE');
+                        break;
+                    case 'date':
+                    case 'time':
+                    case 'datetime':
+                        if(fv===''){
+                            fv=null;
+                        }
+                        idx++;
+                        ns.push(fnName(f, idx));
+                        vs.push(fv);
+                        break;
+                        //no break;
+                    default:
+                        idx++;
+                        ns.push(fnName(f, idx));
+                        vs.push(fv);
+                }
+            }
+        }
+    });
+    return {
+        names: ns,
+        values: vs
+    };
+}
 router.post(apiPath+':objectId', function(req, res) {
     var results = [];
     var mid = req.params.objectId;
@@ -156,34 +194,26 @@ router.post(apiPath+':objectId', function(req, res) {
 
     // Get a Postgres client from the connection pool
     pg.connect(connectionString, function(err, client, done) {
+        var sql;
+        var q=_prepData(req, function(f, idx){return f.attribute;});
+        if(q.names.length){
+            var ps=_.map(q.names, function(n, idx){
+                return '($'+(idx+1)+')';
+            });
+            sql = 'INSERT INTO '+tableName;
+            sql+='("'+q.names.join('","')+'") values('+ps.join(',')+')';
+            logSQL(sql);
 
-        var sql = 'INSERT INTO '+tableName,
-            idx=0,
-            ns=[],
-            ps=[],
-            vs=[];
-
-        //fields
-        _.forEach(fields, function(f){
-            if(!(f.type==='formula' || f.readOnly)){
-                idx++;
-                ns.push(f.attribute);
-                ps.push('($'+(idx)+')');
-                vs.push(req.body[f.attribute]);
-            }
-        });
-        sql+='('+ns.join(',')+') values('+ps.join(',')+')';
-        logSQL(sql);
-
-        // SQL Query > Insert Data
-        client.query(sql, vs);
+            // SQL Query > Insert Data
+            client.query(sql, q.values);
+        }
 
         // SQL Query > Select Data
         sql='SELECT * FROM '+tableName+' ORDER BY id DESC limit 1';
         logSQL(sql);
 
         //'SELECT currval(pg_get_serial_sequence('persons','id'));'
-        var query = client.query(sql,null);
+        var query = client.query(sql, null);
 
         // Stream results back one row at a time
         query.on('row', function(row) {
@@ -204,8 +234,8 @@ router.post(apiPath+':objectId', function(req, res) {
     });
 });
 
-// #########    INSERT + UPDATE ONE    ######
-var upsert=function(req, res) {
+// #########    UPDATE ONE    ######
+var _update=function(req, res) {
 
     var results = [];
     var mid = req.params.objectId;
@@ -217,41 +247,13 @@ var upsert=function(req, res) {
     // Get a Postgres client from the connection pool
     pg.connect(connectionString, function(err, client, done) {
         var sql='UPDATE '+tableName+' SET ';
-        var idx=0;
-        var ns=[];
-        var vs=[];
-        _.forEach(fields, function(f){
-            if(f.attribute!='id' && f.type!='formula'){
-                var fv=req.body[f.attribute];
-                if(fv!=null){
-                    switch(f.type){
-                        case 'formula':
-                            break;
-                        case 'boolean':
-                            idx++;
-                            ns.push(f.attribute+'=($'+idx+')');
-                            vs.push(fv?'TRUE':'FALSE');
-                            break;
-                        case 'date':
-                        case 'time':
-                        case 'datetime':
-                            if(fv===''){
-                                fv=null;
-                            }
-                            //no break;
-                        default:
-                            idx++;
-                            ns.push(f.attribute+'=($'+idx+')');
-                            vs.push(fv);
-                    }
-                }
-            }
-        }); 
-        vs.push(id);
-        if(ns.length){
-            sql+=ns.join(',') + ' WHERE id=($'+(idx+1)+')';//'  RETURNING *';
+        var q=_prepData(req, function(f, idx){return '"'+f.attribute+'"=($'+idx+')';});
+
+        if(q.names.length){
+            q.values.push(id);
+            sql+=q.names.join(',') + ' WHERE id=($'+(q.names.length+1)+')';//'  RETURNING *';
             logSQL(sql);
-            client.query(sql, vs);
+            client.query(sql, q.values);
         }
 
         // SQL Query > Select Data
@@ -278,8 +280,8 @@ var upsert=function(req, res) {
     });
 
 };
-router.patch(apiPath+':objectId/:id', upsert);
-router.put(apiPath+':objectId/:id', upsert);
+router.patch(apiPath+':objectId/:id', _update);
+router.put(apiPath+':objectId/:id', _update);
 
 // #########    DELETE ONE   ######
 router.delete(apiPath+':objectId/:id', function(req, res) {
