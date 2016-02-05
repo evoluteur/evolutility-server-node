@@ -200,35 +200,28 @@ router.post(apiPath+':objectId', function(req, res) {
             var ps=_.map(q.names, function(n, idx){
                 return '($'+(idx+1)+')';
             });
-            sql = 'INSERT INTO '+tableName;
-            sql+='("'+q.names.join('","')+'") values('+ps.join(',')+')';
+            sql = 'INSERT INTO '+tableName+
+                ' ("'+q.names.join('","')+'") values('+ps.join(',')+') RETURNING *;';
             logSQL(sql);
 
             // SQL Query > Insert Data
-            client.query(sql, q.values);
-        }
+            var query = client.query(sql, q.values);
 
-        // SQL Query > Select Data
-        sql='SELECT * FROM '+tableName+' ORDER BY id DESC limit 1';
-        logSQL(sql);
+            // Stream results back one row at a time
+            query.on('row', function(row) {
+                results=row;
+            });
 
-        //'SELECT currval(pg_get_serial_sequence('persons','id'));'
-        var query = client.query(sql, null);
+            // After all data is returned, close connection and return results
+            query.on('end', function() {
+                client.end();
+                return res.json(results);
+            });
 
-        // Stream results back one row at a time
-        query.on('row', function(row) {
-            results=row;
-        });
-
-        // After all data is returned, close connection and return results
-        query.on('end', function() {
-            client.end();
-            return res.json(results);
-        });
-
-        // Handle Errors
-        if(err) {
-          console.log(err);
+            // Handle Errors
+            if(err) {
+              console.log(err);
+            }
         }
 
     });
@@ -251,30 +244,25 @@ var _update=function(req, res) {
 
         if(q.names.length){
             q.values.push(id);
-            sql+=q.names.join(',') + ' WHERE id=($'+(q.names.length+1)+')';//'  RETURNING *';
+            sql+=q.names.join(',') + ' WHERE id=($'+(q.names.length+1)+') RETURNING *;';
             logSQL(sql);
-            client.query(sql, q.values);
-        }
+            var query = client.query(sql, q.values);
 
-        // SQL Query > Select Data
-        sql='SELECT * FROM '+tableName+' WHERE id=($1)';
-        logSQL(sql);
-        var query = client.query(sql, [id]);
+            // Stream results back one row at a time
+            query.on('row', function(row) {
+                results=row;
+            });
 
-        // Stream results back one row at a time
-        query.on('row', function(row) {
-            results=row;
-        });
+            // After all data is returned, close connection and return results
+            query.on('end', function() {
+                client.end();
+                return res.json(results);
+            });
 
-        // After all data is returned, close connection and return results
-        query.on('end', function() {
-            client.end();
-            return res.json(results);
-        });
-
-        // Handle Errors
-        if(err) {
-          console.log(err);
+            // Handle Errors
+            if(err) {
+              console.log(err);
+            }
         }
 
     });
