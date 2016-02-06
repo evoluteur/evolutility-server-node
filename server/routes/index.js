@@ -4,6 +4,9 @@ var path = require('path');
 var pg = require('pg');
 var _ = require('underscore');
 
+//var evol = require('evolutility');
+var connectionString = require(path.join(__dirname, '../', '../', 'config'));
+
 var schema='evol_demo',
     apiPath='/api/v1/evolutility/';
 
@@ -64,30 +67,15 @@ function logSQL(sql){
     }
 }
 
-//var evol = require('evolutility');
-var connectionString = require(path.join(__dirname, '../', '../', 'config'));
-
-console.log('\n\n=== START EVOLUTILITY ===\n');
-
-router.get('/', function(req, res, next) {
-  res.sendFile(path.join(__dirname, '../', '../', 'client', 'views', 'index.html'));
-});
-
-
-// #########    GET MANY   ######
-router.get(apiPath+':objectId', function(req, res) {
+function runQuery(res, sql, values, singleRecord){
     var results = [];
-    var uimid = req.params.objectId;
-    loadUIModel(uimid);
-    logObject('GET MANY', req);
 
     // Get a Postgres client from the connection pool 
     pg.connect(connectionString, function(err, client, done) {
 
         // SQL Query > Select Data
-        var sql='SELECT * FROM '+tableName+' ORDER BY id ASC;';
         logSQL(sql);
-        var query = client.query(sql);
+        var query = values ? client.query(sql, values) :  client.query(sql);
 
         // Stream results back one row at a time
         query.on('row', function(row) {
@@ -97,7 +85,7 @@ router.get(apiPath+':objectId', function(req, res) {
         // After all data is returned, close connection and return results
         query.on('end', function() {
             client.end();
-            return res.json(results);
+            return res.json(singleRecord ? results[0] : results);
         });
 
         // Handle Errors
@@ -108,42 +96,35 @@ router.get(apiPath+':objectId', function(req, res) {
 
     });
 
+}
+
+console.log('\n\n=== START EVOLUTILITY-SERVER ===\n');
+
+router.get('/', function(req, res, next) {
+  res.sendFile(path.join(__dirname, '../', '../', 'client', 'views', 'index.html'));
+});
+
+
+// #########    GET MANY   ######
+router.get(apiPath+':objectId', function(req, res) {
+    var uimid = req.params.objectId;
+    loadUIModel(uimid);
+    logObject('GET MANY', req);
+
+    var sql='SELECT * FROM '+tableName+' ORDER BY id ASC;';
+    runQuery(res, sql, null, false);
 });
 
 // #########    GET ONE   ######
 router.get(apiPath+':objectId/:id', function(req, res) {
-    var result;
+    var uimid = req.params.objectId;
+    var id = req.params.id;
+    loadUIModel(uimid);
+    logObject('GET ONE', req);
 
-    // Get a Postgres client from the connection pool 
-    pg.connect(connectionString, function(err, client, done) {
-        var uimid = req.params.objectId;
-        var id = req.params.id;
-        loadUIModel(uimid);
-        logObject('GET ONE', req);
-
-        // SQL Query > Select Data
-        var sql='SELECT * FROM '+tableName+' WHERE id=($1)';
-        logSQL(sql);
-        var query = client.query(sql, [id]);
-
-        // Stream results back one row at a time
-        query.on('row', function(row) {
-            results=row;
-        });
-
-        // After all data is returned, close connection and return results
-        query.on('end', function() {
-            client.end();
-            return res.json(results);
-        });
-
-        // Handle Errors
-        if(err) {
-          console.log(err);
-        }
-
-    });
-
+    // SQL Query > Select Data
+    var sql='SELECT * FROM '+tableName+' WHERE id=($1)';
+    runQuery(res, sql, [id], true);
 });
 
 // #########    INSERT ONE   ######
@@ -172,7 +153,6 @@ function _prepData(req, fnName){
                         ns.push(fnName(f, idx));
                         vs.push(fv);
                         break;
-                        //no break;
                     default:
                         idx++;
                         ns.push(fnName(f, idx));
@@ -187,93 +167,44 @@ function _prepData(req, fnName){
     };
 }
 router.post(apiPath+':objectId', function(req, res) {
-    var results = [];
     var mid = req.params.objectId;
     loadUIModel(mid);
     logObject('INSERT ONE', req);
 
-    // Get a Postgres client from the connection pool
-    pg.connect(connectionString, function(err, client, done) {
-        var sql;
-        var q=_prepData(req, function(f, idx){return f.attribute;});
-        if(q.names.length){
-            var ps=_.map(q.names, function(n, idx){
-                return '($'+(idx+1)+')';
-            });
-            sql = 'INSERT INTO '+tableName+
-                ' ("'+q.names.join('","')+'") values('+ps.join(',')+') RETURNING *;';
-            logSQL(sql);
-
-            // SQL Query > Insert Data
-            var query = client.query(sql, q.values);
-
-            // Stream results back one row at a time
-            query.on('row', function(row) {
-                results=row;
-            });
-
-            // After all data is returned, close connection and return results
-            query.on('end', function() {
-                client.end();
-                return res.json(results);
-            });
-
-            // Handle Errors
-            if(err) {
-              console.log(err);
-            }
-        }
-
-    });
+    var q=_prepData(req, function(f, idx){return f.attribute;});
+    if(q.names.length){
+        var ps=_.map(q.names, function(n, idx){
+            return '($'+(idx+1)+')';
+        });
+        var sql = 'INSERT INTO '+tableName+
+            ' ("'+q.names.join('","')+'") values('+ps.join(',')+')'+
+            ' RETURNING *;';
+        runQuery(res, sql, q.values, true);
+    }
 });
 
 // #########    UPDATE ONE    ######
-var _update=function(req, res) {
-
+function _update(req, res) {
     var results = [];
     var mid = req.params.objectId;
-    //var id=req.body.id;
     var id = req.params.id; 
     loadUIModel(mid);
     logObject('UPDATE ONE', req);
 
-    // Get a Postgres client from the connection pool
-    pg.connect(connectionString, function(err, client, done) {
-        var sql='UPDATE '+tableName+' SET ';
-        var q=_prepData(req, function(f, idx){return '"'+f.attribute+'"=($'+idx+')';});
+    var q=_prepData(req, function(f, idx){return '"'+f.attribute+'"=($'+idx+')';});
 
-        if(q.names.length){
-            q.values.push(id);
-            sql+=q.names.join(',') + ' WHERE id=($'+(q.names.length+1)+') RETURNING *;';
-            logSQL(sql);
-            var query = client.query(sql, q.values);
-
-            // Stream results back one row at a time
-            query.on('row', function(row) {
-                results=row;
-            });
-
-            // After all data is returned, close connection and return results
-            query.on('end', function() {
-                client.end();
-                return res.json(results);
-            });
-
-            // Handle Errors
-            if(err) {
-              console.log(err);
-            }
-        }
-
-    });
-
-};
+    if(q.names.length){
+        q.values.push(id);
+        var sql='UPDATE '+tableName+' SET '+ q.names.join(',') + 
+            ' WHERE id=($'+q.values.length+') RETURNING *;';
+        runQuery(res, sql, q.values, true);
+    }
+}
 router.patch(apiPath+':objectId/:id', _update);
 router.put(apiPath+':objectId/:id', _update);
 
 // #########    DELETE ONE   ######
 router.delete(apiPath+':objectId/:id', function(req, res) {
-
     var mid = req.params.objectId;
     var id = req.params.id;
     loadUIModel(mid);
