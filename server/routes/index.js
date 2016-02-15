@@ -24,6 +24,23 @@ var uims={
 
 var fCache = {};
 
+if(consoleLog){
+    console.log(
+        (
+        '  ______          _           _ _ _\n'+
+        ' |  ____|        | |      /| (_) (_)/|\n'+
+        ' | |____   _____ | |_   _| |_ _| |_| |_ _   _\n'+
+        ' |  __\\ \\ / / _ \\| | | | | __| | | | __| | | |\n'+
+        ' | |___\\ V / (_) | | |_| | |_| | | | |_| |_| |\n'+
+        ' |______\\_/ \\___/|_|\\__,_|\\__|_|_|_|\\__|\\__, |\n'+
+        '         ___  ___ _ ____   _____ _ __    __/ |\n'+
+        '  ____  / __|/ _ \\ \'__\\ \\ / / _ \\ \'__|  |___/\n' + 
+        ' |____| \\__ \\  __/ |   \\ V /  __/ |\n'+
+        '        |___/\\___|_|    \\_/ \\___|_|\n\n'+
+        new Date()).toString() + '\n'
+    );
+}
+
 function getFields(uiModel, asObject){
     var fs=asObject?{}:[];
     function collectFields(te) {
@@ -98,14 +115,13 @@ function runQuery(res, sql, values, singleRecord){
 
 }
 
-console.log('\n\n=== START EVOLUTILITY-SERVER ===\n');
 
 router.get('/', function(req, res, next) {
   res.sendFile(path.join(__dirname, '../', '../', 'client', 'views', 'index.html'));
 });
 
 
-// #########    GET MANY   ######
+// -----------------    GET MANY   -------------------------------------------------------
 router.get(apiPath+':objectId', function(req, res) {
     var uimid = req.params.objectId;
     loadUIModel(uimid);
@@ -115,7 +131,8 @@ router.get(apiPath+':objectId', function(req, res) {
     runQuery(res, sql, null, false);
 });
 
-// #########    GET ONE   ######
+
+// -----------------    GET ONE   -------------------------------------------------------
 router.get(apiPath+':objectId/:id', function(req, res) {
     var uimid = req.params.objectId;
     var id = req.params.id;
@@ -127,7 +144,8 @@ router.get(apiPath+':objectId/:id', function(req, res) {
     runQuery(res, sql, [id], true);
 });
 
-// #########    INSERT ONE   ######
+
+// -----------------    INSERT ONE   -------------------------------------------------------
 function _prepData(req, fnName){
     var idx=0,
         ns=[],
@@ -183,7 +201,8 @@ router.post(apiPath+':objectId', function(req, res) {
     }
 });
 
-// #########    UPDATE ONE    ######
+
+// -----------------    UPDATE ONE    -------------------------------------------------------
 function _update(req, res) {
     var results = [];
     var mid = req.params.objectId;
@@ -203,7 +222,8 @@ function _update(req, res) {
 router.patch(apiPath+':objectId/:id', _update);
 router.put(apiPath+':objectId/:id', _update);
 
-// #########    DELETE ONE   ######
+
+// -----------------    DELETE ONE   -------------------------------------------------------
 router.delete(apiPath+':objectId/:id', function(req, res) {
     var mid = req.params.objectId;
     var id = req.params.id;
