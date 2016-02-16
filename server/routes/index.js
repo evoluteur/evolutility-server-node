@@ -1,16 +1,24 @@
+/*! *******************************************************
+ *
+ * evolutility-server :: index.js
+ * Starting page for Evolutility SPA
+ *
+ * https://github.com/evoluteur/evolutility-server
+ * Copyright (c) 2016 Olivier Giulieri
+ ********************************************************* */
+
 var express = require('express');
 var router = express.Router();
 var path = require('path');
 var pg = require('pg');
 var _ = require('underscore');
+var log = require('./logger');
 
 //var evol = require('evolutility');
 var connectionString = require(path.join(__dirname, '../', '../', 'config'));
 
 var schema='evol_demo',
     apiPath='/api/v1/evolutility/';
-
-var consoleLog = true;
 
 var uims={
         'todo': require('../../client/public/ui-models/todo.js'),
@@ -24,22 +32,6 @@ var uims={
 
 var fCache = {};
 
-if(consoleLog){
-    console.log(
-        (
-        '  ______          _           _ _ _\n'+
-        ' |  ____|        | |      /| (_) (_)/|\n'+
-        ' | |____   _____ | |_   _| |_ _| |_| |_ _   _\n'+
-        ' |  __\\ \\ / / _ \\| | | | | __| | | | __| | | |\n'+
-        ' | |___\\ V / (_) | | |_| | |_| | | | |_| |_| |\n'+
-        ' |______\\_/ \\___/|_|\\__,_|\\__|_|_|_|\\__|\\__, |\n'+
-        '         ___  ___ _ ____   _____ _ __    __/ |\n'+
-        '  ____  / __|/ _ \\ \'__\\ \\ / / _ \\ \'__|  |___/\n' + 
-        ' |____| \\__ \\  __/ |   \\ V /  __/ |\n'+
-        '        |___/\\___|_|    \\_/ \\___|_|\n\n'+
-        new Date()).toString() + '\n'
-    );
-}
 
 function getFields(uiModel, asObject){
     var fs=asObject?{}:[];
@@ -61,6 +53,7 @@ function getFields(uiModel, asObject){
     collectFields(uiModel);
     return fs;
 }
+log.ascii_art();
 
 function loadUIModel(uimId){
     uim = uims[uimId];
@@ -71,19 +64,6 @@ function loadUIModel(uimId){
     fields = fCache[uimId];
 }
 
-function logObject(title, req){
-    if(logSQL){
-        console.log('\n\n--- '+title+' ---');
-        console.log('params = '+JSON.stringify(req.params, null, 2));
-        console.log('body = '+JSON.stringify(req.body, null, 2));
-    }
-}
-function logSQL(sql){
-    if(logSQL){
-        console.log('sql = '+sql+'\n');
-    }
-}
-
 function runQuery(res, sql, values, singleRecord){
     var results = [];
 
@@ -91,7 +71,7 @@ function runQuery(res, sql, values, singleRecord){
     pg.connect(connectionString, function(err, client, done) {
 
         // SQL Query > Select Data
-        logSQL(sql);
+        log.logSQL(sql);
         var query = values ? client.query(sql, values) :  client.query(sql);
 
         // Stream results back one row at a time
@@ -125,7 +105,7 @@ router.get('/', function(req, res, next) {
 router.get(apiPath+':objectId', function(req, res) {
     var uimid = req.params.objectId;
     loadUIModel(uimid);
-    logObject('GET MANY', req);
+    log.logObject('GET MANY', req);
 
     var sql='SELECT * FROM '+tableName+' ORDER BY id ASC;';
     runQuery(res, sql, null, false);
@@ -137,7 +117,7 @@ router.get(apiPath+':objectId/:id', function(req, res) {
     var uimid = req.params.objectId;
     var id = req.params.id;
     loadUIModel(uimid);
-    logObject('GET ONE', req);
+    log.logObject('GET ONE', req);
 
     // SQL Query > Select Data
     var sql='SELECT * FROM '+tableName+' WHERE id=($1)';
@@ -187,7 +167,7 @@ function _prepData(req, fnName){
 router.post(apiPath+':objectId', function(req, res) {
     var mid = req.params.objectId;
     loadUIModel(mid);
-    logObject('INSERT ONE', req);
+    log.logObject('INSERT ONE', req);
 
     var q=_prepData(req, function(f, idx){return f.attribute;});
     if(q.names.length){
@@ -208,7 +188,7 @@ function _update(req, res) {
     var mid = req.params.objectId;
     var id = req.params.id; 
     loadUIModel(mid);
-    logObject('UPDATE ONE', req);
+    log.logObject('UPDATE ONE', req);
 
     var q=_prepData(req, function(f, idx){return '"'+f.attribute+'"=($'+idx+')';});
 
@@ -228,14 +208,14 @@ router.delete(apiPath+':objectId/:id', function(req, res) {
     var mid = req.params.objectId;
     var id = req.params.id;
     loadUIModel(mid);
-    logObject('DELETE ONE', req);
+    log.logObject('DELETE ONE', req);
 
     // Get a Postgres client from the connection pool
     pg.connect(connectionString, function(err, client, done) {
 
         // SQL Query > Delete Data
         var sql = 'DELETE FROM '+tableName+' WHERE id=($1)';
-        logSQL(sql);
+        log.logSQL(sql);
         client.query(sql, [id]);
         return res.json(true);
 /*
