@@ -1,6 +1,16 @@
+/*! *******************************************************
+ *
+ * evolutility-server :: database.js
+ * Methods to build Postgres DB from ui-models.
+ *
+ * https://github.com/evoluteur/evolutility-server
+ * Copyright (c) 2016 Olivier Giulieri
+ ********************************************************* */
+
 var pg = require('pg');
 var path = require('path');
 var _ = require('underscore');
+var def = require('./def');
 
 var schema = 'evol_demo';
 //var dbuser = 'evol';
@@ -25,32 +35,12 @@ var connectionString = require(path.join(__dirname, '../', '../', 'config'));
 var client = new pg.Client(connectionString);
 client.connect();
 
-function getFields(uiModel, asObject){
-    var fs=asObject?{}:[];
-    function collectFields(te) {
-        if (te && te.elements && te.elements.length > 0) {
-            _.forEach(te.elements, function (te) {
-                if(te.type!='panel-list'){
-                    collectFields(te);
-                }
-            });
-        } else {
-            if(asObject){
-                fs[te]=te;
-            }else{
-                fs.push(te);
-            }
-        }
-    }
-    collectFields(uiModel);
-    return fs;
-}
 
 function uim2db(uimid){
     // -- generates SQL script to create a Postgres DB table for the ui model
     var uiModel = uims[uimid],
         t=schema+'.'+(uiModel.table || uiModel.id),
-        fields=getFields(uiModel),
+        fields=def.getFields(uiModel),
         fs=['id serial primary key'],
         sql0,
         sql;
@@ -87,6 +77,7 @@ function uim2db(uimid){
             fs.push(sql0);
         }
     });
+    //subCollecs
 
     //sql = 'CREATE SCHEMA "evol_demo" AUTHORIZATION evol;\n';
     sql = 'CREATE TABLE '+t+'(\n' + fs.join(',\n') + ');\n';

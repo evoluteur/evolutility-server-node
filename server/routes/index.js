@@ -12,6 +12,7 @@ var router = express.Router();
 var path = require('path');
 var pg = require('pg');
 var _ = require('underscore');
+var def = require('../models/def');
 var log = require('./logger');
 
 //var evol = require('evolutility');
@@ -32,34 +33,13 @@ var uims={
 
 var fCache = {};
 
-
-function getFields(uiModel, asObject){
-    var fs=asObject?{}:[];
-    function collectFields(te) {
-        if (te && te.elements && te.elements.length > 0) {
-            _.forEach(te.elements, function (te) {
-                if(te.type!='panel-list'){
-                    collectFields(te);
-                }
-            });
-        } else {
-            if(asObject){
-                fs[te]=te;
-            }else{
-                fs.push(te);
-            }
-        }
-    }
-    collectFields(uiModel);
-    return fs;
-}
 log.ascii_art();
 
 function loadUIModel(uimId){
     uim = uims[uimId];
     tableName=(schema?'"'+schema+'".':'')+'"'+(uim.table || uim.id)+'"';
     if(!fCache[uimId]){
-        fCache[uimId] = getFields(uim);
+        fCache[uimId] = def.getFields(uim);
     }
     fields = fCache[uimId];
 }
