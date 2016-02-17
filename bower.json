@@ -1,6 +1,6 @@
 {
   "name": "evolutility-server",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Backend for Evolutility.",
   "main": [
     "app.js"
