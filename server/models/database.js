@@ -41,10 +41,12 @@ function uim2db(uimid){
     var uiModel = uims[uimid],
         t=schema+'.'+(uiModel.table || uiModel.id),
         fields=def.getFields(uiModel),
+        subCollecs=def.getSubCollecs(uiModel),
         fs=['id serial primary key'],
         sql0,
         sql;
 
+    // fields
     _.forEach(fields, function(f, idx){
         if(f.attribute!='id' && f.type!=='formula'){
             sql0=' "'+(f.attribute || f.id)+'" ';
@@ -77,7 +79,10 @@ function uim2db(uimid){
             fs.push(sql0);
         }
     });
-    //subCollecs
+    // subCollecs - as json columns
+    _.forEach(subCollecs, function(c, idx){
+        fs.push(' "'+(c.attribute || c.id)+'" json');
+    });
 
     //sql = 'CREATE SCHEMA "evol_demo" AUTHORIZATION evol;\n';
     sql = 'CREATE TABLE '+t+'(\n' + fs.join(',\n') + ');\n';
@@ -96,6 +101,7 @@ function uim2db(uimid){
                 vs.push(v);
             }
         }
+
         sql+='('+ns.join(',')+') values('+vs.join(',')+');\n';
     });
     console.log(sql);

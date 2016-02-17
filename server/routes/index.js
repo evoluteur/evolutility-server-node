@@ -31,6 +31,7 @@ var uims={
     uim=null,
     tableName=null;
 
+var fields;
 var fCache = {};
 
 log.ascii_art();
@@ -68,7 +69,7 @@ function runQuery(res, sql, values, singleRecord){
         // Handle Errors
         if(err) {
             res.status(500).send('Something broke!');
-            console.log(err);
+            log.error(err);
         }
 
     });
@@ -139,11 +140,20 @@ function _prepData(req, fnName){
             }
         }
     });
+    _.forEach(def.getSubCollecs(uim), function(f){
+        var fv=req.body[f.attribute||f.id];
+        if(fv!=null){ 
+            idx++;
+            ns.push(fnName(f, idx));
+            vs.push(JSON.stringify(fv));
+        }
+    });
     return {
         names: ns,
         values: vs
     };
 }
+
 router.post(apiPath+':objectId', function(req, res) {
     var mid = req.params.objectId;
     loadUIModel(mid);
@@ -179,6 +189,7 @@ function _update(req, res) {
         runQuery(res, sql, q.values, true);
     }
 }
+
 router.patch(apiPath+':objectId/:id', _update);
 router.put(apiPath+':objectId/:id', _update);
 
