@@ -69,7 +69,7 @@ function runQuery(res, sql, values, singleRecord){
         // Handle Errors
         if(err) {
             res.status(500).send('Something broke!');
-            log.error(err);
+            log.logError(err);
         }
 
     });

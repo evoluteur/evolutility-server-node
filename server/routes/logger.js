@@ -47,8 +47,7 @@ module.exports = {
 	},
 
 	logError: function(err){
-		// TODO:
-		
+		console.error(err);
 	}
 
 };
