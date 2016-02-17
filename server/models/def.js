@@ -23,7 +23,7 @@ module.exports = {
 				});
 			} else {
 				if (asObject) {
-					fs[te] = te;
+					fs[te.id] = te;
 				} else {
 					fs.push(te);
 				}
