@@ -1,10 +1,8 @@
 # evolutility-server
 
-Generic REST for CRUD (Create, Read, Update, Delete) and more. 
+Generic RESTful API for CRUD (Create, Read, Update, Delete) and more using [Node.js](https://nodejs.org/en/), [Express](http://expressjs.com/) and [PostgreSQL](http://www.postgresql.org/). 
 
-This project is still a work in progress. 
-The goal is to make a generic RESTful API for Postgres, Node.js and Express. 
-It will use the same metadata as [Evolutility UI](http://evoluteur.github.io/evolutility/index.html).
+Evolutility-server is build to work with [Evolutility](http://evoluteur.github.io/evolutility/index.html) (but doesn't have to).
 
 
 ## Installation
@@ -73,14 +71,11 @@ You can filter result rows by adding conditions on fields, each condition is a q
 GET /<object>/<field.id>=<operator>.<value>
 
 GET /todo?title=sw.a
-
 GET /todo?priority=in.1,2,3
-
 ```
 Adding multiple parameters conjoins the conditions:
 ```
 todo?complete=0&duedate=lt.2016-01-01
-
 ```
 
 These operators are available:
@@ -121,7 +116,6 @@ GET /todo?order=duedate
 The reserved words "page" and "pageSize" limits the response rows.
 ```
 GET /todo?page=0&pageSize=5
-
 ```
 
 ### Updating Data
