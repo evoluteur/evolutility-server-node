@@ -1,7 +1,7 @@
 {
   "name": "evolutility-server",
-  "version": "0.0.6",
-  "description": "Backend for Evolutility.",
+  "version": "0.1.0",
+  "description": "Evolutility RESTful API for CRUD and more.",
   "main": [
     "app.js"
   ],
