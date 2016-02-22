@@ -85,21 +85,21 @@ todo?complete=0&duedate=lt.2016-01-01
 
 These operators are available:
 
-| Operator     | Meaning                 |
-|--------------|-------------------------|
-| eq           | equals                  |
-| gt           | greater than            |
-| lt           | less than               |
-| gte          | less than or equal      |
-| lte          | less than or equal      |
-| ct           | contains                |
-| sw           | start with              |
-| fw           | finishes than           |
-| in           | one of a list of values |
-| 0            | is false                |
-| 1            | is true                 |
-| null         | is null                 |
-| nn           | is not null             |
+| Operator     | Meaning                 | Example                      |
+|--------------|-------------------------|------------------------------|
+| eq           | equals                  | /todo?category=eq.fun        |
+| gt           | greater than            | /todo?duedate=gt.2016-01-15  |
+| lt           | less than               | /todo?duedate=lt.2016-01-15  |
+| gte          | less than or equal      | /todo?duedate=gte.2016-01-15 |
+| lte          | less than or equal      | /todo?duedate=lte.2016-01-15 |
+| ct           | contains                | /todo?title=ct.e             |
+| sw           | start with              | /todo?title=sw.a             |
+| fw           | finishes than           | /todo?title=fw.z             |
+| in           | one of a list of values | /todo?priority=in.1,2,3      |
+| 0            | is false                | /todo?category=0             |
+| 1            | is true                 | /todo?category=1             |
+| null         | is null                 | /todo?category=null          |
+| nn           | is not null             | /todo?category==nn           |
 
 
 #### Ordering
