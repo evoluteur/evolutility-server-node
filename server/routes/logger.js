@@ -9,6 +9,9 @@
 
 var consoleLog = true;
 
+
+var pkg = require('../../package.json');
+
 module.exports = {
 
 	ascii_art: function(){
@@ -24,7 +27,7 @@ module.exports = {
 					'         ___  ___ _ ____   _____ _ __    __/ |\n'+
 					'  ____  / __|/ _ \\ \'__\\ \\ / / _ \\ \'__|  |___/\n' + 
 					' |____| \\__ \\  __/ |   \\ V /  __/ |\n'+
-					'        |___/\\___|_|    \\_/ \\___|_|\n\n'+
+					'        |___/\\___|_|    \\_/ \\___|_|      '+pkg.version+'\n\n'+
 					new Date()).toString() + '\n'
 			);
 		}
