@@ -138,7 +138,7 @@ router.get(apiPath+':objectId', function(req, res) {
                 var w='t1."'+f.attribute+'"'+sqlOperators[cond];
                 if(f.type==='lov' && cond==='in'){
                     sqlW.push(w+'('+cs[1].split(',').map(function(li){
-                        return "'"+li.replace(/\'/g, '\'\'')+"'";
+                        return "'"+li.replace(/'/g, "''")+"'";
                     }).join(',')+')');
                 }else if(cond==='0'){ // false
                     sqlW.push(w+'false');
