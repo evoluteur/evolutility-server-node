@@ -31,12 +31,18 @@ module.exports = {
 
 	},
 
-	 logObject: function(title, req){
+	 logReq: function(title, req){
 		if(consoleLog){
-			console.log('\n\n--- '+title+' ---');
+			console.log('\n\n--- '+title+' : '+req.params.objectId+' ---');
 			console.log('params = '+JSON.stringify(req.params, null, 2));
 			console.log('query = '+JSON.stringify(req.query, null, 2));
 			console.log('body = '+JSON.stringify(req.body, null, 2));
+		}
+	},
+
+	 logObject: function(title, obj){
+		if(consoleLog){
+			console.log(title+' = '+JSON.stringify(obj, null, 2));
 		}
 	},
 
