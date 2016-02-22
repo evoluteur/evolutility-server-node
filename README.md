@@ -51,7 +51,7 @@ Every model is exposed. You can query lists of items by using the model ID.
 ```
 GET /<object>
 
-/todo
+GET /todo
 ```
 
 
@@ -85,8 +85,8 @@ todo?complete=0&duedate=lt.2016-01-01
 
 These operators are available:
 
-| Operator     |  Meaning                |
-|--------------|:-----------------------:|
+| Operator     | Meaning                 |
+|--------------|-------------------------|
 | eq           | equals                  |
 | gt           | greater than            |
 | lt           | less than               |
@@ -120,7 +120,7 @@ GET /todo?order=duedate
 
 The reserved words "page" and "pageSize" limits the response rows.
 ```
-GET /todo?page=1&pageSize=5
+GET /todo?page=0&pageSize=5
 
 ```
 
