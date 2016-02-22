@@ -21,11 +21,13 @@ module.exports = {
 						collectFields(te);
 					}
 				});
-			} else {
-				if (asObject) {
-					fs[te.id] = te;
-				} else {
-					fs.push(te);
+			} else { 
+				if(te.type && te.type!== 'formula'){
+					if (asObject) {
+						fs[te.id] = te;
+					} else{
+						fs.push(te);
+					}
 				}
 			}
 		}
