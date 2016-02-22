@@ -33,7 +33,7 @@ npm start
 
 ```
 
-5- In a web browser go to the url http://localhost:3000/
+5- In a web browser go to the url [http://localhost:3000/](http://localhost:3000/).
 
 
 ## API
