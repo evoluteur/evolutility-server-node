@@ -49,9 +49,9 @@ When running Evolutility-server locally, the API for the "todo" app is accessibl
 Every model is exposed. You can query lists of items by using the model ID.
 
 ```
-*GET* /<object>
+GET /<object>
 
-*GET* /todo
+GET /todo
 ```
 
 
@@ -59,9 +59,9 @@ Every model is exposed. You can query lists of items by using the model ID.
 To get a specific item by ID, use /ID.
 
 ```
-*GET* /<object>/<id>
+GET /<object>/<id>
 
-*GET* /todo/12
+GET /todo/12
 ```
 
 
@@ -69,10 +69,10 @@ To get a specific item by ID, use /ID.
 You can filter result rows by adding conditions on fields, each condition is a query string parameter. 
 
 ```
-*GET* /<object>/<field.id>=<operator>.<value>
+GET /<object>/<field.id>=<operator>.<value>
 
-*GET* /todo?title=sw.a
-*GET* /todo?priority=in.1,2,3
+GET /todo?title=sw.a
+GET /todo?priority=in.1,2,3
 ```
 Adding multiple parameters conjoins the conditions:
 ```
@@ -102,13 +102,13 @@ These operators are available:
 
 The reserved word "order" reorders the response rows. It uses a comma-separated list of fields and directions:
 ```
-*GET* /todo?order=complete.asc
+GET /todo?order=complete.asc
 
-*GET* /todo?order=priority.desc,title.asc
+GET /todo?order=priority.desc,title.asc
 ```
 If no direction is specified it defaults to ascending order:
 ```
-*GET* /todo?order=duedate
+GET /todo?order=duedate
 ```
 
 #### Limiting and Pagination
@@ -116,7 +116,7 @@ If no direction is specified it defaults to ascending order:
 
 The reserved words "page" and "pageSize" limits the response rows.
 ```
-*GET* /todo?page=0&pageSize=5
+GET /todo?page=0&pageSize=5
 ```
 
 ### Updating Data
@@ -126,14 +126,14 @@ The reserved words "page" and "pageSize" limits the response rows.
 To create a row in a database table post a JSON object whose keys are the names of the columns you would like to create. Missing keys will be set to default values when applicable.
 
 ```
-*POST* /todo
+POST /todo
 { field.id1: 'value1', field.id2: 'value2'}
 ```
 
 #### Update
 
 ```
-*PATCH* /todo
+PATCH /todo
 { field.id1: 'value1', field.id2: 'value2'}
 ```
 
@@ -141,7 +141,7 @@ To create a row in a database table post a JSON object whose keys are the names 
 Simply use the DELETE verb with the id of the record to remove. 
 
 ```
-*DELETE* /todo/5
+DELETE /todo/5
 ```
 
 ## License
