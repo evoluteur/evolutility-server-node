@@ -131,39 +131,44 @@ router.get(apiPath+':objectId', function(req, res) {
     var sqlW=[];
     var ffs=_.forEach(req.query, function(c, n){
         var f = (n==='id') ? {attribute:'id'} : fieldsH[n];
-        if(f){
+        if(f && ['select', 'filter', 'search', 'order', 'page', 'pageSize'].indexOf(f)<0){
             var cs=c.split('.');
             if(cs.length){
                 var cond=cs[0];
-                var w='t1."'+f.attribute+'"'+sqlOperators[cond];
-                if(f.type==='lov' && cond==='in'){
-                    sqlW.push(w+'('+cs[1].split(',').map(function(li){
-                        return "'"+li.replace(/'/g, "''")+"'";
-                    }).join(',')+')');
-                }else if(cond==='0'){ // false
-                    sqlW.push(w+'false');
-                }else if(cond==='1'){ // true
-                    sqlW.push(w+'true');
-                }else if(cond==='null'){ // empty
-                    sqlW.push(w+'NULL');
-                }else if(cond==='nn'){ // not empty
-                    sqlW.push(' NOT '+w+'NULL');
+                if((cond==='eq' || cond==='ne') && def.fieldIsText(f)){
+                    data.push(cs[1]);
+                    sqlW.push('LOWER(t1."'+f.attribute+'")'+sqlOperators[cond]+'LOWER($'+data.length+')');
                 }else{
-                    if(cond==='nct'){ // contains
-                        //TODO replace % in cs[1]
-                        data.push('%'+cs[1]+'%');
-                        sqlW.push(' NOT '+w+'($'+data.length+')');
+                    var w='t1."'+f.attribute+'"'+sqlOperators[cond];
+                    if(cond==='in' && (f.type==='lov' || f.type==='list')){
+                        sqlW.push(w+'('+cs[1].split(',').map(function(li){
+                            return "'"+li.replace(/'/g, "''")+"'";
+                        }).join(',')+')'); 
+                    }else if(cond==='0'){ // false
+                        sqlW.push(w+'false');
+                    }else if(cond==='1'){ // true
+                        sqlW.push(w+'true');
+                    }else if(cond==='null'){ // empty
+                        sqlW.push(w+'NULL');
+                    }else if(cond==='nn'){ // not empty
+                        sqlW.push(' NOT '+w+'NULL');
                     }else{
-                        if(cond==='sw'){ // start with
-                            data.push(cs[1]+'%');
-                        }else if(cond==='fw'){ // finishes with
-                            data.push('%'+cs[1]);
-                        }else if(cond==='ct'){ // contains
+                        if(cond==='nct'){ // contains
+                            //TODO replace % in cs[1]
                             data.push('%'+cs[1]+'%');
+                            sqlW.push(' NOT '+w+'($'+data.length+')');
                         }else{
-                            data.push(cs[1]);
+                            if(cond==='sw'){ // start with
+                                data.push(cs[1]+'%');
+                            }else if(cond==='fw'){ // finishes with
+                                data.push('%'+cs[1]);
+                            }else if(cond==='ct'){ // contains
+                                data.push('%'+cs[1]+'%');
+                            }else{
+                                data.push(cs[1]);
+                            }
+                            sqlW.push(w+'($'+data.length+')');
                         }
-                        sqlW.push(w+'($'+data.length+')');
                     }
                 }
             }

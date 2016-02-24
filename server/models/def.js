@@ -9,7 +9,35 @@
 
 var _ = require('underscore');
 
+var fts = {
+    text: 'text',
+    textml: 'textmultiline',
+    bool: 'boolean',
+    int: 'integer',
+    dec: 'decimal',
+    money: 'money',
+    date: 'date',
+    datetime: 'datetime',
+    time: 'time',
+    lov: 'lov',
+    list: 'list', // many values for one field (behave like tags - return an array of strings)
+    html: 'html',
+    formula:'formula', // soon to be a field attribute rather than a field type
+    email: 'email',
+    pix: 'image',
+    //geoloc: 'geolocation',
+    //doc:'document',
+    url: 'url',
+    color: 'color',
+    hidden: 'hidden',
+    json: 'json'
+    //rating: 'rating',
+    //widget: 'widget'
+};
+
 module.exports = {
+
+	fieldTypes: fts,
 
 	getFields: function(uiModel, asObject) {
 		var fs = asObject ? {} : [];
@@ -57,6 +85,13 @@ module.exports = {
 
 		collectCollecs(uiModel);
 		return ls;
-	}
+	},
+	fieldIsText: function(f){
+		return [fts.text, fts.textml, fts.url, fts.html, fts.email].indexOf(f.type)<0;
+	},
+
+	fieldIsNumber: function(f){
+		return [fts.int, fts.dec, fts.money].indexOf(f.type)<0;
+	},
 
 };
