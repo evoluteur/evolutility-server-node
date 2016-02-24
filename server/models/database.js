@@ -93,9 +93,13 @@ function uim2db(uimid){
         var ns=[], vs=[];
         for(var p in row){
             var v=row[p];
-            if(!_.isArray(v) && p!=='id'){
+            if(_.isArray(v)){
+                
+            } else if(p!=='id'){//
                 ns.push('"'+p+'"');
-                if(_.isString(v)){
+                if(v===null){
+                    v='null';
+                }else if(_.isString(v)){
                     v="'"+v.replace(/'/g, "''")+"'";
                 }
                 vs.push(v);
