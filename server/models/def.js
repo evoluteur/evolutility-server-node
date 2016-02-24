@@ -87,11 +87,11 @@ module.exports = {
 		return ls;
 	},
 	fieldIsText: function(f){
-		return [fts.text, fts.textml, fts.url, fts.html, fts.email].indexOf(f.type)<0;
+		return [fts.text, fts.textml, fts.url, fts.html, fts.email].indexOf(f.type)>-1;
 	},
 
 	fieldIsNumber: function(f){
-		return [fts.int, fts.dec, fts.money].indexOf(f.type)<0;
+		return [fts.int, fts.dec, fts.money].indexOf(f.type)>-1;
 	},
 
 };
