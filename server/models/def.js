@@ -94,4 +94,12 @@ module.exports = {
 		return [fts.int, fts.dec, fts.money].indexOf(f.type)>-1;
 	},
 
+	hById: function(arr){
+		var objH={};
+		_.forEach(arr, function(o){
+			objH[o.id] = o; 
+		});
+		return objH;
+	}
+
 };

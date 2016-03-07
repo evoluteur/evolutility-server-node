@@ -12,7 +12,7 @@ var path = require('path');
 var pg = require('pg');
 var _ = require('underscore');
 var def = require('../models/def');
-var log = require('./logger');
+var logger = require('./logger');
 
 //var evol = require('evolutility');
 var connectionString = require(path.join(__dirname, '../', '../', 'config'));
@@ -30,11 +30,11 @@ var uims={
     uim=null,
     tableName=null;
 
-var fields;
-var fieldsH;
-var fCache = {};
+var fields,
+    fieldsH,
+    fCache = {};
 
-log.ascii_art();
+logger.ascii_art();
 
 function loadUIModel(uimId){
     uim = uims[uimId];
@@ -43,7 +43,8 @@ function loadUIModel(uimId){
         fCache[uimId] = def.getFields(uim);
     }
     fields = fCache[uimId];
-    fieldsH = def.getFields(uim, true);
+    fieldsH = def.hById(fields);
+    collecs = def.getSubCollecs(uim);
 }
 
 function runQuery(res, sql, values, singleRecord){
@@ -53,7 +54,7 @@ function runQuery(res, sql, values, singleRecord){
     pg.connect(connectionString, function(err, client, done) {
 
         // SQL Query > Select Data
-        log.logSQL(sql);
+        logger.logSQL(sql);
         var query = values ? client.query(sql, values) :  client.query(sql);
 
         // Stream results back one row at a time
@@ -70,13 +71,25 @@ function runQuery(res, sql, values, singleRecord){
         // Handle Errors
         if(err) {
             res.status(500).send('Something broke!');
-            log.logError(err);
+            logger.logError(err);
         }
 
     });
 
 }
 
+function sqlSelect(fields, collecs, table){
+    var tQuote = table ? 't1."' : '"';
+    var sqlfs=_.map(fields, function(f){
+        return tQuote+f.attribute+(f.type==='money' ? '"::numeric' : '"');
+    });
+    if(collecs){
+        sqlfs=sqlfs.concat(_.map(collecs, function(c){
+            return tQuote+(c.attribute||c.id)+'"';
+        }));
+    }
+    return sqlfs.join(',');
+}
 
 router.get('/', function(req, res, next) {
   res.sendFile(path.join(__dirname, '../', '../', 'client', 'views', 'index.html'));
@@ -87,7 +100,7 @@ router.get('/', function(req, res, next) {
 // -----------------    GET MANY   ------------------------------------------------------
 // --------------------------------------------------------------------------------------
 
-function fieldOrder(f){
+function sqlFieldOrder(f){
     var fs=def.getFields(uim,true);
     var idx=f.indexOf('.');
     if(idx>-1){
@@ -103,13 +116,11 @@ router.get(apiPath+':objectId', function(req, res) {
     var uimid = req.params.objectId;
     var data=[];
     loadUIModel(uimid);
-    log.logReq('GET MANY', req);
+    logger.logReq('GET MANY', req);
 
     // ---- SELECTION
-    var columns = _.map(fields, function(f){
-        return 't1."'+f.attribute+'"';
-    });
-    var sql='SELECT t1.id, '+columns.join(',')+' FROM '+tableName + ' AS t1';
+    var sql='SELECT t1.id, '+sqlSelect(fields, false)+
+            ' FROM '+tableName + ' AS t1';
 
     // ---- FILTERING
     var sqlOperators = {
@@ -180,7 +191,7 @@ router.get(apiPath+':objectId', function(req, res) {
         var paramSearch=false;
         var sqlWS=[];
         if(uim.fnSearch && _.isArray(uim.fnSearch)){
-            log.logObject('search fields', uim.fnSearch);
+            logger.logObject('search fields', uim.fnSearch);
             var sqlP='"'+sqlOperators.ct+'($'+(data.length+1)+')';
             _.forEach(uim.fnSearch, function(m){
                 sqlWS.push('t1."'+fieldsH[m].attribute+sqlP);
@@ -200,9 +211,9 @@ router.get(apiPath+':objectId', function(req, res) {
     if(qOrder){
         if(qOrder.indexOf(',')>-1){
             var fl=qOrder.split(',');
-            sql+=_.map(fl, fieldOrder).join(',');
+            sql+=_.map(fl, sqlFieldOrder).join(',');
         }else{
-            sql+=fieldOrder(qOrder);
+            sql+=sqlFieldOrder(qOrder);
         }
     }else{
         sql+='t1.id DESC';
@@ -231,10 +242,11 @@ router.get(apiPath+':objectId/:id', function(req, res) {
     var uimid = req.params.objectId;
     var id = req.params.id;
     loadUIModel(uimid);
-    log.logReq('GET ONE', req);
+    logger.logReq('GET ONE', req);
+    var sql='SELECT t1.id, '+sqlSelect(fields, def.getSubCollecs(uim))+//aaaaaaa
+            ' FROM '+tableName + ' AS t1'+
+            ' WHERE id=$1 LIMIT 1;';
 
-    // SQL Query > Select Data
-    var sql='SELECT * FROM '+tableName+' WHERE id=($1) LIMIT 1;';
     runQuery(res, sql, [id], true);
 });
 
@@ -244,8 +256,7 @@ router.get(apiPath+':objectId/:id', function(req, res) {
 // --------------------------------------------------------------------------------------
 
 function _prepData(req, fnName){
-    var idx=0,
-        ns=[],
+    var ns=[],
         vs=[];
 
     _.forEach(fields, function(f){
@@ -253,10 +264,13 @@ function _prepData(req, fnName){
             var fv=req.body[f.attribute];
             if(fv!=null){
                 switch(f.type){
+                    case 'panel-list':
+                        vs.push(JSON.stringify(fv));
+                        ns.push(fnName(f, vs.length));
+                        break;
                     case 'boolean':
-                        idx++;
-                        ns.push(fnName(f, idx));
                         vs.push(fv?'TRUE':'FALSE');
+                        ns.push(fnName(f, vs.length));
                         break;
                     case 'date':
                     case 'time':
@@ -264,24 +278,21 @@ function _prepData(req, fnName){
                         if(fv===''){
                             fv=null;
                         }
-                        idx++;
-                        ns.push(fnName(f, idx));
                         vs.push(fv);
+                        ns.push(fnName(f, vs.length));
                         break;
                     default:
-                        idx++;
-                        ns.push(fnName(f, idx));
                         vs.push(fv);
+                        ns.push(fnName(f, vs.length));
                 }
             }
         }
     });
     _.forEach(def.getSubCollecs(uim), function(f){
         var fv=req.body[f.attribute||f.id];
-        if(fv!=null){ 
-            idx++;
-            ns.push(fnName(f, idx));
+        if(fv!=null){
             vs.push(JSON.stringify(fv));
+            ns.push(fnName(f, vs.length));
         }
     });
     return {
@@ -293,16 +304,17 @@ function _prepData(req, fnName){
 router.post(apiPath+':objectId', function(req, res) {
     var mid = req.params.objectId;
     loadUIModel(mid);
-    log.logReq('INSERT ONE', req);
+    logger.logReq('INSERT ONE', req);
 
     var q=_prepData(req, function(f, idx){return f.attribute;});
     if(q.names.length){
         var ps=_.map(q.names, function(n, idx){
-            return '($'+(idx+1)+')';
+            return '$'+(idx+1);
         });
         var sql = 'INSERT INTO '+tableName+
             ' ("'+q.names.join('","')+'") values('+ps.join(',')+')'+
-            ' RETURNING *;';
+            ' RETURNING id, '+sqlSelect(fields, false)+';';
+
         runQuery(res, sql, q.values, true);
     }
 });
@@ -317,14 +329,14 @@ function _update(req, res) {
     var mid = req.params.objectId;
     var id = req.params.id; 
     loadUIModel(mid);
-    log.logReq('UPDATE ONE', req);
+    logger.logReq('UPDATE ONE', req);
 
-    var q = _prepData(req, function(f, idx){return '"'+f.attribute+'"=($'+idx+')';});
+    var q = _prepData(req, function(f, idx){return '"'+f.attribute+'"=$'+idx;});
 
     if(q.names.length){
         q.values.push(id);
         var sql='UPDATE '+tableName+' SET '+ q.names.join(',') + 
-            ' WHERE id=($'+q.values.length+') RETURNING *;';
+            ' WHERE id=$'+q.values.length+' RETURNING id, '+sqlSelect(fields, false)+';';
         runQuery(res, sql, q.values, true);
     }
 }
@@ -341,14 +353,14 @@ router.delete(apiPath+':objectId/:id', function(req, res) {
     var mid = req.params.objectId;
     var id = req.params.id;
     loadUIModel(mid);
-    log.logReq('DELETE ONE', req);
+    logger.logReq('DELETE ONE', req);
 
     // Get a Postgres client from the connection pool
     pg.connect(connectionString, function(err, client, done) {
 
         // SQL Query > Delete Data
         var sql = 'DELETE FROM '+tableName+' WHERE id=($1)';
-        log.logSQL(sql);
+        logger.logSQL(sql);
         client.query(sql, [id]);
         return res.json(true);
 /*

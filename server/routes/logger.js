@@ -31,7 +31,6 @@ module.exports = {
 					new Date()).toString() + '\n'
 			);
 		}
-
 	},
 
 	 logReq: function(title, req){

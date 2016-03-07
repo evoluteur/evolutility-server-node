@@ -41,6 +41,7 @@ function uim2db(uimid){
     var uiModel = uims[uimid],
         t=schema+'.'+(uiModel.table || uiModel.id),
         fields=def.getFields(uiModel),
+        fieldsH=def.hById(fields),
         subCollecs=def.getSubCollecs(uiModel),
         fs=['id serial primary key'],
         sql0,
@@ -93,11 +94,11 @@ function uim2db(uimid){
         var ns=[], vs=[];
         for(var p in row){
             var v=row[p];
-            if(_.isArray(v)){
-                
-            } else if(p!=='id'){//
+            if(p!=='id' && fieldsH[p]){
                 ns.push('"'+p+'"');
-                if(v===null){
+                if(_.isObject(v)){
+                    v="'"+ JSON.stringify(v) +"'";
+                }else if(v===null){
                     v='null';
                 }else if(_.isString(v)){
                     v="'"+v.replace(/'/g, "''")+"'";
@@ -105,7 +106,6 @@ function uim2db(uimid){
                 vs.push(v);
             }
         }
-
         sql+='('+ns.join(',')+') values('+vs.join(',')+');\n';
     });
     console.log(sql);
