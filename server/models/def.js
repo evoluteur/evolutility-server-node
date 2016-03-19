@@ -39,8 +39,8 @@ module.exports = {
 
 	fieldTypes: fts,
 
-	getFields: function(uiModel, asObject) {
-		var fs = asObject ? {} : [];
+	getFields: function(uiModel) {
+		var fs = [];
 
 		function collectFields(te) {
 			if (te && te.elements && te.elements.length > 0) {
@@ -51,17 +51,17 @@ module.exports = {
 				});
 			} else { 
 				if(te.type && te.type!== 'formula'){
-					if (asObject) {
-						fs[te.id] = te;
-					} else{
-						fs.push(te);
-					}
+					fs.push(te);
 				}
 			}
 		}
 
-		collectFields(uiModel);
-		return fs;
+		if(uiModel.fields){
+			return uiModel.fields;
+		}else{
+			collectFields(uiModel);
+			return fs;
+		}
 	},
 
 	getSubCollecs: function(uiModel) {

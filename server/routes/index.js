@@ -148,7 +148,11 @@ router.get(apiPath+':objectId', function(req, res) {
                 var cond=cs[0];
                 if((cond==='eq' || cond==='ne') && def.fieldIsText(f)){
                     data.push(cs[1]);
-                    sqlW.push('LOWER(t1."'+f.attribute+'")'+sqlOperators[cond]+'LOWER($'+data.length+')');
+                    if(f.type==='text' || f.type==='textmultiline' || f.type==='html'){
+                        sqlW.push('LOWER(t1."'+f.attribute+'")'+sqlOperators[cond]+'LOWER($'+data.length+')');
+                    }else{
+                        sqlW.push('t1."'+f.attribute+'"'+sqlOperators[cond]+'$'+data.length);
+                    }
                 }else{
                     var w='t1."'+f.attribute+'"'+sqlOperators[cond];
                     if(cond==='in' && (f.type==='lov' || f.type==='list')){
@@ -164,10 +168,10 @@ router.get(apiPath+':objectId', function(req, res) {
                     }else if(cond==='nn'){ // not empty
                         sqlW.push(' NOT '+w+'NULL');
                     }else{
-                        if(cond==='nct'){ // contains
+                        if(cond==='nct'){ // not contains
                             //TODO replace % in cs[1]
                             data.push('%'+cs[1]+'%');
-                            sqlW.push(' NOT '+w+'($'+data.length+')');
+                            sqlW.push(' NOT '+w+'$'+data.length);
                         }else{
                             if(cond==='sw'){ // start with
                                 data.push(cs[1]+'%');
@@ -178,7 +182,7 @@ router.get(apiPath+':objectId', function(req, res) {
                             }else{
                                 data.push(cs[1]);
                             }
-                            sqlW.push(w+'($'+data.length+')');
+                            sqlW.push(w+'$'+data.length);
                         }
                     }
                 }
@@ -243,7 +247,7 @@ router.get(apiPath+':objectId/:id', function(req, res) {
     var id = req.params.id;
     loadUIModel(uimid);
     logger.logReq('GET ONE', req);
-    var sql='SELECT t1.id, '+sqlSelect(fields, def.getSubCollecs(uim))+//aaaaaaa
+    var sql='SELECT t1.id, '+sqlSelect(fields, def.getSubCollecs(uim))+
             ' FROM '+tableName + ' AS t1'+
             ' WHERE id=$1 LIMIT 1;';
 
