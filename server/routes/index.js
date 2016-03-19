@@ -15,10 +15,9 @@ var def = require('../models/def');
 var logger = require('./logger');
 
 //var evol = require('evolutility');
-var connectionString = require(path.join(__dirname, '../', '../', 'config'));
+var config = require(path.join(__dirname, '../', '../', 'config'));
 
-var schema='evol_demo',
-    apiPath='/api/v1/evolutility/';
+var apiPath = config.apiPath || '/api/v1/evolutility/';
 
 var uims={
         'todo': require('../../client/public/ui-models/todo.js'),
@@ -38,7 +37,7 @@ logger.ascii_art();
 
 function loadUIModel(uimId){
     uim = uims[uimId];
-    tableName=(schema?'"'+schema+'".':'')+'"'+(uim.table || uim.id)+'"';
+    tableName=(config.schema?'"'+config.schema+'".':'')+'"'+(uim.table || uim.id)+'"';
     if(!fCache[uimId]){
         fCache[uimId] = def.getFields(uim);
     }
@@ -51,7 +50,7 @@ function runQuery(res, sql, values, singleRecord){
     var results = [];
 
     // Get a Postgres client from the connection pool 
-    pg.connect(connectionString, function(err, client, done) {
+    pg.connect(config.connectionString, function(err, client, done) {
 
         // SQL Query > Select Data
         logger.logSQL(sql);
@@ -360,7 +359,7 @@ router.delete(apiPath+':objectId/:id', function(req, res) {
     logger.logReq('DELETE ONE', req);
 
     // Get a Postgres client from the connection pool
-    pg.connect(connectionString, function(err, client, done) {
+    pg.connect(config.connectionString, function(err, client, done) {
 
         // SQL Query > Delete Data
         var sql = 'DELETE FROM '+tableName+' WHERE id=($1)';

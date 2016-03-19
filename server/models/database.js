@@ -12,7 +12,8 @@ var path = require('path');
 var _ = require('underscore');
 var def = require('./def');
 
-var schema = 'evol_demo';
+var config = require(path.join(__dirname, '../', '../', 'config'));
+
 //var dbuser = 'evol';
 var dbuser = 'postgres';
 
@@ -30,16 +31,16 @@ var uims_data = {
     'comics': require('../../client/public/ui-models/comics.data.js')
 };
 
-var connectionString = require(path.join(__dirname, '../', '../', 'config'));
 
-var client = new pg.Client(connectionString);
+var client = new pg.Client(config.connectionString);
 client.connect();
 
 
 function uim2db(uimid){
     // -- generates SQL script to create a Postgres DB table for the ui model
     var uiModel = uims[uimid],
-        t=schema+'.'+(uiModel.table || uiModel.id),
+        t = (config.schema ? config.schema+'.' : '') +(uiModel.table || uiModel.id),
+        fieldsAttr={},
         fields=def.getFields(uiModel),
         fieldsH=def.hById(fields),
         subCollecs=def.getSubCollecs(uiModel),
@@ -49,8 +50,9 @@ function uim2db(uimid){
 
     // fields
     _.forEach(fields, function(f, idx){
-        if(f.attribute!='id' && f.type!=='formula'){
-            sql0=' "'+(f.attribute || f.id)+'" ';
+        if(f.attribute && f.attribute!='id' && f.type!=='formula' && !fieldsAttr[f.attribute]){
+            fieldsAttr[f.attribute]=true;
+            sql0=' "'+f.attribute+'" ';
             switch(f.type){
                 case 'boolean':
                 case 'integer':
@@ -85,23 +87,36 @@ function uim2db(uimid){
         fs.push(' "'+(c.attribute || c.id)+'" json');
     });
 
-    //sql = 'CREATE SCHEMA "evol_demo" AUTHORIZATION evol;\n';
+    function stringValue(v){
+        if(v){
+            return "'"+v.replace(/'/g, "''")+"'";
+        }
+        return 'NULL';
+    }
+
     sql = 'CREATE TABLE '+t+'(\n' + fs.join(',\n') + ');\n';
 
     // -- insert sample data
     _.each(uims_data[uimid], function(row){
         sql+='INSERT INTO '+t;
         var ns=[], vs=[];
-        for(var p in row){
-            var v=row[p];
-            if(p!=='id' && fieldsH[p]){
-                ns.push('"'+p+'"');
-                if(_.isObject(v)){
-                    v="'"+ JSON.stringify(v) +"'";
+        var f, v;
+        for(var fid in row){
+            f = fieldsH[fid];
+            if(f && fid!=='id'){
+                v = row[fid];
+                ns.push('"'+fid+'"');
+                if(_.isArray(v)){
+                    // TODO: 
+                    //v='null';
+                    //v = '['+v.map(stringValue).join(',')+']';
+                    v="['a','b']"
+                }else if(_.isObject(v)){
+                    v = "'"+ JSON.stringify(v) +"'";
                 }else if(v===null){
-                    v='null';
+                    v = 'null';
                 }else if(_.isString(v)){
-                    v="'"+v.replace(/'/g, "''")+"'";
+                    v = stringValue(v);
                 }
                 vs.push(v);
             }
@@ -114,8 +129,8 @@ function uim2db(uimid){
 }
 
 var sql='';
-if(schema){
-    sql='CREATE SCHEMA '+schema+' AUTHORIZATION '+dbuser+';\n';
+if(config.schema){
+    sql='CREATE SCHEMA '+config.schema+' AUTHORIZATION '+dbuser+';\n';
 }
 for(var uimid in uims){
     sql+=uim2db(uimid);
