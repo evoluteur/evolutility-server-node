@@ -90,7 +90,7 @@ These operators are available:
 | lte          | less than or equal      | /todo?duedate=lte.2016-01-15 |
 | ct           | contains                | /todo?title=ct.e             |
 | sw           | start with              | /todo?title=sw.a             |
-| fw           | finishes than           | /todo?title=fw.z             |
+| fw           | finishes with           | /todo?title=fw.z             |
 | in           | one of a list of values | /todo?priority=in.1,2,3      |
 | 0            | is false                | /todo?complete=0             |
 | 1            | is true                 | /todo?complete=1             |
