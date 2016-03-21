@@ -7,20 +7,38 @@ Evolutility-server is build to work with [Evolutility](http://evoluteur.github.i
 
 ## Installation
 
-1- Download Evolutility-server.
+You can use **NPM** to install Evolutility-server as an [npm package](https://www.npmjs.com/package/evolutility-server):
 
-2- Create a PostgreSQL database.
+```bash
+# To get the latest stable version, use npm from the command line.
+npm install evolutility-server
+```
 
-3- In server/config.js set your PostgreSQL connection string to the new database.
+You can also use **Bower** to install Evolutility.
 
-4- In the command line type the following:
+```bash
+# To get the latest stable version, use Bower from the command line.
+bower install evolutility-server
+
+# To get the most recent, latest committed-to-master version use:
+bower install evolutility-server#master
+```
+
+... or **download** it from [GitHub](https://github.com/evoluteur/evolutility-server/archive/master.zip).
+
+## Setup
+
+After installing Evolutility-server, follow these steps:
+
+1. Create a PostgreSQL database.
+
+2. In the file /server/config.js set the PostgreSQL connection string and a schema name to access your new database.
+
+3. In the command line type the following:
 
 ```bash
 # Install dependencies
 npm install
-
-# Add Evolutility client:
-bower install
 
 # Copy Evolutility client to Node.js
 grunt
@@ -33,7 +51,7 @@ npm start
 
 ```
 
-5- In a web browser go to the url [http://localhost:3000/](http://localhost:3000/).
+4. In a web browser go to the url [http://localhost:3000/](http://localhost:3000/).
 
 
 ## API
