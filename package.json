@@ -26,7 +26,8 @@
     "morgan": "~1.5.1",
     "pg": "^4.2.0",
     "serve-favicon": "~2.2.0",
-    "underscore": "1.8.3"
+    "underscore": "1.8.3",
+    "evolutility": "1.1.2"
   },
   "devDependencies": {
     "grunt": "~0.4.5",
