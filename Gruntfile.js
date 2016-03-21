@@ -1,6 +1,7 @@
 module.exports = function (grunt) {
 
-    var uiPath = 'bower_components';
+    var uiPath = 'node_modules';
+    //var uiPath = 'bower_components';
     //var uiPath = '..';
 
     grunt.initConfig({
