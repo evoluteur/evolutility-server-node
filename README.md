@@ -1,6 +1,6 @@
 # evolutility-server
 
-Generic RESTful API for CRUD (Create, Read, Update, Delete) and more using [Node.js](https://nodejs.org/en/), [Express](http://expressjs.com/) and [PostgreSQL](http://www.postgresql.org/). 
+Generic RESTful API for CRUD (Create, Read, Update, Delete) and more using Node.js, Express and PostgreSQL. 
 
 Evolutility-server is build to work with [Evolutility](http://evoluteur.github.io/evolutility/index.html) (but doesn't have to).
 
@@ -56,9 +56,9 @@ npm start
 
 ## API
 Evolutility-server provides a generic RESTful API for CRUD (Create, Read, Update, Delete) and more.
-It is a partial server-side Javascript implementation of [PostgREST](http://postgrest.com) using Node.js, Express, and Postgres.
+It is a partial server-side Javascript implementation of [PostgREST](http://postgrest.com) using [Node.js](https://nodejs.org/en/), [Express](http://expressjs.com/) and [PostgreSQL](http://www.postgresql.org/).
 
-When running Evolutility-server locally, the API for the "todo" app is accessible at 
+When running Evolutility-server locally, the url for the "todo" app is 
 [http://localhost:3000/api/v1/evolutility/todo](http://localhost:3000/api/v1/evolutility/todo).
 
 ### Requesting Information
