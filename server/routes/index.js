@@ -64,6 +64,7 @@ function runQuery(res, sql, values, singleRecord){
         // After all data is returned, close connection and return results
         query.on('end', function() {
             client.end();
+            done();
             return res.json(singleRecord ? results[0] : results);
         });
 
@@ -362,9 +363,10 @@ router.delete(apiPath+':objectId/:id', function(req, res) {
     pg.connect(config.connectionString, function(err, client, done) {
 
         // SQL Query > Delete Data
-        var sql = 'DELETE FROM '+tableName+' WHERE id=($1)';
+        var sql = 'DELETE FROM '+tableName+' WHERE id=$1';
         logger.logSQL(sql);
         client.query(sql, [id]);
+        done();
         return res.json(true);
 /*
         // Handle Errors
