@@ -145,14 +145,14 @@ To create a row in a database table post a JSON object whose keys are the names 
 
 ```
 POST /todo
-{ field.id1: 'value1', field.id2: 'value2'}
+{ title: 'Finish testing', priority: 2}
 ```
 
 #### Update
 
 ```
 PATCH /todo
-{ field.id1: 'value1', field.id2: 'value2'}
+{ title: 'Finish testing', priority: 2}
 ```
 
 #### Deletion
