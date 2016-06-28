@@ -39,7 +39,8 @@ client.connect();
 function uim2db(uimid){
     // -- generates SQL script to create a Postgres DB table for the ui model
     var uiModel = uims[uimid],
-        t = (config.schema ? config.schema+'.' : '') +(uiModel.table || uiModel.id),
+        tableName = uiModel.table || uiModel.id,
+        tableNameSchema = (config.schema ? config.schema+'.' : '') + tableName,
         fieldsAttr={},
         fields=def.getFields(uiModel),
         fieldsH=def.hById(fields),
@@ -94,13 +95,14 @@ function uim2db(uimid){
         return 'NULL';
     }
 
-    sql = 'CREATE TABLE '+t+'(\n' + fs.join(',\n') + ');\n';
+    sql = 'CREATE TABLE '+tableNameSchema+'(\n' + fs.join(',\n') + ');\n';
 
     // -- insert sample data
     _.each(uims_data[uimid], function(row){
-        sql+='INSERT INTO '+t;
+        sql+='INSERT INTO '+tableNameSchema;
         var ns=[], vs=[];
-        var f, v;
+        var fn, f, v, 
+            sqlIdx='';
         for(var fid in row){
             f = fieldsH[fid];
             if(f && fid!=='id'){
@@ -110,7 +112,7 @@ function uim2db(uimid){
                     // TODO: 
                     //v='null';
                     //v = '['+v.map(stringValue).join(',')+']';
-                    v="['a','b']"
+                    v='null'//"['error']";
                 }else if(_.isObject(v)){
                     v = "'"+ JSON.stringify(v) +"'";
                 }else if(v===null){
