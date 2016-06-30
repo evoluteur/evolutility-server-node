@@ -12,12 +12,13 @@ var path = require('path');
 var pg = require('pg');
 var _ = require('underscore');
 var def = require('../models/def');
+var Dico = require('../models/dico');
 var logger = require('./logger');
 
 //var evol = require('evolutility');
 var config = require(path.join(__dirname, '../', '../', 'config'));
 
-var apiPath = config.apiPath || '/api/v1/evolutility/';
+var apiPath = config.apiPath;
 
 var uims={
         'todo': require('../../client/public/ui-models/todo.js'),
@@ -82,12 +83,12 @@ function sqlSelect(fields, collecs, table){
     var tQuote = table ? 't1."' : '"';
     var sqlfs=_.map(fields, function(f){
         return tQuote+f.attribute+(f.type==='money' ? '"::numeric' : '"');
-    });
+    });/*
     if(collecs){
         sqlfs=sqlfs.concat(_.map(collecs, function(c){
             return tQuote+(c.attribute||c.id)+'"';
         }));
-    }
+    }*/
     return sqlfs.join(',');
 }
 
@@ -119,7 +120,7 @@ router.get(apiPath+':objectId', function(req, res) {
     logger.logReq('GET MANY', req);
 
     // ---- SELECTION
-    var sql='SELECT t1.id, '+sqlSelect(fields, false)+
+    var sql='SELECT t1.id, '+sqlSelect(fields.filter(Dico.isFieldMany), false)+
             ' FROM '+tableName + ' AS t1';
 
     // ---- FILTERING
