@@ -1,6 +1,6 @@
 /*! *******************************************************
  *
- * evolutility-server :: database.js
+ * evolutility-server :: utils/database.js
  * Methods to build Postgres DB from ui-models.
  *
  * https://github.com/evoluteur/evolutility-server
@@ -10,27 +10,15 @@
 var pg = require('pg');
 var path = require('path');
 var _ = require('underscore');
-var def = require('./def');
+var dico = require('./dico');
 
 var config = require(path.join(__dirname, '../', '../', 'config'));
 
 //var dbuser = 'evol';
 var dbuser = 'postgres';
 
-var uims = {
-    'todo': require('../../client/public/ui-models/todo.js'),
-    'contact': require('../../client/public/ui-models/contacts.js'),
-    'winecellar': require('../../client/public/ui-models/winecellar.js'),
-    'comics': require('../../client/public/ui-models/comics.js'),
-    //'test': require('../../client/public/ui-models/test.js'),
-};
-var uims_data = {
-    'todo': require('../../client/public/ui-models/todo.data.js'),
-    'contact': require('../../client/public/ui-models/contacts.data.js'),
-    'winecellar': require('../../client/public/ui-models/winecellar.data.js'),
-    'comics': require('../../client/public/ui-models/comics.data.js')
-};
-
+var uims = require('../../models/all_models.js');
+var uims_data = {};
 
 var client = new pg.Client(config.connectionString);
 client.connect();
@@ -42,9 +30,9 @@ function uim2db(uimid){
         tableName = uiModel.table || uiModel.id,
         tableNameSchema = (config.schema ? config.schema+'.' : '') + tableName,
         fieldsAttr={},
-        fields=def.getFields(uiModel),
-        fieldsH=def.hById(fields),
-        subCollecs=def.getSubCollecs(uiModel),
+        fields=dico.getFields(uiModel),
+        fieldsH=dico.hById(fields),
+        subCollecs=dico.getSubCollecs(uiModel),
         fs=['id serial primary key'],
         sql0,
         sql;
@@ -98,11 +86,10 @@ function uim2db(uimid){
     sql = 'CREATE TABLE '+tableNameSchema+'(\n' + fs.join(',\n') + ');\n';
 
     // -- insert sample data
-    _.each(uims_data[uimid], function(row){
+    _.each(uims_data[uimid], function(row, idx){
         sql+='INSERT INTO '+tableNameSchema;
         var ns=[], vs=[];
-        var fn, f, v, 
-            sqlIdx='';
+        var fn, f, v;
         for(var fid in row){
             f = fieldsH[fid];
             if(f && fid!=='id'){
@@ -121,9 +108,11 @@ function uim2db(uimid){
                     v = stringValue(v);
                 }
                 vs.push(v);
+                fn = f.attribute || f.id;
             }
         }
-        sql+='('+ns.join(',')+') values('+vs.join(',')+');\n';
+        sql+='('+ns.join(',')+') values('+vs.join(',')+');\n\n';
+
     });
     console.log(sql);
 

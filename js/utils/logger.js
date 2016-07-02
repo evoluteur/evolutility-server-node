@@ -1,6 +1,6 @@
 /*! *******************************************************
  *
- * evolutility-server :: logger.js
+ * evolutility-server :: utils/logger.js
  * Simple formatted console logger.
  *
  * https://github.com/evoluteur/evolutility-server

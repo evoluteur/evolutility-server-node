@@ -4,7 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 
-var routes = require('./server/routes/index');
+var routes = require('./js/routes');
 
 var app = express();
 
@@ -20,7 +20,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, './client', 'public')));
 
-// prevent denial for cross origin requests
+// prevent denial of cross origin requests
 // TODO: REMOVE IF UNNECESSARY
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");

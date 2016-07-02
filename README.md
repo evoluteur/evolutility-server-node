@@ -40,9 +40,9 @@ After installing Evolutility-server, follow these steps:
 # Install dependencies
 npm install
 
+# Create sample database w/ demo tables
+node js/utils/database.js
 
-# Create sample tables
-node server/models/database.js
 # Run the node.js server
 npm start
 

@@ -1,32 +1,21 @@
 /*! *******************************************************
  *
- * evolutility-server :: index.js
+ * evolutility-server :: utils/orm.js
  *
  * https://github.com/evoluteur/evolutility-server
  * Copyright (c) 2016 Olivier Giulieri
  ********************************************************* */
 
-var express = require('express');
-var router = express.Router();
-var path = require('path');
 var pg = require('pg');
 var _ = require('underscore');
-var def = require('../models/def');
-var Dico = require('../models/dico');
+var dico = require('./dico');
 var logger = require('./logger');
 
-//var evol = require('evolutility');
-var config = require(path.join(__dirname, '../', '../', 'config'));
+var config = require('../../config.js');
 
 var apiPath = config.apiPath;
 
-var uims={
-        'todo': require('../../client/public/ui-models/todo.js'),
-        'contact': require('../../client/public/ui-models/contacts.js'),
-        'winecellar': require('../../client/public/ui-models/winecellar.js'),
-        'comics': require('../../client/public/ui-models/comics.js'),
-        //'test': require('../../client/public/ui-models/test.js')
-    },
+var uims=require('../../models/all_models'),
     uim=null,
     tableName=null;
 
@@ -34,17 +23,15 @@ var fields,
     fieldsH,
     fCache = {};
 
-logger.ascii_art();
-
 function loadUIModel(uimId){
     uim = uims[uimId];
     tableName=(config.schema?'"'+config.schema+'".':'')+'"'+(uim.table || uim.id)+'"';
     if(!fCache[uimId]){
-        fCache[uimId] = def.getFields(uim);
+        fCache[uimId] = dico.getFields(uim);
     }
     fields = fCache[uimId];
-    fieldsH = def.hById(fields);
-    collecs = def.getSubCollecs(uim);
+    fieldsH = dico.hById(fields);
+    collecs = dico.getSubCollecs(uim);
 }
 
 function runQuery(res, sql, values, singleRecord){
@@ -92,17 +79,13 @@ function sqlSelect(fields, collecs, table){
     return sqlfs.join(',');
 }
 
-router.get('/', function(req, res, next) {
-  res.sendFile(path.join(__dirname, '../', '../', 'client', 'views', 'index.html'));
-});
-
 
 // --------------------------------------------------------------------------------------
 // -----------------    GET MANY   ------------------------------------------------------
 // --------------------------------------------------------------------------------------
 
 function sqlFieldOrder(f){
-    var fs=def.getFields(uim,true);
+    var fs=dico.getFields(uim,true);
     var idx=f.indexOf('.');
     if(idx>-1){
         var ff=f.substring(0, idx),
@@ -113,14 +96,14 @@ function sqlFieldOrder(f){
     }
 }
 
-router.get(apiPath+':objectId', function(req, res) {
+function getMany(req, res) {
     var uimid = req.params.objectId;
     var data=[];
     loadUIModel(uimid);
     logger.logReq('GET MANY', req);
 
     // ---- SELECTION
-    var sql='SELECT t1.id, '+sqlSelect(fields.filter(Dico.isFieldMany), false)+
+    var sql='SELECT t1.id, '+sqlSelect(fields.filter(dico.isFieldMany), false)+
             ' FROM '+tableName + ' AS t1';
 
     // ---- FILTERING
@@ -147,7 +130,7 @@ router.get(apiPath+':objectId', function(req, res) {
             var cs=c.split('.');
             if(cs.length){
                 var cond=cs[0];
-                if((cond==='eq' || cond==='ne') && def.fieldIsText(f)){
+                if((cond==='eq' || cond==='ne') && dico.fieldIsText(f)){
                     data.push(cs[1]);
                     if(f.type==='text' || f.type==='textmultiline' || f.type==='html'){
                         sqlW.push('LOWER(t1."'+f.attribute+'")'+sqlOperators[cond]+'LOWER($'+data.length+')');
@@ -236,24 +219,24 @@ router.get(apiPath+':objectId', function(req, res) {
     sql+=';';
 
     runQuery(res, sql, data, false);
-});
+}
 
 
 // --------------------------------------------------------------------------------------
 // -----------------    GET ONE   -------------------------------------------------------
 // --------------------------------------------------------------------------------------
 
-router.get(apiPath+':objectId/:id', function(req, res) {
+function getOne(req, res) {
     var uimid = req.params.objectId;
     var id = req.params.id;
     loadUIModel(uimid);
     logger.logReq('GET ONE', req);
-    var sql='SELECT t1.id, '+sqlSelect(fields, def.getSubCollecs(uim))+
+    var sql='SELECT t1.id, '+sqlSelect(fields, dico.getSubCollecs(uim))+
             ' FROM '+tableName + ' AS t1'+
             ' WHERE id=$1 LIMIT 1;';
 
     runQuery(res, sql, [id], true);
-});
+}
 
 
 // --------------------------------------------------------------------------------------
@@ -293,7 +276,7 @@ function _prepData(req, fnName){
             }
         }
     });
-    _.forEach(def.getSubCollecs(uim), function(f){
+    _.forEach(dico.getSubCollecs(uim), function(f){
         var fv=req.body[f.attribute||f.id];
         if(fv!=null){
             vs.push(JSON.stringify(fv));
@@ -306,7 +289,7 @@ function _prepData(req, fnName){
     };
 }
 
-router.post(apiPath+':objectId', function(req, res) {
+function insertOne(req, res) {
     var mid = req.params.objectId;
     loadUIModel(mid);
     logger.logReq('INSERT ONE', req);
@@ -322,14 +305,14 @@ router.post(apiPath+':objectId', function(req, res) {
 
         runQuery(res, sql, q.values, true);
     }
-});
+}
 
 
 // --------------------------------------------------------------------------------------
 // -----------------    UPDATE ONE    ---------------------------------------------------
 // --------------------------------------------------------------------------------------
 
-function _update(req, res) {
+function updateOne(req, res) {
     var results = [];
     var mid = req.params.objectId;
     var id = req.params.id; 
@@ -346,15 +329,12 @@ function _update(req, res) {
     }
 }
 
-router.patch(apiPath+':objectId/:id', _update);
-router.put(apiPath+':objectId/:id', _update);
-
 
 // --------------------------------------------------------------------------------------
 // -----------------    DELETE ONE   ----------------------------------------------------
 // --------------------------------------------------------------------------------------
 
-router.delete(apiPath+':objectId/:id', function(req, res) {
+function deleteOne(req, res) {
     var mid = req.params.objectId;
     var id = req.params.id;
     loadUIModel(mid);
@@ -369,14 +349,25 @@ router.delete(apiPath+':objectId/:id', function(req, res) {
         client.query(sql, [id]);
         done();
         return res.json(true);
-/*
+
         // Handle Errors
         if(err) {
           console.log(err);
         }
-*/
+
     });
 
-});
+}
 
-module.exports = router;
+
+module.exports = {
+
+    getMany: getMany,
+    getOne: getOne,
+    insertOne: insertOne,
+    updateOne: updateOne,
+    deleteOne: deleteOne
+
+    //,exportMany: exportMany
+
+}

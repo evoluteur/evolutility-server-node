@@ -1,7 +1,6 @@
 /*! ***************************************************************************
  *
- * evolutility-server :: def.js
- * Helpers for ui-models.
+ * evolutility-server :: utils/dico.js
  *
  * https://github.com/evoluteur/evolutility-server
  * Copyright (c) 2016 Olivier Giulieri
@@ -86,6 +85,11 @@ module.exports = {
 		collectCollecs(uiModel);
 		return ls;
 	},
+
+    isFieldMany:function(f){
+        return f.inList || f.inMany
+    },
+
 	fieldIsText: function(f){
 		return [fts.text, fts.textml, fts.url, fts.html, fts.email].indexOf(f.type)>-1;
 	},
