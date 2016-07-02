@@ -1,6 +1,6 @@
 # evolutility-server
 
-Generic RESTful API for CRUD (Create, Read, Update, Delete) and more using Node.js, Express and PostgreSQL. 
+Model-driven RESTful API for CRUD (Create, Read, Update, Delete) and more using Node.js, Express and PostgreSQL. 
 
 Evolutility-server is build to work with [Evolutility](http://evoluteur.github.io/evolutility/index.html) (but doesn't have to).
 
@@ -32,7 +32,7 @@ After installing Evolutility-server, follow these steps:
 
 1. Create a PostgreSQL database.
 
-2. In the file /server/config.js set the PostgreSQL connection string and a schema name to access your new database.
+2. In the file config.js set the PostgreSQL connection string and a schema name to access your new database.
 
 3. In the command line type the following:
 
@@ -40,18 +40,15 @@ After installing Evolutility-server, follow these steps:
 # Install dependencies
 npm install
 
-# Copy Evolutility client to Node.js
-grunt
 
 # Create sample tables
 node server/models/database.js
-
-# Run node.js web server
+# Run the node.js server
 npm start
 
 ```
 
-4. In a web browser go to the url [http://localhost:3000/](http://localhost:3000/).
+4. In a web browser go to the url [http://localhost:3000/api/v1/evolutility/todo](http://localhost:3000/api/v1/evolutility/todo).
 
 
 ## API
@@ -120,7 +117,7 @@ These operators are available:
 
 The reserved word "order" reorders the response rows. It uses a comma-separated list of fields and directions:
 ```
-GET /todo?order=complete.asc
+GET /<object>?order=<field.id>.<asc/desc>
 
 GET /todo?order=priority.desc,title.asc
 ```
@@ -134,7 +131,9 @@ GET /todo?order=duedate
 
 The reserved words "page" and "pageSize" limits the response rows.
 ```
-GET /todo?page=0&pageSize=5
+GET /<object>?page=<pageindex>&pageSize=<pagesize>
+
+GET /todo?page=0&pageSize=50
 ```
 
 ### Updating Data
@@ -159,6 +158,8 @@ PATCH /todo
 Simply use the DELETE verb with the id of the record to remove. 
 
 ```
+DELETE /<object>/<id>
+
 DELETE /todo/5
 ```
 
