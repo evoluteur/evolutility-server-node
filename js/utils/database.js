@@ -18,7 +18,7 @@ var config = require(path.join(__dirname, '../', '../', 'config'));
 var dbuser = 'postgres';
 
 var uims = require('../../models/all_models.js');
-var uims_data = {};
+var uims_data = require('../../models/all_modelsdata.js');
 
 var client = new pg.Client(config.connectionString);
 client.connect();
