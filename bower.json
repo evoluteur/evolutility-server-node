@@ -1,6 +1,6 @@
 {
   "name": "evolutility-server",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Evolutility RESTful API for CRUD and more.",
   "main": [
     "app.js"
