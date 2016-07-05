@@ -25,19 +25,19 @@ router.get('/', function(req, res, next) {
 }); */
 
 // ======  GET MANY ====================================
-router.get(apiPath+':objectId', orm.getMany);
+router.get(apiPath+':entity', orm.getMany);
 
 // ======  GET ONE   ====================================index-
-router.get(apiPath+':objectId/:id', orm.getOne);
+router.get(apiPath+':entity/:id', orm.getOne);
 
 // ======  INSERT ONE ====================================
-router.post(apiPath+':objectId', orm.insertOne);
+router.post(apiPath+':entity', orm.insertOne);
 
 // ======  UPDATE ONE  ====================================
-router.patch(apiPath+':objectId/:id', orm.updateOne);
-router.put(apiPath+':objectId/:id', orm.updateOne);
+router.patch(apiPath+':entity/:id', orm.updateOne);
+router.put(apiPath+':entity/:id', orm.updateOne);
 
 // ======  DELETE ONE ====================================
-router.delete(apiPath+':objectId/:id', orm.deleteOne);
+router.delete(apiPath+':entity/:id', orm.deleteOne);
 
 module.exports = router;

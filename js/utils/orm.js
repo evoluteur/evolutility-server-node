@@ -15,7 +15,7 @@ var config = require('../../config.js');
 
 var apiPath = config.apiPath;
 
-var uims=require('../../models/all_models'),
+var models=require('../../models/all_models'),
     uim=null,
     tableName=null;
 
@@ -24,7 +24,7 @@ var fields,
     fCache = {};
 
 function loadUIModel(uimId){
-    uim = uims[uimId];
+    uim = models[uimId];
     tableName=(config.schema?'"'+config.schema+'".':'')+'"'+(uim.table || uim.id)+'"';
     if(!fCache[uimId]){
         fCache[uimId] = dico.getFields(uim);
@@ -32,6 +32,30 @@ function loadUIModel(uimId){
     fields = fCache[uimId];
     fieldsH = dico.hById(fields);
     collecs = dico.getSubCollecs(uim);
+}
+
+function getModel(){
+
+    uim = models[uimId];
+    tableName=(config.schema?'"'+config.schema+'".':'')+'"'+(uim.table || uim.id)+'"';
+    if(!fCache[uimId]){
+        fCache[uimId] = dico.getFields(uim);
+    }
+
+    fields = fCache[uimId];
+    fieldsH = dico.hById(fields);
+    collecs = dico.getSubCollecs(uim);
+}
+
+function makeSQL(select, tables, where, group, order){
+    var sql = 'SELECT '+select+
+        ' FROM '+tables;
+    if(where.length){
+        sql+=' WHERE '+where.join(' AND ');
+    }
+    sql+=group ? ' GROUP BY '+group : '';
+    sql+=order ? ' ORDER BY '+order : '';
+    return sql;
 }
 
 function runQuery(res, sql, values, singleRecord){
@@ -96,15 +120,16 @@ function sqlFieldOrder(f){
     }
 }
 
-function getMany(req, res) {
-    var uimid = req.params.objectId;
-    var data=[];
+function sqlMany(fields, req){
+
+    var uimid = req.params.entity;
+    var sqlParams=[];
     loadUIModel(uimid);
     logger.logReq('GET MANY', req);
 
     // ---- SELECTION
-    var sql='SELECT t1.id, '+sqlSelect(fields.filter(dico.isFieldMany), false)+
-            ' FROM '+tableName + ' AS t1';
+    var sqlSel='t1.id, '+sqlSelect(fields.filter(dico.isFieldMany), false);
+    var sqlFrom= tableName + ' AS t1';
 
     // ---- FILTERING
     var sqlOperators = {
@@ -131,11 +156,11 @@ function getMany(req, res) {
             if(cs.length){
                 var cond=cs[0];
                 if((cond==='eq' || cond==='ne') && dico.fieldIsText(f)){
-                    data.push(cs[1]);
+                    sqlParams.push(cs[1]);
                     if(f.type==='text' || f.type==='textmultiline' || f.type==='html'){
-                        sqlW.push('LOWER(t1."'+f.attribute+'")'+sqlOperators[cond]+'LOWER($'+data.length+')');
+                        sqlW.push('LOWER(t1."'+f.attribute+'")'+sqlOperators[cond]+'LOWER($'+sqlParams.length+')');
                     }else{
-                        sqlW.push('t1."'+f.attribute+'"'+sqlOperators[cond]+'$'+data.length);
+                        sqlW.push('t1."'+f.attribute+'"'+sqlOperators[cond]+'$'+sqlParams.length);
                     }
                 }else{
                     var w='t1."'+f.attribute+'"'+sqlOperators[cond];
@@ -154,19 +179,19 @@ function getMany(req, res) {
                     }else{
                         if(cond==='nct'){ // not contains
                             //TODO replace % in cs[1]
-                            data.push('%'+cs[1]+'%');
-                            sqlW.push(' NOT '+w+'$'+data.length);
+                            sqlParams.push('%'+cs[1]+'%');
+                            sqlW.push(' NOT '+w+'$'+sqlParams.length);
                         }else{
                             if(cond==='sw'){ // start with
-                                data.push(cs[1]+'%');
+                                sqlParams.push(cs[1]+'%');
                             }else if(cond==='fw'){ // finishes with
-                                data.push('%'+cs[1]);
+                                sqlParams.push('%'+cs[1]);
                             }else if(cond==='ct'){ // contains
-                                data.push('%'+cs[1]+'%');
+                                sqlParams.push('%'+cs[1]+'%');
                             }else{
-                                data.push(cs[1]);
+                                sqlParams.push(cs[1]);
                             }
-                            sqlW.push(w+'$'+data.length);
+                            sqlW.push(w+'$'+sqlParams.length);
                         }
                     }
                 }
@@ -180,45 +205,61 @@ function getMany(req, res) {
         var sqlWS=[];
         if(uim.fnSearch && _.isArray(uim.fnSearch)){
             logger.logObject('search fields', uim.fnSearch);
-            var sqlP='"'+sqlOperators.ct+'($'+(data.length+1)+')';
+            var sqlP='"'+sqlOperators.ct+'($'+(sqlParams.length+1)+')';
             _.forEach(uim.fnSearch, function(m){
                 sqlWS.push('t1."'+fieldsH[m].attribute+sqlP);
             });
-            data.push('%'+req.query.search+'%');
+            sqlParams.push('%'+req.query.search+'%');
             sqlW.push('('+sqlWS.join(' OR ')+')');
         }
     }
 
-    if(sqlW.length){
-        sql+=' WHERE '+sqlW.join(' AND ');
-    }
-
     // ---- ORDERING
-    sql+=' ORDER BY ';
+    sqlOrder='';
     var qOrder=req.query?req.query.order:null;
     if(qOrder){
         if(qOrder.indexOf(',')>-1){
             var fl=qOrder.split(',');
-            sql+=_.map(fl, sqlFieldOrder).join(',');
+            sqlOrder+=_.map(fl, sqlFieldOrder).join(',');
         }else{
-            sql+=sqlFieldOrder(qOrder);
+            sqlOrder+=sqlFieldOrder(qOrder);
         }
     }else{
-        sql+='t1.id DESC';
+        sqlOrder = 't1.id DESC';
     }
 
     // ---- LIMITING & PAGINATION
-    var qPage=req.query.page||0, 
+    var sqlLimit='',
+        qPage=req.query.page||0, 
         qPageSize=req.query.pageSize>0 ? req.query.pageSize : 50;
     if(qPage){
-        sql+=' LIMIT '+qPageSize+
+        sqlLimit=' LIMIT '+qPageSize+
             ' OFFSET '+(qPage*qPageSize);
     }else{
-        sql+=' LIMIT '+qPageSize;
+        sqlLimit=' LIMIT '+qPageSize;
     }
-    sql+=';';
 
-    runQuery(res, sql, data, false);
+    return {
+        select: sqlSel,
+        from: sqlFrom,
+        where: sqlW, //array
+        group: '',
+        order: sqlOrder,
+        limits: sqlLimit,
+        params: sqlParams
+    }
+}
+
+function getMany(req, res) {
+    var uimid = req.params.entity; 
+    loadUIModel(uimid);
+    logger.logReq('GET MANY', req);
+
+
+    var sq=sqlMany(fields, req)
+    var sql= makeSQL(sq.select, sq.from, sq.where, null, sq.order)
+
+    runQuery(res, sql, sq.params, false);
 }
 
 
@@ -227,9 +268,9 @@ function getMany(req, res) {
 // --------------------------------------------------------------------------------------
 
 function getOne(req, res) {
-    var uimid = req.params.objectId;
+    var mid = req.params.entity;
     var id = req.params.id;
-    loadUIModel(uimid);
+    loadUIModel(mid);
     logger.logReq('GET ONE', req);
     var sql='SELECT t1.id, '+sqlSelect(fields, dico.getSubCollecs(uim))+
             ' FROM '+tableName + ' AS t1'+
@@ -290,11 +331,11 @@ function _prepData(req, fnName){
 }
 
 function insertOne(req, res) {
-    var mid = req.params.objectId;
+    var mid = req.params.entity;
     loadUIModel(mid);
     logger.logReq('INSERT ONE', req);
 
-    var q=_prepData(req, function(f, idx){return f.attribute;});
+    var q=_prepData(req, function(f){return f.attribute;});
     if(q.names.length){
         var ps=_.map(q.names, function(n, idx){
             return '$'+(idx+1);
@@ -314,7 +355,7 @@ function insertOne(req, res) {
 
 function updateOne(req, res) {
     var results = [];
-    var mid = req.params.objectId;
+    var mid = req.params.entity;
     var id = req.params.id; 
     loadUIModel(mid);
     logger.logReq('UPDATE ONE', req);
@@ -335,7 +376,7 @@ function updateOne(req, res) {
 // --------------------------------------------------------------------------------------
 
 function deleteOne(req, res) {
-    var mid = req.params.objectId;
+    var mid = req.params.entity;
     var id = req.params.id;
     loadUIModel(mid);
     logger.logReq('DELETE ONE', req);

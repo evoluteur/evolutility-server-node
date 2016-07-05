@@ -59,6 +59,7 @@ module.exports = {
 			return uiModel.fields;
 		}else{
 			collectFields(uiModel);
+			uiModel.fields=fs;
 			return fs;
 		}
 	},

@@ -35,7 +35,7 @@ module.exports = {
 
 	 logReq: function(title, req){
 		if(consoleLog){
-			console.log('\n\n--- '+title+' : '+req.params.objectId+' ---');
+			console.log('\n\n--- '+title+' : '+req.params.entity+' ---');
 			console.log('params = '+JSON.stringify(req.params, null, 2));
 			console.log('query = '+JSON.stringify(req.query, null, 2));
 			console.log('body = '+JSON.stringify(req.body, null, 2));
