@@ -167,4 +167,4 @@ DELETE /todo/5
 
 Copyright (c) 2016 Olivier Giulieri.
 
-Evolutility.js is released under the GNU Affero General Public License version 3 [GNU AGPLv3](http://www.gnu.org/licenses/agpl-3.0.html).
+Evolutility-server is released under the [MIT license](http://github.com/evoluteur/evolutility-server/raw/master/LICENSE.md).
