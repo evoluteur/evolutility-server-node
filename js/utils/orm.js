@@ -76,7 +76,7 @@ function runQuery(res, sql, values, singleRecord){
         // After all data is returned, close connection and return results
         query.on('end', function() {
             client.end();
-            done();
+            //done();
             return res.json(singleRecord ? results[0] : results);
         });
 
@@ -423,7 +423,7 @@ function deleteOne(req, res) {
         var sql = 'DELETE FROM '+tableName+' WHERE id=$1';
         logger.logSQL(sql);
         client.query(sql, [id]);
-        done();
+        //done();
         return res.json(true);
 
         // Handle Errors
