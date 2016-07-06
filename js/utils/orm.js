@@ -91,9 +91,19 @@ function runQuery(res, sql, values, singleRecord){
 }
 
 function sqlSelect(fields, collecs, table){
+    var sql;
     var tQuote = table ? 't1."' : '"';
     var sqlfs=_.map(fields, function(f){
-        return tQuote+f.attribute+(f.type==='money' ? '"::numeric' : '"');
+        sql = tQuote+f.attribute
+        if(f.type==='money'){
+            sql += '"::numeric'
+        }else{
+            sql += '"'
+        }
+        if(f.attribute && f.id!=f.attribute){
+            sql += ' AS "'+f.id+'"'
+        }
+        return sql;
     });/*
     if(collecs){
         sqlfs=sqlfs.concat(_.map(collecs, function(c){
@@ -119,6 +129,22 @@ function sqlFieldOrder(f){
         return 't1."'+(fs[f]?(fs[f].attribute||fs[f].id)||'id':'id') + '" ASC';
     }
 }
+function sqlLOVs(fields){
+    var sql={
+        select: '',
+        from: ''
+    }
+    // add extra attribute (column+"_txt") for value of lov fields
+    fields.forEach(function(f, idx){
+        if(f.type==='lov' && f.lovtable){
+            var tlov='t'+(idx+2)
+            sql.from += ' LEFT JOIN evol_demo.'+f.lovtable+' AS '+tlov+
+                        ' ON t1.'+f.attribute+'='+tlov+'.id'
+            sql.select += ', '+tlov+'.value AS "'+f.id+'_txt"'
+        }
+    })
+    return sql;
+}
 
 function sqlMany(fields, req){
 
@@ -126,10 +152,16 @@ function sqlMany(fields, req){
     var sqlParams=[];
     loadUIModel(uimid);
     logger.logReq('GET MANY', req);
+    var fs=fields.filter(dico.isFieldMany)
 
     // ---- SELECTION
-    var sqlSel='t1.id, '+sqlSelect(fields.filter(dico.isFieldMany), false);
-    var sqlFrom= tableName + ' AS t1';
+    var sqlSel = 't1.id, '+sqlSelect(fs, false);
+    var sqlFrom = tableName + ' AS t1';
+
+    // ---- LISTS OF VALUES
+    var lovs = sqlLOVs(fs)
+    sqlSel += lovs.select
+    sqlFrom += lovs.from
 
     // ---- FILTERING
     var sqlOperators = {
@@ -272,9 +304,12 @@ function getOne(req, res) {
     var id = req.params.id;
     loadUIModel(mid);
     logger.logReq('GET ONE', req);
-    var sql='SELECT t1.id, '+sqlSelect(fields, dico.getSubCollecs(uim))+
-            ' FROM '+tableName + ' AS t1'+
-            ' WHERE id=$1 LIMIT 1;';
+
+    // ---- LISTS OF VALUES
+    var lovs = sqlLOVs(fields)
+    var sql='SELECT t1.id, '+sqlSelect(fields, dico.getSubCollecs(uim))+lovs.select+
+            ' FROM '+tableName + ' AS t1'+lovs.from+
+            ' WHERE t1.id=$1 LIMIT 1;';
 
     runQuery(res, sql, [id], true);
 }
@@ -290,7 +325,7 @@ function _prepData(req, fnName){
 
     _.forEach(fields, function(f){
         if(f.attribute!='id' && f.type!='formula' && !f.readOnly){
-            var fv=req.body[f.attribute];
+            var fv=req.body[f.id];
             if(fv!=null){
                 switch(f.type){
                     case 'panel-list':
@@ -318,7 +353,7 @@ function _prepData(req, fnName){
         }
     });
     _.forEach(dico.getSubCollecs(uim), function(f){
-        var fv=req.body[f.attribute||f.id];
+        var fv=req.body[f.id];
         if(fv!=null){
             vs.push(JSON.stringify(fv));
             ns.push(fnName(f, vs.length));
