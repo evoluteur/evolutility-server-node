@@ -287,11 +287,38 @@ function getMany(req, res) {
     loadUIModel(uimid);
     logger.logReq('GET MANY', req);
 
-
     var sq=sqlMany(fields, req)
     var sql= makeSQL(sq.select, sq.from, sq.where, null, sq.order)
 
     runQuery(res, sql, sq.params, false);
+}
+
+function chartMany(req, res) {
+    var uimid = req.params.entity;
+    var data=[];
+    loadUIModel(uimid);
+    logger.logReq('GET CHART', req);
+
+    var e = req.params.entity
+    var fid=req.params.field
+
+    var f=fieldsH[fid]
+
+    if(f.type==='lov' && f.lovtable){
+        sql='SELECT t2.value::text AS label, count(*)::integer '+
+            ' FROM evol_demo.'+e+' AS t1'+
+            ' LEFT JOIN evol_demo.'+f.lovtable+' AS t2'+
+                ' ON t1.'+f.attribute+'=t2.id'
+    }else{
+        sql='SELECT '+f.attribute+'::text AS label, count(*)::integer '+
+        ' FROM evol_demo.'+e+' AS t1';
+    }
+    sql += ' GROUP BY label'+
+            //' ORDER BY count(*) DESC'+
+            ' ORDER BY label ASC'+
+            ' LIMIT 50;';
+
+    runQuery(res, sql, null, false);
 }
 
 
@@ -442,7 +469,9 @@ module.exports = {
     getOne: getOne,
     insertOne: insertOne,
     updateOne: updateOne,
-    deleteOne: deleteOne
+    deleteOne: deleteOne,
+    
+    chartMany: chartMany
 
     //,exportMany: exportMany
 
