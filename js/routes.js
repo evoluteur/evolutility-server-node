@@ -26,6 +26,7 @@ router.get('/', function(req, res, next) {
 
 // ======  GET MANY ====================================
 router.get(apiPath+':entity', orm.getMany);
+router.get(apiPath+'chart/:entity/:field', orm.chartMany);
 
 // ======  GET ONE   ====================================index-
 router.get(apiPath+':entity/:id', orm.getOne);
