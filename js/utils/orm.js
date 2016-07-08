@@ -138,9 +138,11 @@ function sqlLOVs(fields){
     fields.forEach(function(f, idx){
         if(f.type==='lov' && f.lovtable){
             var tlov='t'+(idx+2)
-            sql.from += ' LEFT JOIN evol_demo.'+f.lovtable+' AS '+tlov+
+            var clov=f.lovcolumn || 'value'
+
+            sql.from += ' LEFT JOIN "'+config.schema+'"."'+f.lovtable+'" AS '+tlov+
                         ' ON t1.'+f.attribute+'='+tlov+'.id'
-            sql.select += ', '+tlov+'.value AS "'+f.id+'_txt"'
+            sql.select += ', '+tlov+'."'+clov+'" AS "'+f.id+'_txt"'
         }
     })
     return sql;
@@ -305,13 +307,14 @@ function chartMany(req, res) {
     var f=fieldsH[fid]
 
     if(f.type==='lov' && f.lovtable){
-        sql='SELECT t2.value::text AS label, count(*)::integer '+
-            ' FROM evol_demo.'+e+' AS t1'+
-            ' LEFT JOIN evol_demo.'+f.lovtable+' AS t2'+
+        var clov=f.lovcolumn?'"'+f.lovcolumn+'"':'value'
+        sql='SELECT t2.'+clov+'::text AS label, count(*)::integer '+
+            ' FROM "'+config.schema+'".'+e+' AS t1'+
+            ' LEFT JOIN "'+config.schema+'"."'+f.lovtable+'" AS t2'+
                 ' ON t1.'+f.attribute+'=t2.id'
     }else{
         sql='SELECT '+f.attribute+'::text AS label, count(*)::integer '+
-        ' FROM evol_demo.'+e+' AS t1';
+        ' FROM "'+config.schema+'"."'+e+'" AS t1';
     }
     sql += ' GROUP BY label'+
             //' ORDER BY count(*) DESC'+
