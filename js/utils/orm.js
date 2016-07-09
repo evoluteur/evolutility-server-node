@@ -12,42 +12,17 @@ var dico = require('./dico');
 var logger = require('./logger');
 
 var config = require('../../config.js');
+var models=require('../../models/all_models');
 
-var apiPath = config.apiPath;
+var schema = '"' + (config.schema || 'evol_demo') + '"';
 
-var models=require('../../models/all_models'),
-    uim=null,
-    tableName=null;
-
-var fields,
-    fieldsH,
-    fCache = {};
-
-function loadUIModel(uimId){
-    uim = models[uimId];
-    tableName=(config.schema?'"'+config.schema+'".':'')+'"'+(uim.table || uim.id)+'"';
-    if(!fCache[uimId]){
-        fCache[uimId] = dico.getFields(uim);
-    }
-    fields = fCache[uimId];
-    fieldsH = dico.hById(fields);
-    collecs = dico.getSubCollecs(uim);
+function getModel(uimId){
+    var m = dico.prepModel(models[uimId]);
+    m.schemaTable = schema+'."'+(m.table || m.id)+'"';
+    return m;
 }
 
-function getModel(){
-
-    uim = models[uimId];
-    tableName=(config.schema?'"'+config.schema+'".':'')+'"'+(uim.table || uim.id)+'"';
-    if(!fCache[uimId]){
-        fCache[uimId] = dico.getFields(uim);
-    }
-
-    fields = fCache[uimId];
-    fieldsH = dico.hById(fields);
-    collecs = dico.getSubCollecs(uim);
-}
-
-function makeSQL(select, tables, where, group, order){
+function sqlQuery(select, tables, where, group, order, limit){
     var sql = 'SELECT '+select+
         ' FROM '+tables;
     if(where.length){
@@ -55,6 +30,7 @@ function makeSQL(select, tables, where, group, order){
     }
     sql+=group ? ' GROUP BY '+group : '';
     sql+=order ? ' ORDER BY '+order : '';
+    sql+=limit ? ' LIMIT '+limit : '';
     return sql;
 }
 
@@ -137,28 +113,23 @@ function sqlLOVs(fields){
     // add extra attribute (column+"_txt") for value of lov fields
     fields.forEach(function(f, idx){
         if(f.type==='lov' && f.lovtable){
-            var tlov='t'+(idx+2)
-            var clov=f.lovcolumn || 'value'
-
-            sql.from += ' LEFT JOIN "'+config.schema+'"."'+f.lovtable+'" AS '+tlov+
+            var tlov = 't'+(idx+2);
+            var lovCol = f.lovcolumn ? f.lovcolumn : 'value';
+            sql.from += ' LEFT JOIN '+schema+'."'+f.lovtable+'" AS '+tlov+
                         ' ON t1.'+f.attribute+'='+tlov+'.id'
-            sql.select += ', '+tlov+'."'+clov+'" AS "'+f.id+'_txt"'
+            sql.select += ', '+tlov+'.'+lovCol+' AS "'+f.id+'_txt"'
         }
     })
     return sql;
 }
 
-function sqlMany(fields, req){
-
-    var uimid = req.params.entity;
+function sqlMany(m, req){
+    var fs=m.fields.filter(dico.isFieldMany)
     var sqlParams=[];
-    loadUIModel(uimid);
-    logger.logReq('GET MANY', req);
-    var fs=fields.filter(dico.isFieldMany)
 
     // ---- SELECTION
-    var sqlSel = 't1.id, '+sqlSelect(fs, false);
-    var sqlFrom = tableName + ' AS t1';
+    var sqlSel = 't1.id, '+sqlSelect(fs, false, true);
+    var sqlFrom = m.schemaTable + ' AS t1';
 
     // ---- LISTS OF VALUES
     var lovs = sqlLOVs(fs)
@@ -184,7 +155,7 @@ function sqlMany(fields, req){
     };
     var sqlW=[];
     var ffs=_.forEach(req.query, function(c, n){
-        var f = (n==='id') ? {attribute:'id'} : fieldsH[n];
+        var f = (n==='id') ? {attribute:'id'} : m.fieldsH[n];
         if(f && ['select', 'filter', 'search', 'order', 'page', 'pageSize'].indexOf(f)<0){
             var cs=c.split('.');
             if(cs.length){
@@ -206,9 +177,7 @@ function sqlMany(fields, req){
                         sqlW.push(w+'false');
                     }else if(cond==='1'){ // true
                         sqlW.push(w+'true');
-                    }else if(cond==='null'){ // empty
-                        sqlW.push(w+'NULL');
-                    }else if(cond==='nn'){ // not empty
+                    }else if(cond==='null'){ // empty        
                         sqlW.push(' NOT '+w+'NULL');
                     }else{
                         if(cond==='nct'){ // not contains
@@ -285,43 +254,40 @@ function sqlMany(fields, req){
 }
 
 function getMany(req, res) {
-    var uimid = req.params.entity; 
-    loadUIModel(uimid);
     logger.logReq('GET MANY', req);
 
-    var sq=sqlMany(fields, req)
-    var sql= makeSQL(sq.select, sq.from, sq.where, null, sq.order)
+    var m = getModel(req.params.entity);
+    var sq = sqlMany(m, req)
+    var sql = sqlQuery(sq.select, sq.from, sq.where, null, sq.order)
 
     runQuery(res, sql, sq.params, false);
 }
 
 function chartMany(req, res) {
-    var uimid = req.params.entity;
-    var data=[];
-    loadUIModel(uimid);
     logger.logReq('GET CHART', req);
 
-    var e = req.params.entity
-    var fid=req.params.field
+    var m = getModel(req.params.entity);
+    var fid=req.params.field;
+    var sqlParams = [];
 
-    var f=fieldsH[fid]
+    var f=m.fieldsH[fid];
+    var clov=f.lovcolumn||'value';
 
     if(f.type==='lov' && f.lovtable){
-        var clov=f.lovcolumn?'"'+f.lovcolumn+'"':'value'
         sql='SELECT t2.'+clov+'::text AS label, count(*)::integer '+
-            ' FROM "'+config.schema+'".'+e+' AS t1'+
-            ' LEFT JOIN "'+config.schema+'"."'+f.lovtable+'" AS t2'+
-                ' ON t1.'+f.attribute+'=t2.id'
+            ' FROM '+m.schemaTable+' AS t1'+
+            ' LEFT JOIN '+schema+'.'+f.lovtable+' AS t2'+
+                ' ON t1.'+f.attribute+'=t2.id';
     }else{
-        sql='SELECT '+f.attribute+'::text AS label, count(*)::integer '+
-        ' FROM "'+config.schema+'"."'+e+'" AS t1';
+        sql='SELECT "'+f.attribute+'"::text AS label, count(*)::integer '+
+        ' FROM '+m.schemaTable+' AS t1';
     }
     sql += ' GROUP BY label'+
             //' ORDER BY count(*) DESC'+
             ' ORDER BY label ASC'+
             ' LIMIT 50;';
 
-    runQuery(res, sql, null, false);
+    runQuery(res, sql, sqlParams, false);
 }
 
 
@@ -330,18 +296,19 @@ function chartMany(req, res) {
 // --------------------------------------------------------------------------------------
 
 function getOne(req, res) {
-    var mid = req.params.entity;
-    var id = req.params.id;
-    loadUIModel(mid);
     logger.logReq('GET ONE', req);
 
-    // ---- LISTS OF VALUES
-    var lovs = sqlLOVs(fields)
-    var sql='SELECT t1.id, '+sqlSelect(fields, dico.getSubCollecs(uim))+lovs.select+
-            ' FROM '+tableName + ' AS t1'+lovs.from+
-            ' WHERE t1.id=$1 LIMIT 1;';
+    var m = getModel(req.params.entity);
+    var sqlParams = [req.params.id];
 
-    runQuery(res, sql, [id], true);
+    // ---- LISTS OF VALUES
+    var lovs = sqlLOVs(m.fields)
+    var sql='SELECT t1.id, '+sqlSelect(m.fields, m.collecs)+lovs.select+
+            ' FROM '+m.schemaTable+' AS t1'+lovs.from+
+            ' WHERE t1.id=$1'+
+            ' LIMIT 1;';
+
+    runQuery(res, sql, sqlParams, true);
 }
 
 
@@ -349,11 +316,11 @@ function getOne(req, res) {
 // -----------------    INSERT ONE   ----------------------------------------------------
 // --------------------------------------------------------------------------------------
 
-function _prepData(req, fnName){
+function prepData(m, req, fnName, action){
     var ns=[],
         vs=[];
 
-    _.forEach(fields, function(f){
+    _.forEach(m.fields, function(f){
         if(f.attribute!='id' && f.type!='formula' && !f.readOnly){
             var fv=req.body[f.id];
             if(fv!=null){
@@ -382,7 +349,7 @@ function _prepData(req, fnName){
             }
         }
     });
-    _.forEach(dico.getSubCollecs(uim), function(f){
+    _.forEach(m.collecs, function(f){
         var fv=req.body[f.id];
         if(fv!=null){
             vs.push(JSON.stringify(fv));
@@ -396,18 +363,18 @@ function _prepData(req, fnName){
 }
 
 function insertOne(req, res) {
-    var mid = req.params.entity;
-    loadUIModel(mid);
     logger.logReq('INSERT ONE', req);
 
-    var q=_prepData(req, function(f){return f.attribute;});
+    var m = getModel(req.params.entity);
+
+    var q=prepData(m, req, function(f){return f.attribute;}, 'C');
     if(q.names.length){
         var ps=_.map(q.names, function(n, idx){
             return '$'+(idx+1);
         });
-        var sql = 'INSERT INTO '+tableName+
+        var sql = 'INSERT INTO '+m.schemaTable+
             ' ("'+q.names.join('","')+'") values('+ps.join(',')+')'+
-            ' RETURNING id, '+sqlSelect(fields, false)+';';
+            ' RETURNING id, '+sqlSelect(m.fields, false)+';';
 
         runQuery(res, sql, q.values, true);
     }
@@ -419,18 +386,17 @@ function insertOne(req, res) {
 // --------------------------------------------------------------------------------------
 
 function updateOne(req, res) {
-    var results = [];
-    var mid = req.params.entity;
-    var id = req.params.id; 
-    loadUIModel(mid);
     logger.logReq('UPDATE ONE', req);
 
-    var q = _prepData(req, function(f, idx){return '"'+f.attribute+'"=$'+idx;});
+    var m = getModel(req.params.entity);
+    var id = req.params.id;
+    var q = prepData(m, req, function(f, idx){return '"'+f.attribute+'"=$'+idx;}, 'U');
 
     if(q.names.length){
         q.values.push(id);
-        var sql='UPDATE '+tableName+' SET '+ q.names.join(',') + 
-            ' WHERE id=$'+q.values.length+' RETURNING id, '+sqlSelect(fields, false)+';';
+        var sql='UPDATE '+m.schemaTable+' AS t1 SET '+ q.names.join(',') + 
+            ' WHERE id=$'+q.values.length+
+            ' RETURNING id, '+sqlSelect(m.fields, false)+';';
         runQuery(res, sql, q.values, true);
     }
 }
@@ -441,27 +407,30 @@ function updateOne(req, res) {
 // --------------------------------------------------------------------------------------
 
 function deleteOne(req, res) {
-    var mid = req.params.entity;
-    var id = req.params.id;
-    loadUIModel(mid);
     logger.logReq('DELETE ONE', req);
 
-    // Get a Postgres client from the connection pool
-    pg.connect(config.connectionString, function(err, client, done) {
+    var m = getModel(req.params.entity);
+    var id = req.params.id;
 
-        // SQL Query > Delete Data
-        var sql = 'DELETE FROM '+tableName+' WHERE id=$1';
-        logger.logSQL(sql);
-        client.query(sql, [id]);
-        //done();
-        return res.json(true);
+    if(id){
+        pg.connect(config.connectionString, function(err, client, done) {
 
-        // Handle Errors
-        if(err) {
-          console.log(err);
-        }
+            // SQL Query > Delete Data
+            var sql = 'DELETE FROM '+m.schemaTable+' WHERE id=$1';
+            logger.logSQL(sql);
+            client.query(sql, [id]);
+            //done();
+            return res.json(true);
 
-    });
+            // Handle Errors
+            if(err) {
+              console.log(err);
+            }
+
+        });
+    }else{
+        return res.json(false);
+    } 
 
 }
 
