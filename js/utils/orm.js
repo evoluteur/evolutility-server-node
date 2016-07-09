@@ -279,8 +279,12 @@ function chartMany(req, res) {
             ' LEFT JOIN '+schema+'.'+f.lovtable+' AS t2'+
                 ' ON t1.'+f.attribute+'=t2.id';
     }else{
-        sql='SELECT "'+f.attribute+'"::text AS label, count(*)::integer '+
-        ' FROM '+m.schemaTable+' AS t1';
+        var attr =  '"'+f.attribute+'"';
+        if(f.type==='boolean'){
+            attr='CASE '+attr+' WHEN true THEN \'Yes\' ELSE \'No\' END'
+        }
+        sql='SELECT '+attr+'::text AS label, count(*)::integer '+
+            ' FROM '+m.schemaTable+' AS t1';
     }
     sql += ' GROUP BY label'+
             //' ORDER BY count(*) DESC'+
