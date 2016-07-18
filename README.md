@@ -2,7 +2,7 @@
 
 Model-driven RESTful API for CRUD (Create, Read, Update, Delete) and more using Node.js, Express and PostgreSQL. 
 
-Evolutility-server is build to work with [Evolutility](http://evoluteur.github.io/evolutility/index.html) (but doesn't have to).
+Evolutility-server is build to work with [Evolutility](http://evoluteur.github.io/evolutility/index.html) or [React-Evolutility](http://github.com/evoluteur/react-evolutility) (but it could also work with your UI).
 
 
 ## Installation
