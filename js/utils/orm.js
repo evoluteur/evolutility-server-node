@@ -42,7 +42,7 @@ function runQuery(res, sql, values, singleRecord){
 
         // SQL Query > Select Data
         logger.logSQL(sql);
-        var query = values ? client.query(sql, values) :  client.query(sql);
+        var query = values ? client.query(sql, values) : client.query(sql);
 
         // Stream results back one row at a time
         query.on('row', function(row) {
@@ -212,7 +212,7 @@ function sqlMany(m, req){
             _.forEach(uim.fnSearch, function(m){
                 sqlWS.push('t1."'+fieldsH[m].attribute+sqlP);
             });
-            sqlParams.push('%'+req.query.search+'%');
+            sqlParams.push('%'+req.query.search.replace(/%/g, '\%')+'%');
             sqlW.push('('+sqlWS.join(' OR ')+')');
         }
     }
@@ -428,7 +428,8 @@ function deleteOne(req, res) {
 
             // Handle Errors
             if(err) {
-              console.log(err);
+                done()
+                console.log(err);
             }
 
         });
