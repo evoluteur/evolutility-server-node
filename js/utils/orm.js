@@ -7,6 +7,7 @@
  ********************************************************* */
 
 var pg = require('pg');
+var csv = require('express-csv');
 var _ = require('underscore');
 var dico = require('./dico');
 var logger = require('./logger');
@@ -34,7 +35,7 @@ function sqlQuery(select, tables, where, group, order, limit){
     return sql;
 }
 
-function runQuery(res, sql, values, singleRecord){
+function runQuery(res, sql, values, singleRecord, format, header){
     var results = [];
 
     // Get a Postgres client from the connection pool 
@@ -53,11 +54,25 @@ function runQuery(res, sql, values, singleRecord){
         query.on('end', function() {
             client.end();
             //done();
-            return res.json(singleRecord ? results[0] : results);
+            if(format==='csv'){
+                if(header){
+                    var headers={};
+                    for (key in results[0]) {
+                        headers[key] = header[key] || key;
+                    }
+                    results.unshift(headers);
+                    return res.csv(results);
+                }else{
+                    return res.csv(results);
+                }
+            }else{
+                return res.json(singleRecord ? results[0] : results);
+            }
         });
 
         // Handle Errors
         if(err) {
+            done();
             res.status(500).send('Something broke!');
             logger.logError(err);
         }
@@ -66,20 +81,48 @@ function runQuery(res, sql, values, singleRecord){
 
 }
 
+function csvHeader(fields){
+    var h={'id': 'ID'}
+    var lovs={}
+    _.forEach(fields.filter(dico.isFieldMany), function(f){
+        if(f.type==='lov'){
+            h[f.id] = (f.label || f.id)+' ID';
+            lovs[f.id+'_txt'] = f.label || f.id;
+        }else{
+            h[f.id] = f.label || f.id;
+        }
+    });
+    // text values for lovs must be at the end
+    if(lovs){
+        for (p in lovs){
+            h[p]=lovs[p];
+        }
+    }
+    return h;
+}
+
 function sqlSelect(fields, collecs, table){
     var sql;
     var tQuote = table ? 't1."' : '"';
-    var sqlfs=_.map(fields, function(f){
+    var sqlfs=[];
+    _.forEach(fields, function(f){
         sql = tQuote+f.attribute
-        if(f.type==='money'){
-            sql += '"::numeric'
-        }else{
+        //if(f.type==='money'){
+            //sql += '"::money'
+        //}else if(f.type==='integer'){
+            //sql += '"::integer'
+        //}else if(f.type==='decimal'){
+            //sql += '"::float'
+        //}else{
             sql += '"'
-        }
+        //}
         if(f.attribute && f.id!=f.attribute){
             sql += ' AS "'+f.id+'"'
         }
-        return sql;
+        sqlfs.push(sql);
+        //if(f.type==='lov'){
+            //sqlfs.push(sql);
+        //}
     });/*
     if(collecs){
         sqlfs=sqlfs.concat(_.map(collecs, function(c){
@@ -94,15 +137,23 @@ function sqlSelect(fields, collecs, table){
 // -----------------    GET MANY   ------------------------------------------------------
 // --------------------------------------------------------------------------------------
 
-function sqlFieldOrder(f){
-    var fs=dico.getFields(uim,true);
-    var idx=f.indexOf('.');
+function sqlOrderColumn(f){
+    // TODO: use this method in sqlFieldOrder
+    if(f.type==='lov' && f.lovtable){
+        return '"'+f.id+'_txt"';
+    }else{
+        return '"'+(f.attribute || f.id)+'"';
+    }
+}
+function sqlFieldOrder(fo){
+    var fs=dico.getFields(uim, true);
+    var idx=fo.indexOf('.');
     if(idx>-1){
-        var ff=f.substring(0, idx),
-            fDirection=f.substring(idx+1)==='desc'?' DESC':' ASC';
+        var ff=fo.substring(0, idx),
+            fDirection=fo.substring(idx+1)==='desc'?' DESC':' ASC';
         return 't1."'+fs[ff].attribute + '"'+fDirection;
     }else{
-        return 't1."'+(fs[f]?(fs[f].attribute||fs[f].id)||'id':'id') + '" ASC';
+        return 't1."'+(fs[fo]?(fs[fo].attribute||fs[fo].id)||'id':'id') + '" ASC';
     }
 }
 function sqlLOVs(fields){
@@ -257,10 +308,11 @@ function getMany(req, res) {
     logger.logReq('GET MANY', req);
 
     var m = getModel(req.params.entity);
-    var sq = sqlMany(m, req)
-    var sql = sqlQuery(sq.select, sq.from, sq.where, null, sq.order)
+    var sq = sqlMany(m, req);
+    var sql = sqlQuery(sq.select, sq.from, sq.where, null, sq.order);
+    var format = req.query._format || null
 
-    runQuery(res, sql, sq.params, false);
+    runQuery(res, sql, sq.params, false, format, format ? csvHeader(m.fields) : null);
 }
 
 function chartMany(req, res) {
