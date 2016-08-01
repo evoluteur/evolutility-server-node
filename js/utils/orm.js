@@ -95,12 +95,12 @@ function csvHeader(fields){
     return h;
 }
 
-function sqlSelect(fields, collecs, table){
+function sqlSelect(fields, collecs, table, action){
     var sql;
     var tQuote = table ? 't1."' : '"';
     var sqlfs=[];
     _.forEach(fields, function(f, idx){
-        if(f.type==='lov'){
+        if(f.type==='lov' && action!=='C' && action!=='U'){
             sqlfs.push('t'+(idx+2)+'.'+(f.lovcolumn ? f.lovcolumn : 'value')+' AS "'+f.id+'_txt"')
         } 
         sql = tQuote+f.attribute
@@ -428,7 +428,7 @@ function insertOne(req, res) {
         });
         var sql = 'INSERT INTO '+m.schemaTable+
             ' ("'+q.names.join('","')+'") values('+ps.join(',')+')'+
-            ' RETURNING id, '+sqlSelect(m.fields, false)+';';
+            ' RETURNING id, '+sqlSelect(m.fields, false, null, 'C')+';';
 
         runQuery(res, sql, q.values, true);
     }
@@ -450,7 +450,7 @@ function updateOne(req, res) {
         q.values.push(id);
         var sql='UPDATE '+m.schemaTable+' AS t1 SET '+ q.names.join(',') + 
             ' WHERE id=$'+q.values.length+
-            ' RETURNING id, '+sqlSelect(m.fields, false)+';';
+            ' RETURNING id, '+sqlSelect(m.fields, false, null, 'U')+';';
         runQuery(res, sql, q.values, true);
     }
 }
