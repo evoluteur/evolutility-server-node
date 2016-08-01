@@ -84,20 +84,14 @@ function runQuery(res, sql, values, singleRecord, format, header){
 function csvHeader(fields){
     var h={'id': 'ID'}
     var lovs={}
-    _.forEach(fields.filter(dico.isFieldMany), function(f){
+    _.forEach(fields, function(f){
         if(f.type==='lov'){
             h[f.id] = (f.label || f.id)+' ID';
-            lovs[f.id+'_txt'] = f.label || f.id;
+            h[f.id+'_txt'] = f.label || f.id;
         }else{
             h[f.id] = f.label || f.id;
         }
     });
-    // text values for lovs must be at the end
-    if(lovs){
-        for (p in lovs){
-            h[p]=lovs[p];
-        }
-    }
     return h;
 }
 
@@ -105,7 +99,10 @@ function sqlSelect(fields, collecs, table){
     var sql;
     var tQuote = table ? 't1."' : '"';
     var sqlfs=[];
-    _.forEach(fields, function(f){
+    _.forEach(fields, function(f, idx){
+        if(f.type==='lov'){
+            sqlfs.push('t'+(idx+2)+'.'+(f.lovcolumn ? f.lovcolumn : 'value')+' AS "'+f.id+'_txt"')
+        } 
         sql = tQuote+f.attribute
         //if(f.type==='money'){
             //sql += '"::money'
@@ -168,14 +165,14 @@ function sqlLOVs(fields){
             var lovCol = f.lovcolumn ? f.lovcolumn : 'value';
             sql.from += ' LEFT JOIN '+schema+'."'+f.lovtable+'" AS '+tlov+
                         ' ON t1.'+f.attribute+'='+tlov+'.id'
-            sql.select += ', '+tlov+'.'+lovCol+' AS "'+f.id+'_txt"'
+            //sql.select += ', '+tlov+'.'+lovCol+' AS "'+f.id+'_txt"'
         }
     })
     return sql;
 }
 
-function sqlMany(m, req){
-    var fs=m.fields.filter(dico.isFieldMany)
+function sqlMany(m, req, allFields){
+    var fs=allFields ? m.fields : m.fields.filter(dico.isFieldMany)
     var sqlParams=[];
 
     // ---- SELECTION
@@ -308,11 +305,12 @@ function getMany(req, res) {
     logger.logReq('GET MANY', req);
 
     var m = getModel(req.params.entity);
-    var sq = sqlMany(m, req);
-    var sql = sqlQuery(sq.select, sq.from, sq.where, null, sq.order);
     var format = req.query._format || null
+    var isCSV = format==='csv'
+    var sq = sqlMany(m, req, isCSV);
+    var sql = sqlQuery(sq.select, sq.from, sq.where, null, sq.order);
 
-    runQuery(res, sql, sq.params, false, format, format ? csvHeader(m.fields) : null);
+    runQuery(res, sql, sq.params, false, format, isCSV ? csvHeader(m.fields) : null);
 }
 
 function chartMany(req, res) {
