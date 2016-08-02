@@ -2,7 +2,7 @@
 
 Model-driven RESTful API for CRUD (Create, Read, Update, Delete) and more using Node.js, Express and PostgreSQL. 
 
-Evolutility-server is build to work with [Evolutility](http://evoluteur.github.io/evolutility/index.html) or [React-Evolutility](http://github.com/evoluteur/react-evolutility) (but it could also work with your UI).
+Evolutility-server is build to work with [Evolutility](http://evoluteur.github.io/evolutility/index.html) or [React-Evolutility](http://github.com/evoluteur/react-evolutility) but could also work with your UI.
 
 
 ## Installation
@@ -134,6 +134,16 @@ The reserved words "page" and "pageSize" limits the response rows.
 GET /<object>?page=<pageindex>&pageSize=<pagesize>
 
 GET /todo?page=0&pageSize=50
+```
+
+#### Formatting
+
+By default all APIs return data in JSON format. This API call allows to request data in CSV format (export to Excel).
+This feature is using [express-csv](https://github.com/nulltask/express-csv).
+```
+GET /<object>?_format=csv
+
+GET /todo?_format=csv
 ```
 
 ### Updating Data
