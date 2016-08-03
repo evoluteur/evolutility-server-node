@@ -1,13 +1,13 @@
 var contact_LOVs = {
 
     categories: [
-        {id: '1', text: 'Work'},
-        {id: '2', text: 'Fun'},
-        {id: '3', text: 'Travel'},
-        {id: '4', text: 'Business'},
-        {id: '5', text: 'Cars'},
-        {id: '6', text: 'Sport'},
-        {id: '7', text: 'Misc.'}
+        {id: 1, text: 'Work'},
+        {id: 2, text: 'Fun'},
+        {id: 3, text: 'Travel'},
+        {id: 4, text: 'Business'},
+        {id: 5, text: 'Cars'},
+        {id: 6, text: 'Sport'},
+        {id: 7, text: 'Misc.'}
     ],
 
     states: [
@@ -392,18 +392,20 @@ module.exports = {
                      label: 'City', maxLength: 100, width: 62
                 },
                 {
-                    type: 'lov', id: 'state', attribute: 'state', 
-                     label: 'State', width: 23,
-                    list: contact_LOVs.states
+                    type: 'text', //type: 'lov', 
+                    id: 'state', attribute: 'state', 
+                    label: 'State', width: 23,
+                    //list: contact_LOVs.states
                 },
                 {
                     type: 'text', id: 'zip', attribute: 'zip', 
                      label: 'Zip', maxLength: 12, width: 15
                 },
                 {
-                    type: 'lov', id: 'country', attribute: 'country', 
-                     label: 'Country', maxLength: 60, width: 100,
-                    list: contact_LOVs.countries
+                    type: 'text', //type: 'lov', 
+                    id: 'country', attribute: 'country', 
+                    label: 'Country', maxLength: 60, width: 100,
+                    //list: contact_LOVs.countries
                 }
             ]
         },
@@ -411,10 +413,12 @@ module.exports = {
             type: 'panel', label: 'Misc.', width: 38,
             elements: [
                 {
-                    type: 'lov', id: 'category', attribute: 'category', 
-                     label: 'Category', width: 100,
+                    type: 'lov', 
+                    id: 'category', attribute: 'category_id', 
+                    label: 'Category', width: 100,
                     inMany: true,
-                    list: contact_LOVs.categories
+                    list: contact_LOVs.categories,
+                    lovtable: 'contact_category'
                 },
                 {
                     type: 'text', id: 'custom1', attribute: 'custom1', 

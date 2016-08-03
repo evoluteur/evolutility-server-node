@@ -1,4 +1,4 @@
-module.exports =  {
+module.exports = {
     id: 'todo',
     label: 'To Do',
     name: 'task',
@@ -20,13 +20,14 @@ module.exports =  {
                     id: 'duedate', attribute: 'duedate', type: 'date', label: 'Due Date', width: 62, inMany: true
                 },
                 {
-                    id: 'category', attribute: 'category', type: 'lov', label: 'Category', width: 38, inMany: true,
+                    id: 'category', attribute: 'category_id', type: 'lov', label: 'Category', width: 38, inMany: true,
+                    lovtable: 'todo_category',
                     list: [
-                        {id: 'home', text: 'Home'},
-                        {id: 'work', text: 'Work'},
-                        {id: 'fun', text: 'Fun'},
-                        {id: 'others', text: 'Others'},
-                        {id: 'misc', text: 'Misc.'}
+                        {id: 1, text: 'Home'},
+                        {id: 2, text: 'Work'},
+                        {id: 3, text: 'Fun'},
+                        {id: 4, text: 'Others'},
+                        {id: 5, text: 'Misc.'}
                     ],
                     typeChart:'bars'
                 }
@@ -36,14 +37,15 @@ module.exports =  {
             type: 'panel', label: 'Status', width: 38,
             elements: [
                 {
-                    id: 'priority', attribute: 'priority', type: 'lov', label: 'Priority', required: true,
+                    id: 'priority', attribute: 'priority_id', type: 'lov', label: 'Priority', required: true,
                     width: 100,  inMany: true,
+                    lovtable: 'todo_priority',
                     list: [
-                        {id: '1', text: '1 - ASAP'},
-                        {id: '2', text: '2 - Urgent'},
-                        {id: '3', text: '3 - Important'},
-                        {id: '4', text: '4 - Medium'},
-                        {id: '5', text: '5 - Low'}
+                        {id: 1, text: '1 - ASAP'},
+                        {id: 2, text: '2 - Urgent'},
+                        {id: 3, text: '3 - Important'},
+                        {id: 4, text: '4 - Medium'},
+                        {id: 5, text: '5 - Low'}
                     ]
                 },
                 {
@@ -56,19 +58,7 @@ module.exports =  {
         },
         {
             type: 'panel', label: 'Task Description', label2:'and Notes', width: 100,
-            elements: [/*
-                {
-                    id: 'project', attribute: 'project', type: 'list', label: 'Projects', width: 100, inMany: true,
-                    list: [
-                        {id: '1', text: 'Project 1'},
-                        {id: '2', text: 'Project 2'},
-                        {id: '3', text: 'Project 3'},
-                        {id: '4', text: 'Top Secret Project'},
-                        {id: '5', text: 'Translation'},
-                        {id: '10', text: 'Other'}
-                    ],
-                    typeChart:'bars'
-                },*/
+            elements: [
                 {
                     id: 'description', attribute: 'description', type: 'textmultiline', 
                     label: 'Description', 

@@ -26,13 +26,13 @@ client.connect();
 
 function uim2db(uimid){
     // -- generates SQL script to create a Postgres DB table for the ui model
-    var uiModel = uims[uimid],
-        tableName = uiModel.table || uiModel.id,
+    var m = uims[uimid],
+        tableName = m.table || m.id,
         tableNameSchema = (config.schema ? config.schema+'.' : '') + tableName,
         fieldsAttr={},
-        fields=dico.getFields(uiModel),
-        fieldsH=dico.hById(fields),
-        subCollecs=dico.getSubCollecs(uiModel),
+        fields=m.fields,
+        fieldsH=m.fieldsH,
+        subCollecs=m.collecs,
         fs=['id serial primary key'],
         sql0,
         sql;
@@ -59,13 +59,16 @@ function uim2db(uimid){
                 case 'time': 
                     sql0+='time with time zone';
                     break;
+                case 'lov': 
+                    sql0+='integer';
+                    break;
                 case 'list': 
                     sql0+='text[]';
                     break;
                 default:
                     sql0+='text';
             }
-            if(f.required){
+            if(f.required && f.type!='lov'){
                 sql0+=' not null';
             }
             fs.push(sql0);
@@ -94,8 +97,11 @@ function uim2db(uimid){
             f = fieldsH[fid];
             if(f && fid!=='id'){
                 v = row[fid];
-                ns.push('"'+fid+'"');
-                if(_.isArray(v)){
+                ns.push('"'+(f.attribute || f.id)+'"');
+                if(f.type==='lov'){
+                    //to nothing
+                    //TODO parseint?
+                }else if(_.isArray(v)){
                     // TODO: 
                     //v='null';
                     //v = '['+v.map(stringValue).join(',')+']';

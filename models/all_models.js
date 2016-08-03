@@ -1,7 +1,8 @@
+var dico = require('./dico');
 
 module.exports = {
-	todo: require('./todo'),
-	contact: require('./contact'),
-	comics: require('./comics'),
+	todo: dico.prepModel(require('./todo')),
+	contact: dico.prepModel(require('./contact')),
+	comics: dico.prepModel(require('./comics')),
 	//test: require('./test')
 };
