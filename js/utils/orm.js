@@ -276,7 +276,9 @@ function sqlMany(m, req, allFields){
             sqlOrder+=sqlFieldOrder(qOrder);
         }
     }else{
-        sqlOrder = 't1.id DESC';
+        var f = fs[0]
+        var col = f.attribute || f.id
+        sqlOrder = 't1."'+col+'" ASC';
     }
 
     // ---- LIMITING & PAGINATION
@@ -384,7 +386,7 @@ function prepData(m, req, fnName, action){
                         ns.push(fnName(f, vs.length));
                         break;
                     case 'boolean':
-                        vs.push(fv?'TRUE':'FALSE');
+                        vs.push((fv&&fv!=='false')?'TRUE':'FALSE');
                         ns.push(fnName(f, vs.length));
                         break;
                     case 'date':
@@ -420,8 +422,8 @@ function insertOne(req, res) {
     logger.logReq('INSERT ONE', req);
 
     var m = getModel(req.params.entity);
+    var q = prepData(m, req, function(f){return f.attribute;}, 'C');
 
-    var q=prepData(m, req, function(f){return f.attribute;}, 'C');
     if(q.names.length){
         var ps=_.map(q.names, function(n, idx){
             return '$'+(idx+1);
