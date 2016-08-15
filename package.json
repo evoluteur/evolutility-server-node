@@ -1,8 +1,8 @@
 {
   "name": "evolutility-server",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "copyright": "(c) 2016 Olivier Giulieri",
-  "license": "AGPL-3.0",
+  "license": "MIT",
   "homepage": "https://github.com/evoluteur/evolutility-server",
   "author": {
       "name": "Olivier Giulieri",
@@ -13,7 +13,6 @@
       "url": "git://github.com/evoluteur/evolutility-server.git"
   },
   "bugs": "https://github.com/evoluteur/evolutility-server/issues",
-
   "scripts": {
     "start": "supervisor ./bin/www"
   }, 
