@@ -1,8 +1,6 @@
 module.exports = {
     id: 'todo',
-    label: 'To Do',
-    name: 'task',
-    namePlural: 'tasks',
+    table: 'task',
     fnSearch: ['title', 'description', 'notes'],
     fields: [
         {
@@ -15,7 +13,7 @@ module.exports = {
         },
         {
             id: 'category', attribute: 'category_id', type: 'lov', label: 'Category', inMany: true,
-            lovtable: 'todo_category',
+            lovtable: 'task_category',
             list: [
                 {id: 1, text: 'Home'},
                 {id: 2, text: 'Work'},
@@ -27,7 +25,7 @@ module.exports = {
         {
             id: 'priority', attribute: 'priority_id', type: 'lov', label: 'Priority', required: true,
             inMany: true,
-            lovtable: 'todo_priority',
+            lovtable: 'task_priority',
             list: [
                 {id: 1, text: '1 - ASAP'},
                 {id: 2, text: '2 - Urgent'},
