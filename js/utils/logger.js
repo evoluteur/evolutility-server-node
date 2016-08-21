@@ -7,10 +7,10 @@
  * Copyright (c) 2016 Olivier Giulieri
  ********************************************************* */
 
-var consoleLog = true;
-
-
+var config = require('../../config.js');
 var pkg = require('../../package.json');
+
+var consoleLog = config.consoleLog;
 
 module.exports = {
 
