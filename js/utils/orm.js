@@ -201,8 +201,8 @@ function sqlMany(m, req, allFields){
         'null': ' IS ',
         'nn': ' IS '
     };
-    var sqlW=[];
-    var ffs=_.forEach(req.query, function(c, n){
+    var sqlW = [];
+    var ffs = _.forEach(req.query, function(c, n){
         var f = (n==='id') ? {attribute:'id'} : m.fieldsH[n];
         if(f && ['select', 'filter', 'search', 'order', 'page', 'pageSize'].indexOf(f)<0){
             var cs=c.split('.');
@@ -252,8 +252,8 @@ function sqlMany(m, req, allFields){
 
     // ---- SEARCHING
     if(req.query.search){
-        var paramSearch=false;
-        var sqlWS=[];
+        var paramSearch = false;
+        var sqlWS = [];
         if(uim.fnSearch && _.isArray(uim.fnSearch)){
             logger.logObject('search fields', uim.fnSearch);
             var sqlP='"'+sqlOperators.ct+'($'+(sqlParams.length+1)+')';
@@ -307,43 +307,48 @@ function getMany(req, res) {
     logger.logReq('GET MANY', req);
 
     var m = getModel(req.params.entity);
-    var format = req.query._format || null
-    var isCSV = format==='csv'
-    var sq = sqlMany(m, req, isCSV);
-    var sql = sqlQuery(sq.select, sq.from, sq.where, null, sq.order);
+    if(m){
+        var format = req.query._format || null,
+            isCSV = format==='csv',
+            sq = sqlMany(m, req, isCSV),
+            sql = sqlQuery(sq.select, sq.from, sq.where, null, sq.order);
 
-    runQuery(res, sql, sq.params, false, format, isCSV ? csvHeader(m.fields) : null);
+        runQuery(res, sql, sq.params, false, format, isCSV ? csvHeader(m.fields) : null);
+    }
 }
 
 function chartMany(req, res) {
     logger.logReq('GET CHART', req);
 
-    var m = getModel(req.params.entity);
-    var fid=req.params.field;
-    var sqlParams = [];
+    var m = getModel(req.params.entity),
+        fid = req.params.field,
+        sqlParams = [];
 
-    var f=m.fieldsH[fid];
-    var clov=f.lovcolumn||'value';
+    if(m && fid){
+        var f = m.fieldsH[fid],
+            clov = f.lovcolumn||'value';
 
-    if(f.type==='lov' && f.lovtable){
-        sql='SELECT t2.'+clov+'::text AS label, count(*)::integer '+
-            ' FROM '+m.schemaTable+' AS t1'+
-            ' LEFT JOIN '+schema+'.'+f.lovtable+' AS t2'+
-                ' ON t1.'+f.attribute+'=t2.id';
-    }else{
-        var attr =  '"'+f.attribute+'"';
-        if(f.type==='boolean'){
-            attr='CASE '+attr+' WHEN true THEN \'Yes\' ELSE \'No\' END'
+        if(f.type==='lov' && f.lovtable){
+            sql='SELECT t2.'+clov+'::text AS label, count(*)::integer '+
+                ' FROM '+m.schemaTable+' AS t1'+
+                ' LEFT JOIN '+schema+'.'+f.lovtable+' AS t2'+
+                    ' ON t1.'+f.attribute+'=t2.id';
+        }else{
+            var attr =  '"'+f.attribute+'"';
+            if(f.type==='boolean'){
+                attr='CASE '+attr+' WHEN true THEN \'Yes\' ELSE \'No\' END'
+            }
+            sql='SELECT '+attr+'::text AS label, count(*)::integer '+
+                ' FROM '+m.schemaTable+' AS t1';
         }
-        sql='SELECT '+attr+'::text AS label, count(*)::integer '+
-            ' FROM '+m.schemaTable+' AS t1';
-    }
-    sql += ' GROUP BY label'+
-            //' ORDER BY count(*) DESC'+
-            ' ORDER BY label ASC'+
-            ' LIMIT 50;';
+        sql += ' GROUP BY label'+
+                //' ORDER BY count(*) DESC'+
+                ' ORDER BY label ASC'+
+                ' LIMIT 50;';
 
-    runQuery(res, sql, sqlParams, false);
+        runQuery(res, sql, sqlParams, false);
+    }
+
 }
 
 
@@ -355,16 +360,19 @@ function getOne(req, res) {
     logger.logReq('GET ONE', req);
 
     var m = getModel(req.params.entity);
-    var sqlParams = [req.params.id];
+    var id = req.params.id;
+    var sqlParams = [id];
 
-    // ---- LISTS OF VALUES
-    var lovs = sqlLOVs(m.fields)
-    var sql='SELECT t1.id, '+sqlSelect(m.fields, m.collecs)+lovs.select+
-            ' FROM '+m.schemaTable+' AS t1'+lovs.from+
-            ' WHERE t1.id=$1'+
-            ' LIMIT 1;';
+    if(m && id){
+        var lovs = sqlLOVs(m.fields)
+        var sql='SELECT t1.id, '+sqlSelect(m.fields, m.collecs, true)+lovs.select+
+                ' FROM '+m.schemaTable+' AS t1'+lovs.from+
+                ' WHERE t1.id=$1'+
+                ' LIMIT 1;';
 
-    runQuery(res, sql, sqlParams, true);
+        runQuery(res, sql, sqlParams, true);        
+    }
+    
 }
 
 
@@ -373,8 +381,8 @@ function getOne(req, res) {
 // --------------------------------------------------------------------------------------
 
 function prepData(m, req, fnName, action){
-    var ns=[],
-        vs=[];
+    var ns = [],
+        vs = [];
 
     _.forEach(m.fields, function(f){
         if(f.attribute!='id' && f.type!='formula' && !f.readOnly){
@@ -424,7 +432,7 @@ function insertOne(req, res) {
     var m = getModel(req.params.entity);
     var q = prepData(m, req, function(f){return f.attribute;}, 'C');
 
-    if(q.names.length){
+    if(m && q.names.length){
         var ps=_.map(q.names, function(n, idx){
             return '$'+(idx+1);
         });
@@ -448,7 +456,7 @@ function updateOne(req, res) {
     var id = req.params.id;
     var q = prepData(m, req, function(f, idx){return '"'+f.attribute+'"=$'+idx;}, 'U');
 
-    if(q.names.length){
+    if(m && id && q.names.length){
         q.values.push(id);
         var sql='UPDATE '+m.schemaTable+' AS t1 SET '+ q.names.join(',') + 
             ' WHERE id=$'+q.values.length+
@@ -468,7 +476,7 @@ function deleteOne(req, res) {
     var m = getModel(req.params.entity);
     var id = req.params.id;
 
-    if(id){
+    if(m && id){
         pg.connect(config.connectionString, function(err, client, done) {
 
             // SQL Query > Delete Data
