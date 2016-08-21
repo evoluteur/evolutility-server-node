@@ -6,19 +6,19 @@
  * Copyright (c) 2016 Olivier Giulieri
  ********************************************************* */
 
-var pg = require('pg');
-var csv = require('express-csv');
-var _ = require('underscore');
-var dico = require('./dico');
-var logger = require('./logger');
+var pg = require('pg'),
+    csv = require('express-csv'),
+    _ = require('underscore'),
+    dico = require('./dico'),
+    logger = require('./logger');
 
 var config = require('../../config.js');
-var models=require('../../models/all_models');
+var models = require('../../models/all_models');
 
 var schema = '"' + (config.schema || 'evol_demo') + '"';
 
-function getModel(uimId){
-    var m = dico.prepModel(models[uimId]);
+function getModel(mId){
+    var m = dico.prepModel(models[mId]);
     m.schemaTable = schema+'."'+(m.table || m.id)+'"';
     return m;
 }
@@ -31,7 +31,7 @@ function sqlQuery(select, tables, where, group, order, limit){
     }
     sql+=group ? ' GROUP BY '+group : '';
     sql+=order ? ' ORDER BY '+order : '';
-    sql+=limit ? ' LIMIT '+limit : '';
+    sql+=' LIMIT '+(limit||1000);
     return sql;
 }
 
@@ -82,8 +82,8 @@ function runQuery(res, sql, values, singleRecord, format, header){
 }
 
 function csvHeader(fields){
-    var h={'id': 'ID'}
-    var lovs={}
+    var h = {'id': 'ID'},
+        lovs = {}
     _.forEach(fields, function(f){
         if(f.type==='lov'){
             h[f.id] = (f.label || f.id)+' ID';
@@ -96,9 +96,9 @@ function csvHeader(fields){
 }
 
 function sqlSelect(fields, collecs, table, action){
-    var sql;
-    var tQuote = table ? 't1."' : '"';
-    var sqlfs=[];
+    var sql,
+        sqlfs=[],
+        tQuote = table ? 't1."' : '"';
     _.forEach(fields, function(f, idx){
         if(f.type==='lov' && action!=='C' && action!=='U'){
             sqlfs.push('t'+(idx+2)+'.'+(f.lovcolumn ? f.lovcolumn : 'value')+' AS "'+f.id+'_txt"')
@@ -117,9 +117,6 @@ function sqlSelect(fields, collecs, table, action){
             sql += ' AS "'+f.id+'"'
         }
         sqlfs.push(sql);
-        //if(f.type==='lov'){
-            //sqlfs.push(sql);
-        //}
     });/*
     if(collecs){
         sqlfs=sqlfs.concat(_.map(collecs, function(c){
@@ -142,19 +139,19 @@ function sqlOrderColumn(f){
         return '"'+(f.attribute || f.id)+'"';
     }
 }
-function sqlFieldOrder(fo){
-    var fs=dico.getFields(uim, true);
-    var idx=fo.indexOf('.');
+function sqlFieldOrder(m, fo){
+    var fs = m.fields,
+        idx = fo.indexOf('.');
     if(idx>-1){
-        var ff=fo.substring(0, idx),
-            fDirection=fo.substring(idx+1)==='desc'?' DESC':' ASC';
+        var ff = fo.substring(0, idx),
+            fDirection = fo.substring(idx+1)==='desc'?' DESC':' ASC';
         return 't1."'+fs[ff].attribute + '"'+fDirection;
     }else{
-        return 't1."'+(fs[fo]?(fs[fo].attribute||fs[fo].id)||'id':'id') + '" ASC';
+        return 't1."'+(fs[fo]?(fs[fo].attribute||fs[fo].id):'id') + '" ASC';
     }
 }
 function sqlLOVs(fields){
-    var sql={
+    var sql = {
         select: '',
         from: ''
     }
@@ -162,7 +159,7 @@ function sqlLOVs(fields){
     fields.forEach(function(f, idx){
         if(f.type==='lov' && f.lovtable){
             var tlov = 't'+(idx+2);
-            var lovCol = f.lovcolumn ? f.lovcolumn : 'value';
+            //var lovCol = f.lovcolumn || 'value';
             sql.from += ' LEFT JOIN '+schema+'."'+f.lovtable+'" AS '+tlov+
                         ' ON t1.'+f.attribute+'='+tlov+'.id'
             //sql.select += ', '+tlov+'.'+lovCol+' AS "'+f.id+'_txt"'
@@ -201,7 +198,7 @@ function sqlMany(m, req, allFields){
         'null': ' IS ',
         'nn': ' IS '
     };
-    var sqlW = [];
+    var sqlWs = [];
     var ffs = _.forEach(req.query, function(c, n){
         var f = (n==='id') ? {attribute:'id'} : m.fieldsH[n];
         if(f && ['select', 'filter', 'search', 'order', 'page', 'pageSize'].indexOf(f)<0){
@@ -211,27 +208,27 @@ function sqlMany(m, req, allFields){
                 if((cond==='eq' || cond==='ne') && dico.fieldIsText(f)){
                     sqlParams.push(cs[1]);
                     if(f.type==='text' || f.type==='textmultiline' || f.type==='html'){
-                        sqlW.push('LOWER(t1."'+f.attribute+'")'+sqlOperators[cond]+'LOWER($'+sqlParams.length+')');
+                        sqlWs.push('LOWER(t1."'+f.attribute+'")'+sqlOperators[cond]+'LOWER($'+sqlParams.length+')');
                     }else{
-                        sqlW.push('t1."'+f.attribute+'"'+sqlOperators[cond]+'$'+sqlParams.length);
+                        sqlWs.push('t1."'+f.attribute+'"'+sqlOperators[cond]+'$'+sqlParams.length);
                     }
                 }else{
                     var w='t1."'+f.attribute+'"'+sqlOperators[cond];
                     if(cond==='in' && (f.type==='lov' || f.type==='list')){
-                        sqlW.push(w+'('+cs[1].split(',').map(function(li){
+                        sqlWs.push(w+'('+cs[1].split(',').map(function(li){
                             return "'"+li.replace(/'/g, "''")+"'";
                         }).join(',')+')'); 
                     }else if(cond==='0'){ // false
-                        sqlW.push(w+'false');
+                        sqlWs.push(w+'false');
                     }else if(cond==='1'){ // true
-                        sqlW.push(w+'true');
+                        sqlWs.push(w+'true');
                     }else if(cond==='null'){ // empty        
-                        sqlW.push(' NOT '+w+'NULL');
+                        sqlWs.push(' NOT '+w+'NULL');
                     }else{
                         if(cond==='nct'){ // not contains
                             //TODO replace % in cs[1]
                             sqlParams.push('%'+cs[1]+'%');
-                            sqlW.push(' NOT '+w+'$'+sqlParams.length);
+                            sqlWs.push(' NOT '+w+'$'+sqlParams.length);
                         }else{
                             if(cond==='sw'){ // start with
                                 sqlParams.push(cs[1]+'%');
@@ -242,7 +239,7 @@ function sqlMany(m, req, allFields){
                             }else{
                                 sqlParams.push(cs[1]);
                             }
-                            sqlW.push(w+'$'+sqlParams.length);
+                            sqlWs.push(w+'$'+sqlParams.length);
                         }
                     }
                 }
@@ -253,15 +250,15 @@ function sqlMany(m, req, allFields){
     // ---- SEARCHING
     if(req.query.search){
         var paramSearch = false;
-        var sqlWS = [];
-        if(uim.fnSearch && _.isArray(uim.fnSearch)){
-            logger.logObject('search fields', uim.fnSearch);
+        var sqlWsSearch = [];
+        if(m.fnSearch && _.isArray(m.fnSearch)){
+            logger.logObject('search fields', m.fnSearch);
             var sqlP='"'+sqlOperators.ct+'($'+(sqlParams.length+1)+')';
-            _.forEach(uim.fnSearch, function(m){
-                sqlWS.push('t1."'+fieldsH[m].attribute+sqlP);
+            _.forEach(m.fnSearch, function(m){
+                sqlWsSearch.push('t1."'+fieldsH[m].attribute+sqlP);
             });
             sqlParams.push('%'+req.query.search.replace(/%/g, '\%')+'%');
-            sqlW.push('('+sqlWS.join(' OR ')+')');
+            sqlWs.push('('+sqlWsSearch.join(' OR ')+')');
         }
     }
 
@@ -271,13 +268,15 @@ function sqlMany(m, req, allFields){
     if(qOrder){
         if(qOrder.indexOf(',')>-1){
             var fl=qOrder.split(',');
-            sqlOrder+=_.map(fl, sqlFieldOrder).join(',');
+            sqlOrder+=_.map(fl, function(f){
+                    return sqlFieldOrder(m, f)
+                }).join(',');
         }else{
-            sqlOrder+=sqlFieldOrder(qOrder);
+            sqlOrder+=sqlFieldOrder(m, qOrder);
         }
     }else{
-        var f = fs[0]
-        var col = f.attribute || f.id
+        var f = fs[0],
+            col = f.attribute || f.id;
         sqlOrder = 't1."'+col+'" ASC';
     }
 
@@ -295,7 +294,7 @@ function sqlMany(m, req, allFields){
     return {
         select: sqlSel,
         from: sqlFrom,
-        where: sqlW, //array
+        where: sqlWs, //array
         group: '',
         order: sqlOrder,
         limits: sqlLimit,
@@ -322,13 +321,13 @@ function chartMany(req, res) {
 
     var m = getModel(req.params.entity),
         fid = req.params.field,
-        sqlParams = [];
+        sqlParams = [],
+        sql;
 
     if(m && fid){
-        var f = m.fieldsH[fid],
-            clov = f.lovcolumn||'value';
-
+        var f = m.fieldsH[fid];
         if(f.type==='lov' && f.lovtable){
+            var clov = f.lovcolumn||'value';
             sql='SELECT t2.'+clov+'::text AS label, count(*)::integer '+
                 ' FROM '+m.schemaTable+' AS t1'+
                 ' LEFT JOIN '+schema+'.'+f.lovtable+' AS t2'+
@@ -359,12 +358,12 @@ function chartMany(req, res) {
 function getOne(req, res) {
     logger.logReq('GET ONE', req);
 
-    var m = getModel(req.params.entity);
-    var id = req.params.id;
-    var sqlParams = [id];
+    var m = getModel(req.params.entity),
+        id = req.params.id;
 
     if(m && id){
-        var lovs = sqlLOVs(m.fields)
+        var lovs = sqlLOVs(m.fields),
+            sqlParams = [id]
         var sql='SELECT t1.id, '+sqlSelect(m.fields, m.collecs, true)+lovs.select+
                 ' FROM '+m.schemaTable+' AS t1'+lovs.from+
                 ' WHERE t1.id=$1'+
@@ -429,8 +428,8 @@ function prepData(m, req, fnName, action){
 function insertOne(req, res) {
     logger.logReq('INSERT ONE', req);
 
-    var m = getModel(req.params.entity);
-    var q = prepData(m, req, function(f){return f.attribute;}, 'C');
+    var m = getModel(req.params.entity),
+        q = prepData(m, req, function(f){return f.attribute;}, 'C');
 
     if(m && q.names.length){
         var ps=_.map(q.names, function(n, idx){
@@ -452,9 +451,9 @@ function insertOne(req, res) {
 function updateOne(req, res) {
     logger.logReq('UPDATE ONE', req);
 
-    var m = getModel(req.params.entity);
-    var id = req.params.id;
-    var q = prepData(m, req, function(f, idx){return '"'+f.attribute+'"=$'+idx;}, 'U');
+    var m = getModel(req.params.entity),
+        id = req.params.id,
+        q = prepData(m, req, function(f, idx){return '"'+f.attribute+'"=$'+idx;}, 'U');
 
     if(m && id && q.names.length){
         q.values.push(id);
@@ -473,8 +472,8 @@ function updateOne(req, res) {
 function deleteOne(req, res) {
     logger.logReq('DELETE ONE', req);
 
-    var m = getModel(req.params.entity);
-    var id = req.params.id;
+    var m = getModel(req.params.entity),
+        id = req.params.id;
 
     if(m && id){
         pg.connect(config.connectionString, function(err, client, done) {
