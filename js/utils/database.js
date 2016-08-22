@@ -1,7 +1,7 @@
 /*! *******************************************************
  *
  * evolutility-server :: utils/database.js
- * Methods to build Postgres DB from ui-models.
+ * Methods to create database from models.
  *
  * https://github.com/evoluteur/evolutility-server
  * Copyright (c) 2016 Olivier Giulieri
@@ -17,25 +17,24 @@ var config = require(path.join(__dirname, '../', '../', 'config'));
 //var dbuser = 'evol';
 var dbuser = 'postgres';
 
-var uims = require('../../models/all_models.js');
-var uims_data = require('../../models/all_modelsdata.js');
+var models = require('../../models/all_models.js');
+var data = require('../../models/all_modelsdata.js');
 
 var client = new pg.Client(config.connectionString);
 client.connect();
 
 
-function uim2db(uimid){
+function m2db(mid){
     // -- generates SQL script to create a Postgres DB table for the ui model
-    var m = uims[uimid],
+    var m = dico.prepModel(models[mid]),
         tableName = m.table || m.id,
-        tableNameSchema = (config.schema ? config.schema+'.' : '') + tableName,
-        fieldsAttr={},
-        fields=m.fields,
-        fieldsH=m.fieldsH,
-        subCollecs=m.collecs,
-        fs=['id serial primary key'],
-        sql0,
-        sql;
+        tableNameSchema = '"' + config.schema + '".' + tableName,
+        fieldsAttr = {},
+        fields = m.fields,
+        fieldsH = m.fieldsH,
+        subCollecs = m.collecs,
+        fs = ['id serial primary key'],
+        sql0, sql;
 
     // fields
     _.forEach(fields, function(f, idx){
@@ -89,7 +88,7 @@ function uim2db(uimid){
     sql = 'CREATE TABLE '+tableNameSchema+'(\n' + fs.join(',\n') + ');\n';
 
     // -- insert sample data
-    _.each(uims_data[uimid], function(row, idx){
+    _.each(data[mid], function(row, idx){
         sql+='INSERT INTO '+tableNameSchema;
         var ns=[], vs=[];
         var fn, f, v;
@@ -120,6 +119,25 @@ function uim2db(uimid){
         sql+='('+ns.join(',')+') values('+vs.join(',')+');\n\n';
 
     });
+
+    // add lov tables
+    var schema = config.schema
+    function lovTable(f){
+        return '"'+schema+'"."'+(f.lovtable ? f.lovtable : (tableName+'_'+f.id))+'"'
+    }
+    _.forEach(fields.filter(function(f){return f.type==='lov'}), function(f, idx){
+        var t = lovTable(f)
+        //create lov table
+        sql+='CREATE TABLE '+t+
+            '(id serial NOT NULL, value text NOT NULL,'+
+                ' CONSTRAINT '+(tableName+'_'+f.id).toLowerCase()+'_pkey PRIMARY KEY (id));\n';
+        // populate lov table
+        sql+='INSERT INTO '+t+'(id,value) VALUES ';
+        sql+=f.list.map(function(item){
+            return '(' + item.id + ',\'' + item.text + '\')'
+        }).join(',\n')+';\n'
+    });
+
     console.log(sql);
 
     return sql;
@@ -127,11 +145,12 @@ function uim2db(uimid){
 
 var sql='';
 if(config.schema){
-    sql='CREATE SCHEMA '+config.schema+' AUTHORIZATION '+dbuser+';\n';
+    sql='CREATE SCHEMA "'+config.schema+'" AUTHORIZATION '+dbuser+';\n';
 }
-for(var uimid in uims){
-    sql+=uim2db(uimid);
+for(var mid in models){
+    sql+=m2db(mid);
 }
+
 console.log(sql);
 var query = client.query(sql);
 query.on('end', function() { client.end(); });
