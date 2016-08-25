@@ -12,7 +12,8 @@ var path = require('path');
 var _ = require('underscore');
 var dico = require('./dico');
 
-var config = require(path.join(__dirname, '../', '../', 'config'));
+var config = require(path.join(__dirname, '../', '../', 'config')),
+    schema = '"'+config.schema+'"';
 
 //var dbuser = 'evol';
 var dbuser = 'postgres';
@@ -28,13 +29,13 @@ function m2db(mid){
     // -- generates SQL script to create a Postgres DB table for the ui model
     var m = dico.prepModel(models[mid]),
         tableName = m.table || m.id,
-        tableNameSchema = '"' + config.schema + '".' + tableName,
+        tableNameSchema = schema+'."'+tableName+'"',
         fieldsAttr = {},
         fields = m.fields,
         fieldsH = m.fieldsH,
         subCollecs = m.collecs,
         fs = ['id serial primary key'],
-        sql0, sql;
+        sql, sql0, sqlIdx='';
 
     // fields
     _.forEach(fields, function(f, idx){
@@ -60,6 +61,8 @@ function m2db(mid){
                     break;
                 case 'lov': 
                     sql0+='integer';
+                    sqlIdx += 'CREATE INDEX idx_'+tableName+'_'+f.attribute.toLowerCase()+
+                        ' ON '+schema+'."'+tableName+'" USING btree ("'+f.attribute+'");\n';
                     break;
                 case 'list': 
                     sql0+='text[]';
@@ -86,12 +89,14 @@ function m2db(mid){
     }
 
     sql = 'CREATE TABLE '+tableNameSchema+'(\n' + fs.join(',\n') + ');\n';
+    sql+=sqlIdx;
 
     // -- insert sample data
     _.each(data[mid], function(row, idx){
         sql+='INSERT INTO '+tableNameSchema;
         var ns=[], vs=[];
-        var fn, f, v;
+        var fn, f, v, 
+            sqlIdx = '';
         for(var fid in row){
             f = fieldsH[fid];
             if(f && fid!=='id'){
@@ -116,37 +121,36 @@ function m2db(mid){
                 fn = f.attribute || f.id;
             }
         }
-        sql+='('+ns.join(',')+') values('+vs.join(',')+');\n\n';
-
+        sql+='('+ns.join(',')+') values('+vs.join(',')+');\n';
     });
 
+    //if(tableName!='test'){
+
     // add lov tables
-    var schema = config.schema
     function lovTable(f){
-        return '"'+schema+'"."'+(f.lovtable ? f.lovtable : (tableName+'_'+f.id))+'"'
+        return schema+'."'+(f.lovtable ? f.lovtable : (tableName+'_'+f.id))+'"';
     }
     _.forEach(fields.filter(function(f){return f.type==='lov'}), function(f, idx){
-        var t = lovTable(f)
+        var t = lovTable(f);
         //create lov table
         sql+='CREATE TABLE '+t+
             '(id serial NOT NULL, value text NOT NULL,'+
                 ' CONSTRAINT '+(tableName+'_'+f.id).toLowerCase()+'_pkey PRIMARY KEY (id));\n';
         // populate lov table
-        sql+='INSERT INTO '+t+'(id,value) VALUES ';
+        sql+='INSERT INTO '+t+'(id, value) VALUES ';
         sql+=f.list.map(function(item){
             return '(' + item.id + ',\'' + item.text + '\')'
         }).join(',\n')+';\n'
-    });
+    })
+
+    //}
 
     console.log(sql);
 
     return sql;
 }
 
-var sql='';
-if(config.schema){
-    sql='CREATE SCHEMA "'+config.schema+'" AUTHORIZATION '+dbuser+';\n';
-}
+var sql='CREATE SCHEMA '+schema+' AUTHORIZATION '+dbuser+';\n';
 for(var mid in models){
     sql+=m2db(mid);
 }
