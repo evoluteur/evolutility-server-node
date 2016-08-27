@@ -318,7 +318,7 @@ function getMany(req, res) {
 
     var m = getModel(req.params.entity);
     if(m){
-        var format = req.query._format || null,
+        var format = req.query.format || null,
             isCSV = format==='csv',
             sq = sqlMany(m, req, isCSV),
             sql = sqlQuery(sq.select, sq.from, sq.where, null, sq.order);
