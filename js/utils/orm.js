@@ -7,6 +7,7 @@
  ********************************************************* */
 
 var pg = require('pg'),
+    parseConnection = require('pg-connection-string').parse,
     csv = require('express-csv'),
     _ = require('underscore'),
     dico = require('./dico'),
@@ -15,7 +16,18 @@ var pg = require('pg'),
 var config = require('../../config.js');
 var models = require('../../models/all_models');
 
+var dbConfig = parseConnection(config.connectionString)
+dbConfig.max = 10; // max number of clients in the pool 
+dbConfig.idleTimeoutMillis = 30000; // how long a client is allowed to remain idle before being closed
+
 var schema = '"' + (config.schema || 'evol_demo') + '"';
+
+
+var pool = new pg.Pool(dbConfig);
+
+pool.on('error', function (err, client) {
+  console.error('idle client error', err.message, err.stack)
+})
 
 function getModel(mId){
     var m = dico.prepModel(models[mId]);
@@ -39,7 +51,7 @@ function runQuery(res, sql, values, singleRecord, format, header){
     var results = [];
 
     // Get a Postgres client from the connection pool 
-    pg.connect(config.connectionString, function(err, client, done) {
+    pool.connect(function(err, client, done) {
 
         // SQL Query > Select Data
         logger.logSQL(sql);
@@ -52,8 +64,7 @@ function runQuery(res, sql, values, singleRecord, format, header){
 
         // After all data is returned, close connection and return results
         query.on('end', function() {
-            client.end();
-            //done();
+            done();
             if(format==='csv'){
                 if(header){
                     var headers={};
@@ -476,13 +487,13 @@ function deleteOne(req, res) {
         id = req.params.id;
 
     if(m && id){
-        pg.connect(config.connectionString, function(err, client, done) {
+        pool.connect(function(err, client, done) {
 
             // SQL Query > Delete Data
             var sql = 'DELETE FROM '+m.schemaTable+' WHERE id=$1';
             logger.logSQL(sql);
             client.query(sql, [id]);
-            //done();
+            done();
             return res.json(true);
 
             // Handle Errors
@@ -494,8 +505,7 @@ function deleteOne(req, res) {
         });
     }else{
         return res.json(false);
-    } 
-
+    }
 }
 
 
@@ -508,7 +518,5 @@ module.exports = {
     deleteOne: deleteOne,
     
     chartMany: chartMany
-
-    //,exportMany: exportMany
 
 }
