@@ -1,13 +1,13 @@
-# evolutility-server
+# Evolutility-Server
 
-Model-driven RESTful API for CRUD (Create, Read, Update, Delete) and more using Node.js, Express and PostgreSQL. 
+Micro-ORM with integrated RESTful API for CRUD (Create, Read, Update, Delete) and more using Node.js, Express and PostgreSQL. 
 
-Evolutility-server is build to work with [Evolutility](http://evoluteur.github.io/evolutility/index.html) or [React-Evolutility](http://github.com/evoluteur/react-evolutility) but could also work with your UI.
+Evolutility-Server is build to work with [Evolutility](http://evoluteur.github.io/evolutility/index.html) or [React-Evolutility](http://github.com/evoluteur/react-evolutility) but could also work with your UI.
 
 
 ## Installation
 
-You can use **NPM** to install Evolutility-server as an [npm package](https://www.npmjs.com/package/evolutility-server):
+You can use **NPM** to install Evolutility-Server as an [npm package](https://www.npmjs.com/package/evolutility-server):
 
 ```bash
 # To get the latest stable version, use npm from the command line.
@@ -50,12 +50,84 @@ npm start
 
 4. In a web browser go to the url [http://localhost:3000/api/v1/evolutility/todo](http://localhost:3000/api/v1/evolutility/todo).
 
+## Models
+
+Each database table accessible by the RESTful API must be defined in a model.
+Models contain the name of the driving table and a list of fields/columns.
+
+### Entity
+
+| Property     | Meaning                                 |
+|--------------|-----------------------------------------|
+| id           | Unique key to identify the entity (used as API parameter). |
+| table        | Database table name.                    |
+| fields       | Array of fields.                        |
+| titleField    | Field id for the column value used as record title. |            
+| searchFields  | Array of field ids identifing fields taking part in search. |      
+
+
+### Field
+
+| Property     | Meaning                               |
+|--------------|---------------------------------------|
+| id           | Unique key for the field (can be the same as column but doesn't have to be). |
+| column       | Database column name for the field    |
+| type         | Field type is not a database column type but more a UI field type. Possible field types: <ul><li>boolean (yes/no)</li><li>date</li><li>datetime</li><li>decimal</li><li>document</li><li>email</li><li>image</li><li>integer</li><li>lov (list of values)</li><li>text</li><li>textmultiline</li><li>time</li><li>url</li></ul> |
+| required     | Determines if the field is required for saving.      |
+| readonly     | Prevents field modification.          |
+| lovtable     | Table to join to for field value (only for fields of "lov" type). |                        
+| inMany       | Determines if the field is present (by default) in lists of records. |
+
+### Sample model
+
+Here is a model for a To-Do app.
+
+```javascript
+module.exports = {
+    id: 'todo',
+    table: 'task',
+    titleField: 'title',
+    searchFields: ['title', 'description', 'notes'],
+    fields: [
+        {
+            id: 'title', column: 'title', type: 'text', label: 'Title', required: true,
+            maxLength: 300,
+            inMany: true
+        },
+        {
+            id: 'duedate', column: 'duedate', type: 'date', label: 'Due Date', inMany: true
+        },
+        {
+            id: 'category', column: 'category_id', type: 'lov', label: 'Category', inMany: true,
+            lovtable: 'task_category'        },
+        {
+            id: 'priority', column: 'priority_id', type: 'lov', label: 'Priority', required: true,
+            inMany: true,
+            lovtable: 'task_priority',
+        {
+            id: 'complete', column: 'complete', type: 'boolean', inMany: true,
+            label: 'Complete'
+        },
+        {
+            id: 'description', column: 'description', type: 'textmultiline', 
+            label: 'Description', 
+            maxLength: 1000,
+            inMany: false
+        },
+        {
+            id: 'notes', column: 'notes', type: 'textmultiline', label: 'Notes', maxLength: 1000,
+            inMany: false
+        }
+    ]
+};
+
+```
 
 ## API
-Evolutility-server provides a generic RESTful API for CRUD (Create, Read, Update, Delete) and more.
+Evolutility-Server provides a generic RESTful API for CRUD (Create, Read, Update, Delete) and more.
 It is a partial server-side Javascript implementation of [PostgREST](http://postgrest.com) using [Node.js](https://nodejs.org/en/), [Express](http://expressjs.com/) and [PostgreSQL](http://www.postgresql.org/).
 
-When running Evolutility-server locally, the url for the "todo" app is 
+When running Evolutility-Server locally, the url for the "todo" app is 
 [http://localhost:3000/api/v1/evolutility/todo](http://localhost:3000/api/v1/evolutility/todo).
 
 ### Requesting Information
@@ -178,4 +250,4 @@ DELETE /todo/5
 
 Copyright (c) 2016 Olivier Giulieri.
 
-Evolutility-server is released under the [MIT license](http://github.com/evoluteur/evolutility-server/raw/master/LICENSE.md).
+Evolutility-Server is released under the [MIT license](http://github.com/evoluteur/evolutility-server/raw/master/LICENSE.md).

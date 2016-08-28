@@ -86,17 +86,17 @@ function getSubCollecs(uiModel) {
 
 	function collectCollecs(te) {
 		if (te.type === 'panel-list') {
-			ls[te.attribute] = te;
+			ls[te.column] = te;
 		} else if (te.type !== 'panel' && te.elements && te.elements.length > 0) {
 			_.each(te.elements, function(te) {
 				if (te.type === 'panel-list') {
-					ls[te.attribute] = te;
+					ls[te.column] = te;
 				} else if (te.type !== 'panel') {
 					collectCollecs(te);
 				}
 			});
 		} else {
-			ls[te.attribute] = te;
+			ls[te.column] = te;
 		}
 	}
 

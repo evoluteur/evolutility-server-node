@@ -39,9 +39,9 @@ function m2db(mid){
 
     // fields
     _.forEach(fields, function(f, idx){
-        if(f.attribute && f.attribute!='id' && f.type!=='formula' && !fieldsAttr[f.attribute]){
-            fieldsAttr[f.attribute]=true;
-            sql0=' "'+f.attribute+'" ';
+        if(f.column && f.column!='id' && f.type!=='formula' && !fieldsAttr[f.column]){
+            fieldsAttr[f.column]=true;
+            sql0=' "'+f.column+'" ';
             switch(f.type){
                 case 'boolean':
                 case 'integer':
@@ -61,8 +61,8 @@ function m2db(mid){
                     break;
                 case 'lov': 
                     sql0+='integer';
-                    sqlIdx += 'CREATE INDEX idx_'+tableName+'_'+f.attribute.toLowerCase()+
-                        ' ON '+schema+'."'+tableName+'" USING btree ("'+f.attribute+'");\n';
+                    sqlIdx += 'CREATE INDEX idx_'+tableName+'_'+f.column.toLowerCase()+
+                        ' ON '+schema+'."'+tableName+'" USING btree ("'+f.column+'");\n';
                     break;
                 case 'list': 
                     sql0+='text[]';
@@ -78,7 +78,7 @@ function m2db(mid){
     });
     // subCollecs - as json columns
     _.forEach(subCollecs, function(c, idx){
-        fs.push(' "'+(c.attribute || c.id)+'" json');
+        fs.push(' "'+(c.column || c.id)+'" json');
     });
 
     function stringValue(v){
@@ -101,7 +101,7 @@ function m2db(mid){
             f = fieldsH[fid];
             if(f && fid!=='id'){
                 v = row[fid];
-                ns.push('"'+(f.attribute || f.id)+'"');
+                ns.push('"'+(f.column || f.id)+'"');
                 if(f.type==='lov'){
                     //to nothing
                     //TODO parseint?
@@ -118,7 +118,7 @@ function m2db(mid){
                     v = stringValue(v);
                 }
                 vs.push(v);
-                fn = f.attribute || f.id;
+                fn = f.column || f.id;
             }
         }
         sql+='('+ns.join(',')+') values('+vs.join(',')+');\n';

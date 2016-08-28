@@ -114,7 +114,7 @@ function sqlSelect(fields, collecs, table, action){
         if(f.type==='lov' && action!=='C' && action!=='U'){
             sqlfs.push('t'+(idx+2)+'.'+(f.lovcolumn ? f.lovcolumn : 'value')+' AS "'+f.id+'_txt"')
         } 
-        sql = tQuote+f.attribute
+        sql = tQuote+f.column
         //if(f.type==='money'){
             //sql += '"::money'
         //}else if(f.type==='integer'){
@@ -124,14 +124,14 @@ function sqlSelect(fields, collecs, table, action){
         //}else{
             sql += '"'
         //}
-        if(f.attribute && f.id!=f.attribute){
+        if(f.column && f.id!=f.column){
             sql += ' AS "'+f.id+'"'
         }
         sqlfs.push(sql);
     });/*
     if(collecs){
         sqlfs=sqlfs.concat(_.map(collecs, function(c){
-            return tQuote+(c.attribute||c.id)+'"';
+            return tQuote+(c.column||c.id)+'"';
         }));
     }*/
     return sqlfs.join(',');
@@ -147,7 +147,7 @@ function sqlOrderColumn(f){
     if(f.type==='lov' && f.lovtable){
         return '"'+f.id+'_txt"';
     }else{
-        return '"'+(f.attribute || f.id)+'"';
+        return '"'+(f.column || f.id)+'"';
     }
 }
 function sqlFieldOrder(m, fo){
@@ -156,9 +156,9 @@ function sqlFieldOrder(m, fo){
     if(idx>-1){
         var ff = fo.substring(0, idx),
             fDirection = fo.substring(idx+1)==='desc'?' DESC':' ASC';
-        return 't1."'+fs[ff].attribute + '"'+fDirection;
+        return 't1."'+fs[ff].column + '"'+fDirection;
     }else{
-        return 't1."'+(fs[fo]?(fs[fo].attribute||fs[fo].id):'id') + '" ASC';
+        return 't1."'+(fs[fo]?(fs[fo].column||fs[fo].id):'id') + '" ASC';
     }
 }
 function sqlLOVs(fields){
@@ -166,13 +166,13 @@ function sqlLOVs(fields){
         select: '',
         from: ''
     }
-    // add extra attribute (column+"_txt") for value of lov fields
+    // add extra column (column+"_txt") for value of lov fields
     fields.forEach(function(f, idx){
         if(f.type==='lov' && f.lovtable){
             var tlov = 't'+(idx+2);
             //var lovCol = f.lovcolumn || 'value';
             sql.from += ' LEFT JOIN '+schema+'."'+f.lovtable+'" AS '+tlov+
-                        ' ON t1.'+f.attribute+'='+tlov+'.id'
+                        ' ON t1.'+f.column+'='+tlov+'.id'
             //sql.select += ', '+tlov+'.'+lovCol+' AS "'+f.id+'_txt"'
         }
     })
@@ -211,7 +211,7 @@ function sqlMany(m, req, allFields){
     };
     var sqlWs = [];
     var ffs = _.forEach(req.query, function(c, n){
-        var f = (n==='id') ? {attribute:'id'} : m.fieldsH[n];
+        var f = (n==='id') ? {column:'id'} : m.fieldsH[n];
         if(f && ['select', 'filter', 'search', 'order', 'page', 'pageSize'].indexOf(f)<0){
             var cs=c.split('.');
             if(cs.length){
@@ -219,12 +219,12 @@ function sqlMany(m, req, allFields){
                 if((cond==='eq' || cond==='ne') && dico.fieldIsText(f)){
                     sqlParams.push(cs[1]);
                     if(f.type==='text' || f.type==='textmultiline' || f.type==='html'){
-                        sqlWs.push('LOWER(t1."'+f.attribute+'")'+sqlOperators[cond]+'LOWER($'+sqlParams.length+')');
+                        sqlWs.push('LOWER(t1."'+f.column+'")'+sqlOperators[cond]+'LOWER($'+sqlParams.length+')');
                     }else{
-                        sqlWs.push('t1."'+f.attribute+'"'+sqlOperators[cond]+'$'+sqlParams.length);
+                        sqlWs.push('t1."'+f.column+'"'+sqlOperators[cond]+'$'+sqlParams.length);
                     }
                 }else{
-                    var w='t1."'+f.attribute+'"'+sqlOperators[cond];
+                    var w='t1."'+f.column+'"'+sqlOperators[cond];
                     if(cond==='in' && (f.type==='lov' || f.type==='list')){
                         sqlWs.push(w+'('+cs[1].split(',').map(function(li){
                             return "'"+li.replace(/'/g, "''")+"'";
@@ -262,11 +262,11 @@ function sqlMany(m, req, allFields){
     if(req.query.search){
         var paramSearch = false;
         var sqlWsSearch = [];
-        if(m.fnSearch && _.isArray(m.fnSearch)){
-            logger.logObject('search fields', m.fnSearch);
+        if(m.searchFields && _.isArray(m.searchFields)){
+            logger.logObject('search fields', m.searchFields);
             var sqlP='"'+sqlOperators.ct+'($'+(sqlParams.length+1)+')';
-            _.forEach(m.fnSearch, function(m){
-                sqlWsSearch.push('t1."'+fieldsH[m].attribute+sqlP);
+            _.forEach(m.searchFields, function(m){
+                sqlWsSearch.push('t1."'+fieldsH[m].column+sqlP);
             });
             sqlParams.push('%'+req.query.search.replace(/%/g, '\%')+'%');
             sqlWs.push('('+sqlWsSearch.join(' OR ')+')');
@@ -287,7 +287,7 @@ function sqlMany(m, req, allFields){
         }
     }else{
         var f = fs[0],
-            col = f.attribute || f.id;
+            col = f.column || f.id;
         sqlOrder = 't1."'+col+'" ASC';
     }
 
@@ -342,9 +342,9 @@ function chartMany(req, res) {
             sql='SELECT t2.'+clov+'::text AS label, count(*)::integer '+
                 ' FROM '+m.schemaTable+' AS t1'+
                 ' LEFT JOIN '+schema+'.'+f.lovtable+' AS t2'+
-                    ' ON t1.'+f.attribute+'=t2.id';
+                    ' ON t1.'+f.column+'=t2.id';
         }else{
-            var attr =  '"'+f.attribute+'"';
+            var attr =  '"'+f.column+'"';
             if(f.type==='boolean'){
                 attr='CASE '+attr+' WHEN true THEN \'Yes\' ELSE \'No\' END'
             }
@@ -395,7 +395,7 @@ function prepData(m, req, fnName, action){
         vs = [];
 
     _.forEach(m.fields, function(f){
-        if(f.attribute!='id' && f.type!='formula' && !f.readOnly){
+        if(f.column!='id' && f.type!='formula' && !f.readOnly){
             var fv=req.body[f.id];
             if(fv!=null){
                 switch(f.type){
@@ -440,7 +440,7 @@ function insertOne(req, res) {
     logger.logReq('INSERT ONE', req);
 
     var m = getModel(req.params.entity),
-        q = prepData(m, req, function(f){return f.attribute;}, 'C');
+        q = prepData(m, req, function(f){return f.column;}, 'C');
 
     if(m && q.names.length){
         var ps=_.map(q.names, function(n, idx){
@@ -464,7 +464,7 @@ function updateOne(req, res) {
 
     var m = getModel(req.params.entity),
         id = req.params.id,
-        q = prepData(m, req, function(f, idx){return '"'+f.attribute+'"=$'+idx;}, 'U');
+        q = prepData(m, req, function(f, idx){return '"'+f.column+'"=$'+idx;}, 'U');
 
     if(m && id && q.names.length){
         q.values.push(id);
