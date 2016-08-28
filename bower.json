@@ -1,14 +1,11 @@
 {
   "name": "evolutility-server",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "description": "Evolutility RESTful API for CRUD and more.",
   "main": [
     "app.js"
   ],
   "homepage": "http://evoluteur.github.io/evolutility-server/",
-  "dependencies": {
-    "evolutility": "master"
-  },
   "repository": {
     "type": "git",
     "url": "git://github.com/evoluteur/evolutility-server.git"
