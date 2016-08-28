@@ -313,8 +313,9 @@ var contact_LOVs = {
 
 module.exports = {
     id: 'contact',
-    label: 'Address book',
-    name: 'contact', namePlural: 'contacts',
+    label: 'Address Book',
+    name: 'contact', 
+    namePlural: 'contacts',
     fnSearch: ['lastname', 'firstname', 'jobtitle', 'company'],
     fields: [
         {

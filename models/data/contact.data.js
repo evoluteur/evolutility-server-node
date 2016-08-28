@@ -1,5 +1,5 @@
 module.exports = [{
-    id: '1',
+    id: 1,
     lastname: 'Smallwood',
     firstname: 'Diane',
     jobtitle: 'Director',
@@ -14,9 +14,9 @@ module.exports = [{
     state: 'CA',
     zip: '94123',
     country: 'US',
-    category: '4'
+    category: 4
 }, {
-    id: '2',
+    id: 2,
     lastname: 'Shackleford ',
     firstname: 'Rusty ',
     email: 'rustyshackleford@gmail.com',
@@ -24,9 +24,9 @@ module.exports = [{
     city: 'Dallas',
     state: 'TX',
     country: 'US',
-    category: '3'
+    category: 3
 }, {
-    id: '3',
+    id: 3,
     lastname: 'Inoue',
     firstname: 'Akemi',
     jobtitle: 'QA Engineer',
@@ -39,9 +39,9 @@ module.exports = [{
     state: 'CA',
     zip: '93112',
     country: 'US',
-    category: '3'
+    category: 3
 }, {
-    id: '4',
+    id: 4,
     lastname: 'Reina Moyano',
     firstname: 'Sergio',
     jobtitle: 'Mr',
@@ -57,9 +57,9 @@ module.exports = [{
     state: 'CA',
     zip: '94567',
     country: 'US',
-    category: '3'
+    category: 3
 }, {
-    id: '5',
+    id: 5,
     lastname: 'Paulus',
     firstname: 'Henry',
     company: 'TEST the TEST',
@@ -69,9 +69,9 @@ module.exports = [{
     state: 'CA',
     zip: '94401',
     country: 'US',
-    category: '2'
+    category: 2
 }, {
-    id: '6',
+    id: 6,
     lastname: 'Dupond',
     firstname: 'Patrick',
     jobtitle: 'Sales Manager',
@@ -82,19 +82,9 @@ module.exports = [{
     city: 'Paris',
     state: '',
     country: 'FR',
-    category: '1'
+    category: 1
 }, {
-    id: '7',
-    lastname: 'Giulieri',
-    firstname: 'Olivier',
-    company: 'Evolutility',
-    city: 'San Mateo',
-    state: 'CA',
-    country: 'US',
-    email: 'olivier@evolutility.org',
-    web: 'http://www.evolutility.org'
-}, {
-    id: '8',
+    id: 8,
     lastname: 'Martin',
     firstname: 'Mary',
     jobtitle: 'President',
@@ -107,9 +97,9 @@ module.exports = [{
     city: 'Musnonville',
     state: 'NH',
     zip: '03434',
-    category: '1'
+    category: 1
 }, {
-    id: '9',
+    id: 9,
     lastname: 'Munar',
     firstname: 'Roman',
     jobtitle: 'Mr',
@@ -126,9 +116,9 @@ module.exports = [{
     state: '',
     zip: '1300',
     country: 'PH',
-    category: '3'
+    category: 3
 }, {
-    id: '10',
+    id: 10,
     lastname: 'Smith',
     firstname: 'George',
     company: 'Blabla',
@@ -141,9 +131,9 @@ module.exports = [{
     state: 'CA',
     zip: '93123',
     country: 'US',
-    category: '1'
+    category: 1
 }, {
-    id: '11',
+    id: 11,
     lastname: 'Kumar',
     firstname: 'Madhukar',
     jobtitle: 'CEO',
@@ -156,9 +146,9 @@ module.exports = [{
     city: 'Bengaluru',
     state: '',
     country: 'IN',
-    category: '4'
+    category: 4
 }, {
-    id: '12',
+    id: 12,
     lastname: 'Cheng',
     firstname: 'Chris',
     jobtitle: 'CTO',
@@ -168,5 +158,5 @@ module.exports = [{
     city: 'Sunnyvalle',
     state: 'CA',
     country: 'US',
-    category: '4'
+    category: 4
 }];
