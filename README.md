@@ -72,7 +72,7 @@ Models contain the name of the driving table and a list of fields/columns.
 |--------------|---------------------------------------|
 | id           | Unique key for the field (can be the same as column but doesn't have to be). |
 | column       | Database column name for the field    |
-| type         | Field type is not a database column type but more a UI field type. Possible field types: <ul><li>boolean (yes/no)</li><li>date</li><li>datetime</li><li>decimal</li><li>document</li><li>email</li><li>image</li><li>integer</li><li>lov (list of values)</li><li>text</li><li>textmultiline</li><li>time</li><li>url</li></ul> |
+| type         | Field type is not a database column type but more a UI field type. Possible field types: <ul><li>boolean (yes/no)</li><li>date</li><li>datetime</li><li>decimal</li><li>document</li><li>email</li><li>image</li><li>integer</li><li>lov (list of values)</li><li>money</li><li>text</li><li>textmultiline</li><li>time</li><li>url</li></ul> |
 | required     | Determines if the field is required for saving.      |
 | readonly     | Prevents field modification.          |
 | lovtable     | Table to join to for field value (only for fields of "lov" type). |                        
