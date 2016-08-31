@@ -24,6 +24,7 @@ var data = require('../../models/data/all_modelsdata.js');
 var client = new pg.Client(config.connectionString);
 client.connect();
 
+var sql = ''
 
 function m2db(mid){
     // -- generates SQL script to create a Postgres DB table for the ui model
@@ -130,22 +131,21 @@ function m2db(mid){
     function lovTable(f){
         return schema+'."'+(f.lovtable ? f.lovtable : (tableName+'_'+f.id))+'"';
     }
-    _.forEach(fields.filter(function(f){return f.type==='lov'}), function(f, idx){
+    _.forEach(fields.filter(function(f){return f.type==='lov' || f.type==='list'}), function(f, idx){
         var t = lovTable(f);
         //create lov table
         sql+='CREATE TABLE '+t+
-            '(id serial NOT NULL, value text NOT NULL,'+
-                ' CONSTRAINT '+(tableName+'_'+f.id).toLowerCase()+'_pkey PRIMARY KEY (id));\n';
+            '(id serial NOT NULL, name text NOT NULL,'+
+                ' CONSTRAINT '+(tableName+'_'+f.id).toLowerCase()+'_pkey PRIMARY KEY (id));\n\n';
         // populate lov table
-        sql+='INSERT INTO '+t+'(id, value) VALUES ';
+        // possible icon or iconfont
+        sql+='INSERT INTO '+t+'(id, name) VALUES ';
         sql+=f.list.map(function(item){
             return '(' + item.id + ',\'' + item.text + '\')'
-        }).join(',\n')+';\n'
+        }).join(',\n')+';\n\n'
     })
 
     //}
-
-    console.log(sql);
 
     return sql;
 }

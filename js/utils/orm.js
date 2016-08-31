@@ -112,7 +112,7 @@ function sqlSelect(fields, collecs, table, action){
         tQuote = table ? 't1."' : '"';
     _.forEach(fields, function(f, idx){
         if(f.type==='lov' && action!=='C' && action!=='U'){
-            sqlfs.push('t'+(idx+2)+'.'+(f.lovcolumn ? f.lovcolumn : 'value')+' AS "'+f.id+'_txt"')
+            sqlfs.push('t'+(idx+2)+'.'+(f.lovcolumn ? f.lovcolumn : 'name')+' AS "'+f.id+'_txt"')
         } 
         sql = tQuote+f.column
         //if(f.type==='money'){
@@ -170,10 +170,10 @@ function sqlLOVs(fields){
     fields.forEach(function(f, idx){
         if(f.type==='lov' && f.lovtable){
             var tlov = 't'+(idx+2);
-            //var lovCol = f.lovcolumn || 'value';
+            var lovCol = f.lovcolumn || 'name';
             sql.from += ' LEFT JOIN '+schema+'."'+f.lovtable+'" AS '+tlov+
                         ' ON t1.'+f.column+'='+tlov+'.id'
-            //sql.select += ', '+tlov+'.'+lovCol+' AS "'+f.id+'_txt"'
+            sql.select += ', '+tlov+'.'+lovCol+' AS "'+f.id+'_txt"'
         }
     })
     return sql;
@@ -338,7 +338,7 @@ function chartMany(req, res) {
     if(m && fid){
         var f = m.fieldsH[fid];
         if(f.type==='lov' && f.lovtable){
-            var clov = f.lovcolumn||'value';
+            var clov = f.lovcolumn||'name';
             sql='SELECT t2.'+clov+'::text AS label, count(*)::integer '+
                 ' FROM '+m.schemaTable+' AS t1'+
                 ' LEFT JOIN '+schema+'.'+f.lovtable+' AS t2'+
