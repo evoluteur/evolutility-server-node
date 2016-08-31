@@ -7,14 +7,24 @@ Evolutility-Server is build to work with [Evolutility](http://evoluteur.github.i
 
 ## Installation
 
-You can use **NPM** to install Evolutility-Server as an [npm package](https://www.npmjs.com/package/evolutility-server):
+
+[**Download**](https://github.com/evoluteur/evolutility-server/archive/master.zip) or **clone** from GitHub.
+
+```bash
+# To get the latest stable version, use git from the command line.
+git clone https://github.com/evoluteur/evolutility-server
+```
+or
+
+Use **NPM** to install Evolutility-Server as an [npm package](https://www.npmjs.com/package/evolutility-server):
 
 ```bash
 # To get the latest stable version, use npm from the command line.
 npm install evolutility-server
 ```
+or
 
-You can also use **Bower** to install Evolutility.
+Use **Bower** to install Evolutility.
 
 ```bash
 # To get the latest stable version, use Bower from the command line.
@@ -24,11 +34,10 @@ bower install evolutility-server
 bower install evolutility-server#master
 ```
 
-... or **download** it from [GitHub](https://github.com/evoluteur/evolutility-server/archive/master.zip).
 
 ## Setup
 
-After installing Evolutility-server, follow these steps:
+After installing Evolutility-Server, follow these steps:
 
 1. Create a PostgreSQL database.
 
@@ -52,8 +61,9 @@ npm start
 
 ## Models
 
-Each database table accessible by the RESTful API must be defined in a model.
-Models contain the name of the driving table and a list of fields/columns.
+To be accessible by the REST API, each database table must be described in a model.
+Models contain the name of the driving table and a list of fields/columns present in the API.
+
 
 ### Entity
 
@@ -62,8 +72,8 @@ Models contain the name of the driving table and a list of fields/columns.
 | id           | Unique key to identify the entity (used as API parameter). |
 | table        | Database table name.                    |
 | fields       | Array of fields.                        |
-| titleField    | Field id for the column value used as record title. |            
-| searchFields  | Array of field ids identifing fields taking part in search. |      
+| groups       | Array of groups.                        |
+| titleField    | Field id for the column value used as record title. |      
 
 
 ### Field
@@ -72,11 +82,13 @@ Models contain the name of the driving table and a list of fields/columns.
 |--------------|---------------------------------------|
 | id           | Unique key for the field (can be the same as column but doesn't have to be). |
 | column       | Database column name for the field    |
+| lovtable     | Table to join to for field value (only for fields of "lov" type). |  
+| lovcolumn    | column for field value (only for fields of "lov" type). |  
 | type         | Field type is not a database column type but more a UI field type. Possible field types: <ul><li>boolean (yes/no)</li><li>date</li><li>datetime</li><li>decimal</li><li>document</li><li>email</li><li>image</li><li>integer</li><li>lov (list of values)</li><li>money</li><li>text</li><li>textmultiline</li><li>time</li><li>url</li></ul> |
 | required     | Determines if the field is required for saving.      |
-| readonly     | Prevents field modification.          |
-| lovtable     | Table to join to for field value (only for fields of "lov" type). |                        
-| inMany       | Determines if the field is present (by default) in lists of records. |
+| readonly     | Prevents field modification.          |                      
+| inMany       | Determines if the field is present (by default) in lists of records. | 
+
 
 ### Sample model
 
@@ -87,7 +99,6 @@ module.exports = {
     id: 'todo',
     table: 'task',
     titleField: 'title',
-    searchFields: ['title', 'description', 'notes'],
     fields: [
         {
             id: 'title', column: 'title', type: 'text', label: 'Title', required: true,
@@ -113,12 +124,9 @@ module.exports = {
             label: 'Description', 
             maxLength: 1000,
             inMany: false
-        },
-        {
-            id: 'notes', column: 'notes', type: 'textmultiline', label: 'Notes', maxLength: 1000,
-            inMany: false
         }
     ]
+  
 };
 
 ```
