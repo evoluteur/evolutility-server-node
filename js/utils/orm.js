@@ -20,7 +20,7 @@ var dbConfig = parseConnection(config.connectionString)
 dbConfig.max = 10; // max number of clients in the pool 
 dbConfig.idleTimeoutMillis = 30000; // how long a client is allowed to remain idle before being closed
 
-var schema = '"' + (config.schema || 'evol_demo') + '"';
+var schema = '"'+(config.schema || 'evol_demo')+'"';
 
 
 var pool = new pg.Pool(dbConfig);
@@ -31,6 +31,11 @@ pool.on('error', function (err, client) {
 
 function getModel(mId){
     var m = dico.prepModel(models[mId]);
+    m.fields.forEach(function(f, idx){
+        if(f.type==='lov'){
+            f.t2 = 't_'+idx
+        }
+    })
     m.schemaTable = schema+'."'+(m.table || m.id)+'"';
     return m;
 }
@@ -39,11 +44,11 @@ function sqlQuery(select, tables, where, group, order, limit){
     var sql = 'SELECT '+select+
         ' FROM '+tables;
     if(where.length){
-        sql+=' WHERE '+where.join(' AND ');
+        sql += ' WHERE '+where.join(' AND ');
     }
-    sql+=group ? ' GROUP BY '+group : '';
-    sql+=order ? ' ORDER BY '+order : '';
-    sql+=' LIMIT '+(limit||1000);
+    sql += group ? ' GROUP BY '+group : '';
+    sql += order ? ' ORDER BY '+order : '';
+    sql += ' LIMIT '+(limit||1000);
     return sql;
 }
 
@@ -112,8 +117,8 @@ function sqlSelect(fields, collecs, table, action){
         tQuote = table ? 't1."' : '"';
     _.forEach(fields, function(f, idx){
         if(f.type==='lov' && action!=='C' && action!=='U'){
-            sqlfs.push('t'+(idx+2)+'.'+(f.lovcolumn ? f.lovcolumn : 'name')+' AS "'+f.id+'_txt"')
-        } 
+            sqlfs.push(f.t2+'.'+(f.lovcolumn ? f.lovcolumn : 'name')+' AS "'+f.id+'_txt"')
+        }
         sql = tQuote+f.column
         //if(f.type==='money'){
             //sql += '"::money'
@@ -143,24 +148,34 @@ function sqlSelect(fields, collecs, table, action){
 // --------------------------------------------------------------------------------------
 
 function sqlOrderColumn(f){
-    // TODO: use this method in sqlFieldOrder
     if(f.type==='lov' && f.lovtable){
         return '"'+f.id+'_txt"';
     }else{
-        return '"'+(f.column || f.id)+'"';
+        var col = 't1."'+f.column+'"';
+        if(f.type==='boolean'){
+            return 'CASE WHEN '+col+'=TRUE THEN TRUE ELSE FALSE END'
+        }else{
+            return col;
+        }
+
     }
 }
-function sqlFieldOrder(m, fo){
+
+function sqlOrderFields(m, fullOrder){
     var fs = m.fields,
-        idx = fo.indexOf('.');
-    if(idx>-1){
-        var ff = fo.substring(0, idx),
-            fDirection = fo.substring(idx+1)==='desc'?' DESC':' ASC';
-        return 't1."'+fs[ff].column + '"'+fDirection;
-    }else{
-        return 't1."'+(fs[fo]?(fs[fo].column||fs[fo].id):'id') + '" ASC';
-    }
+        qos = fullOrder.split(',');
+
+    return qos.map(function(qo){
+        var ows = qo.split('.')
+        var col = sqlOrderColumn(m.fieldsH[ows[0]])
+        if(ows.length===1){
+            return col
+        }else{
+            return col + (ows[1]==='desc'?' DESC':' ASC')
+        }
+    }).join(',')
 }
+
 function sqlLOVs(fields){
     var sql = {
         select: '',
@@ -169,11 +184,11 @@ function sqlLOVs(fields){
     // add extra column (column+"_txt") for value of lov fields
     fields.forEach(function(f, idx){
         if(f.type==='lov' && f.lovtable){
-            var tlov = 't'+(idx+2);
-            var lovCol = f.lovcolumn || 'name';
+            //var lovCol = f.lovcolumn || 'name';
+            var tlov = f.t2;
             sql.from += ' LEFT JOIN '+schema+'."'+f.lovtable+'" AS '+tlov+
                         ' ON t1.'+f.column+'='+tlov+'.id'
-            sql.select += ', '+tlov+'.'+lovCol+' AS "'+f.id+'_txt"'
+            //sql.select += ', '+tlov+'.'+lovCol+' AS "'+f.id+'_txt"'
         }
     })
     return sql;
@@ -278,17 +293,15 @@ function sqlMany(m, req, allFields){
     var qOrder=req.query?req.query.order:null;
     if(qOrder){
         if(qOrder.indexOf(',')>-1){
-            var fl=qOrder.split(',');
-            sqlOrder+=_.map(fl, function(f){
-                    return sqlFieldOrder(m, f)
+            var qOs=qOrder.split(',');
+            sqlOrder+=_.map(qOs, function(qo){
+                    return sqlOrderFields(m, qo)
                 }).join(',');
         }else{
-            sqlOrder+=sqlFieldOrder(m, qOrder);
+            sqlOrder+=sqlOrderFields(m, qOrder);
         }
     }else{
-        var f = fs[0],
-            col = f.column || f.id;
-        sqlOrder = 't1."'+col+'" ASC';
+        sqlOrder = 't1."'+fs[0].column+'" ASC';
     }
 
     // ---- LIMITING & PAGINATION
@@ -326,6 +339,11 @@ function getMany(req, res) {
         runQuery(res, sql, sq.params, false, format, isCSV ? csvHeader(m.fields) : null);
     }
 }
+
+
+// --------------------------------------------------------------------------------------
+// -----------------    GET CHARTS   ----------------------------------------------------
+// --------------------------------------------------------------------------------------
 
 function chartMany(req, res) {
     logger.logReq('GET CHART', req);
