@@ -536,6 +536,42 @@ function deleteOne(req, res) {
 }
 
 
+// --------------------------------------------------------------------------------------
+// -----------------    LIST OF VALUES   ------------------------------------------------
+// --------------------------------------------------------------------------------------
+
+function lovOne(req, res) {
+    logger.logReq('LOV ONE', req);
+
+    var entity = req.params.entity,
+        m = getModel(entity),
+        fid = req.params.field,
+        f = m.fieldsH[fid];
+
+    if(m){
+        if(!f && fid===entity){
+            // -- if field id = entity id, then return the entity as a lov
+            f = {
+                id: 'entity',
+                lovcolumn: m.fields[0].column,
+                lovtable: m.table
+            }
+        }
+        if(f){
+            var col = f.lovcolumn||'name';
+            var sql='SELECT id, "'+col+'" as text FROM '+schema+'."'+f.lovtable+'" ORDER BY "'+col+'" ASC LIMIT 500;';
+            runQuery(res, sql, null, false);
+        }else{
+            res.json(logger.errorMsg('Invalid field \''+fid+'\'.', 'lovOne'));
+        }
+    }else{
+        res.json(logger.errorMsg('Invalid entity\''+entity+'\'.', 'lovOne'));
+    }
+
+}
+
+// --------------------------------------------------------------------------------------
+
 module.exports = {
 
     getMany: getMany,
@@ -544,6 +580,7 @@ module.exports = {
     updateOne: updateOne,
     deleteOne: deleteOne,
     
-    chartMany: chartMany
+    chartMany: chartMany,
+    lovOne: lovOne
 
 }

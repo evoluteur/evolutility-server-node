@@ -56,6 +56,19 @@ module.exports = {
 
 	logError: function(err){
 		console.error(err);
-	}
+	},
+
+	errorMsg: function(err, method){
+		if(consoleLog){
+			return {
+				error: err,
+				method: method
+			}
+		}else{
+			return {
+				error: 'Error'
+			}
+		}
+	},
 
 };

@@ -26,7 +26,7 @@ router.get('/', function(req, res, next) {
 
 // ======  GET MANY ====================================
 router.get(apiPath+':entity', orm.getMany);
-router.get(apiPath+'chart/:entity/:field', orm.chartMany);
+router.get(apiPath+':entity/chart/:field', orm.chartMany);
 
 // ======  GET ONE   ====================================index-
 router.get(apiPath+':entity/:id', orm.getOne);
@@ -40,5 +40,9 @@ router.put(apiPath+':entity/:id', orm.updateOne);
 
 // ======  DELETE ONE ====================================
 router.delete(apiPath+':entity/:id', orm.deleteOne);
+
+// ======  LOV ===========================================
+router.get(apiPath+':entity/lov/:field', orm.lovOne);
+
 
 module.exports = router;
