@@ -148,16 +148,18 @@ function sqlSelect(fields, collecs, table, action){
 // --------------------------------------------------------------------------------------
 
 function sqlOrderColumn(f){
-    if(f.type==='lov' && f.lovtable){
-        return '"'+f.id+'_txt"';
-    }else{
-        var col = 't1."'+f.column+'"';
-        if(f.type==='boolean'){
-            return 'CASE WHEN '+col+'=TRUE THEN TRUE ELSE FALSE END'
+    if(f){
+        if(f.type==='lov' && f.lovtable){
+            return '"'+f.id+'_txt"';
         }else{
-            return col;
+            var col = 't1."'+f.column+'"';
+            if(f.type==='boolean'){
+                return 'CASE WHEN '+col+'=TRUE THEN TRUE ELSE FALSE END'
+            }else{
+                return col;
+            }
         }
-
+        return 'id';
     }
 }
 
@@ -166,8 +168,9 @@ function sqlOrderFields(m, fullOrder){
         qos = fullOrder.split(',');
 
     return qos.map(function(qo){
-        var ows = qo.split('.')
-        var col = sqlOrderColumn(m.fieldsH[ows[0]])
+        var ows = qo.split('.');
+        var f=m.fieldsH[ows[0]];
+        var col = f ? sqlOrderColumn(f) : 'id' // -- sort by id if invalid param
         if(ows.length===1){
             return col
         }else{
@@ -355,26 +358,30 @@ function chartMany(req, res) {
 
     if(m && fid){
         var f = m.fieldsH[fid];
-        if(f.type==='lov' && f.lovtable){
-            var clov = f.lovcolumn||'name';
-            sql='SELECT t2.'+clov+'::text AS label, count(*)::integer '+
-                ' FROM '+m.schemaTable+' AS t1'+
-                ' LEFT JOIN '+schema+'.'+f.lovtable+' AS t2'+
-                    ' ON t1.'+f.column+'=t2.id';
-        }else{
-            var attr =  '"'+f.column+'"';
-            if(f.type==='boolean'){
-                attr='CASE '+attr+' WHEN true THEN \'Yes\' ELSE \'No\' END'
+        if(f){
+            if(f.type==='lov' && f.lovtable){
+                var clov = f.lovcolumn||'name';
+                sql='SELECT t2.'+clov+'::text AS label, count(*)::integer '+
+                    ' FROM '+m.schemaTable+' AS t1'+
+                    ' LEFT JOIN '+schema+'.'+f.lovtable+' AS t2'+
+                        ' ON t1.'+f.column+'=t2.id';
+            }else{
+                var lbl = '"'+f.column+'"';
+                if(f.type==='boolean'){
+                    lbl='CASE '+lbl+' WHEN true THEN \'Yes\' ELSE \'No\' END'
+                }
+                sql='SELECT '+lbl+'::text AS label, count(*)::integer '+
+                    ' FROM '+m.schemaTable+' AS t1';
             }
-            sql='SELECT '+attr+'::text AS label, count(*)::integer '+
-                ' FROM '+m.schemaTable+' AS t1';
-        }
-        sql += ' GROUP BY label'+
-                //' ORDER BY count(*) DESC'+
-                ' ORDER BY label ASC'+
-                ' LIMIT 50;';
+            sql += ' GROUP BY label'+
+                    //' ORDER BY count(*) DESC'+
+                    ' ORDER BY label ASC'+
+                    ' LIMIT 50;';
 
-        runQuery(res, sql, sqlParams, false);
+            runQuery(res, sql, sqlParams, false);
+        }
+    }else{
+        return res.json(logger.errorMsg('Invalid entity or field.', 'chartMany'));
     }
 
 }
@@ -399,6 +406,8 @@ function getOne(req, res) {
                 ' LIMIT 1;';
 
         runQuery(res, sql, sqlParams, true);        
+    }else{
+        return res.json(logger.errorMsg('Invalid entity \''+entity+'\'or field\''+fid+'\'.', 'getOne'));
     }
     
 }
