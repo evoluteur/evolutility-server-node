@@ -1,7 +1,9 @@
 {
   "name": "evolutility-server",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Evolutility RESTful API for CRUD and more.",
+  "copyright": "(c) 2016 Olivier Giulieri",
+  "license": "MIT",
   "main": [
     "app.js"
   ],
