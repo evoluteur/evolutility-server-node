@@ -41,7 +41,7 @@ After installing Evolutility-Server, follow these steps:
 
 1. Create a PostgreSQL database.
 
-2. In the file config.js set the PostgreSQL connection string and a schema name to access your new database.
+2. In the file config.js set the PostgreSQL connection string and the schema name to access your new database.
 
 3. In the command line type the following:
 
@@ -57,7 +57,8 @@ npm start
 
 ```
 
-4. In a web browser go to the url [http://localhost:3000/api/v1/evolutility/todo](http://localhost:3000/api/v1/evolutility/todo).
+In a web browser, go to the url [http://localhost:3000/api/v1/evolutility/todo](http://localhost:3000/api/v1/evolutility/todo).
+
 
 ## Models
 
@@ -140,6 +141,15 @@ When running Evolutility-Server locally, the url for the "todo" app is
 
 ### Requesting Information
 
+#### Get One
+To get a specific record by ID, use "< ObjectName >/ID".
+
+```
+GET /<object>/<id>
+
+GET /todo/12
+```
+
 #### Get Many
 Every model is exposed. You can query lists of items by using the model ID.
 
@@ -148,17 +158,6 @@ GET /<object>
 
 GET /todo
 ```
-
-
-#### Get One
-To get a specific item by ID, use /ID.
-
-```
-GET /<object>/<id>
-
-GET /todo/12
-```
-
 
 #### Filtering
 You can filter result rows by adding conditions on fields, each condition is a query string parameter. 
@@ -196,6 +195,7 @@ These operators are available:
 #### Ordering
 
 The reserved word "order" reorders the response rows. It uses a comma-separated list of fields and directions:
+
 ```
 GET /<object>?order=<field.id>.<asc/desc>
 
@@ -210,6 +210,7 @@ GET /todo?order=duedate
 
 
 The reserved words "page" and "pageSize" limits the response rows.
+
 ```
 GET /<object>?page=<pageindex>&pageSize=<pagesize>
 
@@ -253,6 +254,31 @@ DELETE /<object>/<id>
 
 DELETE /todo/5
 ```
+
+### Extras endpoints
+
+In addition to CRUD, Evolutility-Server provides endpoints for Charts and Lists of values.
+
+#### Charts
+
+For charts data, it is possible to get aggregated data.
+
+```
+GET /<object>/chart/<field id>
+
+GET /todo/chart/category
+```
+
+#### Lists of Values
+
+Fields that are represented as dropdown in the UI (field.type="lov" in the model) need an API for list of values.
+
+```
+GET /<object>/lov/<field id>
+
+GET /todo/lov/category
+```
+
 
 ## License
 
