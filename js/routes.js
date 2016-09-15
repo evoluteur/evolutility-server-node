@@ -28,7 +28,7 @@ router.get('/', function(req, res, next) {
 router.get(apiPath+':entity', orm.getMany);
 router.get(apiPath+':entity/chart/:field', orm.chartMany);
 
-// ======  GET ONE   ====================================index-
+// ======  GET ONE   ====================================
 router.get(apiPath+':entity/:id', orm.getOne);
 
 // ======  INSERT ONE ====================================

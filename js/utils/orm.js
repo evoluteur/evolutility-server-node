@@ -22,14 +22,14 @@ dbConfig.idleTimeoutMillis = 30000; // how long a client is allowed to remain id
 
 var schema = '"'+(config.schema || 'evol_demo')+'"';
 
-
 var pool = new pg.Pool(dbConfig);
 
 pool.on('error', function (err, client) {
   console.error('idle client error', err.message, err.stack)
 })
 
-function getModel(mId){
+function getModel(mId){ 
+// - return a model enhanced w/ hashs
     var m = dico.prepModel(models[mId]);
     m.fields.forEach(function(f, idx){
         if(f.type==='lov'){
@@ -53,6 +53,7 @@ function sqlQuery(select, tables, where, group, order, limit){
 }
 
 function runQuery(res, sql, values, singleRecord, format, header){
+// - run a query and return the result in request
     var results = [];
 
     // Get a Postgres client from the connection pool 
@@ -98,6 +99,7 @@ function runQuery(res, sql, values, singleRecord, format, header){
 }
 
 function csvHeader(fields){
+// - build the header row for CSV export
     var h = {'id': 'ID'},
         lovs = {}
     _.forEach(fields, function(f){
@@ -112,6 +114,7 @@ function csvHeader(fields){
 }
 
 function sqlSelect(fields, collecs, table, action){
+// - generate the SELECT clause
     var sql,
         sqlfs=[],
         tQuote = table ? 't1."' : '"';
@@ -148,6 +151,7 @@ function sqlSelect(fields, collecs, table, action){
 // --------------------------------------------------------------------------------------
 
 function sqlOrderColumn(f){
+// - generate sql ORDER BY clause for 1 field
     if(f){
         if(f.type==='lov' && f.lovtable){
             return '"'+f.id+'_txt"';
@@ -164,6 +168,7 @@ function sqlOrderColumn(f){
 }
 
 function sqlOrderFields(m, fullOrder){
+// - generate sql ORDER BY clause for many fields
     var fs = m.fields,
         qos = fullOrder.split(',');
 
@@ -179,19 +184,13 @@ function sqlOrderFields(m, fullOrder){
     }).join(',')
 }
 
-function sqlLOVs(fields){
-    var sql = {
-        select: '',
-        from: ''
-    }
-    // add extra column (column+"_txt") for value of lov fields
+function sqlFromLOVs(fields){
+// - generates list of joined tables for lov fields
+    var sql = '';
     fields.forEach(function(f, idx){
         if(f.type==='lov' && f.lovtable){
-            //var lovCol = f.lovcolumn || 'name';
-            var tlov = f.t2;
-            sql.from += ' LEFT JOIN '+schema+'."'+f.lovtable+'" AS '+tlov+
-                        ' ON t1.'+f.column+'='+tlov+'.id'
-            //sql.select += ', '+tlov+'.'+lovCol+' AS "'+f.id+'_txt"'
+            sql += ' LEFT JOIN '+schema+'."'+f.lovtable+'" AS '+f.t2+
+                        ' ON t1."'+f.column+'"='+f.t2+'.id'
         }
     })
     return sql;
@@ -203,12 +202,7 @@ function sqlMany(m, req, allFields){
 
     // ---- SELECTION
     var sqlSel = 't1.id, '+sqlSelect(fs, false, true);
-    var sqlFrom = m.schemaTable + ' AS t1';
-
-    // ---- LISTS OF VALUES
-    var lovs = sqlLOVs(fs)
-    sqlSel += lovs.select
-    sqlFrom += lovs.from
+    var sqlFrom = m.schemaTable + ' AS t1' + sqlFromLOVs(fs);
 
     // ---- FILTERING
     var sqlOperators = {
@@ -398,10 +392,9 @@ function getOne(req, res) {
         id = req.params.id;
 
     if(m && id){
-        var lovs = sqlLOVs(m.fields),
-            sqlParams = [id]
-        var sql='SELECT t1.id, '+sqlSelect(m.fields, m.collecs, true)+lovs.select+
-                ' FROM '+m.schemaTable+' AS t1'+lovs.from+
+        var sqlParams = [id];
+        var sql='SELECT t1.id, '+sqlSelect(m.fields, m.collecs, true)+
+                ' FROM '+m.schemaTable+' AS t1'+sqlFromLOVs(m.fields)+
                 ' WHERE t1.id=$1'+
                 ' LIMIT 1;';
 
@@ -412,12 +405,12 @@ function getOne(req, res) {
     
 }
 
-
 // --------------------------------------------------------------------------------------
 // -----------------    INSERT ONE   ----------------------------------------------------
 // --------------------------------------------------------------------------------------
 
 function prepData(m, req, fnName, action){
+// - generates lists of names and values (for insert or update)
     var ns = [],
         vs = [];
 
@@ -559,13 +552,17 @@ function lovOne(req, res) {
         }
         if(f){
             var col = f.lovcolumn||'name';
-            var sql='SELECT id, "'+col+'" as text FROM '+schema+'."'+f.lovtable+'" ORDER BY "'+col+'" ASC LIMIT 500;';
+            var sql='SELECT id, "'+col+'" as text'
+            if(f.lovicon){
+                sql+=',icon'
+            }
+            sql+=' FROM '+schema+'."'+f.lovtable+'" ORDER BY "'+col+'" ASC LIMIT 500;';
             runQuery(res, sql, null, false);
         }else{
             res.json(logger.errorMsg('Invalid field \''+fid+'\'.', 'lovOne'));
         }
     }else{
-        res.json(logger.errorMsg('Invalid entity\''+entity+'\'.', 'lovOne'));
+        res.json(logger.errorMsg('Invalid entity \''+entity+'\'.', 'lovOne'));
     }
 
 }
@@ -574,12 +571,14 @@ function lovOne(req, res) {
 
 module.exports = {
 
+    // - CRUD
     getMany: getMany,
     getOne: getOne,
     insertOne: insertOne,
     updateOne: updateOne,
     deleteOne: deleteOne,
     
+    // - Charts and LOVs
     chartMany: chartMany,
     lovOne: lovOne
 
