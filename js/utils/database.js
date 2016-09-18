@@ -54,11 +54,13 @@ function m2db(mid){
                     sql0+='double precision';
                     break;
                 case 'date':
-                case 'datetime':
                     sql0+='date';
                     break;
+                case 'datetime':
+                    sql0+='timestamp without time zone';
+                    break;
                 case 'time': 
-                    sql0+='time with time zone';
+                    sql0+='time without time zone';
                     break;
                 case 'lov': 
                     sql0+='integer';
@@ -90,7 +92,7 @@ function m2db(mid){
     }
 
     sql = 'CREATE TABLE '+tableNameSchema+'(\n' + fs.join(',\n') + ');\n';
-    sql+=sqlIdx;
+    sql += sqlIdx;
 
     // -- insert sample data
     _.each(data[mid], function(row, idx){
@@ -122,7 +124,7 @@ function m2db(mid){
                 fn = f.column || f.id;
             }
         }
-        sql+='('+ns.join(',')+') values('+vs.join(',')+');\n';
+        sql+='('+ns.join(',')+') values('+vs.join(',')+');\n\n';
     });
 
     //if(tableName!='test'){
