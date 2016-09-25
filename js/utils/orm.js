@@ -21,6 +21,8 @@ dbConfig.max = 10; // max number of clients in the pool
 dbConfig.idleTimeoutMillis = 30000; // how long a client is allowed to remain idle before being closed
 
 var schema = '"'+(config.schema || 'evol_demo')+'"';
+var defaultPageSize = config.pageSize || 50
+var lovSize = config.lovSize || 100
 
 var pool = new pg.Pool(dbConfig);
 
@@ -48,7 +50,7 @@ function sqlQuery(select, tables, where, group, order, limit){
     }
     sql += group ? ' GROUP BY '+group : '';
     sql += order ? ' ORDER BY '+order : '';
-    sql += ' LIMIT '+(limit||1000);
+    sql += ' LIMIT '+(limit || defaultPageSize);
     return sql;
 }
 
@@ -304,14 +306,14 @@ function sqlMany(m, req, allFields){
     // ---- LIMITING & PAGINATION
     var sqlLimit='',
         qPage=req.query.page||0, 
-        qPageSize=req.query.pageSize>0 ? req.query.pageSize : 50;
+        qPageSize=req.query.pageSize>0 ? parseInt(req.query.pageSize, 10) : defaultPageSize;
     if(qPage){
         sqlLimit=' LIMIT '+qPageSize+
             ' OFFSET '+(qPage*qPageSize);
     }else{
         sqlLimit=' LIMIT '+qPageSize;
     }
-
+ 
     return {
         select: sqlSel,
         from: sqlFrom,
@@ -370,7 +372,7 @@ function chartMany(req, res) {
             sql += ' GROUP BY label'+
                     //' ORDER BY count(*) DESC'+
                     ' ORDER BY label ASC'+
-                    ' LIMIT 50;';
+                    ' LIMIT '+defaultPageSize+';';
 
             runQuery(res, sql, sqlParams, false);
         }
@@ -556,7 +558,7 @@ function lovOne(req, res) {
             if(f.lovicon){
                 sql+=',icon'
             }
-            sql+=' FROM '+schema+'."'+f.lovtable+'" ORDER BY "'+col+'" ASC LIMIT 500;';
+            sql+=' FROM '+schema+'."'+f.lovtable+'" ORDER BY "'+col+'" ASC LIMIT '+lovSize+';';
             runQuery(res, sql, null, false);
         }else{
             res.json(logger.errorMsg('Invalid field \''+fid+'\'.', 'lovOne'));
