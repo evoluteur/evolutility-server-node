@@ -127,27 +127,25 @@ function m2db(mid){
         sql+='('+ns.join(',')+') values('+vs.join(',')+');\n\n';
     });
 
-    //if(tableName!='test'){
-
     // add lov tables
     function lovTable(f){
         return schema+'."'+(f.lovtable ? f.lovtable : (tableName+'_'+f.id))+'"';
     }
     _.forEach(fields.filter(function(f){return f.type==='lov' || f.type==='list'}), function(f, idx){
         var t = lovTable(f);
-        //create lov table
-        sql+='CREATE TABLE '+t+
+        // - create lov table
+        // TODO: iconfont
+        sql += 'CREATE TABLE '+t+
             '(id serial NOT NULL, name text NOT NULL,'+
+                (f.lovicon ? ' icon text,' : '')+
                 ' CONSTRAINT '+(tableName+'_'+f.id).toLowerCase()+'_pkey PRIMARY KEY (id));\n\n';
         // populate lov table
-        // possible icon or iconfont
-        sql+='INSERT INTO '+t+'(id, name) VALUES ';
-        sql+=f.list.map(function(item){
-            return '(' + item.id + ',\'' + item.text + '\')'
+        sql += 'INSERT INTO '+t+'(id, name'+(f.lovicon ? ', icon' : '')+') VALUES ';
+        sql += f.list.map(function(item){
+            return '(' + item.id + ',' + stringValue(item.text) + 
+                (f.lovicon ? (',\'' + item.icon + '\'') : '') + ')'
         }).join(',\n')+';\n\n'
     })
-
-    //}
 
     return sql;
 }
