@@ -432,10 +432,8 @@ function prepData(m, req, fnName, action){
                     case 'date':
                     case 'time':
                     case 'datetime':
-                        if(fv===''){
-                            fv=null;
-                        }
-                        vs.push(fv);
+                    case 'lov':
+                        vs.push((!fv)?null:fv);
                         ns.push(fnName(f, vs.length));
                         break;
                     default:
