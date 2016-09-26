@@ -357,10 +357,11 @@ function chartMany(req, res) {
         if(f){
             if(f.type==='lov' && f.lovtable){
                 var clov = f.lovcolumn||'name';
-                sql='SELECT t2.'+clov+'::text AS label, count(*)::integer '+
+                sql='SELECT t2.id, t2.'+clov+'::text AS label, count(*)::integer '+
                     ' FROM '+m.schemaTable+' AS t1'+
                     ' LEFT JOIN '+schema+'.'+f.lovtable+' AS t2'+
                         ' ON t1.'+f.column+'=t2.id';
+                        sql += ' GROUP BY t2.id, label'
             }else{
                 var lbl = '"'+f.column+'"';
                 if(f.type==='boolean'){
@@ -368,9 +369,9 @@ function chartMany(req, res) {
                 }
                 sql='SELECT '+lbl+'::text AS label, count(*)::integer '+
                     ' FROM '+m.schemaTable+' AS t1';
+                sql += ' GROUP BY label'
             }
-            sql += ' GROUP BY label'+
-                    //' ORDER BY count(*) DESC'+
+            sql += //' ORDER BY count(*) DESC'+
                     ' ORDER BY label ASC'+
                     ' LIMIT '+defaultPageSize+';';
 
