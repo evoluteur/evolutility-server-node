@@ -307,7 +307,11 @@ function sqlMany(m, req, allFields){
             sqlOrder+=sqlOrderFields(m, qOrder);
         }
     }else{
-        sqlOrder = 't1."'+fs[0].column+'" ASC';
+        var fCol='t1."'+fs[0].column+'"';
+        if(fs[0].type==='text'){
+            fCol='UPPER('+fCol+')';
+        }
+        sqlOrder = fCol+' ASC';
     }
 
     // ---- LIMITING & PAGINATION
