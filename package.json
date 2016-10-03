@@ -1,6 +1,7 @@
 {
   "name": "evolutility-server",
-  "version": "0.2.3",
+  "version": "0.2.4",
+  "description": "Evolutility RESTful API for CRUD and more.",
   "copyright": "(c) 2016 Olivier Giulieri",
   "license": "MIT",
   "homepage": "https://github.com/evoluteur/evolutility-server",
@@ -18,9 +19,11 @@
   },
   "keywords": [
     "REST",
+    "model-driven",
     "metadata",
     "server",
     "API",
+    "Express",
     "Postgres",
     "NodeJS"
   ],
