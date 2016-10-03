@@ -58,7 +58,7 @@ function hById(arr){
 function getFields(uiModel) {
 	var fs = [];
 
-	function collectFields(te) {
+	function collateFields(te) {
 		if (te && te.elements && te.elements.length > 0) {
 			te.elements.forEach(function(te) {
 				if (te.type != 'panel-list') {
@@ -75,7 +75,7 @@ function getFields(uiModel) {
 	if(uiModel.fields){
 		return uiModel.fields;
 	}else{
-		collectFields(uiModel);
+		collateFields(uiModel);
 		uiModel.fields=fs;
 		return fs;
 	}

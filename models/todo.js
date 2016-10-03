@@ -5,15 +5,18 @@ module.exports = {
     searchFields: ['title', 'description', 'notes'],
     fields: [
         {
-            id: 'title', column: 'title', type: 'text', label: 'Title', required: true,
+            id: 'title', column: 'title', type: 'text', 
+            label: 'Title', required: true,
             maxLength: 255,
             inMany: true
         },
         {
-            id: 'duedate', column: 'duedate', type: 'date', label: 'Due Date', inMany: true
+            id: 'duedate', column: 'duedate', type: 'date', 
+            label: 'Due Date', inMany: true
         },
         {
-            id: 'category', column: 'category_id', type: 'lov', label: 'Category', inMany: true,
+            id: 'category', column: 'category_id', type: 'lov', 
+            label: 'Category', inMany: true,
             lovtable: 'task_category',
             list: [
                 {id: 1, text: 'Home'},
@@ -24,7 +27,8 @@ module.exports = {
             ]
         },
         {
-            id: 'priority', column: 'priority_id', type: 'lov', label: 'Priority', 
+            id: 'priority', column: 'priority_id', type: 'lov', 
+            label: 'Priority', 
             required: true, inMany: true,
             lovtable: 'task_priority',
             list: [
@@ -36,17 +40,20 @@ module.exports = {
             ]
         },
         {
-            id: 'complete', column: 'complete', type: 'boolean', width: 100, inMany: true,
+            id: 'complete', column: 'complete', type: 'boolean', 
+            width: 100, inMany: true,
             label: 'Complete'
         },
         {
-            id: 'description', column: 'description', type: 'textmultiline', 
+            id: 'description', column: 'description', 
+            type: 'textmultiline', 
             label: 'Description', 
             maxLength: 1000,
             inMany: false
         },
         {
-            id: 'notes', column: 'notes', type: 'textmultiline', label: 'Notes', maxLength: 1000,
+            id: 'notes', column: 'notes', type: 'textmultiline', 
+            label: 'Notes', maxLength: 1000,
             inMany: false
         }
     ]
