@@ -85,8 +85,11 @@ function runQuery(res, sql, values, singleRecord, format, header){
                 }else{
                     return res.csv(results);
                 }
+            }else if(singleRecord){
+                return res.json(results[0]);
             }else{
-                return res.json(singleRecord ? results[0] : results);
+                // res.setHeader('_full_count', 'aaaaaa')
+                return res.json(results);
             }
         });
 
@@ -201,12 +204,15 @@ function sqlFromLOVs(fields){
     return sql;
 }
 
-function sqlMany(m, req, allFields){
+function sqlMany(m, req, allFields, wCount){
     var fs=allFields ? m.fields : m.fields.filter(dico.isFieldMany)
     var sqlParams=[];
 
     // ---- SELECTION
-    var sqlSel = 't1.id, '+sqlSelect(fs, false, true);
+    var sqlSel = 't1.id, '+sqlSelect(fs, false, true)
+    if(wCount){
+        sqlSel += ',count(*) OVER()::integer AS _full_count';
+    }
     var sqlFrom = m.schemaTable + ' AS t1' + sqlFromLOVs(fs);
 
     // ---- FILTERING
@@ -337,12 +343,11 @@ function sqlMany(m, req, allFields){
 
 function getMany(req, res) {
     logger.logReq('GET MANY', req);
-
     var m = getModel(req.params.entity);
     if(m){
         var format = req.query.format || null,
             isCSV = format==='csv',
-            sq = sqlMany(m, req, isCSV),
+            sq = sqlMany(m, req, isCSV, !isCSV),
             sql = sqlQuery(sq);
 
         runQuery(res, sql, sq.params, false, format, isCSV ? csvHeader(m.fields) : null);
@@ -379,7 +384,7 @@ function chartMany(req, res) {
                 }
                 sql='SELECT '+lbl+'::text AS label, count(*)::integer '+
                     ' FROM '+m.schemaTable+' AS t1';
-                sql += ' GROUP BY label'
+                sql += ' GROUP BY '+lbl;
             }
             sql += //' ORDER BY count(*) DESC'+
                     ' ORDER BY label ASC'+
