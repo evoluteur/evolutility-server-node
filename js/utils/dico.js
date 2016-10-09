@@ -39,12 +39,14 @@ function fieldIsNumber(f){
 }
 
 function fieldInCharts(f) {
-	return (_.isUndefined(f.inCharts) || f.inCharts) && fieldChartable(f);
+	return //(_.isUndefined(f.inCharts) || f.inCharts) && 
+		fieldChartable(f);
 }
 
 function fieldChartable(f) { 
-	return  f.type===fts.lov || f.type===fts.list || 
-			f.type===fts.bool || fieldIsNumber(f);
+	return  (f.type===fts.lov || f.type===fts.list || 
+				f.type===fts.bool || fieldIsNumber(f)) &&
+			!f.noCharts;
 }
 
 function hById(arr){
@@ -62,7 +64,7 @@ function getFields(uiModel) {
 		if (te && te.elements && te.elements.length > 0) {
 			te.elements.forEach(function(te) {
 				if (te.type != 'panel-list') {
-					collectFields(te);
+					collateFields(te);
 				}
 			});
 		} else { 
@@ -119,8 +121,8 @@ module.exports = {
 		if(!m.fieldsH){
 			m.fieldsH = hById(m.fields);
 		}
-		if(!m.collecs){
-			m.collecs = getSubCollecs(m);
+		if(m.collecs && !m.collecsH){
+			m.collecsH = hById(m.collecs);
 		}
 		return m;
 	},
