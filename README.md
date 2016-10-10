@@ -22,17 +22,6 @@ Use **NPM** to install Evolutility-Server as an [npm package](https://www.npmjs.
 # To get the latest stable version, use npm from the command line.
 npm install evolutility-server
 ```
-or
-
-Use **Bower** to install Evolutility.
-
-```bash
-# To get the latest stable version, use Bower from the command line.
-bower install evolutility-server
-
-# To get the most recent, latest committed-to-master version use:
-bower install evolutility-server#master
-```
 
 
 ## Setup
