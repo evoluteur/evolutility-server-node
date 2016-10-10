@@ -375,8 +375,8 @@ function chartMany(req, res) {
                 sql='SELECT t2.id, t2.'+clov+'::text AS label, count(*)::integer '+
                     ' FROM '+m.schemaTable+' AS t1'+
                     ' LEFT JOIN '+schema+'.'+f.lovtable+' AS t2'+
-                        ' ON t1.'+f.column+'=t2.id';
-                        sql += ' GROUP BY t2.id, label'
+                        ' ON t1.'+f.column+'=t2.id'+
+                    ' GROUP BY t2.id, t2.'+clov
             }else{
                 var lbl = '"'+f.column+'"';
                 if(f.type==='boolean'){
