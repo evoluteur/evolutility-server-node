@@ -2,7 +2,9 @@
 
 Micro-ORM with integrated RESTful API for CRUD (Create, Read, Update, Delete) and more using Node.js, Express and PostgreSQL. 
 
-Evolutility-Server is build to work with [Evolutility](http://evoluteur.github.io/evolutility/index.html) or [React-Evolutility](http://github.com/evoluteur/react-evolutility) but could also work with your UI.
+Evolutility-Server provides all REST endpoints for CRUD and simple charts based on models rather than code. 
+It is build to work with [React-Evolutility](http://github.com/evoluteur/react-evolutility) 
+which provides the matching UI, but could also work with your UI.
 
 
 ## Installation
