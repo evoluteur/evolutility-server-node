@@ -218,6 +218,7 @@ GET /<object>?format=csv
 
 GET /todo?format=csv
 ```
+Note: In the returned data every object has an extra property "\_full_count" which indicate the total number of records in the query (before limit).
 
 ### Updating Data
 
