@@ -1,9 +1,10 @@
 # Evolutility-Server
 
-Micro-ORM with integrated RESTful API for CRUD (Create, Read, Update, Delete) and more using Node.js, Express and PostgreSQL. 
+Model-driven RESTful API for CRUD (Create, Read, Update, Delete) and more using Node.js, Express and PostgreSQL. 
 
-Evolutility-Server provides all REST endpoints for CRUD and simple charts based on models rather than code. 
-It is build to work with [React-Evolutility](http://github.com/evoluteur/react-evolutility) 
+Evolutility-Server provides all REST endpoints for CRUD and simple charts based on models rather than code.
+ 
+Evolutility-Server is build to work with [React-Evolutility](http://github.com/evoluteur/react-evolutility) 
 which provides the matching UI, but could also work with your UI.
 
 
@@ -54,7 +55,7 @@ In a web browser, go to the url [http://localhost:3000/api/v1/evolutility/todo](
 ## Models
 
 To be accessible by the REST API, each database table must be described in a model.
-Models contain the name of the driving table and a list of fields/columns present in the API.
+Models contain the name of the driving table and the list of fields/columns present in the API.
 
 
 ### Entity
@@ -65,7 +66,8 @@ Models contain the name of the driving table and a list of fields/columns presen
 | table        | Database table name.                    |
 | fields       | Array of fields.                        |
 | groups       | Array of groups.                        |
-| titleField    | Field id for the column value used as record title. |      
+| titleField    | Field id for the column value used as record title. |
+| searchFields    | Array of field ids for fields used to perform searches.  |  
 
 
 ### Field
@@ -81,6 +83,7 @@ Models contain the name of the driving table and a list of fields/columns presen
 | readonly     | Prevents field modification.          |                      
 | inMany       | Determines if the field is present (by default) in lists of records. | 
 
+Notes: More field properties (unique, min, max, minLength, maxLength...) will be added later.
 
 ### Sample model
 
@@ -218,7 +221,7 @@ GET /<object>?format=csv
 
 GET /todo?format=csv
 ```
-Note: In the returned data every object has an extra property "\_full_count" which indicate the total number of records in the query (before limit).
+Notes: In the returned data every object has an extra property "\_full_count" which indicate the total number of records in the query (before limit).
 
 ### Updating Data
 
@@ -263,7 +266,7 @@ GET /todo/chart/category
 
 #### Lists of Values
 
-Fields that are represented as dropdown in the UI (field.type="lov" in the model) need an API for list of values.
+Dropdown fields in the UI (field.type="lov" in the model) have a REST endpoint to get the list of values for dropdowns.
 
 ```
 GET /<object>/lov/<field id>
