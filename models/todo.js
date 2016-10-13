@@ -50,11 +50,6 @@ module.exports = {
             label: 'Description', 
             maxLength: 1000,
             inMany: false
-        },
-        {
-            id: 'notes', column: 'notes', type: 'textmultiline', 
-            label: 'Notes', maxLength: 1000,
-            inMany: false
         }
     ]
 };
