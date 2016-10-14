@@ -322,11 +322,16 @@ function sqlMany(m, req, allFields, wCount){
 
     // ---- LIMITING & PAGINATION
     var offset=0,
-        qPage=req.query.page||0, 
-        qPageSize=req.query.pageSize>0 ? parseInt(req.query.pageSize, 10) : defaultPageSize;
+        query=req.query,
+        qPage=query.page||0, 
+        qPageSize;
 
-    if(qPage){
-        offset=qPage*qPageSize;
+    var format = query.format || null;
+    if(format==='csv'){
+        qPageSize = config.csvSize || 1000;
+    }else if(qPage){
+        qPageSize=query.pageSize>0 ? parseInt(query.pageSize, 10) : defaultPageSize;
+        offset = qPage*qPageSize;
     }
 
     return {

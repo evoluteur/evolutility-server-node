@@ -6,5 +6,6 @@ module.exports = {
 	schema: 'evol_demo',
 	consoleLog: true,
 	pageSize: 50,
+	csvSize: 1000,
 	lovSize: 100
 };
