@@ -289,11 +289,12 @@ function sqlMany(m, req, allFields, wCount){
     if(req.query.search){
         var paramSearch = false;
         var sqlWsSearch = [];
+
         if(m.searchFields && _.isArray(m.searchFields)){
             logger.logObject('search fields', m.searchFields);
             var sqlP='"'+sqlOperators.ct+'($'+(sqlParams.length+1)+')';
-            _.forEach(m.searchFields, function(m){
-                sqlWsSearch.push('t1."'+fieldsH[m].column+sqlP);
+            _.forEach(m.searchFields, function(fid){
+                sqlWsSearch.push('t1."'+m.fieldsH[fid].column+sqlP);
             });
             sqlParams.push('%'+req.query.search.replace(/%/g, '\%')+'%');
             sqlWs.push('('+sqlWsSearch.join(' OR ')+')');
