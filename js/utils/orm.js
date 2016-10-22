@@ -378,7 +378,7 @@ function chartMany(req, res) {
         if(f){
             if(f.type==='lov' && f.lovtable){
                 var clov = f.lovcolumn||'name';
-                sql='SELECT t2.id, t2.'+clov+'::text AS label, count(*)::integer '+
+                sql='SELECT t2.id, t2.'+clov+'::text AS label, count(*)::integer AS value'+
                     ' FROM '+m.schemaTable+' AS t1'+
                     ' LEFT JOIN '+schema+'.'+f.lovtable+' AS t2'+
                         ' ON t1.'+f.column+'=t2.id'+
@@ -388,12 +388,11 @@ function chartMany(req, res) {
                 if(f.type==='boolean'){
                     lbl='CASE '+lbl+' WHEN true THEN \'Yes\' ELSE \'No\' END'
                 }
-                sql='SELECT '+lbl+'::text AS label, count(*)::integer '+
+                sql='SELECT '+lbl+'::text AS label, count(*)::integer AS value'+
                     ' FROM '+m.schemaTable+' AS t1';
                 sql += ' GROUP BY '+lbl;
             }
-            sql += //' ORDER BY count(*) DESC'+
-                    ' ORDER BY label ASC'+
+            sql += ' ORDER BY label ASC'+
                     ' LIMIT '+defaultPageSize+';';
 
             runQuery(res, sql, sqlParams, false);
