@@ -13,16 +13,16 @@ var pg = require('pg'),
     dico = require('./dico'),
     logger = require('./logger');
 
-var config = require('../../config.js');
-var models = require('../../models/all_models');
+var config = require('../../config.js'),
+    models = require('../../models/all_models');
 
 var dbConfig = parseConnection(config.connectionString)
 dbConfig.max = 10; // max number of clients in the pool 
 dbConfig.idleTimeoutMillis = 30000; // how long a client is allowed to remain idle before being closed
 
-var schema = '"'+(config.schema || 'evol_demo')+'"';
-var defaultPageSize = config.pageSize || 50
-var lovSize = config.lovSize || 100
+var schema = '"'+(config.schema || 'evol_demo')+'"',
+    defaultPageSize = config.pageSize || 50,
+    lovSize = config.lovSize || 100;
 
 var pool = new pg.Pool(dbConfig);
 
@@ -210,6 +210,7 @@ function sqlMany(m, req, allFields, wCount){
 
     // ---- SELECTION
     var sqlSel = 't1.id, '+sqlSelect(fs, false, true)
+    // - full_count is included after
     if(wCount){
         sqlSel += ',count(*) OVER()::integer AS _full_count';
     }
@@ -301,6 +302,15 @@ function sqlMany(m, req, allFields, wCount){
         }
     }
 
+    // ---- RECORD COUNT (added to selection)
+    if(wCount){
+        if(sqlWs.length){
+            sqlSel += ',(SELECT count(*) FROM '+m.schemaTable+')::integer AS _full_count';
+        }else{
+            sqlSel += ',count(*) OVER()::integer AS _full_count';
+        }
+    }
+    
     // ---- ORDERING
     sqlOrder='';
     var qOrder=req.query?req.query.order:null;
