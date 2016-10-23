@@ -2,7 +2,7 @@ module.exports = {
     id: 'todo',
     table: 'task',
     titleField: 'title',
-    searchFields: ['title', 'description', 'notes'],
+    searchFields: ['title', 'description'],
     fields: [
         {
             id: 'title', column: 'title', type: 'text', 
