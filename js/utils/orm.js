@@ -340,9 +340,11 @@ function sqlMany(m, req, allFields, wCount){
     var format = query.format || null;
     if(format==='csv'){
         qPageSize = config.csvSize || 1000;
-    }else if(qPage){
-        qPageSize=query.pageSize>0 ? parseInt(query.pageSize, 10) : defaultPageSize;
-        offset = qPage*qPageSize;
+    }else{
+        qPageSize = parseInt(query.pageSize || defaultPageSize, 10);
+        if(qPage){
+            offset = qPage*qPageSize;
+        }
     }
 
     return {
