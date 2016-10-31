@@ -171,7 +171,7 @@ These operators are available:
 
 | Operator     | Meaning                 | Example                      |
 |--------------|-------------------------|------------------------------|
-| eq           | equals                  | /todo?category=eq.fun        |
+| eq           | equals                  | /todo?category=eq.1          |
 | gt           | greater than            | /todo?duedate=gt.2016-01-15  |
 | lt           | less than               | /todo?duedate=lt.2016-01-15  |
 | gte          | less than or equal      | /todo?duedate=gte.2016-01-15 |
@@ -279,4 +279,4 @@ GET /todo/lov/category
 
 Copyright (c) 2016 Olivier Giulieri.
 
-Evolutility-Server is released under the [MIT license](http://github.com/evoluteur/evolutility-server/raw/master/LICENSE.md).
+Evolutility-Server is released under the [MIT license](http://github.com/evoluteur/evolutility-server/blob/master/LICENSE.md).
