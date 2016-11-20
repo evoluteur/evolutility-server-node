@@ -540,24 +540,9 @@ function deleteOne(req, res) {
         id = req.params.id;
 
     if(m && id){
-        pool.connect(function(err, client, done) {
-
-            // SQL Query > Delete Data
-            var sql = 'DELETE FROM '+m.schemaTable+' WHERE id=$1';
-            logger.logSQL(sql);
-            client.query(sql, [id]);
-            done();
-            return res.json(true);
-
-            // Handle Errors
-            if(err) {
-                done()
-                console.log(err);
-            }
-
-        });
-    }else{
-        return res.json(false);
+        // SQL Query > Delete Data
+        var sql = 'DELETE FROM '+m.schemaTable+' WHERE id=$1 RETURNING id::integer AS id;';
+        runQuery(res, sql, [id], true);
     }
 }
 
