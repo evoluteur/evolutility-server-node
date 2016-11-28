@@ -587,6 +587,34 @@ function lovOne(req, res) {
 
 }
 
+
+// --------------------------------------------------------------------------------------
+// -----------------    SUB-COLLECTIONS   -------------------------------------------------------
+// --------------------------------------------------------------------------------------
+
+function collecOne(req, res) {
+    logger.logReq('GET ONE-COLLEC', req);
+
+    var m = getModel(req.params.entity),
+        collecId = req.params.collec,
+        collec = m.collecsH[collecId]
+        pId = parseInt(req.query.id, 10);
+
+    if(m && collec){
+        var sqlParams = [pId];
+        var sql = 'SELECT t1.id, '+sqlSelect(collec.fields)+
+                ' FROM '+schema+'."'+collec.table+'" AS t1'+//lovs.from+
+                ' WHERE t1."'+collec.column+'"=$1'+
+                ' ORDER BY t1.id'+//t1.position, t1.id
+                ' LIMIT '+defaultPageSize+';';
+
+        runQuery(res, sql, sqlParams, false);        
+    }else{
+        return res.json(logger.errorMsg('Invalid parameters.', 'collecOne'));
+    }
+}
+
+
 // --------------------------------------------------------------------------------------
 
 module.exports = {
@@ -597,7 +625,10 @@ module.exports = {
     insertOne: insertOne,
     updateOne: updateOne,
     deleteOne: deleteOne,
-    
+
+    // - Sub-collections
+    getCollec: collecOne,
+
     // - Charts and LOVs
     chartMany: chartMany,
     lovOne: lovOne

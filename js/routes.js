@@ -44,5 +44,8 @@ router.delete(apiPath+':entity/:id', orm.deleteOne);
 // ======  LOV ===========================================
 router.get(apiPath+':entity/lov/:field', orm.lovOne);
 
+// ======  SUB-COLLECTIONS  ==============================
+router.get(apiPath+':entity/collec/:collec', orm.getCollec);
+
 
 module.exports = router;
