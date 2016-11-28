@@ -401,11 +401,11 @@ function chartMany(req, res) {
                     lbl='CASE '+lbl+' WHEN true THEN \'Yes\' ELSE \'No\' END'
                 }
                 sql='SELECT '+lbl+'::text AS label, count(*)::integer AS value'+
-                    ' FROM '+m.schemaTable+' AS t1';
-                sql += ' GROUP BY '+lbl;
+                    ' FROM '+m.schemaTable+' AS t1'+
+                    ' GROUP BY '+lbl;
             }
             sql += ' ORDER BY label ASC'+
-                    ' LIMIT '+defaultPageSize+';';
+                   ' LIMIT '+defaultPageSize+';';
 
             runQuery(res, sql, sqlParams, false);
         }
@@ -521,7 +521,7 @@ function updateOne(req, res) {
 
     if(m && id && q.names.length){
         q.values.push(id);
-        var sql='UPDATE '+m.schemaTable+' AS t1 SET '+ q.names.join(',') + 
+        var sql = 'UPDATE '+m.schemaTable+' AS t1 SET '+ q.names.join(',') + 
             ' WHERE id=$'+q.values.length+
             ' RETURNING id, '+sqlSelect(m.fields, false, null, 'U')+';';
         runQuery(res, sql, q.values, true);
@@ -541,7 +541,8 @@ function deleteOne(req, res) {
 
     if(m && id){
         // SQL Query > Delete Data
-        var sql = 'DELETE FROM '+m.schemaTable+' WHERE id=$1 RETURNING id::integer AS id;';
+        var sql = 'DELETE FROM '+m.schemaTable+
+            ' WHERE id=$1 RETURNING id::integer AS id;';
         runQuery(res, sql, [id], true);
     }
 }
@@ -570,7 +571,7 @@ function lovOne(req, res) {
         }
         if(f){
             var col = f.lovcolumn||'name';
-            var sql='SELECT id, "'+col+'" as text'
+            var sql = 'SELECT id, "'+col+'" as text'
             if(f.lovicon){
                 sql+=',icon'
             }
