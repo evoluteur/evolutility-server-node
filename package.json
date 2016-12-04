@@ -1,31 +1,35 @@
 {
-  "name": "evolutility-server",
   "version": "0.2.5",
+  "name": "evolutility-server-node",
   "description": "Evolutility RESTful API for CRUD and more.",
   "copyright": "(c) 2016 Olivier Giulieri",
   "license": "MIT",
-  "homepage": "https://github.com/evoluteur/evolutility-server",
+  "homepage": "https://github.com/evoluteur/evolutility-server-node",
   "author": {
       "name": "Olivier Giulieri",
       "url": "https://github.com/evoluteur"
   },
   "repository": {
       "type": "git",
-      "url": "git://github.com/evoluteur/evolutility-server.git"
+      "url": "git://github.com/evoluteur/evolutility-server-node.git"
   },
-  "bugs": "https://github.com/evoluteur/evolutility-server/issues",
+  "bugs": "https://github.com/evoluteur/evolutility-server-node/issues",
   "scripts": {
     "start": "supervisor ./bin/www"
   },
   "keywords": [
     "REST",
     "model-driven",
+    "MDA",
     "metadata",
     "server",
     "API",
     "Express",
     "Postgres",
-    "NodeJS"
+    "Node",
+    "NodeJS",
+    "low-code",
+    "javascript"
   ],
   "devDependencies": {
     "body-parser": "~1.15.2",

@@ -1,9 +1,9 @@
 /*! *******************************************************
  *
- * evolutility-server :: utils/logger.js
+ * evolutility-server-node :: utils/logger.js
  * Simple formatted console logger.
  *
- * https://github.com/evoluteur/evolutility-server
+ * https://github.com/evoluteur/evolutility-server-node
  * Copyright (c) 2016 Olivier Giulieri
  ********************************************************* */
 

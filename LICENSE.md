@@ -1,4 +1,4 @@
-# Evolutility-Server
+# Evolutility-Server-Node
 
 Released under the [MIT License](http://en.wikipedia.org/wiki/MIT_License)
 

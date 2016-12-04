@@ -1,8 +1,8 @@
 /*! *******************************************************
  *
- * evolutility-server :: utils/orm.js
+ * evolutility-server-node :: utils/orm.js
  *
- * https://github.com/evoluteur/evolutility-server
+ * https://github.com/evoluteur/evolutility-server-node
  * Copyright (c) 2016 Olivier Giulieri
  ********************************************************* */
 

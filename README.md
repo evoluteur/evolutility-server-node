@@ -1,25 +1,23 @@
-# Evolutility-Server
+# Evolutility-Server-Node
 
 Model-driven RESTful API for CRUD (Create, Read, Update, Delete) and more using Node.js, Express and PostgreSQL. 
 
-Evolutility-Server provides all REST endpoints for CRUD and simple charts based on models rather than code.
+Evolutility-Server-Node provides all REST endpoints for CRUD and simple charts based on models rather than code.
  
-Evolutility-Server is build to work with [React-Evolutility](http://github.com/evoluteur/react-evolutility) 
-which provides the matching UI, but could also work with your UI.
+For a matching model-driven UI, use [Evolutility-UI-React](http://github.com/evoluteur/evolutility-ui-react) or [Evolutility-UI-jQuery](http://github.com/evoluteur/evolutility-ui-jquery).
 
 
 ## Installation
 
-
-[**Download**](https://github.com/evoluteur/evolutility-server/archive/master.zip) or **clone** from GitHub.
+[**Download**](https://github.com/evoluteur/evolutility-server-node/archive/master.zip) or **clone** from GitHub.
 
 ```bash
 # To get the latest stable version, use git from the command line.
-git clone https://github.com/evoluteur/evolutility-server
+git clone https://github.com/evoluteur/evolutility-server-node
 ```
 or
 
-Use **NPM** to install Evolutility-Server as an [npm package](https://www.npmjs.com/package/evolutility-server):
+Use **NPM** to install Evolutility-Server-Node as an [npm package](https://www.npmjs.com/package/evolutility-server):
 
 ```bash
 # To get the latest stable version, use npm from the command line.
@@ -29,7 +27,7 @@ npm install evolutility-server
 
 ## Setup
 
-After installing Evolutility-Server, follow these steps:
+After installing Evolutility-Server-Node, follow these steps:
 
 1. Create a PostgreSQL database.
 
@@ -127,10 +125,10 @@ module.exports = {
 ```
 
 ## API
-Evolutility-Server provides a generic RESTful API for CRUD (Create, Read, Update, Delete) and more.
+Evolutility-Server-Node provides a generic RESTful API for CRUD (Create, Read, Update, Delete) and more.
 It is a partial server-side Javascript implementation of [PostgREST](http://postgrest.com) using [Node.js](https://nodejs.org/en/), [Express](http://expressjs.com/) and [PostgreSQL](http://www.postgresql.org/).
 
-When running Evolutility-Server locally, the url for the "todo" app is 
+When running Evolutility-Server-Node locally, the url for the "todo" app is 
 [http://localhost:3000/api/v1/evolutility/todo](http://localhost:3000/api/v1/evolutility/todo).
 
 ### Requesting Information
@@ -252,7 +250,7 @@ DELETE /todo/5
 
 ### Extras endpoints
 
-In addition to CRUD, Evolutility-Server provides endpoints for Charts and Lists of values.
+In addition to CRUD, Evolutility-Server-Node provides endpoints for Charts and Lists of values.
 
 #### Charts
 
@@ -279,4 +277,4 @@ GET /todo/lov/category
 
 Copyright (c) 2016 Olivier Giulieri.
 
-Evolutility-Server is released under the [MIT license](http://github.com/evoluteur/evolutility-server/blob/master/LICENSE.md).
+Evolutility-Server-Node is released under the [MIT license](http://github.com/evoluteur/evolutility-server-node/blob/master/LICENSE.md).

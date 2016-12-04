@@ -1,9 +1,9 @@
 /*! *******************************************************
  *
- * evolutility-server :: utils/database.js
+ * evolutility-server-node :: utils/database.js
  * Methods to create database from models.
  *
- * https://github.com/evoluteur/evolutility-server
+ * https://github.com/evoluteur/evolutility-server-node
  * Copyright (c) 2016 Olivier Giulieri
  ********************************************************* */
 
