@@ -207,19 +207,6 @@ module.exports = [{
   "pix": "comics/ronin.jpeg"
 },
 {
-  "title": "Rising Stars",
-  "genre": 12,
-  "authors": "Joe Michael Straczynski, Christian Zanier, Keu Cha et Ken Lashley",
-  "complete": true,
-  "finished": true,
-  "have": "1",
-  "have_nb": 1,
-  "serie_nb": 1,
-  "language": 1,
-  "notes": "",
-  "pix": "comics/risingstars.jpeg"
-},
-{
   "title": "Le Fleau des Dieux",
   "genre": 11,
   "authors": "Valérie Mangin et Aleksa Gajic",
