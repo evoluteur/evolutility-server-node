@@ -15,14 +15,6 @@ For a matching model-driven UI, use [Evolutility-UI-React](http://github.com/evo
 # To get the latest stable version, use git from the command line.
 git clone https://github.com/evoluteur/evolutility-server-node
 ```
-or
-
-Use **NPM** to install Evolutility-Server-Node as an [npm package](https://www.npmjs.com/package/evolutility-server):
-
-```bash
-# To get the latest stable version, use npm from the command line.
-npm install evolutility-server
-```
 
 
 ## Setup
