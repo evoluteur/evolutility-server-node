@@ -7,18 +7,21 @@
  ********************************************************* */
 
 var pg = require('pg'),
+    path = require('path'),
+    formidable = require('formidable'),
+    shortid = require('shortid'),
+    fs = require('fs'),
     parseConnection = require('pg-connection-string').parse,
     csv = require('express-csv'),
     _ = require('underscore'),
     dico = require('./dico'),
     logger = require('./logger');
-
 var config = require('../../config.js'),
     models = require('../../models/all_models');
 
 var dbConfig = parseConnection(config.connectionString)
 dbConfig.max = 10; // max number of clients in the pool 
-dbConfig.idleTimeoutMillis = 30000; // how long a client is allowed to remain idle before being closed
+dbConfig.idleTimeoutMillis = 30000; // max client idle time before being closed
 
 var schema = '"'+(config.schema || 'evol_demo')+'"',
     defaultPageSize = config.pageSize || 50,
@@ -151,7 +154,6 @@ function sqlSelect(fields, collecs, table, action){
     return sqlfs.join(',');
 }
 
-
 // --------------------------------------------------------------------------------------
 // -----------------    GET MANY   ------------------------------------------------------
 // --------------------------------------------------------------------------------------
@@ -181,9 +183,9 @@ function sqlOrderFields(m, fullOrder){
         qos = fullOrder.split(',');
 
     return qos.map(function(qo){
-        var ows = qo.split('.');
-        var f=m.fieldsH[ows[0]];
-        var col = f ? sqlOrderColumn(f) : 'id' // -- sort by id if invalid param
+        var ows = qo.split('.'),
+            f = m.fieldsH[ows[0]],
+            col = f ? sqlOrderColumn(f) : 'id' // -- sort by id if invalid param
         if(ows.length===1){
             return col
         }else{
@@ -205,6 +207,7 @@ function sqlFromLOVs(fields){
 }
 
 function sqlMany(m, req, allFields, wCount){
+// - generates SQL for query returning a set of records
     var fs=allFields ? m.fields : m.fields.filter(dico.isFieldMany)
     var sqlParams=[];
 
@@ -288,8 +291,8 @@ function sqlMany(m, req, allFields, wCount){
 
     // ---- SEARCHING
     if(req.query.search){
-        var paramSearch = false;
-        var sqlWsSearch = [];
+        var paramSearch = false,
+            sqlWsSearch = [];
 
         if(m.searchFields && _.isArray(m.searchFields)){
             logger.logObject('search fields', m.searchFields);
@@ -360,6 +363,7 @@ function sqlMany(m, req, allFields, wCount){
 }
 
 function getMany(req, res) {
+// - returns a set of records (filtered and sorted)
     logger.logReq('GET MANY', req);
     var m = getModel(req.params.entity);
     if(m){
@@ -378,6 +382,7 @@ function getMany(req, res) {
 // --------------------------------------------------------------------------------------
 
 function chartMany(req, res) {
+// - returns data for a single charts
     logger.logReq('GET CHART', req);
 
     var m = getModel(req.params.entity),
@@ -421,6 +426,7 @@ function chartMany(req, res) {
 // --------------------------------------------------------------------------------------
 
 function getOne(req, res) {
+// - get one record by ID
     logger.logReq('GET ONE', req);
 
     var m = getModel(req.params.entity),
@@ -490,6 +496,7 @@ function prepData(m, req, fnName, action){
 }
 
 function insertOne(req, res) {
+// - insert a single record
     logger.logReq('INSERT ONE', req);
 
     var m = getModel(req.params.entity),
@@ -513,6 +520,7 @@ function insertOne(req, res) {
 // --------------------------------------------------------------------------------------
 
 function updateOne(req, res) {
+// - update a single record
     logger.logReq('UPDATE ONE', req);
 
     var m = getModel(req.params.entity),
@@ -530,10 +538,66 @@ function updateOne(req, res) {
 
 
 // --------------------------------------------------------------------------------------
+// -----------------    FILE UPLOAD ONE    ----------------------------------------------
+// --------------------------------------------------------------------------------------
+
+function uploadOne(req, res){
+// - save uploaded file to server (no DB involved)
+    logger.logReq('UPLOAD ONE', req);
+
+    var m = getModel(req.params.entity),
+        id = req.params.id,
+        form = new formidable.IncomingForm(),
+        fname,
+        dup = false;
+
+    form.multiples = false;
+    form.uploadDir = path.join(config.uploadPath, '/'+m.id);
+
+    form.on('file', function(field, file) {
+        fname = file.name;
+        ffname = form.uploadDir+'/'+fname;
+
+        if (fs.existsSync(ffname)) {
+            // - if duplicate do not overwrite file but postfix name
+            var idx = ffname.lastIndexOf('.'),
+                xtra = '_'+shortid.generate(),
+                originalName = fname;
+
+            dup = true;
+            ffname = idx ? (ffname.slice(0, idx)+xtra+ffname.slice(idx)) : (ffname+xtra);
+            idx = ffname.lastIndexOf('/');
+            fname = ffname.slice(idx+1);
+            console.log('No Dup: "'+originalName+'" -> "'+fname+'".')
+        }
+        fs.rename(file.path, ffname);
+    })
+    .on('end', function(){
+        res.json({
+            duplicate: dup,
+            fileName: fname,
+            id: id,
+            model: m.id
+        });
+    })
+    .on('error', function(err) {
+        logger.logError(err);
+        res.json({
+            error: true,
+            uploaded: false
+        });
+    });
+
+    form.parse(req);
+};
+
+
+// --------------------------------------------------------------------------------------
 // -----------------    DELETE ONE   ----------------------------------------------------
 // --------------------------------------------------------------------------------------
 
 function deleteOne(req, res) {
+// - delete a single record
     logger.logReq('DELETE ONE', req);
 
     var m = getModel(req.params.entity),
@@ -553,6 +617,7 @@ function deleteOne(req, res) {
 // --------------------------------------------------------------------------------------
 
 function lovOne(req, res) {
+// - returns list of possible values for a field (usually for dropdown)
     logger.logReq('LOV ONE', req);
 
     var entity = req.params.entity,
@@ -589,10 +654,11 @@ function lovOne(req, res) {
 
 
 // --------------------------------------------------------------------------------------
-// -----------------    SUB-COLLECTIONS   -------------------------------------------------------
+// -----------------    SUB-COLLECTIONS   -----------------------------------------------
 // --------------------------------------------------------------------------------------
 
 function collecOne(req, res) {
+// - returns sub-collection (nested in UI but relational in DB)
     logger.logReq('GET ONE-COLLEC', req);
 
     var m = getModel(req.params.entity),
@@ -616,6 +682,7 @@ function collecOne(req, res) {
 
 
 // --------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------
 
 module.exports = {
 
@@ -626,11 +693,16 @@ module.exports = {
     updateOne: updateOne,
     deleteOne: deleteOne,
 
+    // - File upload
+    uploadOne: uploadOne,
+
     // - Sub-collections
     getCollec: collecOne,
 
-    // - Charts and LOVs
+    // - Charts
     chartMany: chartMany,
+
+    // - LOVs (for dropdowns)
     lovOne: lovOne
 
 }

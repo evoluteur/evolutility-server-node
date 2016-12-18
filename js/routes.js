@@ -37,6 +37,7 @@ router.post(apiPath+':entity', orm.insertOne);
 // ======  UPDATE ONE  ====================================
 router.patch(apiPath+':entity/:id', orm.updateOne);
 router.put(apiPath+':entity/:id', orm.updateOne);
+router.post(apiPath+':entity/upload/:id', orm.uploadOne);
 
 // ======  DELETE ONE ====================================
 router.delete(apiPath+':entity/:id', orm.deleteOne);
