@@ -29,11 +29,11 @@
     "Node",
     "NodeJS",
     "low-code",
-    "javascript"
+    "javascript",
+    "ORM"
   ],
   "devDependencies": {
     "body-parser": "~1.15.2",
-    "cookie-parser": "~1.4.3",
     "debug": "~2.2.0",
     "formidable": "~1.0.17",
     "shortid": "~2.2.6",
@@ -44,8 +44,5 @@
     "pg-connection-string": "~0.1.3",
     "supervisor": "~0.11.0",
     "underscore": "~1.8.3"
-  },
-  "peerDependencies": {
-    "jshint": "2.x"
   }
 }

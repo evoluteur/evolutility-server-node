@@ -16,6 +16,7 @@ var pg = require('pg'),
     _ = require('underscore'),
     dico = require('./dico'),
     logger = require('./logger');
+
 var config = require('../../config.js'),
     models = require('../../models/all_models');
 
@@ -91,7 +92,7 @@ function runQuery(res, sql, values, singleRecord, format, header){
             }else if(singleRecord){
                 return res.json(results[0]);
             }else{
-                // res.setHeader('_full_count', 'aaaaaa')
+                res.setHeader('_full_count', 'aaaaaa')
                 return res.json(results);
             }
         });
@@ -291,6 +292,7 @@ function sqlMany(m, req, allFields, wCount){
 
     // ---- SEARCHING
     if(req.query.search){
+        // TODO: use fts
         var paramSearch = false,
             sqlWsSearch = [];
 
@@ -445,6 +447,7 @@ function getOne(req, res) {
     }
 
 }
+
 
 // --------------------------------------------------------------------------------------
 // -----------------    INSERT ONE   ----------------------------------------------------
