@@ -1,19 +1,25 @@
 # Evolutility-Server-Node
 
-Model-driven RESTful API for CRUD (Create, Read, Update, Delete) and more using Node.js, Express and PostgreSQL. 
+RESTful Micro-ORM for CRUD and more, using Node.js, Express, and PostgreSQL.
 
-Evolutility-Server-Node provides all REST endpoints for CRUD and simple charts based on models rather than code.
+Evolutility-Server-Node provides REST endpoints for CRUD (Create, Read, Update, Delete) and simple charts based on models rather than code.
  
 For a matching model-driven UI, use [Evolutility-UI-React](http://github.com/evoluteur/evolutility-ui-react) or [Evolutility-UI-jQuery](http://github.com/evoluteur/evolutility-ui-jquery).
 
 
 ## Installation
 
-[**Download**](https://github.com/evoluteur/evolutility-server-node/archive/master.zip) or **clone** from GitHub.
+[Download](https://github.com/evoluteur/evolutility-server-node/archive/master.zip) or **clone** from GitHub.
 
 ```bash
 # To get the latest stable version, use git from the command line.
 git clone https://github.com/evoluteur/evolutility-server-node
+```
+or use the [npm package](https://www.npmjs.com/package/evolutility-server-node):
+
+```bash
+# To get the latest stable version, use npm from the command line.
+npm install evolutility-server-node
 ```
 
 
