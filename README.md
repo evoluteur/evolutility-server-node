@@ -9,7 +9,7 @@ For a matching model-driven UI, use [Evolutility-UI-React](http://github.com/evo
 
 ## Installation
 
-[Download](https://github.com/evoluteur/evolutility-server-node/archive/master.zip) or **clone** from GitHub.
+[Download](https://github.com/evoluteur/evolutility-server-node/archive/master.zip) or clone from GitHub.
 
 ```bash
 # To get the latest stable version, use git from the command line.
@@ -87,40 +87,51 @@ Here is a model for a To-Do app.
 
 ```javascript
 module.exports = {
-    id: 'todo',
-    table: 'task',
-    titleField: 'title',
+    id: "todo",
+    table: "task",
+    titleField: "title",
     fields: [
         {
-            id: 'title', column: 'title', type: 'text', label: 'Title', required: true,
-            maxLength: 300,
+            id: "title", column: "title", 
+            label: "Title", 
+            type: "text", required: true, maxLength: 300, 
             inMany: true
         },
         {
-            id: 'duedate', column: 'duedate', type: 'date', label: 'Due Date', inMany: true
+            id: "duedate", column: "duedate", 
+            label: "Due Date",
+            type: "date", 
+            inMany: true
         },
         {
-            id: 'category', column: 'category_id', type: 'lov', label: 'Category', inMany: true,
-            lovtable: 'task_category'        },
-        {
-            id: 'priority', column: 'priority_id', type: 'lov', label: 'Priority', required: true,
-            inMany: true,
-            lovtable: 'task_priority',
-        {
-            id: 'complete', column: 'complete', type: 'boolean', inMany: true,
-            label: 'Complete'
+            id: "category", column: "category_id", 
+            label: "Category", 
+            type: "lov", lovtable: "task_category",
+            inMany: true
         },
         {
-            id: 'description', column: 'description', type: 'textmultiline', 
-            label: 'Description', 
-            maxLength: 1000,
-            inMany: false
+            id: "priority", column: "priority_id", 
+            label: "Priority", 
+            type: "lov", lovtable: "task_priority", 
+            required: true, 
+            inMany: true
+        {
+            id: "complete", column: "complete", 
+            label: "Complete",
+            type: "boolean", 
+            inMany: true
+        },
+        {
+            id: "description", column: "description", 
+            label: "Description",
+            type: "textmultiline", maxLength: 1000
         }
     ]
   
 };
 
 ```
+
 
 ## API
 Evolutility-Server-Node provides a generic RESTful API for CRUD (Create, Read, Update, Delete) and more.
