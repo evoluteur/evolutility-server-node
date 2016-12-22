@@ -1,7 +1,7 @@
 {
   "name": "evolutility-server-node",
-  "version": "0.3.0",
-  "description": "Evolutility model-driven RESTful API for CRUD and more.",
+  "version": "0.3.1",
+  "description": "RESTful Micro-ORM for CRUD and more, using Node.js, Express, and PostgreSQL.",
   "copyright": "(c) 2016 Olivier Giulieri",
   "license": "MIT",
   "homepage": "https://github.com/evoluteur/evolutility-server-node",
