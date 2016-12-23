@@ -8,9 +8,9 @@
 
 var express = require('express');
 var router = express.Router();
-//var {router} = require('express').Router();
 var logger = require('./utils/logger');
 var orm = require('./utils/orm');
+var upload = require('./utils/upload');
 
 var config = require('../config');
 var apiPath = config.apiPath;
@@ -26,7 +26,7 @@ router.get('/', function(req, res, next) {
 
 // ======  GET MANY ====================================
 router.get(apiPath+':entity', orm.getMany);
-router.get(apiPath+':entity/chart/:field', orm.chartMany);
+router.get(apiPath+':entity/chart/:field', orm.chartField);
 
 // ======  GET ONE   ====================================
 router.get(apiPath+':entity/:id', orm.getOne);
@@ -37,7 +37,7 @@ router.post(apiPath+':entity', orm.insertOne);
 // ======  UPDATE ONE  ====================================
 router.patch(apiPath+':entity/:id', orm.updateOne);
 router.put(apiPath+':entity/:id', orm.updateOne);
-router.post(apiPath+':entity/upload/:id', orm.uploadOne);
+router.post(apiPath+':entity/upload/:id', upload.uploadOne);
 
 // ======  DELETE ONE ====================================
 router.delete(apiPath+':entity/:id', orm.deleteOne);

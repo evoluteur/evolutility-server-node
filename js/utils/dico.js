@@ -6,7 +6,10 @@
  * Copyright (c) 2016 Olivier Giulieri
  *************************************************************************** */
 
-var _ = require('underscore')
+var models = require('../../models/all_models'),
+	config = require('../../config.js');
+
+var schema = '"'+(config.schema || 'evol_demo')+'"';
 
 var fTypes = {
 	text: 'text',
@@ -49,59 +52,45 @@ function fieldChartable(f) {
 
 function hById(arr){
 	var objH={};
-	_.forEach(arr, function(o){
-		objH[o.id] = o; 
-	});
+	if(arr){
+		arr.forEach(function(o){
+			objH[o.id] = o; 
+		});
+	}
 	return objH;
 }
 
-function getFields(uiModel) {
-	var fs = [];
-
-	function collectFields(te) {
-		if (te && te.elements && te.elements.length > 0) {
-			te.elements.forEach(function(te) {
-				if (te.type != 'panel-list') {
-					collectFields(te);
-				}
-			});
-		} else { 
-			if(te.type && te.type!== 'formula'){
-				fs.push(te);
+function prepModel(m){
+	if(!m.prepared){
+		m.fieldsH = {}
+		m.fields.forEach(function(f, idx){
+			if(f.type==='lov'){
+				f.t2 = 't_'+idx
 			}
-		}
-	}
-
-	if(uiModel.fields){
-		return uiModel.fields;
-	}else{
-		collectFields(uiModel);
-		uiModel.fields=fs;
-		return fs;
-	}
-}
-
-
-module.exports = {  
-
-	fieldTypes: fTypes,
-
-	getFields: getFields,
-
-	prepModel: function(m){
-		if(!m.fields){
-			m.fields = getFields(m);
-		}
-		if(!m.fieldsH){
-			m.fieldsH = hById(m.fields);
-		}
+			m.fieldsH[f.id] = f; 
+		})
+		m.schemaTable = schema+'."'+(m.table || m.id)+'"';
 		if(m.collecs && !m.collecsH){
 			m.collecsH = hById(m.collecs);
 		}
-		return m;
+		m.prepared = true;
+	}
+	return m;
+}
+
+
+module.exports = {
+
+	fieldTypes: fTypes,
+
+	getModel: function(mId){ 
+	// - return a model enhanced w/ hashs
+		return prepModel(models[mId]);
 	},
 
-	isFieldMany:function(f){
+	prepModel: prepModel,
+
+	fieldInMany:function(f){
 		return f.inList || f.inMany
 	},
 
@@ -113,8 +102,6 @@ module.exports = {
 
 	fieldInCharts: fieldInCharts,
 
-	fieldChartable: fieldChartable,
-
-	hById: hById
+	fieldChartable: fieldChartable
 
 }

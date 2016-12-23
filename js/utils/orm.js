@@ -7,18 +7,11 @@
  ********************************************************* */
 
 var pg = require('pg'),
-    path = require('path'),
-    formidable = require('formidable'),
-    shortid = require('shortid'),
-    fs = require('fs'),
     parseConnection = require('pg-connection-string').parse,
-    csv = require('express-csv'),
-    _ = require('underscore'),
     dico = require('./dico'),
-    logger = require('./logger');
-
-var config = require('../../config.js'),
-    models = require('../../models/all_models');
+    query = require('./query'),
+    logger = require('./logger'),
+    config = require('../../config.js');
 
 var dbConfig = parseConnection(config.connectionString)
 dbConfig.max = 10; // max number of clients in the pool 
@@ -34,85 +27,12 @@ pool.on('error', function (err, client) {
   console.error('idle client error', err.message, err.stack)
 })
 
-function getModel(mId){ 
-// - return a model enhanced w/ hashs
-    var m = dico.prepModel(models[mId]);
-    m.fields.forEach(function(f, idx){
-        if(f.type==='lov'){
-            f.t2 = 't_'+idx
-        }
-    })
-    m.schemaTable = schema+'."'+(m.table || m.id)+'"';
-    return m;
-}
-
-function sqlQuery(q){
-    var sql = 'SELECT '+q.select+
-        ' FROM '+q.from;
-    if(q.where.length){
-        sql += ' WHERE '+q.where.join(' AND ');
-    }
-    if(q.group) {sql += ' GROUP BY '+q.group;}
-    if(q.order) {sql += ' ORDER BY '+q.order;}
-    sql += ' LIMIT '+(q.limit || defaultPageSize);
-    if(q.offset) {sql += ' OFFSET '+parseInt(q.offset, 10);}
-    return sql;
-}
-
-function runQuery(res, sql, values, singleRecord, format, header){
-// - run a query and return the result in request
-    var results = [];
-
-    // Get a Postgres client from the connection pool 
-    pool.connect(function(err, client, done) {
-
-        // SQL Query > Select Data
-        logger.logSQL(sql);
-        var query = values ? client.query(sql, values) : client.query(sql);
-
-        // Stream results back one row at a time
-        query.on('row', function(row) {
-            results.push(row);
-        });
-
-        // After all data is returned, close connection and return results
-        query.on('end', function() {
-            done();
-            if(format==='csv'){
-                if(header){
-                    var headers={};
-                    for (key in results[0]) {
-                        headers[key] = header[key] || key;
-                    }
-                    results.unshift(headers);
-                    return res.csv(results);
-                }else{
-                    return res.csv(results);
-                }
-            }else if(singleRecord){
-                return res.json(results[0]);
-            }else{
-                res.setHeader('_full_count', 'aaaaaa')
-                return res.json(results);
-            }
-        });
-
-        // Handle Errors
-        if(err) {
-            done();
-            res.status(500).send('Something broke!');
-            logger.logError(err);
-        }
-
-    });
-
-}
-
 function csvHeader(fields){
 // - build the header row for CSV export
     var h = {'id': 'ID'},
-        lovs = {}
-    _.forEach(fields, function(f){
+        lovs = {};
+
+    fields.forEach(function(f){
         if(f.type==='lov'){
             h[f.id] = (f.label || f.id)+' ID';
             h[f.id+'_txt'] = f.label || f.id;
@@ -128,32 +48,37 @@ function sqlSelect(fields, collecs, table, action){
     var sql,
         sqlfs=[],
         tQuote = table ? 't1."' : '"';
-    _.forEach(fields, function(f, idx){
-        if(f.type==='lov' && action!=='C' && action!=='U'){
-            sqlfs.push(f.t2+'.'+(f.lovcolumn ? f.lovcolumn : 'name')+' AS "'+f.id+'_txt"')
-        }
-        sql = tQuote+f.column
-        //if(f.type==='money'){
-            //sql += '"::money'
-        //}else if(f.type==='integer'){
-            //sql += '"::integer'
-        //}else if(f.type==='decimal'){
-            //sql += '"::float'
-        //}else{
-            sql += '"'
-        //}
-        if(f.column && f.id!=f.column){
-            sql += ' AS "'+f.id+'"'
-        }
-        sqlfs.push(sql);
-    });/*
+
+    if(fields){
+        fields.forEach(function(f, idx){
+            if(f.type==='lov' && action!=='C' && action!=='U'){
+                sqlfs.push(f.t2+'.'+(f.lovcolumn ? f.lovcolumn : 'name')+' AS "'+f.id+'_txt"')
+            }
+            sql = tQuote+f.column
+            //if(f.type==='money'){
+                //sql += '"::money'
+            //}else if(f.type==='integer'){
+                //sql += '"::integer'
+            //}else if(f.type==='decimal'){
+                //sql += '"::float'
+            //}else{
+                sql += '"'
+            //}
+            if(f.column && f.id!=f.column){
+                sql += ' AS "'+f.id+'"'
+            }
+            sqlfs.push(sql);
+        });
+    }
+    /*
     if(collecs){
-        sqlfs=sqlfs.concat(_.map(collecs, function(c){
+        sqlfs=sqlfs.concat(collecs.map(function(c){
             return tQuote+(c.column||c.id)+'"';
         }));
     }*/
     return sqlfs.join(',');
 }
+
 
 // --------------------------------------------------------------------------------------
 // -----------------    GET MANY   ------------------------------------------------------
@@ -209,7 +134,7 @@ function sqlFromLOVs(fields){
 
 function sqlMany(m, req, allFields, wCount){
 // - generates SQL for query returning a set of records
-    var fs=allFields ? m.fields : m.fields.filter(dico.isFieldMany)
+    var fs=allFields ? m.fields : m.fields.filter(dico.fieldInMany)
     var sqlParams=[];
 
     // ---- SELECTION
@@ -238,57 +163,59 @@ function sqlMany(m, req, allFields, wCount){
         'nn': ' IS '
     };
     var sqlWs = [];
-    var ffs = _.forEach(req.query, function(c, n){
-        var f = (n==='id') ? {column:'id'} : m.fieldsH[n];
-        if(f && ['select', 'filter', 'search', 'order', 'page', 'pageSize'].indexOf(f)<0){
-            var cs=c.split('.');
-            if(cs.length){
-                var cond=cs[0];
-                if(sqlOperators[cond]){
-                    if((cond==='eq' || cond==='ne') && dico.fieldIsText(f)){
-                        sqlParams.push(cs[1]);
-                        if(f.type==='text' || f.type==='textmultiline' || f.type==='html'){
-                            sqlWs.push('LOWER(t1."'+f.column+'")'+sqlOperators[cond]+'LOWER($'+sqlParams.length+')');
-                        }else{
-                            sqlWs.push('t1."'+f.column+'"'+sqlOperators[cond]+'$'+sqlParams.length);
-                        }
-                    }else{
-                        var w='t1."'+f.column+'"'+sqlOperators[cond];
-                        if(cond==='in' && (f.type==='lov' || f.type==='list')){
-                            sqlWs.push(w+'('+cs[1].split(',').map(function(li){
-                                return "'"+li.replace(/'/g, "''")+"'";
-                            }).join(',')+')'); 
-                        }else if(cond==='0'){ // false
-                            sqlWs.push(w+'false');
-                        }else if(cond==='1'){ // true
-                            sqlWs.push(w+'true');
-                        }else if(cond==='null'){ // empty        
-                            sqlWs.push(' NOT '+w+'NULL');
-                        }else{
-                            if(cond==='nct'){ // not contains
-                                //TODO replace % in cs[1]
-                                sqlParams.push('%'+cs[1]+'%');
-                                sqlWs.push(' NOT '+w+'$'+sqlParams.length);
+    for (var n in req.query){
+        if (req.query.hasOwnProperty(n)) {
+            var f = (n==='id') ? {column:'id'} : m.fieldsH[n];
+            if(f && ['select', 'filter', 'search', 'order', 'page', 'pageSize'].indexOf(f)<0){
+                var cs = req.query[n].split('.');
+                if(cs.length){
+                    var cond=cs[0];
+                    if(sqlOperators[cond]){
+                        if((cond==='eq' || cond==='ne') && dico.fieldIsText(f)){
+                            sqlParams.push(cs[1]);
+                            if(f.type==='text' || f.type==='textmultiline' || f.type==='html'){
+                                sqlWs.push('LOWER(t1."'+f.column+'")'+sqlOperators[cond]+'LOWER($'+sqlParams.length+')');
                             }else{
-                                if(cond==='sw'){ // start with
-                                    sqlParams.push(cs[1]+'%');
-                                }else if(cond==='fw'){ // finishes with
-                                    sqlParams.push('%'+cs[1]);
-                                }else if(cond==='ct'){ // contains
+                                sqlWs.push('t1."'+f.column+'"'+sqlOperators[cond]+'$'+sqlParams.length);
+                            }
+                        }else{
+                            var w='t1."'+f.column+'"'+sqlOperators[cond];
+                            if(cond==='in' && (f.type==='lov' || f.type==='list')){
+                                sqlWs.push(w+'('+cs[1].split(',').map(function(li){
+                                    return "'"+li.replace(/'/g, "''")+"'";
+                                }).join(',')+')'); 
+                            }else if(cond==='0'){ // false
+                                sqlWs.push(w+'false');
+                            }else if(cond==='1'){ // true
+                                sqlWs.push(w+'true');
+                            }else if(cond==='null'){ // empty        
+                                sqlWs.push(' NOT '+w+'NULL');
+                            }else{
+                                if(cond==='nct'){ // not contains
+                                    //TODO replace % in cs[1]
                                     sqlParams.push('%'+cs[1]+'%');
+                                    sqlWs.push(' NOT '+w+'$'+sqlParams.length);
                                 }else{
-                                    sqlParams.push(cs[1]);
+                                    if(cond==='sw'){ // start with
+                                        sqlParams.push(cs[1]+'%');
+                                    }else if(cond==='fw'){ // finishes with
+                                        sqlParams.push('%'+cs[1]);
+                                    }else if(cond==='ct'){ // contains
+                                        sqlParams.push('%'+cs[1]+'%');
+                                    }else{
+                                        sqlParams.push(cs[1]);
+                                    }
+                                    sqlWs.push(w+'$'+sqlParams.length);
                                 }
-                                sqlWs.push(w+'$'+sqlParams.length);
                             }
                         }
+                    }else{
+                        console.log('Invalid condition "'+cond+'"')
                     }
-                }else{
-                    console.log('Invalid condition "'+cond+'"')
                 }
             }
         }
-    });
+    }
 
     // ---- SEARCHING
     if(req.query.search){
@@ -296,10 +223,10 @@ function sqlMany(m, req, allFields, wCount){
         var paramSearch = false,
             sqlWsSearch = [];
 
-        if(m.searchFields && _.isArray(m.searchFields)){
+        if(m.searchFields && Array.isArray(m.searchFields)){
             logger.logObject('search fields', m.searchFields);
             var sqlP='"'+sqlOperators.ct+'($'+(sqlParams.length+1)+')';
-            _.forEach(m.searchFields, function(fid){
+            m.searchFields.forEach(function(fid){
                 sqlWsSearch.push('t1."'+m.fieldsH[fid].column+sqlP);
             });
             sqlParams.push('%'+req.query.search.replace(/%/g, '\%')+'%');
@@ -322,9 +249,11 @@ function sqlMany(m, req, allFields, wCount){
     if(qOrder){
         if(qOrder.indexOf(',')>-1){
             var qOs=qOrder.split(',');
-            sqlOrder+=_.map(qOs, function(qo){
-                    return sqlOrderFields(m, qo)
-                }).join(',');
+            if(qOs){
+                sqlOrder+=qOs.map(qOs, function(qo){
+                        return sqlOrderFields(m, qo)
+                    }).join(',');
+            }
         }else{
             sqlOrder+=sqlOrderFields(m, qOrder);
         }
@@ -338,15 +267,14 @@ function sqlMany(m, req, allFields, wCount){
 
     // ---- LIMITING & PAGINATION
     var offset=0,
-        query=req.query,
-        qPage=query.page||0, 
+        qPage=req.query.page||0, 
         qPageSize;
 
-    var format = query.format || null;
+    var format = req.query.format || null;
     if(format==='csv'){
         qPageSize = config.csvSize || 1000;
     }else{
-        qPageSize = parseInt(query.pageSize || defaultPageSize, 10);
+        qPageSize = parseInt(req.query.pageSize || defaultPageSize, 10);
         if(qPage){
             offset = qPage*qPageSize;
         }
@@ -367,14 +295,14 @@ function sqlMany(m, req, allFields, wCount){
 function getMany(req, res) {
 // - returns a set of records (filtered and sorted)
     logger.logReq('GET MANY', req);
-    var m = getModel(req.params.entity);
+    var m = dico.getModel(req.params.entity);
     if(m){
         var format = req.query.format || null,
             isCSV = format==='csv',
             sq = sqlMany(m, req, isCSV, !isCSV),
-            sql = sqlQuery(sq);
+            sql = query.sqlQuery(sq);
 
-        runQuery(res, sql, sq.params, false, format, isCSV ? csvHeader(m.fields) : null);
+        query.runQuery(pool, res, sql, sq.params, false, format, isCSV ? csvHeader(m.fields) : null);
     }
 }
 
@@ -383,11 +311,11 @@ function getMany(req, res) {
 // -----------------    GET CHARTS   ----------------------------------------------------
 // --------------------------------------------------------------------------------------
 
-function chartMany(req, res) {
+function chartField(req, res) {
 // - returns data for a single charts
     logger.logReq('GET CHART', req);
 
-    var m = getModel(req.params.entity),
+    var m = dico.getModel(req.params.entity),
         fid = req.params.field,
         sqlParams = [],
         sql;
@@ -414,10 +342,10 @@ function chartMany(req, res) {
             sql += ' ORDER BY label ASC'+
                    ' LIMIT '+defaultPageSize+';';
 
-            runQuery(res, sql, sqlParams, false);
+            query.runQuery(pool, res, sql, sqlParams, false);
         }
     }else{
-        return res.json(logger.errorMsg('Invalid entity or field.', 'chartMany'));
+        return res.json(logger.errorMsg('Invalid entity or field.', 'chartField'));
     }
 
 }
@@ -431,7 +359,7 @@ function getOne(req, res) {
 // - get one record by ID
     logger.logReq('GET ONE', req);
 
-    var m = getModel(req.params.entity),
+    var m = dico.getModel(req.params.entity),
         id = req.params.id;
 
     if(m && id){
@@ -441,7 +369,7 @@ function getOne(req, res) {
                 ' WHERE t1.id=$1'+
                 ' LIMIT 1;';
 
-        runQuery(res, sql, sqlParams, true);        
+        query.runQuery(pool, res, sql, sqlParams, true);        
     }else{
         return res.json(logger.errorMsg('Invalid entity \''+entity+'\'or field\''+fid+'\'.', 'getOne'));
     }
@@ -458,7 +386,7 @@ function prepData(m, req, fnName, action){
     var ns = [],
         vs = [];
 
-    _.forEach(m.fields, function(f){
+    m.fields.forEach(function(f){
         if(f.column!='id' && f.type!='formula' && !f.readOnly){
             var fv=req.body[f.id];
             if(fv!=null){
@@ -485,13 +413,15 @@ function prepData(m, req, fnName, action){
             }
         }
     });
-    _.forEach(m.collecs, function(f){
-        var fv=req.body[f.id];
-        if(fv!=null){
-            vs.push(JSON.stringify(fv));
-            ns.push(fnName(f, vs.length));
-        }
-    });
+    if(m.collecs){
+        m.collecs.forEach(function(f){
+            var fv=req.body[f.id];
+            if(fv!=null){
+                vs.push(JSON.stringify(fv));
+                ns.push(fnName(f, vs.length));
+            }
+        });
+    }
     return {
         names: ns,
         values: vs
@@ -502,18 +432,18 @@ function insertOne(req, res) {
 // - insert a single record
     logger.logReq('INSERT ONE', req);
 
-    var m = getModel(req.params.entity),
+    var m = dico.getModel(req.params.entity),
         q = prepData(m, req, function(f){return f.column;}, 'C');
 
     if(m && q.names.length){
-        var ps=_.map(q.names, function(n, idx){
+        var ps = q.names.map(function(n, idx){
             return '$'+(idx+1);
         });
         var sql = 'INSERT INTO '+m.schemaTable+
             ' ("'+q.names.join('","')+'") values('+ps.join(',')+')'+
             ' RETURNING id, '+sqlSelect(m.fields, false, null, 'C')+';';
 
-        runQuery(res, sql, q.values, true);
+        query.runQuery(pool, res, sql, q.values, true);
     }
 }
 
@@ -526,7 +456,7 @@ function updateOne(req, res) {
 // - update a single record
     logger.logReq('UPDATE ONE', req);
 
-    var m = getModel(req.params.entity),
+    var m = dico.getModel(req.params.entity),
         id = req.params.id,
         q = prepData(m, req, function(f, idx){return '"'+f.column+'"=$'+idx;}, 'U');
 
@@ -535,64 +465,9 @@ function updateOne(req, res) {
         var sql = 'UPDATE '+m.schemaTable+' AS t1 SET '+ q.names.join(',') + 
             ' WHERE id=$'+q.values.length+
             ' RETURNING id, '+sqlSelect(m.fields, false, null, 'U')+';';
-        runQuery(res, sql, q.values, true);
+        query.runQuery(pool, res, sql, q.values, true);
     }
 }
-
-
-// --------------------------------------------------------------------------------------
-// -----------------    FILE UPLOAD ONE    ----------------------------------------------
-// --------------------------------------------------------------------------------------
-
-function uploadOne(req, res){
-// - save uploaded file to server (no DB involved)
-    logger.logReq('UPLOAD ONE', req);
-
-    var m = getModel(req.params.entity),
-        id = req.params.id,
-        form = new formidable.IncomingForm(),
-        fname,
-        dup = false;
-
-    form.multiples = false;
-    form.uploadDir = path.join(config.uploadPath, '/'+m.id);
-
-    form.on('file', function(field, file) {
-        fname = file.name;
-        ffname = form.uploadDir+'/'+fname;
-
-        if (fs.existsSync(ffname)) {
-            // - if duplicate do not overwrite file but postfix name
-            var idx = ffname.lastIndexOf('.'),
-                xtra = '_'+shortid.generate(),
-                originalName = fname;
-
-            dup = true;
-            ffname = idx ? (ffname.slice(0, idx)+xtra+ffname.slice(idx)) : (ffname+xtra);
-            idx = ffname.lastIndexOf('/');
-            fname = ffname.slice(idx+1);
-            console.log('No Dup: "'+originalName+'" -> "'+fname+'".')
-        }
-        fs.rename(file.path, ffname);
-    })
-    .on('end', function(){
-        res.json({
-            duplicate: dup,
-            fileName: fname,
-            id: id,
-            model: m.id
-        });
-    })
-    .on('error', function(err) {
-        logger.logError(err);
-        res.json({
-            error: true,
-            uploaded: false
-        });
-    });
-
-    form.parse(req);
-};
 
 
 // --------------------------------------------------------------------------------------
@@ -603,14 +478,14 @@ function deleteOne(req, res) {
 // - delete a single record
     logger.logReq('DELETE ONE', req);
 
-    var m = getModel(req.params.entity),
+    var m = dico.getModel(req.params.entity),
         id = req.params.id;
 
     if(m && id){
         // SQL Query > Delete Data
         var sql = 'DELETE FROM '+m.schemaTable+
             ' WHERE id=$1 RETURNING id::integer AS id;';
-        runQuery(res, sql, [id], true);
+        query.runQuery(pool, res, sql, [id], true);
     }
 }
 
@@ -624,7 +499,7 @@ function lovOne(req, res) {
     logger.logReq('LOV ONE', req);
 
     var entity = req.params.entity,
-        m = getModel(entity),
+        m = dico.getModel(entity),
         fid = req.params.field,
         f = m.fieldsH[fid];
 
@@ -645,7 +520,7 @@ function lovOne(req, res) {
             }
             sql+=' FROM '+schema+'."'+f.lovtable+
                 '" ORDER BY UPPER("'+col+'") ASC LIMIT '+lovSize+';';
-            runQuery(res, sql, null, false);
+            query.runQuery(pool, res, sql, null, false);
         }else{
             res.json(logger.errorMsg('Invalid field \''+fid+'\'.', 'lovOne'));
         }
@@ -664,7 +539,7 @@ function collecOne(req, res) {
 // - returns sub-collection (nested in UI but relational in DB)
     logger.logReq('GET ONE-COLLEC', req);
 
-    var m = getModel(req.params.entity),
+    var m = dico.getModel(req.params.entity),
         collecId = req.params.collec,
         collec = m.collecsH[collecId]
         pId = parseInt(req.query.id, 10);
@@ -677,7 +552,7 @@ function collecOne(req, res) {
                 ' ORDER BY t1.id'+//t1.position, t1.id
                 ' LIMIT '+defaultPageSize+';';
 
-        runQuery(res, sql, sqlParams, false);        
+        query.runQuery(pool, res, sql, sqlParams, false);        
     }else{
         return res.json(logger.errorMsg('Invalid parameters.', 'collecOne'));
     }
@@ -696,14 +571,11 @@ module.exports = {
     updateOne: updateOne,
     deleteOne: deleteOne,
 
-    // - File upload
-    uploadOne: uploadOne,
-
     // - Sub-collections
     getCollec: collecOne,
 
     // - Charts
-    chartMany: chartMany,
+    chartField: chartField,
 
     // - LOVs (for dropdowns)
     lovOne: lovOne
