@@ -3,7 +3,7 @@
  * evolutility-server-node :: utils/routes.js
  *
  * https://github.com/evoluteur/evolutility-server-node
- * Copyright (c) 2016 Olivier Giulieri
+ * (c) 2016 Olivier Giulieri
  ********************************************************* */
 
 var express = require('express');
@@ -21,12 +21,11 @@ logger.ascii_art();
 /*
 // ======  file server ====================================
 router.get('/', function(req, res, next) {
-  res.sendFile(path.join(__dirname, '../', '../', 'client', 'views', 'index.html'));
+  res.sendFile(path.join(__dirname, '../', '../', 'index.html'));
 }); */
 
 // ======  GET MANY ====================================
 router.get(apiPath+':entity', orm.getMany);
-router.get(apiPath+':entity/chart/:field', orm.chartField);
 
 // ======  GET ONE   ====================================
 router.get(apiPath+':entity/:id', orm.getOne);
@@ -41,6 +40,9 @@ router.post(apiPath+':entity/upload/:id', upload.uploadOne);
 
 // ======  DELETE ONE ====================================
 router.delete(apiPath+':entity/:id', orm.deleteOne);
+
+// ======  GET CHARTS ====================================
+router.get(apiPath+':entity/chart/:field', orm.chartField);
 
 // ======  LOV ===========================================
 router.get(apiPath+':entity/lov/:field', orm.lovOne);

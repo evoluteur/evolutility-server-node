@@ -3,7 +3,7 @@
  * evolutility :: utils/dico.js
  *
  * https://github.com/evoluteur/evolutility
- * Copyright (c) 2016 Olivier Giulieri
+ * (c) 2016 Olivier Giulieri
  *************************************************************************** */
 
 var models = require('../../models/all_models'),
@@ -11,7 +11,8 @@ var models = require('../../models/all_models'),
 
 var schema = '"'+(config.schema || 'evol_demo')+'"';
 
-var fTypes = {
+// - Field Types
+var ft = {
 	text: 'text',
 	textml: 'textmultiline',
 	bool: 'boolean',
@@ -38,7 +39,7 @@ var fTypes = {
 };
 
 function fieldIsNumber(f){
-	return [fTypes.int, fTypes.dec, fTypes.money].indexOf(f.type)>-1;
+	return [ft.int, ft.dec, ft.money].indexOf(f.type)>-1;
 }
 
 function fieldInCharts(f) {
@@ -46,8 +47,8 @@ function fieldInCharts(f) {
 }
 
 function fieldChartable(f) { 
-	return  (f.type===fTypes.lov || f.type===fTypes.list || 
-				f.type===fTypes.bool || fieldIsNumber(f));
+	return  (f.type===ft.lov || f.type===ft.list || 
+				f.type===ft.bool || fieldIsNumber(f));
 }
 
 function hById(arr){
@@ -81,7 +82,7 @@ function prepModel(m){
 
 module.exports = {
 
-	fieldTypes: fTypes,
+	fieldTypes: ft,
 
 	getModel: function(mId){ 
 	// - return a model enhanced w/ hashs
@@ -95,7 +96,7 @@ module.exports = {
 	},
 
 	fieldIsText: function(f){
-		return [fTypes.text, fTypes.textml, fTypes.url, fTypes.html, fTypes.email].indexOf(f.type)>-1;
+		return [ft.text, ft.textml, ft.url, ft.html, ft.email].indexOf(f.type)>-1;
 	},
 
 	fieldIsNumber: fieldIsNumber,

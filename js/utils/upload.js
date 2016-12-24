@@ -3,7 +3,7 @@
  * evolutility-server-node :: utils/upload.js
  *
  * https://github.com/evoluteur/evolutility-server-node
- * Copyright (c) 2016 Olivier Giulieri
+ * (c) 2016 Olivier Giulieri
  ********************************************************* */
 
 var formidable = require('formidable'),
@@ -15,8 +15,8 @@ var formidable = require('formidable'),
 
 module.exports = {  
 
-    uploadOne: function uploadOne(req, res){
     // - save uploaded file to server (no DB involved)
+    uploadOne: function uploadOne(req, res){
         logger.logReq('UPLOAD ONE', req);
 
         var m = dico.getModel(req.params.entity),

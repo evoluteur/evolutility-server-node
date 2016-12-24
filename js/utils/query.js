@@ -3,7 +3,7 @@
  * evolutility-server-node :: utils/query.js
  *
  * https://github.com/evoluteur/evolutility-server-node
- * Copyright (c) 2016 Olivier Giulieri
+ * (c) 2016 Olivier Giulieri
  ********************************************************* */
 
 var csv = require('express-csv'),
@@ -22,8 +22,8 @@ function sqlQuery(q){
     return sql;
 }
 
-function runQuery(pool, res, sql, values, singleRecord, format, header){
 // - run a query and return the result in request
+function runQuery(pool, res, sql, values, singleRecord, format, header){
     var results = [];
 
     // Get a Postgres client from the connection pool 

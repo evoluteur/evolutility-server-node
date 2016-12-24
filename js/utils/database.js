@@ -4,7 +4,7 @@
  * Methods to create database from models.
  *
  * https://github.com/evoluteur/evolutility-server-node
- * Copyright (c) 2016 Olivier Giulieri
+ * (c) 2016 Olivier Giulieri
  ********************************************************* */
 
 var pg = require('pg');

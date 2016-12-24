@@ -3,12 +3,13 @@
  * evolutility-server-node :: utils/orm.js
  *
  * https://github.com/evoluteur/evolutility-server-node
- * Copyright (c) 2016 Olivier Giulieri
+ * (c) 2016 Olivier Giulieri
  ********************************************************* */
 
 var pg = require('pg'),
     parseConnection = require('pg-connection-string').parse,
     dico = require('./dico'),
+    sqls = require('./sql-select'),
     query = require('./query'),
     logger = require('./logger'),
     config = require('../../config.js');
@@ -27,8 +28,8 @@ pool.on('error', function (err, client) {
   console.error('idle client error', err.message, err.stack)
 })
 
-function csvHeader(fields){
 // - build the header row for CSV export
+function csvHeader(fields){
     var h = {'id': 'ID'},
         lovs = {};
 
@@ -43,102 +44,47 @@ function csvHeader(fields){
     return h;
 }
 
-function sqlSelect(fields, collecs, table, action){
-// - generate the SELECT clause
-    var sql,
-        sqlfs=[],
-        tQuote = table ? 't1."' : '"';
-
-    if(fields){
-        fields.forEach(function(f, idx){
-            if(f.type==='lov' && action!=='C' && action!=='U'){
-                sqlfs.push(f.t2+'.'+(f.lovcolumn ? f.lovcolumn : 'name')+' AS "'+f.id+'_txt"')
-            }
-            sql = tQuote+f.column
-            //if(f.type==='money'){
-                //sql += '"::money'
-            //}else if(f.type==='integer'){
-                //sql += '"::integer'
-            //}else if(f.type==='decimal'){
-                //sql += '"::float'
-            //}else{
-                sql += '"'
-            //}
-            if(f.column && f.id!=f.column){
-                sql += ' AS "'+f.id+'"'
-            }
-            sqlfs.push(sql);
-        });
-    }
-    /*
-    if(collecs){
-        sqlfs=sqlfs.concat(collecs.map(function(c){
-            return tQuote+(c.column||c.id)+'"';
-        }));
-    }*/
-    return sqlfs.join(',');
-}
-
 
 // --------------------------------------------------------------------------------------
 // -----------------    GET MANY   ------------------------------------------------------
 // --------------------------------------------------------------------------------------
 
-function sqlOrderColumn(f){
-// - generate sql ORDER BY clause for 1 field
-    if(f){
-        if(f.type==='lov' && f.lovtable){
-            return '"'+f.id+'_txt"';
-        }else{
-            var col = 't1."'+f.column+'"';
-            if(f.type==='boolean'){
-                return 'CASE WHEN '+col+'=TRUE THEN TRUE ELSE FALSE END'
-            }else if(f.type==='text'){
-                // TODO: better way?
-                return 'LOWER('+col+')'
-            }
-            return col;
-        }
-        return 'id';
-    }
-}
-
+// - returns sql (obj) ORDER BY clause for many fields
 function sqlOrderFields(m, fullOrder){
-// - generate sql ORDER BY clause for many fields
     var fs = m.fields,
         qos = fullOrder.split(',');
 
     return qos.map(function(qo){
         var ows = qo.split('.'),
             f = m.fieldsH[ows[0]],
-            col = f ? sqlOrderColumn(f) : 'id' // -- sort by id if invalid param
+            col = f ? sqls.columnName.order(f) : 'id' // -- sort by id if invalid param
         if(ows.length===1){
-            return col
+            return col;
         }else{
-            return col + (ows[1]==='desc'?' DESC':' ASC')
+            return col + (ows[1]==='desc'?' DESC':' ASC');
         }
     }).join(',')
 }
 
+// - returns SQL list of joined tables for lov fields
 function sqlFromLOVs(fields){
-// - generates list of joined tables for lov fields
     var sql = '';
     fields.forEach(function(f, idx){
         if(f.type==='lov' && f.lovtable){
             sql += ' LEFT JOIN '+schema+'."'+f.lovtable+'" AS '+f.t2+
-                        ' ON t1."'+f.column+'"='+f.t2+'.id'
+                        ' ON t1."'+f.column+'"='+f.t2+'.id';
         }
     })
     return sql;
 }
 
+// - returns SQL for query returning a set of records
 function sqlMany(m, req, allFields, wCount){
-// - generates SQL for query returning a set of records
-    var fs=allFields ? m.fields : m.fields.filter(dico.fieldInMany)
-    var sqlParams=[];
+    var fs = allFields ? m.fields : m.fields.filter(dico.fieldInMany),
+        sqlParams = [];
 
     // ---- SELECTION
-    var sqlSel = 't1.id, '+sqlSelect(fs, false, true)
+    var sqlSel = 't1.id, '+sqls.select(fs, false, true);
     // - full_count is included after
     if(wCount){
         sqlSel += ',count(*) OVER()::integer AS _full_count';
@@ -292,8 +238,8 @@ function sqlMany(m, req, allFields, wCount){
     }
 }
 
-function getMany(req, res) {
 // - returns a set of records (filtered and sorted)
+function getMany(req, res) {
     logger.logReq('GET MANY', req);
     var m = dico.getModel(req.params.entity);
     if(m){
@@ -311,8 +257,8 @@ function getMany(req, res) {
 // -----------------    GET CHARTS   ----------------------------------------------------
 // --------------------------------------------------------------------------------------
 
-function chartField(req, res) {
 // - returns data for a single charts
+function chartField(req, res) {
     logger.logReq('GET CHART', req);
 
     var m = dico.getModel(req.params.entity),
@@ -329,11 +275,11 @@ function chartField(req, res) {
                     ' FROM '+m.schemaTable+' AS t1'+
                     ' LEFT JOIN '+schema+'.'+f.lovtable+' AS t2'+
                         ' ON t1.'+f.column+'=t2.id'+
-                    ' GROUP BY t2.id, t2.'+clov
+                    ' GROUP BY t2.id, t2.'+clov;
             }else{
                 var lbl = '"'+f.column+'"';
                 if(f.type==='boolean'){
-                    lbl='CASE '+lbl+' WHEN true THEN \'Yes\' ELSE \'No\' END'
+                    lbl='CASE '+lbl+' WHEN true THEN \'Yes\' ELSE \'No\' END';
                 }
                 sql='SELECT '+lbl+'::text AS label, count(*)::integer AS value'+
                     ' FROM '+m.schemaTable+' AS t1'+
@@ -355,16 +301,16 @@ function chartField(req, res) {
 // -----------------    GET ONE   -------------------------------------------------------
 // --------------------------------------------------------------------------------------
 
-function getOne(req, res) {
 // - get one record by ID
+function getOne(req, res) {
     logger.logReq('GET ONE', req);
 
     var m = dico.getModel(req.params.entity),
         id = req.params.id;
 
     if(m && id){
-        var sqlParams = [id];
-        var sql='SELECT t1.id, '+sqlSelect(m.fields, m.collecs, true)+
+        var sqlParams = [id],
+            sql = 'SELECT t1.id, '+sqls.select(m.fields, m.collecs, true)+
                 ' FROM '+m.schemaTable+' AS t1'+sqlFromLOVs(m.fields)+
                 ' WHERE t1.id=$1'+
                 ' LIMIT 1;';
@@ -381,59 +327,13 @@ function getOne(req, res) {
 // -----------------    INSERT ONE   ----------------------------------------------------
 // --------------------------------------------------------------------------------------
 
-function prepData(m, req, fnName, action){
-// - generates lists of names and values (for insert or update)
-    var ns = [],
-        vs = [];
-
-    m.fields.forEach(function(f){
-        if(f.column!='id' && f.type!='formula' && !f.readOnly){
-            var fv=req.body[f.id];
-            if(fv!=null){
-                switch(f.type){
-                    case 'panel-list':
-                        vs.push(JSON.stringify(fv));
-                        ns.push(fnName(f, vs.length));
-                        break;
-                    case 'boolean':
-                        vs.push((fv&&fv!=='false')?'TRUE':'FALSE');
-                        ns.push(fnName(f, vs.length));
-                        break;
-                    case 'date':
-                    case 'time':
-                    case 'datetime':
-                    case 'lov':
-                        vs.push((!fv)?null:fv);
-                        ns.push(fnName(f, vs.length));
-                        break;
-                    default:
-                        vs.push(fv);
-                        ns.push(fnName(f, vs.length));
-                }
-            }
-        }
-    });
-    if(m.collecs){
-        m.collecs.forEach(function(f){
-            var fv=req.body[f.id];
-            if(fv!=null){
-                vs.push(JSON.stringify(fv));
-                ns.push(fnName(f, vs.length));
-            }
-        });
-    }
-    return {
-        names: ns,
-        values: vs
-    };
-}
-
-function insertOne(req, res) {
 // - insert a single record
+function insertOne(req, res) {
+    // TODO: validation
     logger.logReq('INSERT ONE', req);
 
     var m = dico.getModel(req.params.entity),
-        q = prepData(m, req, function(f){return f.column;}, 'C');
+        q = sqls.namedValues(m, req, 'insert');
 
     if(m && q.names.length){
         var ps = q.names.map(function(n, idx){
@@ -441,7 +341,7 @@ function insertOne(req, res) {
         });
         var sql = 'INSERT INTO '+m.schemaTable+
             ' ("'+q.names.join('","')+'") values('+ps.join(',')+')'+
-            ' RETURNING id, '+sqlSelect(m.fields, false, null, 'C')+';';
+            ' RETURNING id, '+sqls.select(m.fields, false, null, 'C')+';';
 
         query.runQuery(pool, res, sql, q.values, true);
     }
@@ -452,19 +352,20 @@ function insertOne(req, res) {
 // -----------------    UPDATE ONE    ---------------------------------------------------
 // --------------------------------------------------------------------------------------
 
-function updateOne(req, res) {
 // - update a single record
+function updateOne(req, res) {
+    // TODO: validation
     logger.logReq('UPDATE ONE', req);
 
     var m = dico.getModel(req.params.entity),
         id = req.params.id,
-        q = prepData(m, req, function(f, idx){return '"'+f.column+'"=$'+idx;}, 'U');
+        q = sqls.namedValues(m, req, 'update');
 
     if(m && id && q.names.length){
         q.values.push(id);
         var sql = 'UPDATE '+m.schemaTable+' AS t1 SET '+ q.names.join(',') + 
             ' WHERE id=$'+q.values.length+
-            ' RETURNING id, '+sqlSelect(m.fields, false, null, 'U')+';';
+            ' RETURNING id, '+sqls.select(m.fields, false, null, 'U')+';';
         query.runQuery(pool, res, sql, q.values, true);
     }
 }
@@ -474,8 +375,8 @@ function updateOne(req, res) {
 // -----------------    DELETE ONE   ----------------------------------------------------
 // --------------------------------------------------------------------------------------
 
-function deleteOne(req, res) {
 // - delete a single record
+function deleteOne(req, res) {
     logger.logReq('DELETE ONE', req);
 
     var m = dico.getModel(req.params.entity),
@@ -484,7 +385,7 @@ function deleteOne(req, res) {
     if(m && id){
         // SQL Query > Delete Data
         var sql = 'DELETE FROM '+m.schemaTable+
-            ' WHERE id=$1 RETURNING id::integer AS id;';
+                ' WHERE id=$1 RETURNING id::integer AS id;';
         query.runQuery(pool, res, sql, [id], true);
     }
 }
@@ -494,8 +395,8 @@ function deleteOne(req, res) {
 // -----------------    LIST OF VALUES   ------------------------------------------------
 // --------------------------------------------------------------------------------------
 
-function lovOne(req, res) {
 // - returns list of possible values for a field (usually for dropdown)
+function lovOne(req, res) {
     logger.logReq('LOV ONE', req);
 
     var entity = req.params.entity,
@@ -513,8 +414,8 @@ function lovOne(req, res) {
             }
         }
         if(f){
-            var col = f.lovcolumn||'name';
-            var sql = 'SELECT id, "'+col+'" as text'
+            var col = f.lovcolumn||'name',
+                sql = 'SELECT id, "'+col+'" as text';
             if(f.lovicon){
                 sql+=',icon'
             }
@@ -535,8 +436,8 @@ function lovOne(req, res) {
 // -----------------    SUB-COLLECTIONS   -----------------------------------------------
 // --------------------------------------------------------------------------------------
 
-function collecOne(req, res) {
 // - returns sub-collection (nested in UI but relational in DB)
+function collecOne(req, res) {
     logger.logReq('GET ONE-COLLEC', req);
 
     var m = dico.getModel(req.params.entity),
@@ -546,7 +447,7 @@ function collecOne(req, res) {
 
     if(m && collec){
         var sqlParams = [pId];
-        var sql = 'SELECT t1.id, '+sqlSelect(collec.fields)+
+        var sql = 'SELECT t1.id, '+sqls.select(collec.fields)+
                 ' FROM '+schema+'."'+collec.table+'" AS t1'+//lovs.from+
                 ' WHERE t1."'+collec.column+'"=$1'+
                 ' ORDER BY t1.id'+//t1.position, t1.id
