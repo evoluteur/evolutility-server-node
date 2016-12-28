@@ -95,6 +95,11 @@ module.exports = {
             inMany: true,
             list: contact_LOVs.categories,
             lovtable: 'contact_category'
+        },
+        {
+            type: 'textmultiline', 
+            id: 'notes', column: 'notes', 
+            label: 'Notes'
         }
     ]
 };
