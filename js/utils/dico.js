@@ -62,20 +62,25 @@ function hById(arr){
 }
 
 function prepModel(m){
-	if(!m.prepared){
-		m.fieldsH = {}
-		m.fields.forEach(function(f, idx){
-			if(f.type==='lov'){
-				f.t2 = 't_'+idx
+	if(m){
+		if(!m.prepared){
+			m.fieldsH = {}
+			m.fields.forEach(function(f, idx){
+				if(f.type==='lov'){
+					f.t2 = 't_'+idx
+				}
+				m.fieldsH[f.id] = f; 
+			})
+			m.schemaTable = schema+'."'+(m.table || m.id)+'"';
+			if(m.collecs && !m.collecsH){
+				m.collecsH = hById(m.collecs);
 			}
-			m.fieldsH[f.id] = f; 
-		})
-		m.schemaTable = schema+'."'+(m.table || m.id)+'"';
-		if(m.collecs && !m.collecsH){
-			m.collecsH = hById(m.collecs);
+			m.prepared = true;
 		}
-		m.prepared = true;
+	}else{
+		console.log('Error in "prepModel": model ="'+m+'".')
 	}
+
 	return m;
 }
 

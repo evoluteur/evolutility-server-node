@@ -5,10 +5,7 @@
   "copyright": "(c) 2016 Olivier Giulieri",
   "license": "MIT",
   "homepage": "https://github.com/evoluteur/evolutility-server-node",
-  "author": {
-      "name": "Olivier Giulieri",
-      "url": "https://github.com/evoluteur"
-  },
+  "author": "Olivier Giulieri (https://evoluteur.github.io/)",
   "repository": {
       "type": "git",
       "url": "git://github.com/evoluteur/evolutility-server-node.git"
@@ -21,6 +18,7 @@
     "REST",
     "model-driven",
     "MDA",
+    "mda",
     "metadata",
     "server",
     "API",
@@ -30,7 +28,8 @@
     "NodeJS",
     "low-code",
     "javascript",
-    "ORM"
+    "ORM",
+    "CRUD"
   ],
   "dependencies": {
     "body-parser": "~1.15.2",

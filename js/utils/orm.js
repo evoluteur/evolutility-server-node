@@ -85,10 +85,6 @@ function sqlMany(m, req, allFields, wCount){
 
     // ---- SELECTION
     var sqlSel = 't1.id, '+sqls.select(fs, false, true);
-    // - full_count is included after
-    if(wCount){
-        sqlSel += ',count(*) OVER()::integer AS _full_count';
-    }
     var sqlFrom = m.schemaTable + ' AS t1' + sqlFromLOVs(fs);
 
     // ---- FILTERING
