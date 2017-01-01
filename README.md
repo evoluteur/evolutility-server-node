@@ -61,7 +61,6 @@ Models contain the name of the driving table and the list of fields/columns pres
 | id           | Unique key to identify the entity (used as API parameter). |
 | table        | Database table name.                    |
 | fields       | Array of fields.                        |
-| groups       | Array of groups.                        |
 | titleField    | Field id for the column value used as record title. |
 | searchFields    | Array of field ids for fields used to perform searches.  |  
 
@@ -73,7 +72,7 @@ Models contain the name of the driving table and the list of fields/columns pres
 | id           | Unique key for the field (can be the same as column but doesn't have to be). |
 | column       | Database column name for the field    |
 | lovtable     | Table to join to for field value (only for fields of "lov" type). |  
-| lovcolumn    | column for field value (only for fields of "lov" type). |  
+| lovcolumn    | Column name (in the lovtable) for field value (only for fields of "lov" type). |  
 | type         | Field type is not a database column type but more a UI field type. Possible field types: <ul><li>boolean (yes/no)</li><li>date</li><li>datetime</li><li>decimal</li><li>document</li><li>email</li><li>image</li><li>integer</li><li>lov (list of values)</li><li>money</li><li>text</li><li>textmultiline</li><li>time</li><li>url</li></ul> |
 | required     | Determines if the field is required for saving.      |
 | readonly     | Prevents field modification.          |                      
@@ -284,6 +283,6 @@ GET /todo/lov/category
 
 ## License
 
-Copyright (c) 2016 Olivier Giulieri.
+Copyright (c) 2017 [Olivier Giulieri](https://evoluteur.github.io/).
 
 Evolutility-Server-Node is released under the [MIT license](http://github.com/evoluteur/evolutility-server-node/blob/master/LICENSE.md).
