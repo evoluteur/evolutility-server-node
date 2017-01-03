@@ -3,7 +3,7 @@
  * evolutility-server-node :: utils/upload.js
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2016 Olivier Giulieri
+ * (c) 2017 Olivier Giulieri
  ********************************************************* */
 
 var formidable = require('formidable'),
