@@ -48,14 +48,12 @@ function runQuery(pool, res, sql, values, singleRecord, format, header){
                         headers[key] = header[key] || key;
                     }
                     results.unshift(headers);
-                    return res.csv(results);
-                }else{
-                    return res.csv(results);
                 }
+                return res.csv(results);
             }else if(singleRecord){
                 return res.json(results[0]);
             }else{
-                if(results && results.length){
+                if(results && results.length && results[0]._full_count){
                     res.setHeader('_full_count', results[0]._full_count);
                 }else{
                     res.setHeader('_full_count', 0);
