@@ -1,7 +1,7 @@
 /*! *******************************************************
  *
  * evolutility-server-node :: utils/logger.js
- * Simple formatted console logger.
+ * Simple formatted console logger (not logging to file).
  *
  * https://github.com/evoluteur/evolutility-server-node
  * (c) 2017 Olivier Giulieri
@@ -9,6 +9,7 @@
 
 var config = require('../../config.js');
 var pkg = require('../../package.json');
+var chalk = require('chalk');
 
 var consoleLog = config.consoleLog;
 
@@ -16,7 +17,7 @@ module.exports = {
 
 	ascii_art: function(){
 		if(consoleLog){
-			console.log(
+			console.log(chalk.cyan(
 				'  ______          _           _ _ _\n'+
 				' |  ____|        | |      /| (_) (_)/|\n'+
 				' | |____   _____ | |_   _| |_ _| |_| |_ _   _\n'+
@@ -26,22 +27,22 @@ module.exports = {
 				'         ___  ___ _ ____   _____ _ __    __/ |\n'+
 				'  ____  / __|/ _ \\ \'__\\ \\ / / _ \\ \'__|  |___/\n' + 
 				' |____| \\__ \\  __/ |   \\ V /  __/ |\n'+
-				'        |___/\\___|_|    \\_/ \\___|_|      '+pkg.version+'\n\n'+
+				'        |___/\\___|_|    \\_/ \\___|_|    v'+pkg.version)+'\n\n'+
 				new Date() + '\n'
 			);
 		}
 	},
 
-	 logReq: function(title, req){
+	logReq: function(title, req){
 		if(consoleLog){
-			console.log('\n\n--- '+title+' : '+req.params.entity+' ---');
+			console.log(chalk.cyan('\n--- '+title+' : '+req.params.entity+' ---'));
 			console.log('params = '+JSON.stringify(req.params, null, 2));
 			console.log('query = '+JSON.stringify(req.query, null, 2));
 			console.log('body = '+JSON.stringify(req.body, null, 2));
 		}
 	},
 
-	 logObject: function(title, obj){
+	logObject: function(title, obj){
 		if(consoleLog){
 			console.log(title+' = '+JSON.stringify(obj, null, 2));
 		}
@@ -53,12 +54,17 @@ module.exports = {
 		}
 	},
 
+	logSuccess: function(nbRecords){
+		console.error(chalk.green('Fetching '+nbRecords+' records.'));
+	},
+
 	logError: function(err){
-		console.error(err);
+		console.error(chalk.red(err));
 	},
 
 	errorMsg: function(err, method){
 		if(consoleLog){
+			this.logError(err);
 			return {
 				error: err,
 				method: method

@@ -9,6 +9,14 @@
 var csv = require('express-csv'),
     logger = require('./logger');
 
+// - show error in console
+function consoleError(err){
+    if(err){
+        logger.logError(err);
+    }
+}
+
+// - concatenate SQL query
 function sqlQuery(q){
     var sql = 'SELECT '+q.select+
         ' FROM '+q.from;
@@ -31,7 +39,7 @@ function runQuery(pool, res, sql, values, singleRecord, format, header){
 
         // SQL Query > Select Data
         logger.logSQL(sql);
-        var query = values ? client.query(sql, values) : client.query(sql);
+        var query = values ? client.query(sql, values, consoleError) : client.query(sql, consoleError);
 
         // Stream results back one row at a time
         query.on('row', function(row) {
@@ -40,6 +48,7 @@ function runQuery(pool, res, sql, values, singleRecord, format, header){
 
         // After all data is returned, close connection and return results
         query.on('end', function() {
+            var nbRecords = results.length;
             done();
             if(format==='csv'){
                 if(header){
@@ -49,24 +58,28 @@ function runQuery(pool, res, sql, values, singleRecord, format, header){
                     }
                     results.unshift(headers);
                 }
+                logger.logSuccess(results.length || 0);
                 return res.csv(results);
             }else if(singleRecord){
+                logger.logSuccess(results.length || 0);
                 return res.json(results[0]);
             }else{
-                if(results && results.length && results[0]._full_count){
+                res.setHeader('_count', nbRecords);
+                if(nbRecords && results[0]._full_count){
                     res.setHeader('_full_count', results[0]._full_count);
                 }else{
                     res.setHeader('_full_count', 0);
                 }
+                logger.logSuccess(results.length || 0);
                 return res.json(results);
             }
         });
 
         // Handle Errors
         if(err) {
+            logger.logError(err);
             done();
             res.status(500).send('Something broke!');
-            logger.logError(err);
         }
 
     });
