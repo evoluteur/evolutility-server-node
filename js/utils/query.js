@@ -55,7 +55,11 @@ function runQuery(pool, res, sql, values, singleRecord, format, header){
             }else if(singleRecord){
                 return res.json(results[0]);
             }else{
-                res.setHeader('_full_count', 'aaaaaa')
+                if(results && results.length){
+                    res.setHeader('_full_count', results[0]._full_count);
+                }else{
+                    res.setHeader('_full_count', 0);
+                }
                 return res.json(results);
             }
         });
