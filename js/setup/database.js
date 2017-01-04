@@ -10,7 +10,7 @@
 var pg = require('pg'),
     path = require('path'),
     _ = require('underscore'),
-    dico = require('./dico');
+    dico = require('../utils/dico');
 
 var config = require(path.join(__dirname, '../', '../', 'config')),
     schema = '"'+config.schema+'"';
