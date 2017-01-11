@@ -170,7 +170,7 @@ GET /todo?priority=in.1,2,3
 ```
 Adding multiple parameters conjoins the conditions:
 ```
-todo?complete=0&duedate=lt.2016-01-01
+todo?complete=0&duedate=lt.2017-01-01
 ```
 
 These operators are available:
@@ -178,10 +178,10 @@ These operators are available:
 | Operator     | Meaning                 | Example                      |
 |--------------|-------------------------|------------------------------|
 | eq           | equals                  | /todo?category=eq.1          |
-| gt           | greater than            | /todo?duedate=gt.2016-01-15  |
-| lt           | less than               | /todo?duedate=lt.2016-01-15  |
-| gte          | less than or equal      | /todo?duedate=gte.2016-01-15 |
-| lte          | less than or equal      | /todo?duedate=lte.2016-01-15 |
+| gt           | greater than            | /todo?duedate=gt.2017-01-15  |
+| lt           | less than               | /todo?duedate=lt.2017-01-15  |
+| gte          | less than or equal      | /todo?duedate=gte.2017-01-15 |
+| lte          | less than or equal      | /todo?duedate=lte.2017-01-15 |
 | ct           | contains                | /todo?title=ct.e             |
 | sw           | start with              | /todo?title=sw.a             |
 | fw           | finishes with           | /todo?title=fw.z             |
@@ -280,6 +280,16 @@ GET /<object>/lov/<field id>
 GET /todo/lov/category
 ```
 
+#### File upload
+
+This endpoint lets you upload a file. The current (naive) implementation only saves the file on the file server in a folder named like the object id.
+
+```
+POST /<object>/upload/<id>
+
+POST /comics/upload/5
+```
+With Query parameters: file and "fieldid".
 
 ## License
 
