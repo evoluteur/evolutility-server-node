@@ -6,7 +6,8 @@
  * (c) 2017 Olivier Giulieri
  ********************************************************* */
 
-var formidable = require('formidable'),
+var path = require('path'),
+    formidable = require('formidable'),
     shortid = require('shortid'),
     fs = require('fs'),
     dico = require('./dico'),
