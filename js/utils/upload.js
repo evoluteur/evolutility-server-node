@@ -43,11 +43,12 @@ module.exports = {
                 ffname = idx ? (ffname.slice(0, idx)+xtra+ffname.slice(idx)) : (ffname+xtra);
                 idx = ffname.lastIndexOf('/');
                 fname = ffname.slice(idx+1);
-                console.log('No Dup: "'+originalName+'" -> "'+fname+'".')
+                logger.logSuccess('Renaming File: "'+originalName+'" -> "'+fname+'".')
             }
             fs.rename(file.path, ffname);
         })
         .on('end', function(){
+            logger.logSuccess('Saving File: "'+ffname+'".')
             res.json({
                 duplicate: dup,
                 fileName: fname,

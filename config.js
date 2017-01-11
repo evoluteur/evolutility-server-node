@@ -14,7 +14,7 @@ module.exports = {
 	csvSize: 1000,
 	lovSize: 100,
 
-	// Directory for files uploaded
+	// Directory for uploaded files
 	uploadPath: '../evolutility-ui-react/public/pix/',
 
 	// Console log

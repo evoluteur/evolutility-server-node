@@ -17,7 +17,7 @@ module.exports = {
 
 	ascii_art: function(){
 		if(consoleLog){
-			console.log(chalk.cyan(
+			console.log(
 				'  ______          _           _ _ _\n'+
 				' |  ____|        | |      /| (_) (_)/|\n'+
 				' | |____   _____ | |_   _| |_ _| |_| |_ _   _\n'+
@@ -27,7 +27,7 @@ module.exports = {
 				'         ___  ___ _ ____   _____ _ __    __/ |\n'+
 				'  ____  / __|/ _ \\ \'__\\ \\ / / _ \\ \'__|  |___/\n' + 
 				' |____| \\__ \\  __/ |   \\ V /  __/ |\n'+
-				'        |___/\\___|_|    \\_/ \\___|_|    v'+pkg.version)+'\n\n'+
+				'        |___/\\___|_|    \\_/ \\___|_|    v'+pkg.version+'\n\n'+
 				new Date() + '\n'
 			);
 		}
@@ -54,12 +54,22 @@ module.exports = {
 		}
 	},
 
-	logSuccess: function(nbRecords){
-		console.error(chalk.green('Fetching '+nbRecords+' records.'));
+	logCount: function(nbRecords){
+		if(consoleLog){
+			console.error(chalk.green('Sending '+nbRecords+' records.'));
+		}
+	},
+
+	logSuccess: function(msg){
+		if(consoleLog){
+			console.error(chalk.green(msg));
+		}
 	},
 
 	logError: function(err){
-		console.error(chalk.red(err));
+		if(consoleLog){
+			console.error(chalk.red(err));
+		}
 	},
 
 	errorMsg: function(err, method){

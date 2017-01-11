@@ -58,11 +58,11 @@ function runQuery(pool, res, sql, values, singleRecord, format, header){
                     }
                     results.unshift(headers);
                 }
-                logger.logSuccess(results.length || 0);
+                logger.logCount(results.length || 0);
                 return res.csv(results);
             }else if(singleRecord){
-                logger.logSuccess(results.length || 0);
-                return res.json(results[0]);
+                logger.logCount(results.length || 0);
+                return res.json(results.length?results[0]:null);
             }else{
                 res.setHeader('_count', nbRecords);
                 if(nbRecords && results[0]._full_count){
@@ -70,7 +70,7 @@ function runQuery(pool, res, sql, values, singleRecord, format, header){
                 }else{
                     res.setHeader('_full_count', 0);
                 }
-                logger.logSuccess(results.length || 0);
+                logger.logCount(results.length || 0);
                 return res.json(results);
             }
         });

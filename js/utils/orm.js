@@ -84,8 +84,8 @@ function sqlMany(m, req, allFields, wCount){
         sqlParams = [];
 
     // ---- SELECTION
-    var sqlSel = 't1.id, '+sqls.select(fs, false, true);
-    var sqlFrom = m.schemaTable + ' AS t1' + sqlFromLOVs(fs);
+    var sqlSel = 't1.id, '+sqls.select(fs, false, true),
+        sqlFrom = m.schemaTable + ' AS t1' + sqlFromLOVs(fs);
 
     // ---- FILTERING
     var sqlOperators = {
@@ -212,8 +212,7 @@ function sqlMany(m, req, allFields, wCount){
         qPage=req.query.page||0, 
         qPageSize;
 
-    var format = req.query.format || null;
-    if(format==='csv'){
+    if(req.query.format==='csv'){
         qPageSize = config.csvSize || 1000;
     }else{
         qPageSize = parseInt(req.query.pageSize || defaultPageSize, 10);
@@ -225,8 +224,8 @@ function sqlMany(m, req, allFields, wCount){
     return {
         select: sqlSel,
         from: sqlFrom,
-        where: sqlWs, //array
-        group: '',
+        where: sqlWs, // = array
+        //group: '',
         order: sqlOrder,
         limit: qPageSize,
         offset: offset,
@@ -384,6 +383,7 @@ function deleteOne(req, res) {
                 ' WHERE id=$1 RETURNING id::integer AS id;';
         query.runQuery(pool, res, sql, [id], true);
     }
+
 }
 
 
