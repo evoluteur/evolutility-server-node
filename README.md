@@ -89,6 +89,7 @@ module.exports = {
     id: "todo",
     table: "task",
     titleField: "title",
+    searchFields: ["title", "duedate", "description"],
     fields: [
         {
             id: "title", column: "title", 
