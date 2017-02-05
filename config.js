@@ -9,7 +9,7 @@ module.exports = {
 	connectionString: process.env.DATABASE_URL || 'postgres://evol:love@localhost:5432/Evolutility',
 	schema: 'evol_demo',
 
-	// Pagination and max rows
+	// Pagination and maximum number of rows
 	pageSize: 50,
 	csvSize: 1000,
 	lovSize: 100,

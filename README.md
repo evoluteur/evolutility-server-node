@@ -29,7 +29,7 @@ After installing Evolutility-Server-Node, follow these steps:
 
 1. Create a PostgreSQL database.
 
-2. In the file config.js set the PostgreSQL connection string and the schema name to access your new database.
+2. In the file [config.js](https://github.com/evoluteur/evolutility-server-node/blob/master/config.js) set the PostgreSQL connection string and the schema name to access your new database.
 
 3. In the command line type the following:
 
@@ -47,6 +47,7 @@ npm start
 
 In a web browser, go to the url [http://localhost:3000/api/v1/evolutility/todo](http://localhost:3000/api/v1/evolutility/todo).
 
+Configuration options are possible by editing the [config.js](https://github.com/evoluteur/evolutility-server-node/blob/master/config.js) file in the root directory of the project.
 
 ## Models
 
