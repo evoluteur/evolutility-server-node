@@ -93,42 +93,44 @@ module.exports = {
     searchFields: ["title", "duedate", "description"],
     fields: [
         {
-            id: "title", column: "title", 
-            label: "Title", 
-            type: "text", required: true, maxLength: 300, 
+            id: "title", 
+            column: "title", 
+            type: "text", 
+            required: true, 
             inMany: true
         },
         {
-            id: "duedate", column: "duedate", 
-            label: "Due Date",
+            id: "duedate", 
+            column: "duedate", 
             type: "date", 
             inMany: true
         },
         {
-            id: "category", column: "category_id", 
-            label: "Category", 
-            type: "lov", lovtable: "task_category",
+            id: "category", 
+            column: "category_id", 
+            type: "lov", 
+            lovtable: "task_category",
             inMany: true
         },
         {
-            id: "priority", column: "priority_id", 
-            label: "Priority", 
-            type: "lov", lovtable: "task_priority", 
+            id: "priority", 
+            column: "priority_id", 
+            type: "lov", 
+            lovtable: "task_priority", 
             required: true, 
             inMany: true
         {
-            id: "complete", column: "complete", 
-            label: "Complete",
+            id: "complete", 
+            column: "complete", 
             type: "boolean", 
             inMany: true
         },
         {
-            id: "description", column: "description", 
-            label: "Description",
-            type: "textmultiline", maxLength: 1000
+            id: "description", 
+            column: "description", 
+            type: "textmultiline"
         }
     ]
-  
 };
 
 ```
