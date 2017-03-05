@@ -127,7 +127,7 @@ function sqlMany(m, req, allFields, wCount){
                                     return "'"+li.replace(/'/g, "''")+"'";
                                 }).join(',')+')'); 
                             }else if(cond==='0'){ // false
-                                sqlWs.push(w+'false');
+                                sqlWs.push('('+w+'false OR t1."'+f.column+'" IS NULL)');
                             }else if(cond==='1'){ // true
                                 sqlWs.push(w+'true');
                             }else if(cond==='null'){ // empty        
