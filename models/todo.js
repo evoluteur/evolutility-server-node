@@ -11,7 +11,7 @@ module.exports = {
             inMany: true
         },
         {
-            id: 'duedate', column: 'duedate', type: 'date', 
+            id: 'duedate', column: 'due_date', type: 'date', 
             label: 'Due Date', inMany: true
         },
         {

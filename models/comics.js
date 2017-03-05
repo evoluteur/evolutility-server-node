@@ -1,8 +1,8 @@
 module.exports =  {
     id: 'comics',
     label: 'Graphic Novels',
-    name: 'graphic novel serie',
-    namePlural: 'graphic novel series',
+    name: 'serie',
+    namePlural: 'series',
     titleField: 'title',
     searchFields: ['title', 'authors', 'notes'],
     fields: [
@@ -13,7 +13,7 @@ module.exports =  {
         },
         {
             id: 'genre', column: 'genre_id', type: 'lov', label: 'Genre', inMany: true,
-            list: [
+            lov: [
                 {id: 1, text: 'Adventure'},
                 {id: 2, text: 'Fairy tale'},
                 {id: 3, text: 'Erotic'},
