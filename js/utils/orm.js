@@ -264,21 +264,27 @@ function chartField(req, res) {
     if(m && fid){
         var f = m.fieldsH[fid];
         if(f){
+            var col = '"'+f.column+'"';
             if(f.type==='lov' && f.lovtable){
                 var clov = f.lovcolumn||'name';
+
                 sql='SELECT t2.id, t2.'+clov+'::text AS label, count(*)::integer AS value'+
                     ' FROM '+m.schemaTable+' AS t1'+
-                    ' LEFT JOIN '+schema+'.'+f.lovtable+' AS t2'+
-                        ' ON t1.'+f.column+'=t2.id'+
+                    ' LEFT JOIN '+schema+'."'+f.lovtable+'" AS t2'+
+                        ' ON t1.'+col+'=t2.id'+
                     ' GROUP BY t2.id, t2.'+clov;
-            }else{
-                var lbl = '"'+f.column+'"';
-                if(f.type==='boolean'){
-                    lbl='CASE '+lbl+' WHEN true THEN \'Yes\' ELSE \'No\' END';
-                }
-                sql='SELECT '+lbl+'::text AS label, count(*)::integer AS value'+
+            }else if(f.type==='boolean'){
+                var cId = 'CASE '+col+' WHEN true THEN 1 ELSE 0 END',
+                    cLabel = 'CASE '+col+' WHEN true THEN \'Yes\' ELSE \'No\' END';
+
+                sql='SELECT '+cId+'::integer AS id, '+
+                        cLabel+'::text AS label, count(*)::integer AS value'+
                     ' FROM '+m.schemaTable+' AS t1'+
-                    ' GROUP BY '+lbl;
+                    ' GROUP BY '+cId+','+cLabel;
+            }else{ // TODO: bukets
+                sql='SELECT '+col+'::text AS label, count(*)::integer AS value'+
+                    ' FROM '+m.schemaTable+' AS t1'+
+                    ' GROUP BY '+col;
             }
             sql += ' ORDER BY label ASC'+
                    ' LIMIT '+defaultPageSize+';';
