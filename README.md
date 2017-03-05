@@ -190,7 +190,7 @@ These operators are available:
 | sw           | start with              | /todo?title=sw.a             |
 | fw           | finishes with           | /todo?title=fw.z             |
 | in           | one of a list of values | /todo?priority=in.1,2,3      |
-| 0            | is false                | /todo?complete=0             |
+| 0            | is false or null        | /todo?complete=0             |
 | 1            | is true                 | /todo?complete=1             |
 | null         | is null                 | /todo?category=null          |
 | nn           | is not null             | /todo?category==nn           |
