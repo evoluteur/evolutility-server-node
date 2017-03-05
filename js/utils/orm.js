@@ -29,16 +29,25 @@ pool.on('error', function (err, client) {
 })
 
 // - build the header row for CSV export
+const csvHeaderColumn = config.csvHeader || 'label'
+
+function fieldId(f){
+    if(csvHeaderColumn==='label'){
+        return f.label || f.id
+    }
+    return f.id
+}
+
 function csvHeader(fields){
     var h = {'id': 'ID'},
         lovs = {};
 
     fields.forEach(function(f){
         if(f.type==='lov'){
-            h[f.id] = (f.label || f.id)+' ID';
-            h[f.id+'_txt'] = f.label || f.id;
+            h[f.id] = fieldId(f)+' ID';
+            h[f.id+'_txt'] = fieldId(f);
         }else{
-            h[f.id] = f.label || f.id;
+            h[f.id] = fieldId(f);
         }
     });
     return h;

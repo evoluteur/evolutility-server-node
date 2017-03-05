@@ -11,8 +11,9 @@ module.exports = {
 
 	// Pagination and maximum number of rows
 	pageSize: 50,
-	csvSize: 1000,
 	lovSize: 100,
+	csvSize: 1000,
+	csvHeader: 'label', // possible values: id, label
 
 	// Directory for uploaded files
 	uploadPath: '../evolutility-ui-react/public/pix/',
