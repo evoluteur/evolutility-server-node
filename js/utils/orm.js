@@ -91,7 +91,9 @@ function sqlFromLOVs(fields){
 function sqlMany(m, req, allFields, wCount){
     var fs = allFields ? m.fields : m.fields.filter(dico.fieldInMany),
         sqlParams = [];
-
+        if(allFields && fs.length===0){
+            fs=allFields.slice(0, 5)
+        }
     // ---- SELECTION
     var sqlSel = 't1.id, '+sqls.select(fs, false, true),
         sqlFrom = m.schemaTable + ' AS t1' + sqlFromLOVs(fs);
@@ -113,11 +115,12 @@ function sqlMany(m, req, allFields, wCount){
         'null': ' IS ',
         'nn': ' IS '
     };
+
     var sqlWs = [];
     for (var n in req.query){
         if (req.query.hasOwnProperty(n)) {
             var f = (n==='id') ? {column:'id'} : m.fieldsH[n];
-            if(f && ['select', 'filter', 'search', 'order', 'page', 'pageSize'].indexOf(f)<0){
+            if(f && ['select', 'filter', 'search', 'order', 'page', 'pageSize'].indexOf(f.column)<0){
                 var cs = req.query[n].split('.');
                 if(cs.length){
                     var cond=cs[0];
@@ -176,7 +179,7 @@ function sqlMany(m, req, allFields, wCount){
 
         if(m.searchFields && Array.isArray(m.searchFields)){
             logger.logObject('search fields', m.searchFields);
-            var sqlP='"'+sqlOperators.ct+'($'+(sqlParams.length+1)+')';
+            var sqlP='"'+sqlOperators.ct+'$'+(sqlParams.length+1);
             m.searchFields.forEach(function(fid){
                 sqlWsSearch.push('t1."'+m.fieldsH[fid].column+sqlP);
             });
@@ -208,12 +211,8 @@ function sqlMany(m, req, allFields, wCount){
         }else{
             sqlOrder+=sqlOrderFields(m, qOrder);
         }
-    }else{
-        var fCol='t1."'+fs[0].column+'"';
-        if(fs[0].type==='text'){
-            fCol='UPPER('+fCol+')';
-        }
-        sqlOrder = fCol+' ASC';
+    }else if(fs.length){
+        sqlOrder = '2 ASC';
     }
 
     // ---- LIMITING & PAGINATION
