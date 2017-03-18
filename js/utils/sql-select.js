@@ -120,6 +120,25 @@ module.exports = {
 			names: ns,
 			values: vs
 		};
+	},
+
+
+	// - returns sql (obj) ORDER BY clause for many fields
+	sqlOrderFields: function(m, fullOrder){
+		var fs = m.fields,
+			qos = fullOrder.split(',');
+
+		return qos.map(function(qo){
+			var ows = qo.split('.'),
+				f = m.fieldsH[ows[0]],
+				col = f ? sqls.columnName.order(f) : 'id' // -- sort by id if invalid param
+			
+			if(ows.length===1){
+				return col;
+			}else{
+				return col + (ows[1]==='desc'?' DESC':' ASC');
+			}
+		}).join(',')
 	}
 
 }

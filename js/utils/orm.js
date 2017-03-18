@@ -58,23 +58,6 @@ function csvHeader(fields){
 // -----------------    GET MANY   ------------------------------------------------------
 // --------------------------------------------------------------------------------------
 
-// - returns sql (obj) ORDER BY clause for many fields
-function sqlOrderFields(m, fullOrder){
-    var fs = m.fields,
-        qos = fullOrder.split(',');
-
-    return qos.map(function(qo){
-        var ows = qo.split('.'),
-            f = m.fieldsH[ows[0]],
-            col = f ? sqls.columnName.order(f) : 'id' // -- sort by id if invalid param
-        if(ows.length===1){
-            return col;
-        }else{
-            return col + (ows[1]==='desc'?' DESC':' ASC');
-        }
-    }).join(',')
-}
-
 // - returns SQL list of joined tables for lov fields
 function sqlFromLOVs(fields){
     var sql = '';
@@ -205,11 +188,11 @@ function sqlMany(m, req, allFields, wCount){
             var qOs=qOrder.split(',');
             if(qOs){
                 sqlOrder+=qOs.map(qOs, function(qo){
-                        return sqlOrderFields(m, qo)
-                    }).join(',');
+                    return sqls.sqlOrderFields(m, qo)
+                }).join(',');
             }
         }else{
-            sqlOrder+=sqlOrderFields(m, qOrder);
+            sqlOrder+=sqls.sqlOrderFields(m, qOrder);
         }
     }else if(fs.length){
         sqlOrder = '2 ASC';
@@ -302,7 +285,6 @@ function chartField(req, res) {
     }else{
         return res.json(logger.errorMsg('Invalid entity or field.', 'chartField'));
     }
-
 }
 
 
@@ -328,7 +310,6 @@ function getOne(req, res) {
     }else{
         return res.json(logger.errorMsg('Invalid entity \''+entity+'\'or field\''+fid+'\'.', 'getOne'));
     }
-
 }
 
 
@@ -375,6 +356,7 @@ function updateOne(req, res) {
         var sql = 'UPDATE '+m.schemaTable+' AS t1 SET '+ q.names.join(',') + 
             ' WHERE id=$'+q.values.length+
             ' RETURNING id, '+sqls.select(m.fields, false, null, 'U')+';';
+
         query.runQuery(pool, res, sql, q.values, true);
     }
 }
@@ -395,9 +377,9 @@ function deleteOne(req, res) {
         // SQL Query > Delete Data
         var sql = 'DELETE FROM '+m.schemaTable+
                 ' WHERE id=$1 RETURNING id::integer AS id;';
+                
         query.runQuery(pool, res, sql, [id], true);
     }
-
 }
 
 
@@ -438,7 +420,6 @@ function lovOne(req, res) {
     }else{
         res.json(logger.errorMsg('Invalid entity \''+entity+'\'.', 'lovOne'));
     }
-
 }
 
 
