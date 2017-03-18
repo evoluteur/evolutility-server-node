@@ -122,7 +122,6 @@ module.exports = {
 		};
 	},
 
-
 	// - returns sql (obj) ORDER BY clause for many fields
 	sqlOrderFields: function(m, fullOrder){
 		var fs = m.fields,
@@ -131,7 +130,7 @@ module.exports = {
 		return qos.map(function(qo){
 			var ows = qo.split('.'),
 				f = m.fieldsH[ows[0]],
-				col = f ? sqls.columnName.order(f) : 'id' // -- sort by id if invalid param
+				col = f ? columnName.order(f) : 'id' // -- sort by id if invalid param
 			
 			if(ows.length===1){
 				return col;
