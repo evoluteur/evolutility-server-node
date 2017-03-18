@@ -58,18 +58,6 @@ function csvHeader(fields){
 // -----------------    GET MANY   ------------------------------------------------------
 // --------------------------------------------------------------------------------------
 
-// - returns SQL list of joined tables for lov fields
-function sqlFromLOVs(fields){
-    var sql = '';
-    fields.forEach(function(f, idx){
-        if(f.type==='lov' && f.lovtable){
-            sql += ' LEFT JOIN '+schema+'."'+f.lovtable+'" AS '+f.t2+
-                        ' ON t1."'+f.column+'"='+f.t2+'.id';
-        }
-    })
-    return sql;
-}
-
 // - returns SQL for query returning a set of records
 function sqlMany(m, req, allFields, wCount){
     var fs = allFields ? m.fields : m.fields.filter(dico.fieldInMany),
@@ -79,7 +67,7 @@ function sqlMany(m, req, allFields, wCount){
         }
     // ---- SELECTION
     var sqlSel = 't1.id, '+sqls.select(fs, false, true),
-        sqlFrom = m.schemaTable + ' AS t1' + sqlFromLOVs(fs);
+        sqlFrom = m.schemaTable + ' AS t1' + sqls.sqlFromLOVs(fs, schema);
 
     // ---- FILTERING
     var sqlOperators = {
@@ -302,7 +290,7 @@ function getOne(req, res) {
     if(m && id){
         var sqlParams = [id],
             sql = 'SELECT t1.id, '+sqls.select(m.fields, m.collecs, true)+
-                ' FROM '+m.schemaTable+' AS t1'+sqlFromLOVs(m.fields)+
+                ' FROM '+m.schemaTable+' AS t1'+sqls.sqlFromLOVs(m.fields, schema)+
                 ' WHERE t1.id=$1'+
                 ' LIMIT 1;';
 

@@ -139,6 +139,19 @@ module.exports = {
 				return col + (ows[1]==='desc'?' DESC':' ASC');
 			}
 		}).join(',')
+	},
+
+	// - returns SQL list of joined tables for lov fields
+	sqlFromLOVs: function(fields, schema){
+		var sql = '';
+
+		fields.forEach(function(f, idx){
+			if(f.type==='lov' && f.lovtable){
+				sql += ' LEFT JOIN '+schema+'."'+f.lovtable+'" AS '+f.t2+
+					' ON t1."'+f.column+'"='+f.t2+'.id';
+			}
+		})
+		return sql;
 	}
 
 }
