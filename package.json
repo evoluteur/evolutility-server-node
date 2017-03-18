@@ -31,6 +31,7 @@
   ],
   "dependencies": {
     "body-parser": "~1.15.2",
+    "helmet": "~3.5.0",
     "debug": "~2.5.1",
     "chalk": "1.1.3",
     "formidable": "~1.0.17",

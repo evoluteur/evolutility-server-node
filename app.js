@@ -1,11 +1,13 @@
 var express = require('express');
 var path = require('path');
+var helmet = require('helmet');
 var bodyParser = require('body-parser');
 
 var routes = require('./js/routes');
 
 var app = express();
 
+app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, './client', 'public')));
