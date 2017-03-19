@@ -243,12 +243,13 @@ function chartField(req, res) {
     if(m && fid){
         var f = m.fieldsH[fid];
         if(f){
-            var col = '"'+f.column+'"';
+            var col = '"'+f.column+'"',
+                sqlFrom = ' FROM '+m.schemaTable+' AS t1';
             if(f.type==='lov' && f.lovtable){
                 var clov = f.lovcolumn||'name';
 
                 sql='SELECT t2.id, t2.'+clov+'::text AS label, count(*)::integer AS value'+
-                    ' FROM '+m.schemaTable+' AS t1'+
+                    sqlFrom+
                     ' LEFT JOIN '+schema+'."'+f.lovtable+'" AS t2'+
                         ' ON t1.'+col+'=t2.id'+
                     ' GROUP BY t2.id, t2.'+clov;
@@ -258,11 +259,11 @@ function chartField(req, res) {
 
                 sql='SELECT '+cId+'::integer AS id, '+
                         cLabel+'::text AS label, count(*)::integer AS value'+
-                    ' FROM '+m.schemaTable+' AS t1'+
+                    sqlFrom+
                     ' GROUP BY '+cId+','+cLabel;
             }else{ // TODO: bukets
                 sql='SELECT '+col+'::text AS label, count(*)::integer AS value'+
-                    ' FROM '+m.schemaTable+' AS t1'+
+                    sqlFrom+
                     ' GROUP BY '+col;
             }
             sql += ' ORDER BY label ASC'+
@@ -367,6 +368,8 @@ function deleteOne(req, res) {
                 ' WHERE id=$1 RETURNING id::integer AS id;';
                 
         query.runQuery(pool, res, sql, [id], true);
+    }else{
+        res.json(logger.errorMsg('Missing parameters.', 'deleteOne'));
     }
 }
 
@@ -386,7 +389,7 @@ function lovOne(req, res) {
 
     if(m){
         if(!f && fid===entity){
-            // -- if field id = entity id, then return the entity as a lov
+            // -- if field id = entity id, then use the entity itself as the lov
             f = {
                 id: 'entity',
                 lovcolumn: m.fields[0].column,
@@ -421,7 +424,7 @@ function collecOne(req, res) {
 
     var m = dico.getModel(req.params.entity),
         collecId = req.params.collec,
-        collec = m.collecsH[collecId]
+        collec = m.collecsH[collecId],
         pId = parseInt(req.query.id, 10);
 
     if(m && collec){
