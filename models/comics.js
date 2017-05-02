@@ -13,7 +13,7 @@ module.exports =  {
         },
         {
             id: 'genre', column: 'genre_id', type: 'lov', label: 'Genre', inMany: true,
-            lov: [
+            list: [
                 {id: 1, text: 'Adventure'},
                 {id: 2, text: 'Fairy tale'},
                 {id: 3, text: 'Erotic'},
