@@ -107,8 +107,8 @@ module.exports = {
 				}
 			}
 		});
-		if(m.collecs){
-			m.collecs.forEach(function(f){
+		if(m.collections){
+			m.collections.forEach(function(f){
 				var fv=req.body[f.id];
 				if(fv!=null){
 					vs.push(JSON.stringify(fv));

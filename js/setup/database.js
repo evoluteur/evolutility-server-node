@@ -12,6 +12,28 @@ var pg = require('pg'),
     _ = require('underscore'),
     dico = require('../utils/dico');
 
+var ft_db = {
+    text: 'text',
+    textmultiline: 'text',
+    boolean: 'boolean',
+    integer: 'integer',
+    decimal: 'double precision',
+    money: 'money',
+    date: 'date',
+    datetime: 'timestamp without time zone',
+    time: 'time without time zone',
+    lov: 'integer',
+    list: 'text[]', // many values for one field (behave like tags - return an array of strings)
+    html: 'text',
+    email: 'text',
+    pix: 'text',
+    //geoloc: 'geolocation',
+    doc:'text',
+    url: 'text',
+    color: 'text',
+    json: 'json'
+};
+
 var config = require(path.join(__dirname, '../', '../', 'config')),
     schema = '"'+config.schema+'"';
 
@@ -34,7 +56,7 @@ function m2db(mid){
         fieldsAttr = {},
         fields = m.fields,
         fieldsH = m.fieldsH,
-        subCollecs = m.collecs,
+        subCollecs = m.collections,
         fs = ['id serial primary key'],
         sql, sql0, sqlIdx='';
 
@@ -42,36 +64,10 @@ function m2db(mid){
     fields.forEach(function(f, idx){
         if(f.column && f.column!='id' && f.type!=='formula' && !fieldsAttr[f.column]){
             fieldsAttr[f.column]=true;
-            sql0=' "'+f.column+'" ';
-            switch(f.type){
-                case 'boolean':
-                case 'integer':
-                case 'json':
-                case 'money':
-                    sql0+=f.type;
-                    break;
-                case 'decimal': 
-                    sql0+='double precision';
-                    break;
-                case 'date':
-                    sql0+='date';
-                    break;
-                case 'datetime':
-                    sql0+='timestamp without time zone';
-                    break;
-                case 'time': 
-                    sql0+='time without time zone';
-                    break;
-                case 'lov': 
-                    sql0+='integer';
+            sql0=' "'+f.column+'" '+(ft_db[f.type]||'text');
+            if(f.type==='lov'){
                     sqlIdx += 'CREATE INDEX idx_'+tableName+'_'+f.column.toLowerCase()+
                         ' ON '+schema+'."'+tableName+'" USING btree ("'+f.column+'");\n';
-                    break;
-                case 'list': 
-                    sql0+='text[]';
-                    break;
-                default:
-                    sql0+='text';
             }
             if(f.required && f.type!='lov'){
                 sql0+=' not null';
@@ -109,8 +105,8 @@ function m2db(mid){
                     v = row[fid];
                     ns.push('"'+(f.column || f.id)+'"');
                     if(f.type==='lov'){
-                        //to nothing
-                        //TODO parseint?
+                        //TODO: parseint?
+                        v=v||'null'//"['error']";
                     }else if(_.isArray(v)){
                         // TODO: 
                         //v='null';
@@ -132,7 +128,7 @@ function m2db(mid){
         });
     }
 
-    // add lov tables
+    // - add lov tables
     function lovTable(f){
         return schema+'."'+(f.lovtable ? f.lovtable : (tableName+'_'+f.id))+'"';
     }

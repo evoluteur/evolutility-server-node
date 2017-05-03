@@ -1,8 +1,8 @@
 module.exports = [
     {id: '1', title: 'Release Evolutility', priority: 3, category: 4, complete: false, description: '10 generic views + a ui-modeling language.', notes:''},
-    {id: '2', title: 'Fix open bugs', duedate: '2016-07-25', priority: 3, category: 2, complete: false, description: 'Not many are left.'},
-    {id: '3', title: 'Testing App', duedate: '2016-06-11', priority: 3, category: 2, complete: false, description: 'test'},
-    {id: '4', title: 'Prepare demo', duedate: '2016-05-12', priority: 1, category: 2, complete: false, description: 'Check this out'},
+    {id: '2', title: 'Fix open bugs', duedate: '2017-07-25', priority: 3, category: 2, complete: false, description: 'Not many are left.'},
+    {id: '3', title: 'Testing App', duedate: '2017-06-11', priority: 3, category: 2, complete: false, description: 'test'},
+    {id: '4', title: 'Prepare demo', duedate: '2017-05-12', priority: 1, category: 2, complete: false, description: 'Check this out'},
     {id: '5', title: 'Test latest code', priority: 5, category: 5, complete: true, description: 'notes for my test todo task.'},
     {id: '6', title: 'Car wash', priority: 4, category: 2, complete: false},
     {id: '7', title: 'Watch Inception', duedate: '2014-01-10', priority: 5, category: 3, complete: true},

@@ -239,6 +239,7 @@ function chartField(req, res) {
         fid = req.params.field,
         sqlParams = [],
         sql;
+    var sqlCount = 'count(*)::integer AS value';
 
     if(m && fid){
         var f = m.fieldsH[fid];
@@ -248,7 +249,7 @@ function chartField(req, res) {
             if(f.type==='lov' && f.lovtable){
                 var clov = f.lovcolumn||'name';
 
-                sql='SELECT t2.id, t2.'+clov+'::text AS label, count(*)::integer AS value'+
+                sql='SELECT t2.id, t2.'+clov+'::text AS label, '+sqlCount+
                     sqlFrom+
                     ' LEFT JOIN '+schema+'."'+f.lovtable+'" AS t2'+
                         ' ON t1.'+col+'=t2.id'+
@@ -258,11 +259,11 @@ function chartField(req, res) {
                     cLabel = 'CASE '+col+' WHEN true THEN \'Yes\' ELSE \'No\' END';
 
                 sql='SELECT '+cId+'::integer AS id, '+
-                        cLabel+'::text AS label, count(*)::integer AS value'+
+                        cLabel+'::text AS label, '+sqlCount+
                     sqlFrom+
                     ' GROUP BY '+cId+','+cLabel;
             }else{ // TODO: bukets
-                sql='SELECT '+col+'::text AS label, count(*)::integer AS value'+
+                sql='SELECT '+col+'::text AS label, '+sqlCount+
                     sqlFrom+
                     ' GROUP BY '+col;
             }
@@ -290,7 +291,7 @@ function getOne(req, res) {
 
     if(m && id){
         var sqlParams = [id],
-            sql = 'SELECT t1.id, '+sqls.select(m.fields, m.collecs, true)+
+            sql = 'SELECT t1.id, '+sqls.select(m.fields, m.collections, true)+
                 ' FROM '+m.schemaTable+' AS t1'+sqls.sqlFromLOVs(m.fields, schema)+
                 ' WHERE t1.id=$1'+
                 ' LIMIT 1;';

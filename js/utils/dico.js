@@ -23,11 +23,11 @@ var ft = {
 	datetime: 'datetime',
 	time: 'time',
 	lov: 'lov',
-	list: 'list', // many values for one field (behave like tags - return an array of strings)
+	list: 'list', // multiple values for one field (behave like tags - return an array of strings)
 	html: 'html',
 	formula:'formula', // soon to be a field attribute rather than a field type
 	email: 'email',
-	pix: 'image',
+	image: 'image',
 	//geoloc: 'geolocation',
 	//doc:'document',
 	url: 'url',
@@ -72,16 +72,16 @@ function prepModel(m){
 				m.fieldsH[f.id] = f; 
 			})
 			m.schemaTable = schema+'."'+(m.table || m.id)+'"';
-			if(m.collecs && !m.collecsH){
-				m.collecsH = hById(m.collecs);
+			if(m.collections && !m.collecsH){
+				m.collecsH = hById(m.collections);
 			}
 			m.prepared = true;
 		}
+		return m;
 	}else{
 		console.log('Error in "prepModel": model ="'+m+'".')
+		return null;
 	}
-
-	return m;
 }
 
 
