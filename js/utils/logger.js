@@ -4,7 +4,7 @@
  * Simple formatted console logger (not logging to file).
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2017 Olivier Giulieri
+ * (c) 2018 Olivier Giulieri
  ********************************************************* */
 
 var config = require('../../config.js');
@@ -12,6 +12,12 @@ var pkg = require('../../package.json');
 var chalk = require('chalk');
 
 var consoleLog = config.consoleLog;
+
+function green(msg){
+	if(consoleLog){
+		console.error(chalk.green(msg));
+	}
+}
 
 module.exports = {
 
@@ -54,16 +60,14 @@ module.exports = {
 		}
 	},
 
-	logCount: function(nbRecords){
-		if(consoleLog){
-			console.error(chalk.green('Sending '+nbRecords+' records.'));
-		}
+	logCount: function(reqid, nbRecords){
+		green('Sending '+nbRecords+' records for '+reqid+'.');
 	},
+	
+	green: green,
 
 	logSuccess: function(msg){
-		if(consoleLog){
-			console.error(chalk.green(msg));
-		}
+		green(msg);
 	},
 
 	logError: function(err){

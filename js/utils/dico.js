@@ -3,7 +3,7 @@
  * evolutility :: utils/dico.js
  *
  * https://github.com/evoluteur/evolutility
- * (c) 2017 Olivier Giulieri
+ * (c) 2018 Olivier Giulieri
  *************************************************************************** */
 
 var models = require('../../models/all_models'),

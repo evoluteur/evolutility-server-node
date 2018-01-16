@@ -297,6 +297,6 @@ With Query parameters: file and "fieldid".
 
 ## License
 
-Copyright (c) 2017 [Olivier Giulieri](https://evoluteur.github.io/).
+Copyright (c) 2018 [Olivier Giulieri](https://evoluteur.github.io/).
 
 Evolutility-Server-Node is released under the [MIT license](http://github.com/evoluteur/evolutility-server-node/blob/master/LICENSE.md).

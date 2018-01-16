@@ -3,7 +3,7 @@
  * evolutility-server-node :: utils/sql-select.js
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2017 Olivier Giulieri
+ * (c) 2018 Olivier Giulieri
  ********************************************************* */
 
 // - SQL for a single field/column in update/create/order
