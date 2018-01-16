@@ -12,7 +12,7 @@ var pg = require('pg'),
     _ = require('underscore'),
     dico = require('../utils/dico');
 
-var ft_db = {
+var ft_postgreSQL = {
     text: 'text',
     textmultiline: 'text',
     boolean: 'boolean',
@@ -46,7 +46,6 @@ var data = require('../../models/data/all_modelsdata.js');
 var client = new pg.Client(config.connectionString);
 client.connect();
 
-var sql = '';
 
 function m2db(mid){
     // -- generates SQL script to create a Postgres DB table for the ui model
@@ -64,7 +63,7 @@ function m2db(mid){
     fields.forEach(function(f, idx){
         if(f.column && f.column!='id' && f.type!=='formula' && !fieldsAttr[f.column]){
             fieldsAttr[f.column]=true;
-            sql0=' "'+f.column+'" '+(ft_db[f.type]||'text');
+            sql0=' "'+f.column+'" '+(ft_postgreSQL[f.type]||'text');
             if(f.type==='lov'){
                     sqlIdx += 'CREATE INDEX idx_'+tableName+'_'+f.column.toLowerCase()+
                         ' ON '+schema+'."'+tableName+'" USING btree ("'+f.column+'");\n';
@@ -107,6 +106,8 @@ function m2db(mid){
                     if(f.type==='lov'){
                         //TODO: parseint?
                         v=v||'null'//"['error']";
+                    }else if(f.type==='json'){
+                        v = "'"+ JSON.stringify(v) +"'";
                     }else if(_.isArray(v)){
                         // TODO: 
                         //v='null';
@@ -142,15 +143,16 @@ function m2db(mid){
             // - create lov table
             // TODO: iconfont
             sql += 'CREATE TABLE IF NOT EXISTS '+t+
-                '(id serial NOT NULL, name text NOT NULL,'+
-                    (f.lovicon ? ' icon text,' : '')+
+                    '(id serial NOT NULL, '+
+                    'name text NOT NULL,'+
+                    'icon text,'+
                     ' CONSTRAINT '+(tableName+'_'+f.id).toLowerCase()+'_pkey PRIMARY KEY (id));\n\n';
             // populate lov table
             if(f.list){
-                sql += 'INSERT INTO '+t+'(id, name'+(f.lovicon ? ', icon' : '')+') VALUES ';
+                sql += 'INSERT INTO '+t+'(id, name, icon) VALUES ';
                 sql += f.list.map(function(item){
                     return '(' + item.id + ',' + stringValue(item.text) + 
-                        (f.lovicon ? (',\'' + item.icon + '\'') : '') + ')'
+                        ',\'' + (item.icon||'') + '\')'
                 }).join(',\n')+';\n\n';
             }
         })
