@@ -6,14 +6,14 @@
  * (c) 2018 Olivier Giulieri
  ********************************************************* */
 
-var express = require('express');
-var router = express.Router();
-var logger = require('./utils/logger');
-var orm = require('./utils/orm');
-var upload = require('./utils/upload');
-
-var config = require('../config');
-var apiPath = config.apiPath;
+var express = require('express'),
+	router = express.Router(),
+	logger = require('./utils/logger'),
+	config = require('../config'),
+	apiPath = config.apiPath,
+	crud = require('./utils/crud'),
+	charts = require('./utils/charts'),
+	upload = require('./utils/upload');
 
 
 logger.ascii_art();
@@ -25,30 +25,30 @@ router.get('/', function(req, res, next) {
 }); */
 
 // ======  GET MANY ====================================
-router.get(apiPath+':entity', orm.getMany);
+router.get(apiPath+':entity', crud.getMany);
 
 // ======  GET ONE   ====================================
-router.get(apiPath+':entity/:id', orm.getOne);
+router.get(apiPath+':entity/:id', crud.getOne);
 
 // ======  INSERT ONE ====================================
-router.post(apiPath+':entity', orm.insertOne);
+router.post(apiPath+':entity', crud.insertOne);
 
 // ======  UPDATE ONE  ====================================
-router.patch(apiPath+':entity/:id', orm.updateOne);
-router.put(apiPath+':entity/:id', orm.updateOne);
+router.patch(apiPath+':entity/:id', crud.updateOne);
+router.put(apiPath+':entity/:id', crud.updateOne);
 router.post(apiPath+':entity/upload/:id', upload.uploadOne);
 
 // ======  DELETE ONE ====================================
-router.delete(apiPath+':entity/:id', orm.deleteOne);
-
-// ======  GET CHARTS ====================================
-router.get(apiPath+':entity/chart/:field', orm.chartField);
+router.delete(apiPath+':entity/:id', crud.deleteOne);
 
 // ======  LOV ===========================================
-router.get(apiPath+':entity/lov/:field', orm.lovOne);
+router.get(apiPath+':entity/lov/:field', crud.lovOne);
 
 // ======  SUB-COLLECTIONS  ==============================
-router.get(apiPath+':entity/collec/:collec', orm.getCollec);
+router.get(apiPath+':entity/collec/:collec', crud.getCollec);
+
+// ======  GET CHARTS ====================================
+router.get(apiPath+':entity/chart/:field', charts.chartField);
 
 
 module.exports = router;
