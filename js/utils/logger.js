@@ -60,8 +60,9 @@ module.exports = {
 		}
 	},
 
-	logCount: function(reqid, nbRecords){
-		green('Sending '+nbRecords+' records for '+reqid+'.');
+	logCount: function(nbRecords){
+		//green('Sending '+nbRecords+' records for '+reqid+'.');
+		green('Sending '+nbRecords+' records.');
 	},
 	
 	green: green,

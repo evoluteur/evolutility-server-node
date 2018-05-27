@@ -6,27 +6,16 @@
  * (c) 2018 Olivier Giulieri
  ********************************************************* */
 
-var pg = require('pg'),
-    parseConnection = require('pg-connection-string').parse,
-    dico = require('./dico'),
+var dico = require('./dico'),
     sqls = require('./sql-select'),
     query = require('./query'),
+    pool = query.pool,
     logger = require('./logger'),
     config = require('../../config.js');
-
-var dbConfig = parseConnection(config.connectionString)
-dbConfig.max = 10; // max number of clients in the pool 
-dbConfig.idleTimeoutMillis = 30000; // max client idle time before being closed
 
 var schema = '"'+(config.schema || 'evol_demo')+'"',
     defaultPageSize = config.pageSize || 50,
     lovSize = config.lovSize || 100;
-
-var pool = new pg.Pool(dbConfig);
-
-pool.on('error', function (err, client) {
-  console.error('idle client error', err.message, err.stack)
-})
 
 // - build the header row for CSV export
 const csvHeaderColumn = config.csvHeader || 'label'

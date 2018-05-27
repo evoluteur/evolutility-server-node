@@ -6,6 +6,23 @@
  * (c) 2018 Olivier Giulieri
  ********************************************************* */
 
+var pg = require('pg'),
+    config = config = require('../../config.js')
+    parseConnection = require('pg-connection-string').parse;
+
+var dbConfig = parseConnection(config.connectionString)
+dbConfig.max = 10; // max number of clients in the pool 
+dbConfig.idleTimeoutMillis = 30000; // max client idle time before being closed
+
+var pool = new pg.Pool(dbConfig);
+
+pool.on('error', function (err, client) {
+  console.error('idle client error', err.message, err.stack)
+})
+
+
+// --------------------------------------------------------------------------------------
+
 var csv = require('express-csv'),
     logger = require('./logger');
 
@@ -87,10 +104,10 @@ function runQuery(pool, res, sql, values, singleRecord, format, header){
 }
 
 // --------------------------------------------------------------------------------------
-// --------------------------------------------------------------------------------------
 
 module.exports = {
 
+    pool: pool,
     runQuery: runQuery,
     sqlQuery: sqlQuery
 
