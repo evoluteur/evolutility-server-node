@@ -9,7 +9,6 @@
 var dico = require('./dico'),
     sqls = require('./sql-select'),
     query = require('./query'),
-    pool = query.pool,
     logger = require('./logger'),
     config = require('../../config.js');
 
@@ -211,7 +210,7 @@ function getMany(req, res) {
             sq = sqlMany(m, req, isCSV, !isCSV),
             sql = query.sqlQuery(sq);
 
-        query.runQuery(pool, res, sql, sq.params, false, format, isCSV ? csvHeader(m.fields) : null);
+        query.runQuery(res, sql, sq.params, false, format, isCSV ? csvHeader(m.fields) : null);
     }
 }
 
@@ -233,7 +232,7 @@ function getOne(req, res) {
                 ' WHERE t1.id=$1'+
                 ' LIMIT 1;';
 
-        query.runQuery(pool, res, sql, sqlParams, true);        
+        query.runQuery(res, sql, sqlParams, true);        
     }else{
         return res.json(logger.errorMsg('Invalid entity \''+entity+'\'or field\''+fid+'\'.', 'getOne'));
     }
@@ -260,7 +259,7 @@ function insertOne(req, res) {
             ' ("'+q.names.join('","')+'") values('+ps.join(',')+')'+
             ' RETURNING id, '+sqls.select(m.fields, false, null, 'C')+';';
 
-        query.runQuery(pool, res, sql, q.values, true);
+        query.runQuery(res, sql, q.values, true);
     }
 }
 
@@ -284,7 +283,7 @@ function updateOne(req, res) {
             ' WHERE id=$'+q.values.length+
             ' RETURNING id, '+sqls.select(m.fields, false, null, 'U')+';';
 
-        query.runQuery(pool, res, sql, q.values, true);
+        query.runQuery(res, sql, q.values, true);
     }
 }
 
@@ -305,7 +304,7 @@ function deleteOne(req, res) {
         var sql = 'DELETE FROM '+m.schemaTable+
                 ' WHERE id=$1 RETURNING id::integer AS id;';
                 
-        query.runQuery(pool, res, sql, [id], true);
+        query.runQuery(res, sql, [id], true);
     }else{
         res.json(logger.errorMsg('Missing parameters.', 'deleteOne'));
     }
@@ -342,7 +341,7 @@ function lovOne(req, res) {
             }
             sql+=' FROM '+schema+'."'+f.lovtable+
                 '" ORDER BY UPPER("'+col+'") ASC LIMIT '+lovSize+';';
-            query.runQuery(pool, res, sql, null, false);
+            query.runQuery(res, sql, null, false);
         }else{
             res.json(logger.errorMsg('Invalid field \''+fid+'\'.', 'lovOne'));
         }
@@ -373,7 +372,7 @@ function collecOne(req, res) {
                 ' ORDER BY t1.id'+//t1.position, t1.id
                 ' LIMIT '+defaultPageSize+';';
 
-        query.runQuery(pool, res, sql, sqlParams, false);        
+        query.runQuery(res, sql, sqlParams, false);        
     }else{
         return res.json(logger.errorMsg('Invalid parameters.', 'collecOne'));
     }

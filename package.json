@@ -6,8 +6,8 @@
   "homepage": "https://github.com/evoluteur/evolutility-server-node",
   "author": "Olivier Giulieri (https://evoluteur.github.io/)",
   "repository": {
-      "type": "git",
-      "url": "git://github.com/evoluteur/evolutility-server-node.git"
+    "type": "git",
+    "url": "git://github.com/evoluteur/evolutility-server-node.git"
   },
   "bugs": "https://github.com/evoluteur/evolutility-server-node/issues",
   "scripts": {
@@ -30,16 +30,16 @@
     "CRUD"
   ],
   "dependencies": {
-    "express": "~4.16.2",
+    "express": "~4.16.3",
     "express-csv": "~0.6.0",
-    "body-parser": "~1.18.2",
-    "helmet": "~3.9.0",
+    "body-parser": "~1.18.3",
+    "helmet": "~3.12.1",
     "debug": "~3.1.0",
-    "chalk": "~2.3.0",
-    "formidable": "~1.1.1",
+    "chalk": "~2.4.1",
+    "formidable": "~1.2.1",
     "shortid": "~2.2.8",
     "bluebird": "^3.5.1",
-    "pg": "^6.1.2",
+    "pg": "^7.4.3",
     "pg-connection-string": "~2.0.0",
     "supervisor": "~0.12.0",
     "underscore": "~1.8.3"

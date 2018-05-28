@@ -6,7 +6,6 @@
 var dico = require('./dico'),
     logger = require('./logger'),
     query = require('./query'),
-    pool = query.pool,
     config = require('../../config.js');
 
 var schema = '"'+(config.schema || 'evol_demo')+'"',
@@ -51,7 +50,7 @@ function chartField(req, res) {
             sql += ' ORDER BY label ASC'+
                    ' LIMIT '+defaultPageSize+';';
 
-            query.runQuery(pool, res, sql, sqlParams, false);
+            query.runQuery(res, sql, sqlParams, false);
         }
     }else{
         return res.json(logger.errorMsg('Invalid entity or field.', 'chartField'));

@@ -17,7 +17,8 @@ dbConfig.idleTimeoutMillis = 30000; // max client idle time before being closed
 var pool = new pg.Pool(dbConfig);
 
 pool.on('error', function (err, client) {
-  console.error('idle client error', err.message, err.stack)
+  console.error('Unexpected error on idle client', err.message, err.stack)
+  process.exit(-1)
 })
 
 
@@ -48,7 +49,7 @@ function sqlQuery(q){
 }
 
 // - run a query and return the result in request
-function runQuery(pool, res, sql, values, singleRecord, format, header){
+function runQuery(res, sql, values, singleRecord, format, header){
     var results = [];
 
     // Get a Postgres client from the connection pool 
@@ -56,48 +57,43 @@ function runQuery(pool, res, sql, values, singleRecord, format, header){
 
         // SQL Query > Select Data
         logger.logSQL(sql);
-        var query = values ? client.query(sql, values, consoleError) : client.query(sql, consoleError);
 
-        // Stream results back one row at a time
-        query.on('row', function(row) {
-            results.push(row);
-        });
-
-        // After all data is returned, close connection and return results
-        query.on('end', function() {
-            var nbRecords = results.length;
+        client.query(sql, values, function(err, data) {
             done();
-            if(format==='csv'){
-                if(header){
-                    var headers={};
-                    for (key in results[0]) {
-                        headers[key] = header[key] || key;
+            var results = (data && data.rows) ? data.rows : [];
+              if (err) {
+                console.log(err.stack)
+              } else {
+                var nbRecords = results.length; 
+                if(format==='csv'){
+                    if(nbRecords){
+                        if(header){
+                            var headers={};
+                            for (key in results[0]) {
+                                headers[key] = header[key] || key;
+                            }
+                            results.unshift(headers);
+                        }
+                        logger.logCount(results.length || 0);
+                        return res.csv(results);
                     }
-                    results.unshift(headers);
-                }
-                logger.logCount(results.length || 0);
-                return res.csv(results);
-            }else if(singleRecord){
-                logger.logCount(results.length || 0);
-                return res.json(results.length?results[0]:null);
-            }else{
-                res.setHeader('_count', nbRecords);
-                if(nbRecords && results[0]._full_count){
-                    res.setHeader('_full_count', results[0]._full_count);
+                    return null;    
+                }else if(singleRecord){
+                    logger.logCount(results.length || 0);
+                    return res.json(results.length?results[0]:null);
                 }else{
-                    res.setHeader('_full_count', 0);
+                    res.setHeader('_count', nbRecords);
+                    if(nbRecords && results[0]._full_count){
+                        res.setHeader('_full_count', results[0]._full_count);
+                    }else{
+                        res.setHeader('_full_count', 0);
+                    }
+                    logger.logCount(results.length || 0);
+                    return res.json(results);
                 }
-                logger.logCount(results.length || 0);
-                return res.json(results);
             }
-        });
-
-        // Handle Errors
-        if(err) {
-            logger.logError(err);
-            done();
-            res.status(500).send('Something broke!');
-        }
+          }
+        )
 
     });
 
@@ -107,7 +103,6 @@ function runQuery(pool, res, sql, values, singleRecord, format, header){
 
 module.exports = {
 
-    pool: pool,
     runQuery: runQuery,
     sqlQuery: sqlQuery
 
