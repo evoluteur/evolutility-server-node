@@ -1,6 +1,7 @@
 /*! ***************************************************************************
  *
  * evolutility :: utils/dico.js
+ * Helper functions for metadata
  *
  * https://github.com/evoluteur/evolutility
  * (c) 2018 Olivier Giulieri

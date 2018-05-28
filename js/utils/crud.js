@@ -1,6 +1,7 @@
 /*! *******************************************************
  *
  * evolutility-server-node :: utils/crud.js
+ * CRUD (Create, Read, Update, Delete) end-points
  *
  * https://github.com/evoluteur/evolutility-server-node
  * (c) 2018 Olivier Giulieri
