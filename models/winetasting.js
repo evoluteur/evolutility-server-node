@@ -36,7 +36,5 @@ module.exports = {
             id: 'notes', column: 'notes', type: 'textmultiline', 
             label: 'Note', inMany: true, width: 100, height: 5
         }
-    ]/*
-    groups: [] 
-    ]*/ 
+    ]
 };

@@ -7,8 +7,10 @@
  ********************************************************* */
 
 var pg = require('pg'),
-    config = config = require('../../config.js')
-    parseConnection = require('pg-connection-string').parse;
+    config = config = require('../../config.js'),
+    parseConnection = require('pg-connection-string').parse,
+    csv = require('express-csv'),
+    logger = require('./logger');
 
 var dbConfig = parseConnection(config.connectionString)
 dbConfig.max = 10; // max number of clients in the pool 
@@ -20,12 +22,6 @@ pool.on('error', function (err, client) {
   console.error('Unexpected error on idle client', err.message, err.stack)
   process.exit(-1)
 })
-
-
-// --------------------------------------------------------------------------------------
-
-var csv = require('express-csv'),
-    logger = require('./logger');
 
 // - show error in console
 function consoleError(err){
@@ -54,10 +50,8 @@ function runQuery(res, sql, values, singleRecord, format, header){
 
     // Get a Postgres client from the connection pool 
     pool.connect(function(err, client, done) {
-
         // SQL Query > Select Data
         logger.logSQL(sql);
-
         client.query(sql, values, function(err, data) {
             done();
             var results = (data && data.rows) ? data.rows : [];
@@ -92,9 +86,7 @@ function runQuery(res, sql, values, singleRecord, format, header){
                     return res.json(results);
                 }
             }
-          }
-        )
-
+        })
     });
 
 }

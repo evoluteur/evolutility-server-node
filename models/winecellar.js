@@ -405,9 +405,6 @@ module.exports = {
             height: 8
         }
     ],
-    /*
-    groups: [],
-                */ 
     collections: [
         {
             id:'wine_tasting',
