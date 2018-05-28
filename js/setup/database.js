@@ -9,6 +9,7 @@
 
 var pg = require('pg'),
     path = require('path'),
+    parseConnection = require('pg-connection-string').parse;
     _ = require('underscore'),
     dico = require('../utils/dico');
 
@@ -43,8 +44,6 @@ var dbuser = 'postgres';
 var models = require('../../models/all_models.js');
 var data = require('../../models/data/all_modelsdata.js');
 
-var client = new pg.Client(config.connectionString);
-client.connect();
 
 
 function m2db(mid){
@@ -167,5 +166,14 @@ for(var mid in models){
 }
 
 console.log(sql);
-var query = client.query(sql);
-query.on('end', function() { client.end(); });
+var dbConfig = parseConnection(config.connectionString)
+dbConfig.max = 10; // max number of clients in the pool 
+dbConfig.idleTimeoutMillis = 30000; // max client idle time before being closed
+var pool = new pg.Pool(dbConfig);
+pool.connect(function(err, client, done) {
+    console.log(sql);
+    client.query(sql, function(err, data) {
+        done();
+    })
+});
+
