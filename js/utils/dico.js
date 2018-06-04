@@ -40,7 +40,13 @@ var ft = {
 };
 
 function fieldIsNumber(f){
-	return [ft.int, ft.dec, ft.money].indexOf(f.type)>-1;
+	return f.type===ft.int || f.type===ft.dec || f.type===ft.money;
+}
+function fieldIsDateOrTime(f){
+	return f.type===ft.date || f.type===ft.datetime || f.type===ft.time;
+}
+function fieldIsNumeric(f){
+	return fieldIsNumber(f) || fieldIsDateOrTime(f) 
 }
 
 function fieldInCharts(f) {
@@ -106,9 +112,11 @@ module.exports = {
 	},
 
 	fieldIsNumber: fieldIsNumber,
+	fieldIsNumeric: fieldIsNumeric,
+	fieldIsDateOrTime: fieldIsDateOrTime,
 
 	fieldInCharts: fieldInCharts,
 
-	fieldChartable: fieldChartable
+	fieldChartable: fieldChartable,
 
 }

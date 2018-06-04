@@ -274,6 +274,16 @@ GET /<object>/chart/<field id>
 GET /todo/chart/category
 ```
 
+#### Stats
+
+Returns the total count, and the min, max, average, and total for numeric fields in the model.
+
+```
+GET /<object>/stats
+
+GET /todo/stats
+```
+
 #### Lists of Values
 
 Dropdown fields in the UI (field.type="lov" in the model) have a REST endpoint to get the list of values for dropdowns.

@@ -12,6 +12,7 @@ var express = require('express'),
 	config = require('../config'),
 	apiPath = config.apiPath,
 	crud = require('./utils/crud'),
+	stats = require('./utils/stats'),
 	charts = require('./utils/charts'),
 	upload = require('./utils/upload');
 
@@ -24,27 +25,26 @@ router.get('/', function(req, res, next) {
   res.sendFile(path.join(__dirname, '../', '../', 'index.html'));
 }); */
 
-// ======  GET MANY ====================================
+
+// ======  GET STATS ====================================
+router.get(apiPath+':entity/stats', stats.numbers);
+
+// ======  CRUD ====================================
+// -  GET MANY ------------------------------------
 router.get(apiPath+':entity', crud.getMany);
-
-// ======  GET ONE   ====================================
+// -  GET ONE   ------------------------------------
 router.get(apiPath+':entity/:id', crud.getOne);
-
-// ======  INSERT ONE ====================================
+// -  INSERT ONE ------------------------------------
 router.post(apiPath+':entity', crud.insertOne);
-
-// ======  UPDATE ONE  ====================================
+// -  UPDATE ONE  ------------------------------------
 router.patch(apiPath+':entity/:id', crud.updateOne);
 router.put(apiPath+':entity/:id', crud.updateOne);
 router.post(apiPath+':entity/upload/:id', upload.uploadOne);
-
-// ======  DELETE ONE ====================================
+// -  DELETE ONE ------------------------------------
 router.delete(apiPath+':entity/:id', crud.deleteOne);
-
-// ======  LOV ===========================================
+// -  LOV -----------------------------------------
 router.get(apiPath+':entity/lov/:field', crud.lovOne);
-
-// ======  SUB-COLLECTIONS  ==============================
+// -  SUB-COLLECTIONS  ------------------------------------
 router.get(apiPath+':entity/collec/:collec', crud.getCollec);
 
 // ======  GET CHARTS ====================================
