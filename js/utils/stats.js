@@ -51,7 +51,10 @@ function numbers(req, res) {
                 sql += minMax('min', f)
                 sql += minMax('max', f)
             }
-        }) 
+        })
+        if(config.timestamp){
+            sql += minMax('max', {id: 'update_date', type: 'datetime', column: 'u_date'})
+        }
         sql += ' FROM '+m.schemaTable;  
         query.runQuery(res, sql, [], true);
     }else{
