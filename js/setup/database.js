@@ -45,6 +45,8 @@ var models = require('../../models/all_models.js');
 var data = require('../../models/data/all_modelsdata.js');
 
 
+// - options
+var wTimestamp = true;
 
 function m2db(mid){
     // -- generates SQL script to create a Postgres DB table for the ui model
@@ -73,6 +75,14 @@ function m2db(mid){
             fs.push(sql0);
         }
     });
+    // - "who-is" columns to track creation and last modification.
+    if(wTimestamp){
+        fs.push('c_date timestamp without time zone DEFAULT timezone(\'utc\'::text, now())');
+        //fs.push('c_id integer');
+        fs.push('u_date timestamp without time zone DEFAULT timezone(\'utc\'::text, now())');
+        //fs.push('u_id integer');   
+    }
+
     // subCollecs - as json columns
     if(subCollecs){
         subCollecs.forEach(function(c, idx){
@@ -89,6 +99,12 @@ function m2db(mid){
 
     sql = 'CREATE TABLE '+tableNameSchema+'(\n' + fs.join(',\n') + ');\n';
     sql += sqlIdx;
+
+    // - track updates
+    if(wTimestamp){
+        sql+='\nCREATE TRIGGER tr_u_'+tableName+' BEFORE UPDATE ON '+schema+'.'+tableName+
+                ' FOR EACH ROW EXECUTE PROCEDURE '+schema+'.u_date();\n';
+    }
 
     // -- insert sample data
     if(data[mid]){
@@ -160,7 +176,15 @@ function m2db(mid){
     return sql;
 }
 
-var sql='CREATE SCHEMA '+schema+' AUTHORIZATION '+dbuser+';\n';
+var sql = 'CREATE SCHEMA '+schema+' AUTHORIZATION '+dbuser+';\n\n';
+
+if(wTimestamp){
+    sql+='CREATE OR REPLACE FUNCTION '+schema+'.u_date() RETURNS trigger\n'+
+        '    LANGUAGE plpgsql\n'+
+        '    AS $$\n'+
+        '  BEGIN\n    NEW.u_date = now();\n    RETURN NEW;\n  END;\n$$;\n\n';
+}
+
 for(var mid in models){
     sql+=m2db(mid);
 }
