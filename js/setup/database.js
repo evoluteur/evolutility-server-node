@@ -9,9 +9,16 @@
 
 var pg = require('pg'),
     path = require('path'),
+    fs = require('fs'),
     parseConnection = require('pg-connection-string').parse;
     _ = require('underscore'),
     dico = require('../utils/dico');
+
+// - options; values are also in config.js but duplicated here for now
+//var dbuser = 'evol';
+var dbuser = 'postgres';
+var sqlFile = false;    // log SQL to file
+var wTimestamp = true;  // track creation and update time
 
 var ft_postgreSQL = {
     text: 'text',
@@ -38,15 +45,11 @@ var ft_postgreSQL = {
 var config = require(path.join(__dirname, '../', '../', 'config')),
     schema = '"'+config.schema+'"';
 
-//var dbuser = 'evol';
-var dbuser = 'postgres';
 
 var models = require('../../models/all_models.js');
 var data = require('../../models/data/all_modelsdata.js');
 
 
-// - options
-var wTimestamp = true;
 
 function m2db(mid){
     // -- generates SQL script to create a Postgres DB table for the ui model
@@ -58,7 +61,8 @@ function m2db(mid){
         fieldsH = m.fieldsH,
         subCollecs = m.collections,
         fs = ['id serial primary key'],
-        sql, sql0, sqlIdx='';
+        sql, sql0, sqlIdx='',
+        sqlData = '';
 
     // fields
     fields.forEach(function(f, idx){
@@ -109,7 +113,7 @@ function m2db(mid){
     // -- insert sample data
     if(data[mid]){
         data[mid].forEach(function(row, idx){
-            sql+='INSERT INTO '+tableNameSchema;
+            sqlData+='INSERT INTO '+tableNameSchema;
             var ns=[], vs=[];
             var fn, f, v, 
                 sqlIdx = '';
@@ -140,7 +144,7 @@ function m2db(mid){
                     fn = f.column || f.id;
                 }
             }
-            sql+='('+ns.join(',')+') values('+vs.join(',')+');\n\n';
+            sqlData+='('+ns.join(',')+') values('+vs.join(',')+');\n\n';
         });
     }
 
@@ -173,11 +177,11 @@ function m2db(mid){
         })
     }
 
-    return sql;
+    return [sql, sqlData];
 }
 
 var sql = 'CREATE SCHEMA '+schema+' AUTHORIZATION '+dbuser+';\n\n';
-
+var sqlData = ''
 if(wTimestamp){
     sql+='CREATE OR REPLACE FUNCTION '+schema+'.u_date() RETURNS trigger\n'+
         '    LANGUAGE plpgsql\n'+
@@ -186,10 +190,27 @@ if(wTimestamp){
 }
 
 for(var mid in models){
-    sql+=m2db(mid);
+    var sqls=m2db(mid);
+    sql+=sqls[0]
+    sqlData+=sqls[1]
 }
 
 console.log(sql);
+
+if(sqlFile){
+    var fId = new Date().toISOString()
+    fs.writeFile('evol-db-'+fId+'.sql', sql, function(err){
+        if (err){
+            throw err;
+        }
+    })
+    fs.writeFile('evol-db-data-'+fId+'.sql', sqlData, function(err){
+        if (err){
+            throw err;
+        }
+    })  
+}
+
 var dbConfig = parseConnection(config.connectionString)
 dbConfig.max = 10; // max number of clients in the pool 
 dbConfig.idleTimeoutMillis = 30000; // max client idle time before being closed
@@ -197,7 +218,9 @@ var pool = new pg.Pool(dbConfig);
 pool.connect(function(err, client, done) {
     console.log(sql);
     client.query(sql, function(err, data) {
-        done();
+        client.query(sqlData, function(err, data) {
+            done();
+            console.log(sqlData);
+        })
     })
 });
-
