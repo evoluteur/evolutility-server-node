@@ -40,8 +40,7 @@ module.exports = {
 	
 	// - returns the SELECT clause for SQL queries
 	select: function(fields, collecs, table, action){
-		var sql,
-			sqlfs = [],
+		var sqlfs = [],
 			tQuote = table ? 't1."' : '"';
 
 		if(fields){
@@ -49,7 +48,7 @@ module.exports = {
 				if(f.type==='lov' && action!=='C' && action!=='U'){
 					sqlfs.push(f.t2+'.'+(f.lovcolumn ? f.lovcolumn : 'name')+' AS "'+f.id+'_txt"')
 				}
-				sql = tQuote+f.column
+				let sql = tQuote+f.column
 				//if(f.type==='money'){
 					//sql += '"::money'
 				//}else if(f.type==='integer'){

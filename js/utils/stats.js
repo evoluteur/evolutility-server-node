@@ -52,8 +52,11 @@ function numbers(req, res) {
                 sql += minMax('max', f)
             }
         })
-        if(config.timestamp){
-            sql += minMax('max', {id: 'update_date', type: 'datetime', column: 'u_date'})
+        if(config.wTimestamp){
+            sql += ', max(u_date) AS u_date_max'
+        }
+        if(config.wComments){
+            sql += ', sum(nb_comments::int)::int AS nb_comments'
         }
         sql += ' FROM '+m.schemaTable;  
         query.runQuery(res, sql, [], true);

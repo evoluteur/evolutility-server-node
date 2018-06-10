@@ -14,11 +14,13 @@ var pg = require('pg'),
     _ = require('underscore'),
     dico = require('../utils/dico');
 
-// - options; values are also in config.js but duplicated here for now
-//var dbuser = 'evol';
-var dbuser = 'postgres';
-var sqlFile = false;    // log SQL to file
-var wTimestamp = true;  // track creation and update time
+
+// - options; mostly from in config.js
+var config = require(path.join(__dirname, '../', '../', 'config')),
+    schema = '"'+config.schema+'"',
+    //dbuser = 'evol',
+    dbuser = 'postgres', // DB user
+    sqlFile = true;     // log SQL to file
 
 var ft_postgreSQL = {
     text: 'text',
@@ -42,10 +44,6 @@ var ft_postgreSQL = {
     json: 'json'
 };
 
-var config = require(path.join(__dirname, '../', '../', 'config')),
-    schema = '"'+config.schema+'"';
-
-
 var models = require('../../models/all_models.js');
 var data = require('../../models/data/all_modelsdata.js');
 
@@ -68,23 +66,37 @@ function m2db(mid){
     fields.forEach(function(f, idx){
         if(f.column && f.column!='id' && f.type!=='formula' && !fieldsAttr[f.column]){
             fieldsAttr[f.column]=true;
-            sql0=' "'+f.column+'" '+(ft_postgreSQL[f.type]||'text');
-            if(f.type==='lov'){
-                    sqlIdx += 'CREATE INDEX idx_'+tableName+'_'+f.column.toLowerCase()+
-                        ' ON '+schema+'."'+tableName+'" USING btree ("'+f.column+'");\n';
+            // skip fields specified in config
+            if(['c_date','u_date','nb_comments','nb_ratings','avg_ratings'].indexOf(f.column)<0){
+                sql0=' "'+f.column+'" '+(ft_postgreSQL[f.type]||'text');
+                if(f.type==='lov'){
+                        sqlIdx += 'CREATE INDEX idx_'+tableName+'_'+f.column.toLowerCase()+
+                            ' ON '+schema+'."'+tableName+'" USING btree ("'+f.column+'");\n';
+                }
+                if(f.required && f.type!='lov'){
+                    sql0+=' not null';
+                }
+                fs.push(sql0);
             }
-            if(f.required && f.type!='lov'){
-                sql0+=' not null';
-            }
-            fs.push(sql0);
         }
     });
     // - "who-is" columns to track creation and last modification.
-    if(wTimestamp){
+    if(config.wTimestamp){
         fs.push('c_date timestamp without time zone DEFAULT timezone(\'utc\'::text, now())');
         //fs.push('c_id integer');
         fs.push('u_date timestamp without time zone DEFAULT timezone(\'utc\'::text, now())');
         //fs.push('u_id integer');   
+    }
+
+    // - tracking number of comments.
+    if(config.wComments){
+        fs.push('nb_comments integer DEFAULT 0');
+    }
+
+    // - tracking ratings.
+    if(config.wRating){
+        fs.push('nb_ratings integer DEFAULT 0');
+        fs.push('avg_ratings integer DEFAULT NULL'); // smallint ?
     }
 
     // subCollecs - as json columns
@@ -105,7 +117,7 @@ function m2db(mid){
     sql += sqlIdx;
 
     // - track updates
-    if(wTimestamp){
+    if(config.wTimestamp){
         sql+='\nCREATE TRIGGER tr_u_'+tableName+' BEFORE UPDATE ON '+schema+'.'+tableName+
                 ' FOR EACH ROW EXECUTE PROCEDURE '+schema+'.u_date();\n';
     }
@@ -182,7 +194,7 @@ function m2db(mid){
 
 var sql = 'CREATE SCHEMA '+schema+' AUTHORIZATION '+dbuser+';\n\n';
 var sqlData = ''
-if(wTimestamp){
+if(config.wTimestamp){
     sql+='CREATE OR REPLACE FUNCTION '+schema+'.u_date() RETURNS trigger\n'+
         '    LANGUAGE plpgsql\n'+
         '    AS $$\n'+
@@ -199,12 +211,12 @@ console.log(sql);
 
 if(sqlFile){
     var fId = new Date().toISOString()
-    fs.writeFile('evol-db-'+fId+'.sql', sql, function(err){
+    fs.writeFile('evol-db-schema-'+fId+'.sql', sql, function(err){
         if (err){
             throw err;
         }
     })
-    fs.writeFile('evol-db-data-'+fId+'.sql', sqlData, function(err){
+    fs.writeFile('evol-db-z-data-'+fId+'.sql', sqlData, function(err){
         if (err){
             throw err;
         }
@@ -218,8 +230,15 @@ var pool = new pg.Pool(dbConfig);
 pool.connect(function(err, client, done) {
     console.log(sql);
     client.query(sql, function(err, data) {
+        if(err){ 
+            done();
+            throw err;
+        }
         client.query(sqlData, function(err, data) {
             done();
+            if(err){
+                throw err;
+            }
             console.log(sqlData);
         })
     })

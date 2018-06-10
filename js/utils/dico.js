@@ -12,6 +12,28 @@ var models = require('../../models/all_models'),
 
 var schema = '"'+(config.schema || 'evol_demo')+'"';
 
+// - fields for comments, ratings...
+var systemFields = []
+if(config.wTimestamp){
+    systemFields.push({
+    	// record creation date
+    	type: 'datetime',
+    	column:'c_date',
+    },
+    {
+    	// record last update date
+    	type: 'datetime',
+    	column:'u_date',
+    })
+}
+if(config.wComments){
+    systemFields.push({
+    	// number of comments about the record
+    	type: 'integer',
+    	column:'nb_comments',
+    })
+}
+
 // - Field Types
 var ft = {
 	text: 'text',
@@ -119,4 +141,5 @@ module.exports = {
 
 	fieldChartable: fieldChartable,
 
+	systemFields: systemFields,
 }

@@ -16,8 +16,12 @@ module.exports = {
 	csvHeader: 'label', // possible values: id, label
 
 	// - Timestamp columns u_date and c_date w/ date of record creation and last update 
-	timestamp: true,
-	
+	wTimestamp: true,
+
+	// - Comments & Ratings (community feature) 
+	wComments: true,
+	wRating: true,
+
 	// Directory for uploaded files
 	uploadPath: '../evolutility-ui-react/public/pix/',
 
