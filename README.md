@@ -31,7 +31,9 @@ After installing Evolutility-Server-Node, follow these steps:
 
 2. In the file [config.js](https://github.com/evoluteur/evolutility-server-node/blob/master/config.js) set the PostgreSQL connection string and the schema name to access your new database.
 
-3. In the command line type the following:
+3. Maybe, also change other config options in the same file.
+
+4. In the command line type the following:
 
 ```bash
 # Install dependencies
@@ -47,7 +49,28 @@ npm start
 
 In a web browser, go to the url [http://localhost:3000/api/v1/evolutility/todo](http://localhost:3000/api/v1/evolutility/todo).
 
-Configuration options are possible by editing the [config.js](https://github.com/evoluteur/evolutility-server-node/blob/master/config.js) file in the root directory of the project.
+
+## Configuration
+
+Configuration options are set in the file [config.js](https://github.com/evoluteur/evolutility-server-node/blob/master/config.js).
+
+
+| Option       | Description                             |
+|--------------|-----------------------------------------|
+| apiPath   | Path for REST API (i.e.: "/api/v1/evolutility/").|
+| apiPort   | Port for REST API (i.e.: 3000). |
+| connectionString | DB connection string (i.e.: "postgres://evol:love@localhost:5432/evol"). |
+| schema | DB connection string (i.e.: "Evolutility").|
+| pageSize | Number of rows per page in pagination (default = 50).|
+| lovSize | Maximum number of values allowed for form dropdowns (default = 100). |
+| csvSize | Maximum number of rows in CSV export (default = 1000).|
+| csvHeader | CSV list of labels for CSV export| | uploadPath | path for pictures and documents uploads (i.e.: "../evolutility-ui-react/public/pix/").|
+| consoleLog | Log SQL statements to console.|
+| wComments | Allow for user comments. |
+| wRating | Allow for user ratings. |
+| wTimestamp | Timestamp columns u_date and c_date w/ date of record creation and last update. |
+
+
 
 ## Models
 
@@ -57,7 +80,7 @@ Models contain the name of the driving table and the list of fields/columns pres
 
 ### Entity
 
-| Property     | Meaning                                 |
+| Property     | Description                             |
 |--------------|-----------------------------------------|
 | id           | Unique key to identify the entity (used as API parameter). |
 | table        | Database table name.                    |
@@ -68,7 +91,7 @@ Models contain the name of the driving table and the list of fields/columns pres
 
 ### Field
 
-| Property     | Meaning                               |
+| Property     | Description                           |
 |--------------|---------------------------------------|
 | id           | Unique key for the field (can be the same as column but doesn't have to be). |
 | column       | Database column name for the field    |
