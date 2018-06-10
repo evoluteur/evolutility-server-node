@@ -7,10 +7,10 @@
  * (c) 2018 Olivier Giulieri
  ********************************************************* */
 
-var dico = require('./dico'),
-    logger = require('./logger'),
-    query = require('./query'),
-    config = require('../../config.js');
+var dico = require('./utils/dico'),
+    logger = require('./utils/logger'),
+    query = require('./utils/query'),
+    config = require('../config.js');
 
 var schema = '"'+(config.schema || 'evol_demo')+'"',
     defaultPageSize = config.pageSize || 50;
@@ -60,6 +60,8 @@ function chartField(req, res) {
         return res.json(logger.errorMsg('Invalid entity or field.', 'chartField'));
     }
 }
+
+// --------------------------------------------------------------------------------------
 
 module.exports = {
 

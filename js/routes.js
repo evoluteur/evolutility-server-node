@@ -9,13 +9,12 @@
 var express = require('express'),
 	router = express.Router(),
 	logger = require('./utils/logger'),
+	upload = require('./utils/upload'),
 	config = require('../config'),
 	apiPath = config.apiPath,
-	crud = require('./utils/crud'),
-	stats = require('./utils/stats'),
-	charts = require('./utils/charts'),
-	upload = require('./utils/upload');
-
+	crud = require('./crud'),
+	stats = require('./stats'),
+	charts = require('./charts');
 
 logger.ascii_art();
 

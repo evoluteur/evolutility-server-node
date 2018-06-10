@@ -7,11 +7,11 @@
  * (c) 2018 Olivier Giulieri
  ********************************************************* */
 
-var dico = require('./dico'),
-    sqls = require('./sql-select'),
-    query = require('./query'),
-    logger = require('./logger'),
-    config = require('../../config.js');
+var dico = require('./utils/dico'),
+    sqls = require('./utils/sql-select'),
+    query = require('./utils/query'),
+    logger = require('./utils/logger'),
+    config = require('../config.js');
 
 var schema = '"'+(config.schema || 'evol_demo')+'"',
     defaultPageSize = config.pageSize || 50,
