@@ -168,23 +168,27 @@ function m2db(mid){
     var lovFields=fields.filter(function(f){
         return f.type==='lov' || f.type==='list'
     })
+    var lovIncluded=[]
     if(lovFields){
         lovFields.forEach(function(f, idx){
             var t = lovTable(f);
-            // - create lov table
-            // TODO: iconfont
-            sql += 'CREATE TABLE IF NOT EXISTS '+t+
-                    '(id serial NOT NULL, '+
-                    'name text NOT NULL,'+
-                    'icon text,'+
-                    ' CONSTRAINT '+(tableName+'_'+f.id).toLowerCase()+'_pkey PRIMARY KEY (id));\n\n';
-            // populate lov table
-            if(f.list){
-                sql += 'INSERT INTO '+t+'(id, name, icon) VALUES ';
-                sql += f.list.map(function(item){
-                    return '(' + item.id + ',' + stringValue(item.text) + 
-                        ',\'' + (item.icon||'') + '\')'
-                }).join(',\n')+';\n\n';
+            if(lovIncluded.indexOf(t)<0){
+                // - create lov table
+                // TODO: iconfont
+                sql += 'CREATE TABLE IF NOT EXISTS '+t+
+                        '(id serial NOT NULL, '+
+                        'name text NOT NULL,'+
+                        'icon text,'+
+                        ' CONSTRAINT '+(tableName+'_'+f.id).toLowerCase()+'_pkey PRIMARY KEY (id));\n\n';
+                // populate lov table
+                if(f.list){
+                    sql += 'INSERT INTO '+t+'(id, name, icon) VALUES ';
+                    sql += f.list.map(function(item){
+                        return '(' + item.id + ',' + stringValue(item.text) + 
+                            ',\'' + (item.icon||'') + '\')'
+                    }).join(',\n')+';\n\n';
+                }
+                lovIncluded.push(t)
             }
         })
     }
