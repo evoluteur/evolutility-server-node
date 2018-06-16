@@ -17,10 +17,12 @@ module.exports = {
 
 	// - Timestamp columns u_date and c_date w/ date of record creation and last update 
 	wTimestamp: true,
+	// - "WhoIs" columns u_uid and c_uid w/ userid of creator and last modifier
+	wWhoIs: false,
 
 	// - Comments & Ratings (community feature) 
-	wComments: true,
-	wRating: true,
+	wComments: false,
+	wRating: false,
 
 	// Directory for uploaded files
 	uploadPath: '../evolutility-ui-react/public/pix/',

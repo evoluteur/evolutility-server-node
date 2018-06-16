@@ -56,8 +56,11 @@ function sqlMany(m, req, allFields, wCount){
         }
     // ---- SELECTION
     var sqlSel = 't1.id, '+sqls.select(fs, false, true);
-    dico.systemFields.forEach(function(f){
+    dico.systemManyFields.forEach(function(f){
         sqlSel += ', t1.'+f.column
+        if(f.type==='integer'){
+            sqlSel += '::integer'
+        }
     })
     var sqlFrom = m.schemaTable + ' AS t1' + sqls.sqlFromLOVs(fs, schema);
 

@@ -13,7 +13,10 @@ var models = require('../../models/all_models'),
 var schema = '"'+(config.schema || 'evol_demo')+'"';
 
 // - fields for comments, ratings...
-var systemFields = []
+var systemFields = [] 		// all system fields
+var systemManyFields = []	// system fields in list and cards views
+var f
+
 if(config.wTimestamp){
     systemFields.push({
     	// record creation date
@@ -26,12 +29,42 @@ if(config.wTimestamp){
     	column:'u_date',
     })
 }
-if(config.wComments){
+
+if(config.wWhoIs){
     systemFields.push({
+    	// record creator (user.id)
+    	type: 'integer',
+    	column:'c_uid',
+    },
+    {
+    	// record last editor (user.id)
+    	type: 'integer',
+    	column:'u_uid',
+    })
+}
+if(config.wComments){
+	f = {
     	// number of comments about the record
     	type: 'integer',
     	column:'nb_comments',
-    })
+    }
+    systemManyFields.push(f)
+    systemFields.push(f)
+}
+// - tracking ratings.
+if(config.wRating){
+	f = {
+    	type: 'integer',
+    	column:'nb_ratings',
+    }
+    systemManyFields.push(f)
+    systemFields.push(f)
+	f = {
+    	type: 'integer',
+    	column:'avg_ratings',
+    }
+    systemManyFields.push(f)
+    systemFields.push(f)
 }
 
 // - Field Types
@@ -56,7 +89,7 @@ var ft = {
 	url: 'url',
 	color: 'color',
 	hidden: 'hidden',
-	json: 'json'
+	json: 'json',
 	//rating: 'rating',
 	//widget: 'widget'
 };
@@ -142,4 +175,5 @@ module.exports = {
 	fieldChartable: fieldChartable,
 
 	systemFields: systemFields,
+    systemManyFields: systemManyFields,
 }

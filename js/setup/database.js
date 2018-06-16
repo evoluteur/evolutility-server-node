@@ -67,7 +67,7 @@ function m2db(mid){
         if(f.column && f.column!='id' && f.type!=='formula' && !fieldsAttr[f.column]){
             fieldsAttr[f.column]=true;
             // skip fields specified in config
-            if(['c_date','u_date','nb_comments','nb_ratings','avg_ratings'].indexOf(f.column)<0){
+            if(['c_date','u_date','c_uid','u_uid','nb_comments','nb_ratings','avg_ratings'].indexOf(f.column)<0){
                 sql0=' "'+f.column+'" '+(ft_postgreSQL[f.type]||'text');
                 if(f.type==='lov'){
                         sqlIdx += 'CREATE INDEX idx_'+tableName+'_'+f.column.toLowerCase()+
@@ -83,9 +83,12 @@ function m2db(mid){
     // - "who-is" columns to track creation and last modification.
     if(config.wTimestamp){
         fs.push('c_date timestamp without time zone DEFAULT timezone(\'utc\'::text, now())');
-        //fs.push('c_id integer');
         fs.push('u_date timestamp without time zone DEFAULT timezone(\'utc\'::text, now())');
-        //fs.push('u_id integer');   
+    }
+    // - "who-is" columns to track user who created and last modified the record.
+    if(config.wWhoIs){
+        fs.push('c_uid integer');
+        fs.push('u_uid integer');   
     }
 
     // - tracking number of comments.
