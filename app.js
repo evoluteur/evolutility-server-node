@@ -1,7 +1,23 @@
-var express = require('express');
-var path = require('path');
-var helmet = require('helmet');
-var bodyParser = require('body-parser');
+/*
+  ______          _           _ _ _
+ |  ____|        | |      /| (_) (_)/|
+ | |____   _____ | |_   _| |_ _| |_| |_ _   _
+ |  __\ \ / / _ \| | | | | __| | | | __| | | |
+ | |___\ V / (_) | | |_| | |_| | | | |_| |_| |
+ |______\_/ \___/|_|\__,_|\__|_|_|_|\__|\__, |
+         ___  ___ _ ____   _____ _ __    __/ |
+  ____  / __|/ _ \ '__\ \ / / _ \ '__|  |___/
+ |____| \__ \  __/ |   \ V /  __/ |
+        |___/\___|_|    \_/ \___|_| 
+
+* https://github.com/evoluteur/evolutility-server-node
+* (c) 2018 Olivier Giulieri
+*/
+
+var express = require('express'),
+    path = require('path'),
+    helmet = require('helmet'),
+    bodyParser = require('body-parser');
 
 var routes = require('./js/routes');
 
