@@ -270,9 +270,11 @@ POST /todo
 #### Update
 
 ```
-PATCH /todo
+PATCH /<object>/<id>
+PATCH /todo/5
 { title: 'Finish testing', priority: 2}
 ```
+Note: PATCH or PUT can be used here.
 
 #### Deletion
 Simply use the DELETE verb with the id of the record to remove. 
