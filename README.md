@@ -328,6 +328,16 @@ POST /comics/upload/5
 ```
 With Query parameters: file and "fieldid".
 
+
+#### API Version
+
+This endpoint gets the API version (as specified in the project's package.json file).
+
+```
+GET /version
+```
+
+
 ## License
 
 Copyright (c) 2018 [Olivier Giulieri](https://evoluteur.github.io/).

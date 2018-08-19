@@ -1,6 +1,6 @@
 /*! *******************************************************
  *
- * evolutility-server-node :: utils/routes.js
+ * evolutility-server-node :: routes.js
  *
  * https://github.com/evoluteur/evolutility-server-node
  * (c) 2018 Olivier Giulieri
@@ -14,7 +14,8 @@ var express = require('express'),
 	apiPath = config.apiPath,
 	crud = require('./crud'),
 	stats = require('./stats'),
-	charts = require('./charts');
+	charts = require('./charts'),
+	info = require('./info');
 
 logger.ascii_art();
 
@@ -24,6 +25,8 @@ router.get('/', function(req, res, next) {
   res.sendFile(path.join(__dirname, '../', '../', 'index.html'));
 }); */
 
+// ======  Version ====================================
+router.get(apiPath+'version', info.version);
 
 // ======  GET STATS ====================================
 router.get(apiPath+':entity/stats', stats.numbers);
