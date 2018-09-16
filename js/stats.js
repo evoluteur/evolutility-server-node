@@ -1,5 +1,6 @@
 /*! *******************************************************
- * evolutility-server-node :: utils/stats.js
+ * 
+ * evolutility-server-node :: stats.js
  * Some data on the object like the min, max, average, and total for numeric fields.
  *
  * https://github.com/evoluteur/evolutility-server-node

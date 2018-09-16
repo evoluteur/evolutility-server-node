@@ -1,6 +1,6 @@
 /*! *******************************************************
  *
- * evolutility-server-node :: utils/charts.js
+ * evolutility-server-node :: charts.js
  * Charts and grph data
  *
  * https://github.com/evoluteur/evolutility-server-node
