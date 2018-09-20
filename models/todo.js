@@ -1,5 +1,6 @@
 module.exports = {
     id: 'todo',
+    active: true,
     table: 'task',
     titleField: 'title',
     searchFields: ['title', 'description'],

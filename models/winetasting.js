@@ -1,6 +1,7 @@
 
 module.exports = {
     id: 'winetasting',
+    active: true,
     table: 'wine_tasting',
     titleField: 'drink_date',
     name: 'wine tasting',

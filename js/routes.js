@@ -25,6 +25,12 @@ router.get('/', function(req, res, next) {
   res.sendFile(path.join(__dirname, '../', '../', 'index.html'));
 }); */
 
+
+// ======  APIs DISCOVERY ====================================
+if(config.apiInfo){
+	router.get(apiPath+'/', info.apis);
+}
+
 // ======  Version ====================================
 router.get(apiPath+'version', info.version);
 

@@ -134,6 +134,7 @@ var winecellar_lovs = {
 
 module.exports = {
     id: 'winecellar',
+    active: true,
     table: 'wine',
     name: 'wine',
     namePlural: 'wines',

@@ -24,6 +24,9 @@ module.exports = {
 	wComments: false,
 	wRating: false,
 
+	// - API discovery
+	apiInfo: true,
+
 	// Directory for uploaded files
 	uploadPath: '../evolutility-ui-react/public/pix/',
 

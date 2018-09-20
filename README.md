@@ -287,7 +287,17 @@ DELETE /todo/5
 
 ### Extras endpoints
 
-In addition to CRUD, Evolutility-Server-Node provides endpoints for Charts and Lists of values.
+In addition to CRUD, Evolutility-Server-Node provides endpoints for Charts, Lists of values, and more.
+
+#### Discovery
+
+Returns the list of Objects and their APIs (only objects flagged active are included).
+This end-point must be enabled in the configuration with {apiInfo: true}.
+
+```
+GET /
+```
+
 
 #### Charts
 

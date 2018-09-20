@@ -1,6 +1,7 @@
 module.exports =  {
     id: 'comics',
     label: 'Graphic Novels',
+    active: true,
     name: 'serie',
     namePlural: 'series',
     titleField: 'title',
@@ -44,11 +45,11 @@ module.exports =  {
             lovtable: 'comics_language'
         },
         {
-            id: 'serie_nb', column: 'serie_nb', type: 'integer', inMany: false,
+            id: 'serie_nb', column: 'serie_nb', type: 'integer', inMany: true,
             label: 'Albums', inCharts:false 
         },
         {
-            id: 'have_nb', column: 'have_nb', type: 'integer', inMany: false,
+            id: 'have_nb', column: 'have_nb', type: 'integer', inMany: true,
             label: 'Owned', inCharts:false 
         },
         {
