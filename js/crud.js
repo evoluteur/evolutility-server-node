@@ -7,13 +7,13 @@
  * (c) 2018 Olivier Giulieri
  ********************************************************* */
 
-var dico = require('./utils/dico'),
+const dico = require('./utils/dico'),
     sqls = require('./utils/sql-select'),
     query = require('./utils/query'),
     logger = require('./utils/logger'),
     config = require('../config.js');
 
-var schema = '"'+(config.schema || 'evol_demo')+'"',
+const schema = '"'+(config.schema || 'evol_demo')+'"',
     defaultPageSize = config.pageSize || 50,
     lovSize = config.lovSize || 100;
 
@@ -284,13 +284,13 @@ function updateOne(req, res) {
     // TODO: validation
     logger.logReq('UPDATE ONE', req);
 
-    var m = dico.getModel(req.params.entity),
+    const m = dico.getModel(req.params.entity),
         id = req.params.id,
         q = sqls.namedValues(m, req, 'update');
 
     if(m && id && q.names.length){
         q.values.push(id);
-        var sql = 'UPDATE '+m.schemaTable+' AS t1 SET '+ q.names.join(',') + 
+        let sql = 'UPDATE '+m.schemaTable+' AS t1 SET '+ q.names.join(',') + 
             ' WHERE id=$'+q.values.length+
             ' RETURNING id, '+sqls.select(m.fields, false, null, 'U')+';';
 

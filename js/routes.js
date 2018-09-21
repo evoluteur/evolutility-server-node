@@ -6,7 +6,7 @@
  * (c) 2018 Olivier Giulieri
  ********************************************************* */
 
-var express = require('express'),
+const express = require('express'),
 	router = express.Router(),
 	logger = require('./utils/logger'),
 	upload = require('./utils/upload'),
