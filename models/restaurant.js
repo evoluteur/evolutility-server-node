@@ -36,7 +36,7 @@ module.exports = {
     fields:[
         {
             type: 'text', id: 'name',
-            label: 'name', maxLength: 50,
+            label: 'Name',
             required: true, width: 62, inMany: true
         }, 
         {
