@@ -10,7 +10,7 @@
 var models = require('../../models/all_models'),
 	config = require('../../config.js');
 
-var schema = '"'+(config.schema || 'evol_demo')+'"';
+var schema = '"'+(config.schema || 'evolutility')+'"';
 
 // - fields for comments, ratings...
 var systemFields = [] 		// all system fields

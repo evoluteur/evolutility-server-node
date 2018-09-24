@@ -47,9 +47,9 @@ npm start
 
 ```
 
-Note: The database creation and population scripts are logged in the files "evol-db-schema-{datetime}.sql" and  "evol-db-data-{datetime}.sql".
+**Note**: The database creation and population scripts are logged in the files "evol-db-schema-{datetime}.sql" and  "evol-db-data-{datetime}.sql".
 
-In a web browser, go to the url [http://localhost:3000/api/v1/evolutility/todo](http://localhost:3000/api/v1/evolutility/todo).
+In a web browser, go to the url [http://localhost:2000/api/v1/evolutility/todo](http://localhost:2000/api/v1/evolutility/todo).
 
 
 ## Configuration
@@ -60,7 +60,7 @@ Configuration options are set in the file [config.js](https://github.com/evolute
 | Option       | Description                             |
 |--------------|-----------------------------------------|
 | apiPath   | Path for REST API (i.e.: "/api/v1/evolutility/").|
-| apiPort   | Port for REST API (i.e.: 3000). |
+| apiPort   | Port for REST API (i.e.: 2000). |
 | connectionString | DB connection string (i.e.: "postgres://evol:love@localhost:5432/evol"). |
 | schema | DB connection string (i.e.: "Evolutility").|
 | pageSize | Number of rows per page in pagination (default = 50).|
@@ -166,7 +166,7 @@ Evolutility-Server-Node provides a generic RESTful API for CRUD (Create, Read, U
 It is a partial server-side Javascript implementation of [PostgREST](http://postgrest.com) using [Node.js](https://nodejs.org/en/), [Express](http://expressjs.com/) and [PostgreSQL](http://www.postgresql.org/).
 
 When running Evolutility-Server-Node locally, the url for the "todo" app is 
-[http://localhost:3000/api/v1/evolutility/todo](http://localhost:3000/api/v1/evolutility/todo).
+[http://localhost:2000/api/v1/evolutility/todo](http://localhost:2000/api/v1/evolutility/todo).
 
 ### Requesting Information
 

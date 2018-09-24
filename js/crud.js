@@ -13,7 +13,7 @@ const dico = require('./utils/dico'),
     logger = require('./utils/logger'),
     config = require('../config.js');
 
-const schema = '"'+(config.schema || 'evol_demo')+'"',
+const schema = '"'+(config.schema || 'evolutility')+'"',
     defaultPageSize = config.pageSize || 50,
     lovSize = config.lovSize || 100;
 

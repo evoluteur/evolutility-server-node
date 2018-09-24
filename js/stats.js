@@ -12,7 +12,7 @@ var dico = require('./utils/dico'),
     query = require('./utils/query'),
     config = require('../config.js');
 
-var schema = '"'+(config.schema || 'evol_demo')+'"',
+var schema = '"'+(config.schema || 'evolutility')+'"',
     defaultPageSize = config.pageSize || 50;
 
 function minMax(fn, f, cast){
@@ -62,7 +62,7 @@ function numbers(req, res) {
         sql += ' FROM '+m.schemaTable;  
         query.runQuery(res, sql, [], true);
     }else{
-        return res.json(logger.errorMsg('Invalid entity or field.', 'chartField'));
+        return res.json(logger.errorMsg('Invalid parameters.', 'stats numbers'));
     }
 }
 

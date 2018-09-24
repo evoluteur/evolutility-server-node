@@ -12,7 +12,7 @@ const dico = require('./utils/dico'),
     query = require('./utils/query'),
     config = require('../config.js');
 
-const schema = '"'+(config.schema || 'evol_demo')+'"',
+const schema = '"'+(config.schema || 'evolutility')+'"',
     defaultPageSize = config.pageSize || 50;
 
 // - returns data for a single charts
