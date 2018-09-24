@@ -28,7 +28,7 @@ module.exports = {
     active: true,
     table: 'restaurant',
     label: 'Restaurants',
-    icon: 'contact.gif',
+    icon: 'resto.gif',
     name: 'restaurant', 
     namePlural: 'restaurants',
     searchFields: ['name'],

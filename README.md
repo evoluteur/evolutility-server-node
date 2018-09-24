@@ -108,7 +108,7 @@ Notes: More field properties (unique, min, max, minLength, maxLength...) will be
 
 ### Sample model
 
-Here is a model for a To-Do app.
+Below is the model for a To-Do app.
 
 ```javascript
 module.exports = {
@@ -160,6 +160,12 @@ module.exports = {
 
 ```
 
+More sample models: 
+ [Address book](https://github.com/evoluteur/evolutility-server-node/blob/master/models/contact.js),
+  [Restaurants list](https://github.com/evoluteur/evolutility-server-node/blob/master/models/restaurant.js),
+    [Wine cellar](https://github.com/evoluteur/evolutility-server-node/blob/master/models/winecellar.js),
+    [Graphic novels inventory](https://github.com/evoluteur/evolutility-server-node/blob/master/models/comics.js). 
+ 
 
 ## API
 Evolutility-Server-Node provides a generic RESTful API for CRUD (Create, Read, Update, Delete) and more.
