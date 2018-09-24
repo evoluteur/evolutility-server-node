@@ -223,7 +223,7 @@ if(sqlFile){
             throw err;
         }
     })
-    fs.writeFile('evol-db-z-data-'+fId+'.sql', sqlData, function(err){
+    fs.writeFile('evol-db-data-'+fId+'.sql', sqlData, function(err){
         if (err){
             throw err;
         }

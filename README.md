@@ -47,6 +47,8 @@ npm start
 
 ```
 
+Note: The database creation script is logged as the files "evol-db-schema-{datetime}.sql" and  "evol-db-data-{datetime}.sql".
+
 In a web browser, go to the url [http://localhost:3000/api/v1/evolutility/todo](http://localhost:3000/api/v1/evolutility/todo).
 
 
