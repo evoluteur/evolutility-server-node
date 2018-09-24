@@ -7,31 +7,31 @@
  * (c) 2018 Olivier Giulieri
  ********************************************************* */
 
-var dico = require('./utils/dico'),
+const dico = require('./utils/dico'),
     logger = require('./utils/logger'),
     query = require('./utils/query'),
     config = require('../config.js');
 
-var schema = '"'+(config.schema || 'evol_demo')+'"',
+const schema = '"'+(config.schema || 'evol_demo')+'"',
     defaultPageSize = config.pageSize || 50;
 
 // - returns data for a single charts
 function chartField(req, res) {
     logger.logReq('GET CHART', req);
 
-    var m = dico.getModel(req.params.entity),
-        fid = req.params.field,
-        sqlParams = [],
+    const m = dico.getModel(req.params.entity),
+        fid = req.params.field;
+    let sqlParams = [],
         sql;
-    var sqlCount = 'count(*)::integer AS value';
+    const sqlCount = 'count(*)::integer AS value';
 
     if(m && fid){
-        var f = m.fieldsH[fid];
+        let f = m.fieldsH[fid];
         if(f){
-            var col = '"'+f.column+'"',
+            const col = '"'+f.column+'"',
                 sqlFrom = ' FROM '+m.schemaTable+' AS t1';
             if(f.type==='lov' && f.lovtable){
-                var clov = f.lovcolumn||'name';
+                const clov = f.lovcolumn||'name';
 
                 sql='SELECT t2.id, t2.'+clov+'::text AS label, '+sqlCount+
                     sqlFrom+
@@ -39,7 +39,7 @@ function chartField(req, res) {
                         ' ON t1.'+col+'=t2.id'+
                     ' GROUP BY t2.id, t2.'+clov;
             }else if(f.type==='boolean'){
-                var cId = 'CASE '+col+' WHEN true THEN 1 ELSE 0 END',
+                const cId = 'CASE '+col+' WHEN true THEN 1 ELSE 0 END',
                     cLabel = 'CASE '+col+' WHEN true THEN \'Yes\' ELSE \'No\' END';
 
                 sql='SELECT '+cId+'::integer AS id, '+

@@ -31,7 +31,7 @@ function csvHeader(fields){
     var h = {'id': 'ID'},
         lovs = {};
 
-    fields.forEach(function(f){
+    fields.forEach((f) => {
         if(f.type==='lov'){
             h[f.id] = fieldId(f)+' ID';
             h[f.id+'_txt'] = fieldId(f);
@@ -56,7 +56,7 @@ function sqlMany(m, req, allFields, wCount){
         }
     // ---- SELECTION
     var sqlSel = 't1.id, '+sqls.select(fs, false, true);
-    dico.systemManyFields.forEach(function(f){
+    dico.systemManyFields.forEach((f) => {
         sqlSel += ', t1.'+f.column
         if(f.type==='integer'){
             sqlSel += '::integer'
@@ -182,7 +182,7 @@ function sqlMany(m, req, allFields, wCount){
     }
 
     // ---- LIMITING & PAGINATION
-    var offset=0,
+    let offset=0,
         qPage=req.query.page||0, 
         qPageSize;
 
@@ -210,7 +210,7 @@ function sqlMany(m, req, allFields, wCount){
 // - returns a set of records (filtered and sorted)
 function getMany(req, res) {
     logger.logReq('GET MANY', req);
-    var m = dico.getModel(req.params.entity);
+    const m = dico.getModel(req.params.entity);
     if(m){
         var format = req.query.format || null,
             isCSV = format==='csv',
@@ -229,7 +229,7 @@ function getMany(req, res) {
 function getOne(req, res) {
     logger.logReq('GET ONE', req);
 
-    var m = dico.getModel(req.params.entity),
+    const m = dico.getModel(req.params.entity),
         id = req.params.id;
 
     if(m && id){
@@ -259,7 +259,7 @@ function insertOne(req, res) {
     // TODO: validation
     logger.logReq('INSERT ONE', req);
 
-    var m = dico.getModel(req.params.entity),
+    const m = dico.getModel(req.params.entity),
         q = sqls.namedValues(m, req, 'insert');
 
     if(m && q.names.length){
@@ -307,7 +307,7 @@ function updateOne(req, res) {
 function deleteOne(req, res) {
     logger.logReq('DELETE ONE', req);
 
-    var m = dico.getModel(req.params.entity),
+    const m = dico.getModel(req.params.entity),
         id = req.params.id;
 
     if(m && id){
@@ -330,9 +330,9 @@ function deleteOne(req, res) {
 function lovOne(req, res) {
     logger.logReq('LOV ONE', req);
 
-    var entity = req.params.entity,
-        m = dico.getModel(entity),
-        fid = req.params.field,
+    const entity = req.params.entity,
+        m = dico.getModel(entity)
+    let fid = req.params.field,
         f = m.fieldsH[fid];
 
     if(m){
@@ -370,7 +370,7 @@ function lovOne(req, res) {
 function collecOne(req, res) {
     logger.logReq('GET ONE-COLLEC', req);
 
-    var m = dico.getModel(req.params.entity),
+    const m = dico.getModel(req.params.entity),
         collecId = req.params.collec,
         collec = m.collecsH[collecId],
         pId = parseInt(req.query.id, 10);
