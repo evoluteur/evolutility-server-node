@@ -62,7 +62,7 @@ Configuration options are set in the file [config.js](https://github.com/evolute
 | apiPath   | Path for REST API (i.e.: "/api/v1/evolutility/").|
 | apiPort   | Port for REST API (i.e.: 2000). |
 | connectionString | DB connection string (i.e.: "postgres://evol:love@localhost:5432/evol"). |
-| schema | DB connection string (i.e.: "Evolutility").|
+| schema | DB schema name (i.e.: "evolutility").|
 | pageSize | Number of rows per page in pagination (default = 50).|
 | lovSize | Maximum number of values allowed for form dropdowns (default = 100). |
 | csvSize | Maximum number of rows in CSV export (default = 1000).|
@@ -162,9 +162,9 @@ module.exports = {
 
 More sample models: 
  [Address book](https://github.com/evoluteur/evolutility-server-node/blob/master/models/contact.js),
-  [Restaurants list](https://github.com/evoluteur/evolutility-server-node/blob/master/models/restaurant.js),
-    [Wine cellar](https://github.com/evoluteur/evolutility-server-node/blob/master/models/winecellar.js),
-    [Graphic novels inventory](https://github.com/evoluteur/evolutility-server-node/blob/master/models/comics.js). 
+ [Restaurants list](https://github.com/evoluteur/evolutility-server-node/blob/master/models/restaurant.js),
+ [Wine cellar](https://github.com/evoluteur/evolutility-server-node/blob/master/models/winecellar.js),
+ [Graphic novels inventory](https://github.com/evoluteur/evolutility-server-node/blob/master/models/comics.js). 
  
 
 ## API
@@ -295,7 +295,7 @@ DELETE /todo/5
 
 ### Extras endpoints
 
-In addition to CRUD, Evolutility-Server-Node provides endpoints for Charts, Lists of values, and more.
+In addition to CRUD, Evolutility-Server-Node provides a few endpoints for Charts, Lists of values, and more.
 
 #### Discovery
 
@@ -339,7 +339,7 @@ GET /todo/lov/category
 
 #### File upload
 
-This endpoint lets you upload a file. The current (naive) implementation only saves the file on the file server in a folder named like the object id.
+This endpoint lets you upload a file. The current (naive) implementation simply saves the file on the file server in a folder named like the object id (inside the folder specified by the option "uploadPath" in config.js).
 
 ```
 POST /<object>/upload/<id>
