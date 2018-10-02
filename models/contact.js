@@ -63,12 +63,8 @@ module.exports = {
             label: 'Fax', maxLength: 20
         },
         {
-            type: 'text', id: 'address1', column: 'address1', 
-             label: 'Address'
-        },
-        {
-            type: 'text', id: 'address2', column: 'address2', 
-             label: '', labelMany: 'Address 2'
+            type: 'textmultiline', id: 'address', column: 'address', 
+             label: 'Address', height: 3,
         },
         {
             type: 'text', id: 'city', column: 'city', 
