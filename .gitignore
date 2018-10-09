@@ -1,5 +1,7 @@
 client/public/
 
+evol-db-*.sql
+
 node_modules
 bower_components
 
