@@ -8,8 +8,9 @@
  ********************************************************* */
 
 var dico = require('./utils/dico'),
-    logger = require('./utils/logger'),
     query = require('./utils/query'),
+    errors = require('./utils/errors.js'),
+    logger = require('./utils/logger'),
     config = require('../config.js');
 
 var schema = '"'+(config.schema || 'evolutility')+'"',
@@ -37,7 +38,9 @@ function minMax(fn, f, cast){
 function numbers(req, res) {
     logger.logReq('GET STATS', req);
 
-    var m = dico.getModel(req.params.entity)
+    const mid = req.params.entity,
+        m = dico.getModel(mid)
+        
     if(m){
         var sql = 'SELECT count(*)::integer AS count';
             
@@ -62,7 +65,7 @@ function numbers(req, res) {
         sql += ' FROM '+m.schemaTable;  
         query.runQuery(res, sql, [], true);
     }else{
-        return res.json(logger.errorMsg('Invalid parameters.', 'stats numbers'));
+        errors.badRequest(res, 'Invalid model: "'+mid+'".')
     }
 }
 

@@ -8,8 +8,9 @@
  ********************************************************* */
 
 const dico = require('./utils/dico'),
-    logger = require('./utils/logger'),
     query = require('./utils/query'),
+    errors = require('./utils/errors.js'),
+    logger = require('./utils/logger'),
     config = require('../config.js');
 
 const schema = '"'+(config.schema || 'evolutility')+'"',
@@ -19,7 +20,8 @@ const schema = '"'+(config.schema || 'evolutility')+'"',
 function chartField(req, res) {
     logger.logReq('GET CHART', req);
 
-    const m = dico.getModel(req.params.entity),
+    const mid = req.params.entity,
+        m = dico.getModel(mid),
         fid = req.params.field;
     let sqlParams = [],
         sql;
@@ -55,9 +57,11 @@ function chartField(req, res) {
                    ' LIMIT '+defaultPageSize+';';
 
             query.runQuery(res, sql, sqlParams, false);
+        }else{
+            errors.badRequest(res, 'Invalid field: "'+fid+'".')
         }
     }else{
-        return res.json(logger.errorMsg('Invalid entity or field.', 'chartField'));
+        errors.badRequest(res, 'Invalid model: "'+mid+'".')
     }
 }
 

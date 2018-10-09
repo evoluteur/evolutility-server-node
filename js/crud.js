@@ -10,6 +10,7 @@
 const dico = require('./utils/dico'),
     sqls = require('./utils/sql-select'),
     query = require('./utils/query'),
+    errors = require('./utils/errors.js'),
     logger = require('./utils/logger'),
     config = require('../config.js');
 
@@ -218,6 +219,8 @@ function getMany(req, res) {
             sql = query.sqlQuery(sq);
 
         query.runQuery(res, sql, sq.params, false, format, isCSV ? csvHeader(m.fields) : null);
+    }else{
+        errors.badRequest(res)
     }
 }
 
@@ -245,7 +248,7 @@ function getOne(req, res) {
 
         query.runQuery(res, sql, sqlParams, true);        
     }else{
-        return res.json(logger.errorMsg('Invalid entity \''+entity+'\'or field\''+fid+'\'.', 'getOne'));
+        errors.badRequest(res)
     }
 }
 
@@ -271,6 +274,8 @@ function insertOne(req, res) {
             ' RETURNING id, '+sqls.select(m.fields, false, null, 'C')+';';
 
         query.runQuery(res, sql, q.values, true);
+    }else{
+        errors.badRequest(res)
     }
 }
 
@@ -295,6 +300,8 @@ function updateOne(req, res) {
             ' RETURNING id, '+sqls.select(m.fields, false, null, 'U')+';';
 
         query.runQuery(res, sql, q.values, true);
+    }else{
+        errors.badRequest(res)
     }
 }
 
@@ -317,7 +324,7 @@ function deleteOne(req, res) {
                 
         query.runQuery(res, sql, [id], true);
     }else{
-        res.json(logger.errorMsg('Missing parameters.', 'deleteOne'));
+        errors.badRequest(res)
     }
 }
 
@@ -357,7 +364,7 @@ function lovOne(req, res) {
             res.json(logger.errorMsg('Invalid field \''+fid+'\'.', 'lovOne'));
         }
     }else{
-        res.json(logger.errorMsg('Invalid entity \''+entity+'\'.', 'lovOne'));
+        errors.badRequest(res)
     }
 }
 
@@ -385,7 +392,7 @@ function collecOne(req, res) {
 
         query.runQuery(res, sql, sqlParams, false);        
     }else{
-        return res.json(logger.errorMsg('Invalid parameters.', 'collecOne'));
+        errors.badRequest(res)
     }
 }
 
