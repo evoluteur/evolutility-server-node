@@ -211,7 +211,9 @@ function sqlMany(m, req, allFields, wCount){
 // - returns a set of records (filtered and sorted)
 function getMany(req, res) {
     logger.logReq('GET MANY', req);
-    const m = dico.getModel(req.params.entity);
+    const mid = req.params.entity,
+        m = dico.getModel(mid);
+    
     if(m){
         var format = req.query.format || null,
             isCSV = format==='csv',
@@ -220,7 +222,7 @@ function getMany(req, res) {
 
         query.runQuery(res, sql, sq.params, false, format, isCSV ? csvHeader(m.fields) : null);
     }else{
-        errors.badRequest(res)
+        errors.badRequest(res, 'Invalid model: "'+mid+'".')
     }
 }
 
@@ -232,12 +234,13 @@ function getMany(req, res) {
 function getOne(req, res) {
     logger.logReq('GET ONE', req);
 
-    const m = dico.getModel(req.params.entity),
+    const mid = req.params.entity,
+        m = dico.getModel(mid),
         id = req.params.id;
 
-    if(m && id){
-        var sqlParams = [id],
-            sql = 'SELECT t1.id, '+sqls.select(m.fields, m.collections, true)
+    if(m){
+        const sqlParams = [id]
+        let sql = 'SELECT t1.id, '+sqls.select(m.fields, m.collections, true)
 
             dico.systemFields.forEach(function(f){
                 sql += ', t1.'+f.column
@@ -248,7 +251,7 @@ function getOne(req, res) {
 
         query.runQuery(res, sql, sqlParams, true);        
     }else{
-        errors.badRequest(res)
+        errors.badRequest(res, 'Invalid model: "'+mid+'".')
     }
 }
 
@@ -266,10 +269,10 @@ function insertOne(req, res) {
         q = sqls.namedValues(m, req, 'insert');
 
     if(m && q.names.length){
-        var ps = q.names.map(function(n, idx){
+        const ps = q.names.map(function(n, idx){
             return '$'+(idx+1);
         });
-        var sql = 'INSERT INTO '+m.schemaTable+
+        const sql = 'INSERT INTO '+m.schemaTable+
             ' ("'+q.names.join('","')+'") values('+ps.join(',')+')'+
             ' RETURNING id, '+sqls.select(m.fields, false, null, 'C')+';';
 
@@ -337,13 +340,13 @@ function deleteOne(req, res) {
 function lovOne(req, res) {
     logger.logReq('LOV ONE', req);
 
-    const entity = req.params.entity,
-        m = dico.getModel(entity)
-    let fid = req.params.field,
-        f = m.fieldsH[fid];
+    const mid = req.params.entity,
+        m = dico.getModel(entity),
+        fid = req.params.field
+    let f = m.fieldsH[fid];
 
     if(m){
-        if(!f && fid===entity){
+        if(!f && fid===mid){
             // -- if field id = entity id, then use the entity itself as the lov
             f = {
                 id: 'entity',
@@ -352,8 +355,9 @@ function lovOne(req, res) {
             }
         }
         if(f){
-            var col = f.lovcolumn||'name',
-                sql = 'SELECT id, "'+col+'" as text';
+            const col = f.lovcolumn||'name'
+            let sql = 'SELECT id, "'+col+'" as text'
+            
             if(f.lovicon){
                 sql+=',icon'
             }
@@ -377,15 +381,16 @@ function lovOne(req, res) {
 function collecOne(req, res) {
     logger.logReq('GET ONE-COLLEC', req);
 
-    const m = dico.getModel(req.params.entity),
+    const mid = req.params.entity
+        m = dico.getModel(mid),
         collecId = req.params.collec,
         collec = m.collecsH[collecId],
         pId = parseInt(req.query.id, 10);
 
     if(m && collec){
-        var sqlParams = [pId];
-        var sql = 'SELECT t1.id, '+sqls.select(collec.fields)+
-                ' FROM '+schema+'."'+collec.table+'" AS t1'+//lovs.from+
+        const sqlParams = [pId],
+            sql = 'SELECT t1.id, '+sqls.select(collec.fields)+
+                ' FROM '+schema+'."'+collec.table+'" AS t1'+
                 ' WHERE t1."'+collec.column+'"=$1'+
                 ' ORDER BY t1.id'+//t1.position, t1.id
                 ' LIMIT '+defaultPageSize+';';

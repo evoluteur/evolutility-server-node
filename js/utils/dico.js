@@ -12,6 +12,33 @@ var models = require('../../models/all_models'),
 
 var schema = '"'+(config.schema || 'evolutility')+'"';
 
+// - Field Types
+var ft = {
+	text: 'text',
+	textml: 'textmultiline',
+	bool: 'boolean',
+	int: 'integer',
+	dec: 'decimal',
+	money: 'money',
+	date: 'date',
+	datetime: 'datetime',
+	time: 'time',
+	lov: 'lov',
+	list: 'list', // multiple values for one field (behave like tags - return an array of strings)
+	html: 'html',
+	formula:'formula', // soon to be a field attribute rather than a field type
+	email: 'email',
+	image: 'image',
+	//geoloc: 'geolocation',
+	//doc:'document',
+	url: 'url',
+	color: 'color',
+	hidden: 'hidden',
+	json: 'json',
+	//rating: 'rating',
+	//widget: 'widget'
+};
+
 // - fields for comments, ratings...
 var systemFields = [] 		// all system fields
 var systemManyFields = []	// system fields in list and cards views
@@ -29,7 +56,6 @@ if(config.wTimestamp){
     	column:'u_date',
     })
 }
-
 if(config.wWhoIs){
     systemFields.push({
     	// record creator (user.id)
@@ -67,51 +93,15 @@ if(config.wRating){
     systemFields.push(f)
 }
 
-// - Field Types
-var ft = {
-	text: 'text',
-	textml: 'textmultiline',
-	bool: 'boolean',
-	int: 'integer',
-	dec: 'decimal',
-	money: 'money',
-	date: 'date',
-	datetime: 'datetime',
-	time: 'time',
-	lov: 'lov',
-	list: 'list', // multiple values for one field (behave like tags - return an array of strings)
-	html: 'html',
-	formula:'formula', // soon to be a field attribute rather than a field type
-	email: 'email',
-	image: 'image',
-	//geoloc: 'geolocation',
-	//doc:'document',
-	url: 'url',
-	color: 'color',
-	hidden: 'hidden',
-	json: 'json',
-	//rating: 'rating',
-	//widget: 'widget'
-};
+const fieldIsNumber = f => f.type===ft.int || f.type===ft.dec || f.type===ft.money
 
-function fieldIsNumber(f){
-	return f.type===ft.int || f.type===ft.dec || f.type===ft.money;
-}
-function fieldIsDateOrTime(f){
-	return f.type===ft.date || f.type===ft.datetime || f.type===ft.time;
-}
-function fieldIsNumeric(f){
-	return fieldIsNumber(f) || fieldIsDateOrTime(f) 
-}
+const fieldIsDateOrTime = f => f.type===ft.date || f.type===ft.datetime || f.type===ft.time
 
-function fieldInCharts(f) {
-	return fieldChartable(f) && !f.noCharts;
-}
+const fieldIsNumeric = f => fieldIsNumber(f) || fieldIsDateOrTime(f)
 
-function fieldChartable(f) { 
-	return  (f.type===ft.lov || f.type===ft.list || 
-				f.type===ft.bool || fieldIsNumber(f));
-}
+const fieldInCharts = f => fieldChartable(f) && !f.noCharts
+
+const fieldChartable = f => f.type===ft.lov || f.type===ft.list || f.type===ft.bool || fieldIsNumber(f)
 
 function hById(arr){
 	var objH={};
@@ -146,32 +136,23 @@ function prepModel(m){
 	}
 }
 
-
 module.exports = {
 
 	fieldTypes: ft,
 
-	getModel: function(mId){ 
-	// - return a model enhanced w/ hashs
-		return prepModel(models[mId]);
-	},
+	getModel: mId => prepModel(models[mId]),
 
 	prepModel: prepModel,
 
-	fieldInMany:function(f){
-		return f.inList || f.inMany
-	},
+	fieldInMany: f =>  f.inList || f.inMany,
 
-	fieldIsText: function(f){
-		return [ft.text, ft.textml, ft.url, ft.html, ft.email].indexOf(f.type)>-1;
-	},
+	fieldIsText: f => [ft.text, ft.textml, ft.url, ft.html, ft.email].indexOf(f.type)>-1,
 
 	fieldIsNumber: fieldIsNumber,
 	fieldIsNumeric: fieldIsNumeric,
 	fieldIsDateOrTime: fieldIsDateOrTime,
 
 	fieldInCharts: fieldInCharts,
-
 	fieldChartable: fieldChartable,
 
 	systemFields: systemFields,

@@ -47,7 +47,10 @@ function apis(req, res) {
 function version(req, res) {
     logger.logReq('GET VERSION', req);
 
-    return res.json({ version: pkg.version});
+    return res.json({
+        name: pkg.name,
+        version: pkg.version
+    });
 }
 
 // --------------------------------------------------------------------------------------
