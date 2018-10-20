@@ -42,7 +42,7 @@ function numbers(req, res) {
         m = dico.getModel(mid)
         
     if(m){
-        var sql = 'SELECT count(*)::integer AS count';
+        let sql = 'SELECT count(*)::integer AS count';
             
         m.fields.forEach(function(f){
             if(dico.fieldIsNumeric(f)){

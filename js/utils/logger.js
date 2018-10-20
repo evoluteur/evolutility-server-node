@@ -7,11 +7,10 @@
  * (c) 2018 Olivier Giulieri
  ********************************************************* */
 
-var config = require('../../config.js');
-var pkg = require('../../package.json');
-var chalk = require('chalk');
-
-var consoleLog = config.consoleLog;
+const config = require('../../config.js'),
+	pkg = require('../../package.json'),
+	chalk = require('chalk'),
+	consoleLog = config.consoleLog;
 
 function green(msg){
 	if(consoleLog){
@@ -61,7 +60,6 @@ module.exports = {
 	},
 
 	logCount: function(nbRecords){
-		//green('Sending '+nbRecords+' records for '+reqid+'.');
 		green('Sending '+nbRecords+' records.');
 	},
 	

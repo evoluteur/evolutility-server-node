@@ -14,14 +14,14 @@
 * (c) 2018 Olivier Giulieri
 */
 
-var express = require('express'),
+const express = require('express'),
     path = require('path'),
     helmet = require('helmet'),
     bodyParser = require('body-parser');
 
 var routes = require('./js/routes');
 
-var app = express();
+const app = express();
 
 app.use(helmet());
 app.use(bodyParser.json());

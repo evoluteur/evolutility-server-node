@@ -29,7 +29,7 @@ function fieldId(f){
 }
 
 function csvHeader(fields){
-    var h = {'id': 'ID'},
+    let h = {'id': 'ID'},
         lovs = {};
 
     fields.forEach((f) => {
@@ -50,13 +50,13 @@ function csvHeader(fields){
 
 // - returns SQL for query returning a set of records
 function sqlMany(m, req, allFields, wCount){
-    var fs = allFields ? m.fields : m.fields.filter(dico.fieldInMany),
+    let fs = allFields ? m.fields : m.fields.filter(dico.fieldInMany),
         sqlParams = [];
         if(allFields && fs.length===0){
             fs=allFields.slice(0, 5)
         }
     // ---- SELECTION
-    var sqlSel = 't1.id, '+sqls.select(fs, false, true);
+    let sqlSel = 't1.id, '+sqls.select(fs, false, true);
     dico.systemManyFields.forEach((f) => {
         sqlSel += ', t1.'+f.column
         if(f.type==='integer'){
