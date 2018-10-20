@@ -22,6 +22,8 @@ module.exports = {
 
 	ascii_art: function(){
 		if(consoleLog){
+			const apiRoot = 'http://localhost:'+config.apiPort+config.apiPath;
+
 			console.log(
 				'  ______          _           _ _ _\n'+
 				' |  ____|        | |      /| (_) (_)/|\n'+
@@ -33,6 +35,7 @@ module.exports = {
 				'  ____  / __|/ _ \\ \'__\\ \\ / / _ \\ \'__|  |___/\n' + 
 				' |____| \\__ \\  __/ |   \\ V /  __/ |\n'+
 				'        |___/\\___|_|    \\_/ \\___|_|    v'+pkg.version+'\n\n'+
+				apiRoot+'\n\n'+
 				new Date() + '\n'
 			);
 		}
