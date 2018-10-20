@@ -36,8 +36,7 @@ function apis(req, res) {
                     stats: baseUrl+mid+'/stats'
                 })
             }
-            logger.logReq('EvoDico - models', req)
-        } 
+        }
     }
     return res.json(ms);
 }
