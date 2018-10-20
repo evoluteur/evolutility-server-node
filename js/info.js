@@ -7,16 +7,15 @@
  ********************************************************* */
 
 const logger = require('./utils/logger'),
-    pkg = require('../package.json');
-
-const models = require('../models/all_models'),
+    pkg = require('../package.json'),
+    models = require('../models/all_models'),
     config = require('../config.js');
 
-// - returns "GET" URLs for all models
+// - returns list of all models and URLs to query them
 function apis(req, res) {
     logger.logReq('GET API', req);
 
-    const baseUrl = 'http://'+req.headers.host+req.url
+    const baseUrl = req.protocol+'://'+req.headers.host+req.url
     var ms=[];
 
     if(config.apiInfo){ 
