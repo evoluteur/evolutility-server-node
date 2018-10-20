@@ -275,14 +275,24 @@ POST /todo
 { title: 'Finish testing', priority: 2}
 ```
 
+Even though it is a "POST", the request returns the new record. It is not standard but it saves the UI a subsequent call.
+
 #### Update
+
+PATCH or PUT can be used to update specific records.
 
 ```
 PATCH /<object>/<id>
 PATCH /todo/5
 { title: 'Finish testing', priority: 2}
+
+PUT /<object>/<id>
+PUT /todo/5
+{ title: 'Finish testing', priority: 2}
+
 ```
-Note: PATCH or PUT can be used here.
+Notes: The request returns the updated record. It is not standard but it saves the UI a subsequent call.
+
 
 #### Deletion
 Simply use the DELETE verb with the id of the record to remove. 
@@ -329,7 +339,7 @@ GET /todo/stats
 
 #### Lists of Values
 
-Dropdown fields in the UI (field.type="lov" in the model) have a REST endpoint to get the list of values for dropdowns.
+Dropdown fields in the UI (field.type="lov" in the model) have a REST endpoint to get the list of values (used for dropdowns in the UI).
 
 ```
 GET /<object>/lov/<field id>
