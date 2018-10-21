@@ -2,7 +2,7 @@
 
 RESTful Micro-ORM for CRUD and more, using Node.js, Express, and PostgreSQL.
 
-Evolutility-Server-Node provides REST endpoints for CRUD (Create, Read, Update, Delete) and simple charts based on models rather than code.
+Evolutility-Server-Node provides a set of generic REST endpoints for CRUD (Create, Read, Update, Delete) and simple charts based on models rather than code.
  
 For a matching model-driven UI, use [Evolutility-UI-React](http://github.com/evoluteur/evolutility-ui-react) or [Evolutility-UI-jQuery](http://github.com/evoluteur/evolutility-ui-jquery).
 
@@ -180,7 +180,7 @@ When running Evolutility-Server-Node locally, the url for the "todo" app is
 To get a specific record by ID, use "< ObjectName >/ID".
 
 ```
-GET /<object>/<id>
+GET /<model.id>/<id>
 
 GET /todo/12
 ```
@@ -189,7 +189,7 @@ GET /todo/12
 Every model is exposed. You can query lists of items by using the model ID.
 
 ```
-GET /<object>
+GET /<model.id>
 
 GET /todo
 ```
@@ -198,7 +198,7 @@ GET /todo
 You can filter result rows by adding conditions on fields, each condition is a query string parameter. 
 
 ```
-GET /<object>/<field.id>=<operator>.<value>
+GET /<model.id>/<field.id>=<operator>.<value>
 
 GET /todo?title=sw.a
 GET /todo?priority=in.1,2,3
@@ -232,7 +232,7 @@ These operators are available:
 The reserved word "order" reorders the response rows. It uses a comma-separated list of fields and directions:
 
 ```
-GET /<object>?order=<field.id>.<asc/desc>
+GET /<model.id>?order=<field.id>.<asc/desc>
 
 GET /todo?order=priority.desc,title.asc
 ```
@@ -247,7 +247,7 @@ GET /todo?order=duedate
 The reserved words "page" and "pageSize" limits the response rows.
 
 ```
-GET /<object>?page=<pageindex>&pageSize=<pagesize>
+GET /<model.id>?page=<pageindex>&pageSize=<pagesize>
 
 GET /todo?page=0&pageSize=50
 ```
@@ -258,7 +258,7 @@ By default all APIs return data in JSON format. This API call allows to request 
 This feature is using [express-csv](https://github.com/nulltask/express-csv).
 
 ```
-GET /<object>?format=csv
+GET /<model.id>?format=csv
 
 GET /todo?format=csv
 ```
@@ -271,6 +271,8 @@ Notes: In the returned data every object has an extra property "\_full_count" wh
 To create a row in a database table post a JSON object whose keys are the names of the columns you would like to create. Missing keys will be set to default values when applicable.
 
 ```
+POST <model.id> {<data>}
+
 POST /todo
 { title: 'Finish testing', priority: 2}
 ```
@@ -282,11 +284,16 @@ Even though it is a "POST", the request returns the new record. It is not standa
 PATCH or PUT can be used to update specific records.
 
 ```
-PATCH /<object>/<id>
+PATCH /<model.id>/<id>
+
 PATCH /todo/5
 { title: 'Finish testing', priority: 2}
 
-PUT /<object>/<id>
+```
+
+```
+PUT /<model.id>/<id>
+
 PUT /todo/5
 { title: 'Finish testing', priority: 2}
 
@@ -298,7 +305,7 @@ Notes: The request returns the updated record. It is not standard but it saves t
 Simply use the DELETE verb with the id of the record to remove. 
 
 ```
-DELETE /<object>/<id>
+DELETE /<model.id>/<id>
 
 DELETE /todo/5
 ```
@@ -322,7 +329,7 @@ GET /
 For charts data, it is possible to get aggregated data.
 
 ```
-GET /<object>/chart/<field id>
+GET /<model.id>/chart/<field id>
 
 GET /todo/chart/category
 ```
@@ -332,7 +339,7 @@ GET /todo/chart/category
 Returns the total count, and the min, max, average, and total for numeric fields in the model.
 
 ```
-GET /<object>/stats
+GET /<model.id>/stats
 
 GET /todo/stats
 ```
@@ -342,7 +349,7 @@ GET /todo/stats
 Dropdown fields in the UI (field.type="lov" in the model) have a REST endpoint to get the list of values (used for dropdowns in the UI).
 
 ```
-GET /<object>/lov/<field id>
+GET /<model.id>/lov/<field.id>
 
 GET /todo/lov/category
 ```
@@ -352,7 +359,7 @@ GET /todo/lov/category
 This endpoint lets you upload a file. The current (naive) implementation simply saves the file on the file server in a folder named like the object id (inside the folder specified by the option "uploadPath" in config.js).
 
 ```
-POST /<object>/upload/<id>
+POST /<model.id>/upload/<id>
 
 POST /comics/upload/5
 ```
