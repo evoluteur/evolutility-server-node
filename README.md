@@ -288,7 +288,6 @@ PATCH /<model.id>/<id>
 
 PATCH /todo/5
 { title: 'Finish testing', priority: 2}
-
 ```
 
 ```
@@ -296,7 +295,6 @@ PUT /<model.id>/<id>
 
 PUT /todo/5
 { title: 'Finish testing', priority: 2}
-
 ```
 Notes: The request returns the updated record. It is not standard but it saves the UI a subsequent call.
 
@@ -326,7 +324,7 @@ GET /
 
 #### Charts
 
-For charts data, it is possible to get aggregated data.
+For charts data, it is possible to get aggregated data for field of types lov, boolean, integer, decimal, and money.
 
 ```
 GET /<model.id>/chart/<field id>
@@ -356,14 +354,14 @@ GET /todo/lov/category
 
 #### File upload
 
-This endpoint lets you upload a file. The current (naive) implementation simply saves the file on the file server in a folder named like the object id (inside the folder specified by the option "uploadPath" in config.js).
+This endpoint lets you upload a file. The current (naive) implementation simply saves the file on the file server in a folder named like the model id (inside the folder specified by the option "uploadPath" in config.js).
 
 ```
 POST /<model.id>/upload/<id>
 
 POST /comics/upload/5
 ```
-With Query parameters: file and "fieldid".
+With query parameters: file and "field.id".
 
 
 #### API Version
