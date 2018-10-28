@@ -217,7 +217,7 @@ for(var mid in models){
 console.log(sql);
 
 if(sqlFile){
-    var fId = new Date().toISOString()
+    var fId = new Date().toISOString().replace(/:/g,'')
     fs.writeFile('evol-db-schema-'+fId+'.sql', sql, function(err){
         if (err){
             throw err;
