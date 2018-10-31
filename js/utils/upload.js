@@ -6,7 +6,7 @@
  * (c) 2018 Olivier Giulieri
  ********************************************************* */
 
-var path = require('path'),
+const path = require('path'),
     formidable = require('formidable'),
     shortid = require('shortid'),
     fs = require('fs'),
@@ -20,10 +20,11 @@ module.exports = {
     uploadOne: function uploadOne(req, res){
         logger.logReq('UPLOAD ONE', req);
 
-        var m = dico.getModel(req.params.entity),
+        const m = dico.getModel(req.params.entity),
             id = req.params.id,
-            form = new formidable.IncomingForm(),
-            fname,
+            form = new formidable.IncomingForm()
+        let fname,
+            ffname,
             dup = false;
 
         form.multiples = false;
@@ -33,22 +34,24 @@ module.exports = {
             fname = file.name;
             ffname = form.uploadDir+'/'+fname;
 
-            if (fs.existsSync(ffname)) {
-                // - if duplicate do not overwrite file but postfix name
-                var idx = ffname.lastIndexOf('.'),
-                    xtra = '_'+shortid.generate(),
+            if(fs.existsSync(ffname)){
+                // - if duplicate name do not overwrite file but postfix name
+                let idx = ffname.lastIndexOf('.')
+                const xtra = '_'+shortid.generate(),
                     originalName = fname;
 
                 dup = true;
                 ffname = idx ? (ffname.slice(0, idx)+xtra+ffname.slice(idx)) : (ffname+xtra);
                 idx = ffname.lastIndexOf('/');
                 fname = ffname.slice(idx+1);
-                logger.logSuccess('Renaming File: "'+originalName+'" -> "'+fname+'".')
+                logger.logSuccess('New file name: "'+originalName+'" -> "'+fname+'".')
             }
-            fs.rename(file.path, ffname);
+            fs.rename(file.path, ffname, function (err) {
+                if (err) throw err;
+            });
         })
         .on('end', function(){
-            logger.logSuccess('Saving File: "'+ffname+'".')
+            logger.logSuccess('Saved file: "'+ffname+'".')
             res.json({
                 duplicate: dup,
                 fileName: fname,
