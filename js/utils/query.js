@@ -6,17 +6,18 @@
  * (c) 2018 Olivier Giulieri
  ********************************************************* */
 
-var pg = require('pg'),
-    config = config = require('../../config.js'),
+const pg = require('pg'),
+    config = require('../../config.js'),
     parseConnection = require('pg-connection-string').parse,
     csv = require('express-csv'),
+    errors = require('./errors.js'),
     logger = require('./logger');
 
-var dbConfig = parseConnection(config.connectionString)
+const dbConfig = parseConnection(config.connectionString)
 dbConfig.max = 10; // max number of clients in the pool 
 dbConfig.idleTimeoutMillis = 30000; // max client idle time before being closed
 
-var pool = new pg.Pool(dbConfig);
+const pool = new pg.Pool(dbConfig);
 
 pool.on('error', function (err, client) {
   console.error('Unexpected error on idle client', err.message, err.stack)
@@ -58,12 +59,17 @@ function runQuery(res, sql, values, singleRecord, format, header){
     pool.connect(function(err, client, done) {
         // SQL Query > Select Data
         logger.logSQL(sql);
+        if(!client){
+            errors.badRequest(res, 'No Database connection.', 500)
+            return
+        }
         client.query(sql, values, function(err, data) {
             done();
             var results = (data && data.rows) ? data.rows : [];
-              if (err) {
+              if(err){
                 console.log(err.stack)
-              } else {
+                errors.badRequest(res, 'Database error.', 500)
+              }else{
                 var nbRecords = results.length; 
                 if(format==='csv'){
                     if(nbRecords){
