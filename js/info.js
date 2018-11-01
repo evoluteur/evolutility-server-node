@@ -16,13 +16,13 @@ function apis(req, res) {
     logger.logReq('GET API', req);
 
     const baseUrl = req.protocol+'://'+req.headers.host+req.url
-    var ms=[];
+    const ms=[];
 
     if(config.apiInfo){ 
-        for (var mid in models){
-            var model=models[mid]
+        for (let mid in models){
+            const model=models[mid]
             if(model.active){
-                var charts = []
+                const charts = []
                 model.fields.forEach(function(f){
                     if(f.type==='boolean'||f.type==='lov'){
                         charts.push(baseUrl+mid+'/chart/'+f.id)

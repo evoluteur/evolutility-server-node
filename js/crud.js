@@ -63,10 +63,10 @@ function sqlMany(m, req, allFields, wCount){
             sqlSel += '::integer'
         }
     })
-    var sqlFrom = m.schemaTable + ' AS t1' + sqls.sqlFromLOVs(fs, schema);
+    const sqlFrom = m.schemaTable + ' AS t1' + sqls.sqlFromLOVs(fs, schema);
 
     // ---- FILTERING
-    var sqlOperators = {
+    const sqlOperators = {
         'eq': '=',
         'ne': '<>',
         'gt': '>',
@@ -243,12 +243,12 @@ function getOne(req, res) {
         const sqlParams = [id]
         let sql = 'SELECT t1.id, '+sqls.select(m.fields, m.collections, true)
 
-            dico.systemFields.forEach(function(f){
-                sql += ', t1.'+f.column
-            })
-            sql += ' FROM '+m.schemaTable+' AS t1'+sqls.sqlFromLOVs(m.fields, schema)+
-                ' WHERE t1.id=$1'+
-                ' LIMIT 1;';
+        dico.systemFields.forEach(function(f){
+            sql += ', t1.'+f.column
+        })
+        sql += ' FROM '+m.schemaTable+' AS t1'+sqls.sqlFromLOVs(m.fields, schema)+
+            ' WHERE t1.id=$1'+
+            ' LIMIT 1;';
 
         query.runQuery(res, sql, sqlParams, true);        
     }else{
