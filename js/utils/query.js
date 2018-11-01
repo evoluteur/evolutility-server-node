@@ -61,7 +61,6 @@ function runQuery(res, sql, values, singleRecord, format, header){
         logger.logSQL(sql);
         if(!client){
             errors.badRequest(res, 'No Database connection.', 500)
-            return
         }
         client.query(sql, values, function(err, data) {
             done();
