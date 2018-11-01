@@ -100,10 +100,11 @@ function sqlMany(m, req, allFields, wCount){
                                 sqlWs.push('t1."'+f.column+'"'+sqlOperators[cond]+'$'+sqlParams.length);
                             }
                         }else{
-                            var w='t1."'+f.column+'"'+sqlOperators[cond];
+                            let w='t1."'+f.column+'"'+sqlOperators[cond];
                             if(cond==='in' && (f.type==='lov' || f.type==='list')){
-                                sqlWs.push(w+'('+cs[1].split(',').map(function(li){
-                                    return "'"+li.replace(/'/g, "''")+"'";
+                                sqlWs.push(w+'('+cs[1].split(',').map(li => {
+                                    sqlParams.push(li);
+                                    return '$'+sqlParams.length
                                 }).join(',')+')'); 
                             }else if(cond==='0'){ // false
                                 sqlWs.push('('+w+'false OR t1."'+f.column+'" IS NULL)');
@@ -215,7 +216,7 @@ function getMany(req, res) {
         m = dico.getModel(mid);
     
     if(m){
-        var format = req.query.format || null,
+        const format = req.query.format || null,
             isCSV = format==='csv',
             sq = sqlMany(m, req, isCSV, !isCSV),
             sql = query.sqlQuery(sq);
@@ -269,9 +270,7 @@ function insertOne(req, res) {
         q = sqls.namedValues(m, req, 'insert');
 
     if(m && q.names.length){
-        const ps = q.names.map(function(n, idx){
-            return '$'+(idx+1);
-        });
+        const ps = q.names.map((n, idx) => '$'+(idx+1));
         const sql = 'INSERT INTO '+m.schemaTable+
             ' ("'+q.names.join('","')+'") values('+ps.join(',')+')'+
             ' RETURNING id, '+sqls.select(m.fields, false, null, 'C')+';';

@@ -32,15 +32,21 @@ function consoleError(err){
 
 // - concatenate SQL query
 function sqlQuery(q){
-    var sql = 'SELECT '+q.select+
+    let sql = 'SELECT '+q.select+
         ' FROM '+q.from;
     if(q.where.length){
         sql += ' WHERE '+q.where.join(' AND ');
     }
-    if(q.group) {sql += ' GROUP BY '+q.group;}
-    if(q.order) {sql += ' ORDER BY '+q.order;}
+    if(q.group) {
+        sql += ' GROUP BY '+q.group;
+    }
+    if(q.order) {
+        sql += ' ORDER BY '+q.order;
+    }
     sql += ' LIMIT '+(q.limit || defaultPageSize);
-    if(q.offset) {sql += ' OFFSET '+parseInt(q.offset, 10);}
+    if(q.offset) {
+        sql += ' OFFSET '+parseInt(q.offset, 10);
+    }
     return sql;
 }
 
