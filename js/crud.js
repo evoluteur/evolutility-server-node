@@ -391,7 +391,7 @@ function collecOne(req, res) {
             sql = 'SELECT t1.id, '+sqls.select(collec.fields)+
                 ' FROM '+schema+'."'+collec.table+'" AS t1'+
                 ' WHERE t1."'+collec.column+'"=$1'+
-                ' ORDER BY t1.id'+//t1.position, t1.id
+                ' ORDER BY t1.'+collec.fields[0].column+(collec.order==='desc'?' DESC':' ASC')+
                 ' LIMIT '+defaultPageSize+';';
 
         query.runQuery(res, sql, sqlParams, false);        

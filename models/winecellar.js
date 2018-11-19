@@ -412,13 +412,13 @@ module.exports = {
             table: 'wine_tasting',
             column: 'wine_id',
             entity: 'winetasting',
+            order: 'desc',
             fields: [
-                {id: 'drink_date', column: 'drink_date', type: 'date', label: 'Date', maxLength: 20, inMany: true,
-                    required:true},
-                {id: 'robe', column: 'robe', type: 'text', label: 'Robe', maxLength: 100, inMany: true},
-                {id: 'nose', column: 'nose', type: 'text', label: 'Nose', maxLength: 100, inMany: true},
-                {id: 'taste', column: 'taste', type: 'text', label: 'Taste', maxLength: 100, inMany: true},
-                {id: 'notes', column: 'notes', type: 'textmultiline', label: 'Note', maxLength: 300, inMany: true}
+                {id: 'drink_date', column: 'drink_date', type: 'date', label: 'Date', required:true},
+                {id: 'robe', column: 'robe', type: 'text', label: 'Robe'},
+                {id: 'nose', column: 'nose', type: 'text', label: 'Nose'},
+                {id: 'taste', column: 'taste', type: 'text', label: 'Taste'},
+                {id: 'notes', column: 'notes', type: 'textmultiline', label: 'Note'}
             ]
         }
     ]
