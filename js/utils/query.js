@@ -54,11 +54,11 @@ function sqlQuery(q){
 // - run a query and return the result in request
 function runQuery(res, sql, values, singleRecord, format, header){
     var results = [];
+    logger.logSQL(sql);
 
     // Get a Postgres client from the connection pool 
     pool.connect(function(err, client, done) {
         // SQL Query > Select Data
-        logger.logSQL(sql);
         if(!client){
             errors.badRequest(res, 'No Database connection.', 500)
         }
