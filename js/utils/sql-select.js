@@ -8,13 +8,11 @@
 
 // - SQL for a single field/column in update/create/order
 var columnName = {
-	'update': function(f, idx){
-		return '"'+f.column+'"=$'+idx;
-	},
-	'insert': function(f){
-		return f.column;
-	},
-	'order': function(f){
+	'update': (f, idx) => '"'+f.column+'"=$'+idx,
+
+	'insert': (f) => f.column,
+
+	'order': (f) => {
 		// - generate sql ORDER BY clause (for 1 field)
 		if(f){
 			if(f.type==='lov' && f.lovtable){
@@ -29,7 +27,6 @@ var columnName = {
 				}
 				return col;
 			}
-			return 'id';
 		}
 	}
 }
@@ -123,8 +120,7 @@ module.exports = {
 
 	// - returns sql (obj) ORDER BY clause for many fields
 	sqlOrderFields: function(m, fullOrder){
-		var fs = m.fields,
-			qos = fullOrder.split(',');
+		const qos = fullOrder.split(',');
 
 		return qos.map(function(qo){
 			var ows = qo.split('.'),
@@ -141,7 +137,7 @@ module.exports = {
 
 	// - returns SQL list of joined tables for lov fields
 	sqlFromLOVs: function(fields, schema){
-		var sql = '';
+		let sql = '';
 
 		fields.forEach(function(f, idx){
 			if(f.type==='lov' && f.lovtable){

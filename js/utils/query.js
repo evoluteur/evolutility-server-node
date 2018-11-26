@@ -9,7 +9,6 @@
 const pg = require('pg'),
     config = require('../../config.js'),
     parseConnection = require('pg-connection-string').parse,
-    csv = require('express-csv'),
     errors = require('./errors.js'),
     logger = require('./logger');
 
@@ -23,13 +22,6 @@ pool.on('error', function (err, client) {
   console.error('Unexpected error on idle client', err.message, err.stack)
   process.exit(-1)
 })
-
-// - show error in console
-function consoleError(err){
-    if(err){
-        logger.logError(err);
-    }
-}
 
 // - concatenate SQL query
 function sqlQuery(q){
