@@ -103,6 +103,7 @@ Models contain the name of the driving table and the list of fields/columns pres
 | required     | Determines if the field is required for saving.      |
 | readonly     | Prevents field modification.          |                      
 | inMany       | Determines if the field is present (by default) in lists of records. | 
+| noCharts       | Forbids charts on the field. | 
 
 Notes: More field properties (unique, min, max, minLength, maxLength...) will be added later.
 
