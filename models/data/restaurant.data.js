@@ -114,22 +114,6 @@ module.exports = [
     "zip": 94121
   },
   {
-    "id": 10,
-    "name": "The Slanted Door",
-    "cuisine": 2,
-    "price": 3,
-    "web": "http://www.slanteddoor.com/",
-    "yelp": "https://www.yelp.com/biz/the-slanted-door-san-francisco",
-    "schedule": "",
-    "notes": "",
-    "favorite": "",
-    "phone": "(415) 861-8032",
-    "address": "1 Ferry Bldg \nSte 3",
-    "city": "San Francisco",
-    "state": "CA",
-    "zip": 94111
-  },
-  {
     "id": 8,
     "name": "Thep Phanom",
     "cuisine": 6,
@@ -176,5 +160,21 @@ module.exports = [
     "city": "San Mateo",
     "state": "CA",
     "zip": 94401
-  }
+  },
+  {
+    "id": 11,
+    "name": "The Slanted Door",
+    "cuisine": 2,
+    "price": 3,
+    "web": "http://www.slanteddoor.com/",
+    "yelp": "https://www.yelp.com/biz/the-slanted-door-san-francisco",
+    "schedule": "",
+    "notes": "",
+    "favorite": "",
+    "phone": "(415) 861-8032",
+    "address": "1 Ferry Bldg \nSte 3",
+    "city": "San Francisco",
+    "state": "CA",
+    "zip": 94111
+  },
 ]
