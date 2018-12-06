@@ -6,7 +6,8 @@
  * (c) 2018 Olivier Giulieri
  ********************************************************* */
 
-const logger = require('./utils/logger'),
+const {fieldInCharts} = require('./utils/dico'),
+    logger = require('./utils/logger'),
     pkg = require('../package.json'),
     models = require('../models/all_models'),
     config = require('../config.js');
@@ -24,7 +25,7 @@ function apis(req, res) {
             if(model.active){
                 const charts = []
                 model.fields.forEach(function(f){
-                    if(f.type==='boolean'||f.type==='lov'){
+                    if(fieldInCharts(f)){
                         charts.push(baseUrl+mid+'/chart/'+f.id)
                     }
                 })
