@@ -13,9 +13,6 @@ var dico = require('./utils/dico'),
     logger = require('./utils/logger'),
     config = require('../config.js');
 
-var schema = '"'+(config.schema || 'evolutility')+'"',
-    defaultPageSize = config.pageSize || 50;
-
 function minMax(fn, f, cast){
     const num = f.type==='money' ? '::numeric' : ''
     let tcast = '';
@@ -43,6 +40,7 @@ function numbers(req, res) {
         
     if(m){
         let sql = 'SELECT count(*)::integer AS count';
+        const sqlFROM = ' FROM '+m.schemaTable;  
             
         m.fields.forEach(function(f){
             if(dico.fieldIsNumeric(f)){
@@ -58,11 +56,12 @@ function numbers(req, res) {
         })
         if(config.wTimestamp){
             sql += ', max(u_date) AS u_date_max'
+            sql += ', (SELECT count(id)::integer '+sqlFROM+' WHERE u_date > NOW() - interval \'7 days\')  AS u_date_week_count'
         }
         if(config.wComments){
             sql += ', sum(nb_comments::int)::int AS nb_comments'
         }
-        sql += ' FROM '+m.schemaTable;  
+        sql += sqlFROM
         query.runQuery(res, sql, [], true);
     }else{
         errors.badRequest(res, 'Invalid model: "'+mid+'".')
