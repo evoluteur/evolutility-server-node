@@ -14,20 +14,22 @@
     "start": "supervisor ./bin/www"
   },
   "keywords": [
-    "REST",
+    "low code",
+    "CRUD",
     "model-driven",
     "MDA",
-    "mda",
+    "REST",
+    "platform",
     "metadata",
     "database",
+    "nodejs",
+    "ORM",
+    "SQL",
+    "generator",
     "express",
     "postgres",
-    "node",
-    "NodeJS",
-    "low-code",
     "javascript",
-    "ORM",
-    "CRUD"
+    "DRY"
   ],
   "dependencies": {
     "express": "~4.16.3",
