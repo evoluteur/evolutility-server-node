@@ -12,8 +12,11 @@ var pg = require('pg'),
     fs = require('fs'),
     parseConnection = require('pg-connection-string').parse;
     _ = require('underscore'),
+    { version, homepage } = require('../../package.json'),
     dico = require('../utils/dico');
 
+var models = require('../../models/all_models.js');
+var data = require('../../models/data/all_modelsdata.js');
 
 // - options; mostly from in config.js
 var config = require(path.join(__dirname, '../', '../', 'config')),
@@ -43,9 +46,6 @@ var ft_postgreSQL = {
     color: 'text',
     json: 'json'
 };
-
-var models = require('../../models/all_models.js');
-var data = require('../../models/data/all_modelsdata.js');
 
 
 
@@ -217,13 +217,20 @@ for(var mid in models){
 console.log(sql);
 
 if(sqlFile){
-    var fId = new Date().toISOString().replace(/:/g,'')
-    fs.writeFile('evol-db-schema-'+fId+'.sql', sql, function(err){
+    const d = new Date()
+    const fId = d.toISOString().replace(/:/g,'')
+    let header = `-- Evolutility v${version}
+-- SQL Script to create Evolutility database on PostgreSQL.
+-- ${homepage}
+-- ${d}\n\n`;
+
+    fs.writeFile('evol-db-schema-'+fId+'.sql', header + sql, function(err){
         if (err){
             throw err;
         }
     })
-    fs.writeFile('evol-db-data-'+fId+'.sql', sqlData, function(err){
+    header = header.replace('create', 'populate');
+    fs.writeFile('evol-db-data-'+fId+'.sql', header + sqlData, function(err){
         if (err){
             throw err;
         }
