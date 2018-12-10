@@ -1,5 +1,6 @@
 module.exports =  {
     id: 'comics',
+    table: 'comics',
     label: 'Graphic Novels',
     active: true,
     name: 'serie',

@@ -13,6 +13,7 @@ var contact_LOVs = {
 
 module.exports = {
     id: 'contact',
+    table: 'contact',
     active: true,
     label: 'Address Book',
     titleField: 'fistname',
