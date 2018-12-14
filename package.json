@@ -1,6 +1,6 @@
 {
   "name": "evolutility-server-node",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "description": "RESTful Micro-ORM for CRUD and more, using Node.js, Express, and Postgres.",
   "license": "MIT",
   "homepage": "https://github.com/evoluteur/evolutility-server-node",
