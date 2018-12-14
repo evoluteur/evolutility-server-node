@@ -7,6 +7,7 @@
  ********************************************************* */
 
 const pg = require('pg'),
+    csv = require('express-csv'),
     config = require('../../config.js'),
     parseConnection = require('pg-connection-string').parse,
     errors = require('./errors.js'),
