@@ -130,8 +130,7 @@ function m2db(mid){
         data[mid].forEach(function(row, idx){
             sqlData+='INSERT INTO '+tableNameSchema;
             var ns=[], vs=[];
-            var fn, f, v, 
-                sqlIdx = '';
+            var f, v;
             for(var fid in row){
                 f = fieldsH[fid];
                 if(f && fid!=='id'){
@@ -169,7 +168,7 @@ function m2db(mid){
     }
 
     var lovFields=fields.filter(function(f){
-        return f.type==='lov' || f.type==='list'
+        return (f.type==='lov' || f.type==='list') && !f.entity
     })
     var lovIncluded=[]
     if(lovFields){
@@ -209,9 +208,9 @@ if(config.wTimestamp){
 }
 
 for(var mid in models){
-    var sqls=m2db(mid);
-    sql+=sqls[0]
-    sqlData+=sqls[1]
+    var sqls = m2db(mid);
+    sql += sqls[0]
+    sqlData += sqls[1]
 }
 
 console.log(sql);
@@ -229,6 +228,7 @@ if(sqlFile){
             throw err;
         }
     })
+
     header = header.replace('create', 'populate');
     fs.writeFile('evol-db-data-'+fId+'.sql', header + sqlData, function(err){
         if (err){
