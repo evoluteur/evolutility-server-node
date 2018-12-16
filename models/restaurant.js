@@ -67,47 +67,47 @@ module.exports = {
             label: 'yelp', width: 38, 
         },
         {
-            type: 'textmultiline', id: 'schedule',
+            type: 'text', id: 'schedule',
             column: 'schedule',
-            label: 'Schedule', maxLength: 1000, width: 30, height: 3
+            label: 'Schedule', maxLength: 1000
         },
         {
             type: 'textmultiline', id: 'notes',
             column: 'notes',
-            label: 'Notes', maxLength: 1000, width: 32, height: 3
+            label: 'Notes', maxLength: 2000, 
         },
         {
             type: 'textmultiline', id: 'favorite',
             column: 'favorite',
-            label: 'Favorite dish', maxLength: 1000, width: 38, height: 3
+            label: 'Favorite dish', maxLength: 2000, 
         },
  
         {
             type: 'text', id: 'phone',
             column: 'phone',
-            label: 'Phone', maxLength: 20, width: 50, mini:'1'
+            label: 'Phone', maxLength: 20, 
         },
         {
             type: 'textmultiline', id: 'address',
             column: 'address',
-            label: 'Address', maxLength: 150, width: 100,
+            label: 'Address', maxLength: 150, 
              height: 2
         },
         {
             type: 'text', id: 'city',
             column: 'city',
-            label: 'City', maxLength: 100, width: 62,
+            label: 'City', maxLength: 200, 
             inMany: true
         },
         {
             type: 'text', id: 'state',
             column: 'state',
-            label: 'State', width: 23
+            label: 'State',
         },
         {
             type: 'text', id: 'zip',
             column: 'zip',
-            label: 'Zip', maxLength: 12, width: 15
+            label: 'Zip', maxLength: 12,
         },
     ],
 
