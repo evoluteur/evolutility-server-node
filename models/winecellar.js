@@ -212,7 +212,8 @@ module.exports = {
             inMany: true,
             width: 38,
             list: winecellar_lovs.type,
-            lovtable: 'wine_type'
+            lovtable: 'wine_type',
+            lovicon: true,
         },
         {
             id:'appellation',
@@ -229,7 +230,8 @@ module.exports = {
             label: 'Country',
             width: 32,
             list: winecellar_lovs.country,
-            lovtable: 'wine_country'
+            lovtable: 'wine_country',
+            lovicon: true,
         },
         {
             id:'region',

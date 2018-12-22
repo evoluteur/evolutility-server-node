@@ -44,6 +44,9 @@ module.exports = {
 			fields.forEach(function(f, idx){
 				if(f.type==='lov' && action!=='C' && action!=='U'){
 					sqlfs.push(f.t2+'.'+(f.lovcolumn ? f.lovcolumn : 'name')+' AS "'+f.id+'_txt"')
+					if(f.lovicon){
+						sqlfs.push(f.t2+'.icon AS "'+f.id+'_icon"')
+					}
 				}
 				let sql = tQuote+f.column
 				//if(f.type==='money'){
