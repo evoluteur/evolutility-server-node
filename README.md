@@ -99,6 +99,7 @@ Models contain the name of the driving table and the list of fields/columns pres
 | column       | Database column name for the field    |
 | lovtable     | Table to join to for field value (only for fields of "lov" type). |  
 | lovcolumn    | Column name (in the lovtable) for field value (only for fields of "lov" type). |  
+| lovicon      | Set to True to include icon with LOV items.    |
 | type         | Field type is not a database column type but more a UI field type. Possible field types: <ul><li>boolean</li><li>date</li><li>datetime</li><li>decimal</li><li>document</li><li>email</li><li>image</li><li>integer</li><li>lov (list of values)</li><li>money</li><li>text</li><li>textmultiline</li><li>time</li><li>url</li></ul> |
 | required     | Determines if the field is required for saving.      |
 | readonly     | Prevents field modification.          |                      
@@ -209,7 +210,7 @@ Adding multiple parameters conjoins the conditions:
 todo?complete=0&duedate=lt.2018-12-24
 ```
 
-These operators are available:
+Based on field types, a sub-set of the operators below are supported by the API.
 
 | Operator     | Meaning                 | Example                      |
 |--------------|-------------------------|------------------------------|
