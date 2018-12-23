@@ -108,6 +108,21 @@ Models contain the name of the driving table and the list of fields/columns pres
 
 Notes: More field properties (unique, min, max, minLength, maxLength...) will be added later.
 
+### Collection
+
+Multiple Master-Details can be specified with collections. 
+
+| Property     | Meaning                               |
+|--------------|---------------------------------------|
+| id           | Unique key for the collection.        |
+| table        | DB Table to query.      |
+| column       | Column in the detail table to match against id of object. |
+| entity       | Object linked to.                        |
+| order       | field column in SQL order clause.     |
+| fields       | Array of fields.                        |
+
+Example of collection in [Wine cellar](https://github.com/evoluteur/evolutility-server-node/blob/master/models/winecellar.js).
+
 ### Sample model
 
 Below is the model for a To-Do app.
