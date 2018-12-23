@@ -118,7 +118,7 @@ Multiple Master-Details can be specified with collections.
 | table        | DB Table to query.      |
 | column       | Column in the detail table to match against id of object. |
 | entity       | Object linked to.                        |
-| order       | field column in SQL order clause.     |
+| order        | "asc/desc" for sorting by the first field in fields.     |
 | fields       | Array of fields.                        |
 
 Example of collection in [Wine cellar](https://github.com/evoluteur/evolutility-server-node/blob/master/models/winecellar.js).
