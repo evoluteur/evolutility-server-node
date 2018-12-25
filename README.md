@@ -272,7 +272,7 @@ GET /todo?page=0&pageSize=50
 #### Formatting
 
 By default all APIs return data in JSON format. This API call allows to request data in CSV format (export to Excel).
-This feature is using [express-csv](https://github.com/nulltask/express-csv).
+This feature is using [csv-express](https://github.com/nulltask/csv-express).
 
 ```
 GET /<model.id>?format=csv

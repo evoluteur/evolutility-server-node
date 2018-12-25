@@ -33,7 +33,7 @@
   ],
   "dependencies": {
     "express": "~4.16.3",
-    "express-csv": "~0.6.0",
+    "csv-express": "~1.2.2",
     "body-parser": "~1.18.3",
     "helmet": "~3.13.0",
     "debug": "~3.1.0",
