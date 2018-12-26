@@ -174,20 +174,23 @@ function m2db(mid){
     if(lovFields){
         lovFields.forEach(function(f, idx){
             var t = lovTable(f);
+            var icons = f.lovicon || false;
             if(lovIncluded.indexOf(t)<0){
                 // - create lov table
                 // TODO: iconfont
                 sql += 'CREATE TABLE IF NOT EXISTS '+t+
                         '(id serial NOT NULL, '+
                         'name text NOT NULL,'+
-                        'icon text,'+
+                        (icons?'icon text,':'')+
                         ' CONSTRAINT '+(tableName+'_'+f.id).toLowerCase()+'_pkey PRIMARY KEY (id));\n\n';
-                // populate lov table
+                
+                // - populate lov table
+                const insertSQL = 'INSERT INTO '+t+'(id, name'+(icons ? ', icon':'')+') VALUES ';
                 if(f.list){
-                    sql += 'INSERT INTO '+t+'(id, name, icon) VALUES ';
+                    sql += insertSQL;
                     sql += f.list.map(function(item){
                         return '(' + item.id + ',' + stringValue(item.text) + 
-                            ',\'' + (item.icon||'') + '\')'
+                            (icons ? ',\'' + (item.icon || '')+ '\'' : '') + ')'
                     }).join(',\n')+';\n\n';
                 }
                 lovIncluded.push(t)
