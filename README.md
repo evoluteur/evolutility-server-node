@@ -85,10 +85,10 @@ Models contain the name of the driving table and the list of fields/columns pres
 | Property     | Description                             |
 |--------------|-----------------------------------------|
 | id           | Unique key to identify the entity (used as API parameter). |
-| table        | Database table name.                    |
+| table        | Driving database table name (there are secondary tables for fields of type "lov"). |
 | fields       | Array of fields.                        |
-| titleField    | Field id for the column value used as record title. |
 | searchFields    | Array of field ids for fields used to perform searches.  |  
+| titleField   | Field id for the column value used as record title. |
 
 
 ### Field
@@ -118,8 +118,8 @@ Multiple Master-Details can be specified with collections.
 | table        | DB Table to query.      |
 | column       | Column in the detail table to match against id of object. |
 | entity       | Object linked to.                        |
-| order        | "asc/desc" for sorting by the first field in fields.     |
-| fields       | Array of fields.                        |
+| order        | "asc"/"desc" for sorting by the first field in fields.      |
+| fields       | Array of fields. Fields in collections do not need all properties of Fields in objects.      |
 
 Example of collection in [Wine cellar](https://github.com/evoluteur/evolutility-server-node/blob/master/models/winecellar.js).
 
