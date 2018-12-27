@@ -73,7 +73,6 @@ Configuration options are set in the file [config.js](https://github.com/evolute
 | wTimestamp | Timestamp columns u_date and c_date w/ date of record creation and last update. |
 
 
-
 ## Models
 
 To be accessible by the REST API, each database table must be described in a model.
@@ -87,8 +86,8 @@ Models contain the name of the driving table and the list of fields/columns pres
 | id           | Unique key to identify the entity (used as API parameter). |
 | table        | Driving database table name (there are secondary tables for fields of type "lov"). |
 | fields       | Array of fields.                        |
-| searchFields    | Array of field ids for fields used to perform searches.  |  
 | titleField   | Field id for the column value used as record title. |
+| searchFields | Array of field ids for fields used to perform searches.  |  
 
 
 ### Field
@@ -122,6 +121,7 @@ Multiple Master-Details can be specified with collections.
 | fields       | Array of fields. Fields in collections do not need all properties of Fields in objects.      |
 
 Example of collection in [Wine cellar](https://github.com/evoluteur/evolutility-server-node/blob/master/models/winecellar.js).
+
 
 ### Sample model
 
@@ -332,12 +332,11 @@ In addition to CRUD, Evolutility-Server-Node provides a few endpoints for Charts
 #### Discovery
 
 Returns the list of Objects and their APIs (only objects flagged active are included).
-This end-point must be enabled in the configuration with {apiInfo: true}.
 
 ```
 GET /
 ```
-
+Note: This end-point must be enabled in the configuration with {apiInfo: true}.
 
 #### Charts
 
@@ -379,6 +378,17 @@ POST /<model.id>/upload/<id>
 POST /comics/upload/5
 ```
 With query parameters: file and "field.id".
+
+
+#### Nested collections
+
+If the model has collections defined, they can be queried with this end-point.
+
+```
+GET /<model.id>/collec/<collection.id>?id=<id>
+
+GET /winecellar/collec/wine_tasting?id=1
+```
 
 
 #### API version
