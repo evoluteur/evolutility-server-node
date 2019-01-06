@@ -240,16 +240,23 @@ function getOne(req, res) {
         id = req.params.id;
 
     if(m){
-        const sqlParams = [id]
+        let sqlParams = []
         let sql = 'SELECT t1.id, '+sqls.select(m.fields, m.collections, true)
 
         dico.systemFields.forEach(function(f){
             sql += ', t1.'+f.column
         })
-        sql += ' FROM '+m.schemaTable+' AS t1'+sqls.sqlFromLOVs(m.fields, schema)+
-            ' WHERE t1.id=$1'+
-            ' LIMIT 1;';
-
+        sql += ' FROM '+m.schemaTable+' AS t1'+sqls.sqlFromLOVs(m.fields, schema)
+        if(parseInt(id)){
+            sqlParams.push(id)
+            sql += ' WHERE t1.id=$1'
+        }else{
+            return errors.badRequest(res, 'Invalid id: "'+id+'".')
+        }
+        sql += ' LIMIT 1;';
+        if(!sqlParams.length){
+            sqlParams = null
+        }
         query.runQuery(res, sql, sqlParams, true);        
     }else{
         errors.badRequest(res, 'Invalid model: "'+mid+'".')
