@@ -72,9 +72,12 @@ module.exports = {
 		green(msg);
 	},
 
-	logError: function(err){
+	logError: function(err, modeInfo){
 		if(consoleLog){
 			console.error(chalk.red(err));
+			if(modeInfo){
+				console.error(chalk.red(modeInfo))
+			}
 		}
 	},
 
