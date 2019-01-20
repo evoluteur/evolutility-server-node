@@ -3,7 +3,7 @@ module.exports = {
 
 	// Path to REST API
 	apiPath: '/api/v1/',
-	apiPort: process.env.APIPORT || 2000,
+	apiPort: process.env.PORT || 2000,
 
 	// DB connection
 	connectionString: process.env.DATABASE_URL || 'postgres://evol:love@localhost:5432/Evolutility', 
