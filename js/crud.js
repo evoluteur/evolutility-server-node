@@ -4,7 +4,7 @@
  * CRUD (Create, Read, Update, Delete) end-points
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2018 Olivier Giulieri
+ * (c) 2019 Olivier Giulieri
  ********************************************************* */
 
 const dico = require('./utils/dico'),
@@ -29,8 +29,7 @@ function fieldId(f){
 }
 
 function csvHeader(fields){
-    let h = {'id': 'ID'},
-        lovs = {};
+    let h = {'id': 'ID'}
 
     fields.forEach((f) => {
         if(f.type==='lov'){
@@ -140,12 +139,12 @@ function sqlMany(m, req, allFields, wCount){
     }
 
     // ---- SEARCHING
-    if(req.query.search){
-        // TODO: use fts
-        var paramSearch = false,
-            sqlWsSearch = [];
+    if(req.query.search){ // TODO: use FTS
+        var sqlWsSearch = [];
 
-        if(m.searchFields && Array.isArray(m.searchFields)){
+        if(!m.searchFields){
+            console.error('No searchFields are specified in model.')
+        }else{
             logger.logObject('search fields', m.searchFields);
             var sqlP='"'+sqlOperators.ct+'$'+(sqlParams.length+1);
             m.searchFields.forEach(function(fid){

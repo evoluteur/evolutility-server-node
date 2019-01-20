@@ -4,7 +4,7 @@
  * Helper functions for metadata
  *
  * https://github.com/evoluteur/evolutility
- * (c) 2018 Olivier Giulieri
+ * (c) 2019 Olivier Giulieri
  *************************************************************************** */
 
 var models = require('../../models/all_models'),
@@ -95,6 +95,8 @@ if(config.wRating){
 
 const fieldIsNumber = f => f.type===ft.int || f.type===ft.dec || f.type===ft.money
 
+const fieldIsText = f => [ft.text, ft.textml, ft.url, ft.html, ft.email].indexOf(f.type)>-1
+
 const fieldIsDateOrTime = f => f.type===ft.date || f.type===ft.datetime || f.type===ft.time
 
 const fieldIsNumeric = f => fieldIsNumber(f) || fieldIsDateOrTime(f)
@@ -116,14 +118,25 @@ function hById(arr){
 function prepModel(m){
 	if(m){
 		if(!m.prepared){
+			m.schemaTable = schema+'."'+(m.table || m.id)+'"';
 			m.fieldsH = {}
 			m.fields.forEach(function(f, idx){
 				if(f.type==='lov'){
 					f.t2 = 't_'+idx
 				}
-				m.fieldsH[f.id] = f; 
+				if(f.id!==m.table+'_id'){ // TODO: should not need the if
+					m.fieldsH[f.id] = f; 
+				}
 			})
-			m.schemaTable = schema+'."'+(m.table || m.id)+'"';
+			if(m.searchFields){
+				if(!Array.isArray(m.searchFields)){
+					m.searchFields = [m.searchFields]
+				}
+			}else{
+				m.searchFields = m.fields.filter(f => {
+					return f.inMany && fieldIsText(f.type)
+				}).map(f => f.id)
+			}
 			if(m.collections && !m.collecsH){
 				m.collecsH = hById(m.collections);
 			}
@@ -146,7 +159,7 @@ module.exports = {
 
 	fieldInMany: f =>  f.inList || f.inMany,
 
-	fieldIsText: f => [ft.text, ft.textml, ft.url, ft.html, ft.email].indexOf(f.type)>-1,
+	fieldIsText: fieldIsText,
 
 	fieldIsNumber: fieldIsNumber,
 	fieldIsNumeric: fieldIsNumeric,
