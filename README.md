@@ -1,6 +1,6 @@
 # Evolutility-Server-Node
 
-RESTful Micro-ORM for CRUD and more, using Node.js, Express, and PostgreSQL.
+Model-driven RESTful backend for CRUD and more, using Node.js, Express, and PostgreSQL.
 
 Evolutility-Server-Node provides a set of generic REST endpoints for CRUD (Create, Read, Update, Delete) and simple charts based on models rather than code.
  
@@ -235,6 +235,7 @@ GET /todo?title=sw.a
 GET /todo?priority=in.1,2,3
 ```
 Adding multiple parameters conjoins the conditions:
+
 ```
 todo?complete=0&duedate=lt.2018-12-24
 ```
@@ -257,6 +258,16 @@ For each field a sub-set of the operators below will be supported by the API (de
 | null         | is null                 | /todo?category=null          |
 | nn           | is not null             | /todo?category==nn           |
 
+
+#### Searching
+
+You can search for a specific string across multiple fields at once with the "search" parameter. The list of fields to be searched is specified with "searchFields" in the model (if unspecified, text fields flagged with "inMany" for list view will be used).
+
+```
+GET /<model.id>/search=<value>
+
+GET /todo?search=translation
+```
 
 #### Ordering
 
@@ -417,6 +428,6 @@ GET /version
 <a name="License"></a>
 ## License
 
-Copyright (c) 2018 [Olivier Giulieri](https://evoluteur.github.io/).
+Copyright (c) 2019 [Olivier Giulieri](https://evoluteur.github.io/).
 
 Evolutility-Server-Node is released under the [MIT license](http://github.com/evoluteur/evolutility-server-node/blob/master/LICENSE.md).
