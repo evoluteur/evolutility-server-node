@@ -4,7 +4,7 @@
  * Methods to create new database from models.
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2018 Olivier Giulieri
+ * (c) 2019 Olivier Giulieri
  ********************************************************* */
 
 var pg = require('pg'),
@@ -15,7 +15,7 @@ var pg = require('pg'),
     { version, homepage } = require('../../package.json'),
     { prepModel, fieldTypes} = require('../utils/dico');
 
-    const ft = fieldTypes
+const ft = fieldTypes;
 var models = require('../../models/all_models.js');
 var data = require('../../models/data/all_modelsdata.js');
 
@@ -71,10 +71,12 @@ function model2SQL(mid){
             if(['c_date','u_date','c_uid','u_uid','nb_comments','nb_ratings','avg_ratings'].indexOf(f.column)<0){
                 sql0=' "'+f.column+'" '+(ft_postgreSQL[f.type]||'text');
                 if(f.type===ft.lov){
+                        if(f.deletetrigger){
+                            sql0 += ' NOT NULL REFERENCES '+schema+'."'+f.lovtable+'"(id) ON DELETE CASCADE'
+                        }
                         sqlIdx += 'CREATE INDEX idx_'+tableName+'_'+f.column.toLowerCase()+
                             ' ON '+schema+'."'+tableName+'" USING btree ("'+f.column+'");\n';
-                }
-                if(f.required && f.type!==ft.lov){
+                }else if(f.required){
                     sql0+=' not null';
                 }
                 fs.push(sql0);

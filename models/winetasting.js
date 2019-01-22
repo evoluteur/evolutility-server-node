@@ -14,7 +14,8 @@ module.exports = {
             id: 'wine_id', column: 'wine_id', type: 'lov', 
             lovtable: 'wine',
             label: 'Wine', inMany: true,
-            required:true
+            required: true,
+			deletetrigger: true,
         },
         { 
             id: 'drink_date', column: 'drink_date', type: 'date', 
