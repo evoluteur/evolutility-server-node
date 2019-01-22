@@ -5,5 +5,5 @@ module.exports = {
 	restaurant: require('./restaurant'),
 	winecellar: require('./winecellar'),
 	winetasting: require('./winetasting'),
-	//test: require('./test'),
+	test: require('./test'),
 };
