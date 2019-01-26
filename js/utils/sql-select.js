@@ -6,6 +6,9 @@
  * (c) 2018 Olivier Giulieri
  ********************************************************* */
 
+const dico = require('./dico')
+const ft = dico.fieldTypes
+	
 // - SQL for a single field/column in update/create/order
 var columnName = {
 	'update': (f, idx) => '"'+f.column+'"=$'+idx,
@@ -19,7 +22,7 @@ var columnName = {
 				return '"'+f.id+'_txt"';
 			}else{
 				var col = 't1."'+f.column+'"';
-				if(f.type==='boolean'){
+				if(f.type===ft.bool){
 					return 'CASE WHEN '+col+'=TRUE THEN TRUE ELSE FALSE END'
 				}else if(f.type==='text'){
 					// TODO: better way?
@@ -73,22 +76,35 @@ module.exports = {
 		return sqlfs.join(',');
 	},
 
-	// - returns lists of names and values (for Insert or Update)
+	// - returns lists of names, values, invalids (for Insert or Update) 
 	namedValues: function(m, req, action){
 		var fnName = columnName[action],
 			ns = [],
-			vs = [];
+			vs = [],
+			invalids = [];
+
+		function addInvalid(fid, value, condition){
+			//invalids.push(fid)
+			invalids.push({
+				id: fid,
+				value: value,
+				condition: condition,
+			})
+		}
 
 		m.fields.forEach(function(f){
 			if(f.column!='id' && f.type!='formula' && !f.readOnly){
 				var fv=req.body[f.id];
-				if(fv!=null){
+				if(fv!==null && fv!==undefined){
 					switch(f.type){
 						case 'panel-list':
 							vs.push(JSON.stringify(fv));
 							ns.push(fnName(f, vs.length));
 							break;
 						case 'boolean':
+							if(f.required && fv==='false'){
+								addInvalid(f.id, fv, 'required')
+							}
 							vs.push((fv&&fv!=='false')?'TRUE':'FALSE');
 							ns.push(fnName(f, vs.length));
 							break;
@@ -100,9 +116,25 @@ module.exports = {
 							ns.push(fnName(f, vs.length));
 							break;
 						default:
+							if(dico.fieldIsNumber(f)){
+								if(f.min && fv<f.min){
+									addInvalid(f.id, fv, 'min = '+f.min)
+								}
+								if(f.max && fv>f.max){
+									addInvalid(f.id, fv, 'max = '+f.max)
+								}
+							}
+							if(f.maxLength && fv.length>f.maxLength){
+								addInvalid(f.id, fv, 'maxLength = '+f.maxLength)
+							}
+							if(f.minLength && fv.length<f.minLength){
+								addInvalid(f.id, fv, 'minLength = '+f.minLength)
+							}
 							vs.push(fv);
 							ns.push(fnName(f, vs.length));
 					}
+				}else if(f.required){
+					addInvalid(f.id, fv, 'required')
 				}
 			}
 		});
@@ -117,7 +149,8 @@ module.exports = {
 		}
 		return {
 			names: ns,
-			values: vs
+			values: vs,
+			invalids: invalids.length>0 ? invalids : null
 		};
 	},
 

@@ -107,18 +107,22 @@ Models contain the name of the driving table and the list of fields/columns pres
 | Property     | Description                           |
 |--------------|---------------------------------------|
 | id           | Unique key for the field (can be the same as column but doesn't have to be). |
-| column       | Database column name for the field    |
-| lovtable     | Table to join to for field value (only for fields of "lov" type). |  
-| lovcolumn    | Column name (in the lovtable) for field value (only for fields of "lov" type). |  
-| lovicon      | Set to True to include icon with LOV items.    |
-| object       | Model id for the object to link to (only for fields of "lov" type).    |
+| column       | Database column name for the field.    |
+| lovtable     | Table to join to for field value (only for fields of type "lov"). |  
+| lovcolumn    | Column name (in the lovtable) for field value (only for fields of type "lov"). |  
+| lovicon      | Set to True to include icon with LOV items (only for fields of type "lov").    |
+| object       | Model id for the object to link to (only for fields of type "lov").    |
 | type         | Field type is not a database column type but more a UI field type. Possible field types: <ul><li>boolean</li><li>date</li><li>datetime</li><li>decimal</li><li>document</li><li>email</li><li>image</li><li>integer</li><li>lov (list of values)</li><li>money</li><li>text</li><li>textmultiline</li><li>time</li><li>url</li></ul> |
 | required     | Determines if the field is required for saving.      |
 | readonly     | Prevents field modification.          |                      
 | inMany       | Determines if the field is present (by default) in lists of records. | 
-| noCharts       | Forbids charts on the field. | 
+| max, min     | Maximum/Minimum value allowed (only applies to numeric fields).      |    
+| maxLength, minLength | Maximum/Minimum length allowed (only applies to text fields).      | 
+| unique       | Values must be unique (not implemented yet).   |
+| noCharts     | Forbids charts on the field.   |
+| deletetrigger | Deleting records in the lovtable will trigger a cascade delete (this property is only used while creating the database). |
 
-Notes: More field properties (unique, min, max, minLength, maxLength...) will be added later.
+
 
 ### Collection
 

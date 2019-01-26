@@ -271,13 +271,14 @@ function getOne(req, res) {
 
 // - insert a single record
 function insertOne(req, res) {
-    // TODO: validation
     logger.logReq('INSERT ONE', req);
 
     const m = dico.getModel(req.params.entity),
         q = sqls.namedValues(m, req, 'insert');
 
-    if(m && q.names.length){
+    if(q.invalids){
+        returnInvalid(res, q.invalids)
+    }else if(m && q.names.length){
         const ps = q.names.map((n, idx) => '$'+(idx+1));
         const sql = 'INSERT INTO '+m.schemaTable+
             ' ("'+q.names.join('","')+'") values('+ps.join(',')+')'+
@@ -289,6 +290,15 @@ function insertOne(req, res) {
     }
 }
 
+function returnInvalid(res, invalids){
+    logger.logObject('invalids', invalids)
+    res.status('500')
+    res.statusMessage = 'Invalid record'
+    return res.json({
+        error: 'Invalid record',
+        invalids: invalids
+    });
+}
 
 // --------------------------------------------------------------------------------------
 // -----------------    UPDATE ONE    ---------------------------------------------------
@@ -296,14 +306,15 @@ function insertOne(req, res) {
 
 // - update a single record
 function updateOne(req, res) {
-    // TODO: validation
     logger.logReq('UPDATE ONE', req);
 
     const m = dico.getModel(req.params.entity),
         id = req.params.id,
         q = sqls.namedValues(m, req, 'update');
-
-    if(m && id && q.names.length){
+    
+    if(q.invalids){
+        returnInvalid(res, q.invalids)
+    }else if(m && id && q.names.length){
         q.values.push(id);
         let sql = 'UPDATE '+m.schemaTable+' AS t1 SET '+ q.names.join(',') + 
             ' WHERE id=$'+q.values.length+
