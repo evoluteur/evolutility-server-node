@@ -8,7 +8,7 @@ module.exports = {
     namePlural: 'wine tastings',
     label: 'Wine Tasting',
     icon: 'wine.gif', 
-    //fnSearch: ['name', 'winery', 'appellation', 'notes'],
+    searchFields: ['robe', 'nose', 'taste', 'notes'],
     fields: [
         { 
             id: 'wine_id', column: 'wine_id', type: 'lov', 

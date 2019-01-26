@@ -150,8 +150,10 @@ function sqlMany(m, req, allFields, wCount){
             m.searchFields.forEach(function(fid){
                 sqlWsSearch.push('t1."'+m.fieldsH[fid].column+sqlP);
             });
-            sqlParams.push('%'+req.query.search.replace(/%/g, '\%')+'%');
-            sqlWs.push('('+sqlWsSearch.join(' OR ')+')');
+            if(sqlWsSearch.length){
+                sqlParams.push('%'+req.query.search.replace(/%/g, '\%')+'%');
+                sqlWs.push('('+sqlWsSearch.join(' OR ')+')');
+            }
         }
     }
 

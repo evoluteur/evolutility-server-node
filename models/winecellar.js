@@ -146,7 +146,7 @@ module.exports = {
     fnBadge: function(model){
         return model.get('remaining') || 0;
     },
-    fnSearch: ['name', 'winery', 'appellation', 'notes'],
+    searchFields: ['name', 'winery', 'appellation', 'notes'],
 
     fields: [
         {
