@@ -31,7 +31,7 @@ module.exports = {
     icon: 'resto.gif',
     name: 'restaurant', 
     namePlural: 'restaurants',
-    searchFields: ['name'],
+    searchFields: ['name', 'city', 'notes'],
 
     fields:[
         {
@@ -67,15 +67,16 @@ module.exports = {
             label: 'yelp', width: 38, 
         },
         {
-            type: 'text', id: 'schedule',
-            column: 'schedule',
-            label: 'Schedule', maxLength: 1000
-        },
-        {
             type: 'textmultiline', id: 'notes',
             column: 'notes',
             label: 'Notes', maxLength: 2000, 
         },
+		{
+			"id": "hours",
+			"type": "textmultiline",
+			"label": "Hours",
+			"column": "hours"
+		},
         {
             type: 'textmultiline', id: 'favorite',
             column: 'favorite',

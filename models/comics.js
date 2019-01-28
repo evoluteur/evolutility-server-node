@@ -17,18 +17,19 @@ module.exports =  {
             id: 'genre', column: 'genre_id', type: 'lov', label: 'Genre', inMany: true,
             list: [
                 {id: 1, text: 'Adventure'},
-                {id: 2, text: 'Fairy tale'},
                 {id: 3, text: 'Erotic'},
+                {id: 2, text: 'Fairy tale'},
                 {id: 4, text: 'Fantastic'},
+                {id: 14, text: 'Graphic novel'},
                 {id: 5, text: 'Heroic Fantasy'},
                 {id: 6, text: 'Historic'},
                 {id: 7, text: 'Humor'},
                 {id: 8, text: 'One of a kind'},
-                {id: 9, text: 'Youth'},
-                {id: 10, text: 'Thriller'},
                 {id: 11, text: 'Science-fiction'},
                 {id: 12, text: 'Super Heros'},
-                {id: 13, text: 'Western'} 
+                {id: 10, text: 'Thriller'},
+                {id: 13, text: 'Western'},
+                {id: 9, text: 'Youth'},
             ],
             lovtable: 'comics_genre'
         },
@@ -65,6 +66,18 @@ module.exports =  {
             id: 'finished', column: 'finished', type: 'boolean', inMany: true,
             label: 'Finished', labelTrue:'Finished', labelFalse:'Not finished', css:'cBlue'
         },
+		{
+			"id": "url_bdfugue",
+			"type": "url",
+			"label": "BDFugue",
+			"column": "url_bdfugue",
+		},
+		{
+			"id": "url_amazon",
+			"type": "url",
+			"label": "Amazon",
+			"column": "url_amazon",
+		},
         {
             id: 'notes', column: 'notes', type: 'textmultiline', label: 'Notes', maxLength: 1000,
             inMany: false

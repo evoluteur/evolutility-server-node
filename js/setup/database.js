@@ -60,7 +60,8 @@ function model2SQL(mid){
         fieldsH = m.fieldsH,
         subCollecs = m.collections,
         fs = ['id serial primary key'],
-        sql, sql0, sqlIdx='',
+        sql, sql0, 
+        sqlIdx='',
         sqlData = '';
 
     // fields
@@ -69,7 +70,7 @@ function model2SQL(mid){
             fieldsAttr[f.column]=true;
             // skip fields specified in config
             if(['c_date','u_date','c_uid','u_uid','nb_comments','nb_ratings','avg_ratings'].indexOf(f.column)<0){
-                sql0=' "'+f.column+'" '+(ft_postgreSQL[f.type]||'text');
+                sql0 = ' "'+f.column+'" '+(ft_postgreSQL[f.type]||'text');
                 if(f.type===ft.lov){
                         if(f.deletetrigger){
                             sql0 += ' NOT NULL REFERENCES '+schema+'."'+f.lovtable+'"(id) ON DELETE CASCADE'
@@ -77,7 +78,7 @@ function model2SQL(mid){
                         sqlIdx += 'CREATE INDEX idx_'+tableName+'_'+f.column.toLowerCase()+
                             ' ON '+schema+'."'+tableName+'" USING btree ("'+f.column+'");\n';
                 }else if(f.required){
-                    sql0+=' not null';
+                    sql0 += ' not null';
                 }
                 fs.push(sql0);
             }
@@ -192,8 +193,10 @@ function model2SQL(mid){
                 if(f.list){
                     sql += insertSQL;
                     sql += f.list.map(function(item){
-                        return '(' + item.id + ',' + stringValue(item.text) + 
-                            (icons ? ',\'' + (item.icon || '')+ '\'' : '') + ')'
+                        return '(' + 
+                            item.id + ',' + stringValue(item.text) + 
+                            (icons ? ',\'' + (item.icon || '')+ '\'' : '') + 
+                        ')'
                     }).join(',\n')+';\n\n';
                 }
                 lovIncluded.push(t)
