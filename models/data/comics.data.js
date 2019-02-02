@@ -9,7 +9,9 @@ module.exports = [{
   "serie_nb": 6,
   "language": 1,
   "notes": "",
-  "pix": "comics/androitsheep1.jpeg"
+  "pix": "comics/androitsheep1.jpeg",
+  url_amazon: "https://smile.amazon.com/Androids-Dream-Electric-Sheep-Vol-ebook/dp/B01E0IR7G2",
+  url_bdfugue: "https://www.bdfugue.com/do-androids-dream-of-electric-sheep",
 },
 {
   "title": "Saga",
@@ -22,7 +24,9 @@ module.exports = [{
   "serie_nb": 6,
   "language": 1,
   "notes": "",
-  "pix": "comics/saga1.jpeg"
+  "pix": "comics/saga1.jpeg",
+  url_amazon: "https://smile.amazon.com/Saga-Book-One-Brian-Vaughan/dp/1632150786",
+  url_bdfugue: "https://www.bdfugue.com/saga-tome-1",
 },
 {
   "title": "Alim le Tanneur",
@@ -35,7 +39,8 @@ module.exports = [{
   "serie_nb": 4,
   "language": 2,
   "notes": "",
-  "pix": "comics/alim1.jpg"
+  "pix": "comics/alim1.jpg",
+  url_bdfugue: "https://www.bdfugue.com/alim-le-tanneur-t-1-le-secret-des-eaux",
 },
 {
   "title": "La Caste des Meta-Barons",
@@ -100,7 +105,9 @@ module.exports = [{
   "serie_nb": 12,
   "language": 2,
   "notes": "",
-  "pix": "comics/carmenmc1.jpeg"
+  "pix": "comics/carmenmc1.jpeg",
+  url_amazon: "",
+  url_bdfugue: "https://www.bdfugue.com/carmen-mc-callum-t-1-jukurpa",
 },
 {
   "title": "Code McCallum",
@@ -113,7 +120,7 @@ module.exports = [{
   "serie_nb": 5,
   "language": 2,
   "notes": "",
-  "pix": "comics/codemc1.jpeg"
+  "pix": "comics/codemc1.jpeg",
 },
 {
   "title": "La Nef des Fous",
@@ -126,7 +133,8 @@ module.exports = [{
   "serie_nb": 7,
   "language": 2,
   "notes": "",
-  "pix": "comics/neffous1.jpeg"
+  "pix": "comics/neffous1.jpeg", 
+  url_bdfugue: "https://www.bdfugue.com/la-nef-des-fous-t-1-eauxfolles",
 },
 {
   "title": "La Quete de l'Oiseau du Temps",
@@ -139,7 +147,9 @@ module.exports = [{
   "serie_nb": 4,
   "language": 2,
   "notes": "",
-  "pix": "comics/quete1.jpeg"
+  "pix": "comics/quete1.jpeg",
+  url_amazon: "",
+  url_bdfugue: "",
 },
 {
   "title": "Le Lama Blanc",
@@ -178,7 +188,9 @@ module.exports = [{
   "serie_nb": 6,
   "language": 2,
   "notes": "",
-  "pix": "comics/incal1.jpeg"
+  "pix": "comics/incal1.jpeg",
+  url_amazon: "https://smile.amazon.com/Incal-Vol-Black-ebook/dp/B00SVE70MI/",
+  url_bdfugue: "https://www.bdfugue.com/l-incal-t-1-l-incal-noir-29999",
 },
 {
   "title": "Sky Doll",
@@ -204,7 +216,8 @@ module.exports = [{
   "serie_nb": 1,
   "language": 1,
   "notes": "",
-  "pix": "comics/ronin.jpeg"
+  "pix": "comics/ronin.jpeg",
+  url_amazon: "https://smile.amazon.com/Ronin-Deluxe-Frank-Miller-ebook/dp/B00MV1NZ94",
 },
 {
   "title": "Le Fleau des Dieux",
@@ -217,7 +230,8 @@ module.exports = [{
   "serie_nb": 6,
   "language": 2,
   "notes": "",
-  "pix": "comics/fleaudieux1.jpeg"
+  "pix": "comics/fleaudieux1.jpeg",
+  url_bdfugue: "https://www.bdfugue.com/le-fleau-des-dieux-t-1-morituri-te-saluant-82834",
 },
 {
   "title": "Tales of an Imperfect Future",
