@@ -111,6 +111,7 @@ module.exports = {
 						case 'date':
 						case 'time':
 						case 'datetime':
+							// TODO: date validation
 						case 'lov':
 							vs.push((!fv)?null:fv);
 							ns.push(fnName(f, vs.length));
@@ -133,7 +134,7 @@ module.exports = {
 							vs.push(fv);
 							ns.push(fnName(f, vs.length));
 					}
-				}else if(f.required){
+				}else if(f.required && action==='insert'){
 					addInvalid(f.id, fv, 'required')
 				}
 			}
