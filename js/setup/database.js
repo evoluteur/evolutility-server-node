@@ -58,16 +58,16 @@ function model2SQL(mid){
         fieldsAttr = {},
         fields = m.fields,
         fieldsH = m.fieldsH,
-        subCollecs = m.collections,
+        //subCollecs = m.collections,
         fs = ['id serial primary key'],
         sql, sql0, 
         sqlIdx='',
         sqlData = '';
 
     // fields
-    fields.forEach(function(f, idx){
-        if(f.column && f.column!='id' && f.type!=='formula' && !fieldsAttr[f.column]){
-            fieldsAttr[f.column]=true;
+    fields.forEach(function(f){
+        if(f.column && f.column!=='id' && f.type!=='formula' && !fieldsAttr[f.column]){
+            fieldsAttr[f.column] = true;
             // skip fields specified in config
             if(['c_date','u_date','c_uid','u_uid','nb_comments','nb_ratings','avg_ratings'].indexOf(f.column)<0){
                 sql0 = ' "'+f.column+'" '+(ft_postgreSQL[f.type]||'text');
@@ -105,14 +105,14 @@ function model2SQL(mid){
         fs.push('nb_ratings integer DEFAULT 0');
         fs.push('avg_ratings integer DEFAULT NULL'); // smallint ?
     }
-
+/*
     // subCollecs - as json columns
     if(subCollecs){
         subCollecs.forEach(function(c, idx){
             fs.push(' "'+(c.column || c.id)+'" json');
         });
     }
-
+*/
     function stringValue(v){
         if(v){
             return "'"+v.replace(/'/g, "''")+"'";
