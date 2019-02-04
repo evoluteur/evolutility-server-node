@@ -91,7 +91,7 @@ To be accessible by the REST API, each database table must be described in a mod
 Models contain the name of the driving table and the list of fields/columns present in the API.
 
 
-### Entity
+### Object
 
 | Property     | Description                             |
 |--------------|-----------------------------------------|
@@ -249,10 +249,10 @@ For each field a sub-set of the operators below will be supported by the API (de
 | Operator     | Meaning                 | Example                      |
 |--------------|-------------------------|------------------------------|
 | eq           | equals                  | /todo?category=eq.1          |
-| gt           | greater than            | /todo?duedate=gt.2017-01-15  |
-| lt           | less than               | /todo?duedate=lt.2017-01-15  |
-| gte          | less than or equal      | /todo?duedate=gte.2017-01-15 |
-| lte          | less than or equal      | /todo?duedate=lte.2017-01-15 |
+| gt           | greater than            | /todo?duedate=gt.2019-01-15  |
+| lt           | less than               | /todo?duedate=lt.2019-01-15  |
+| gte          | less than or equal      | /todo?duedate=gte.2019-01-15 |
+| lte          | less than or equal      | /todo?duedate=lte.2019-01-15 |
 | ct           | contains                | /todo?title=ct.e             |
 | sw           | start with              | /todo?title=sw.a             |
 | fw           | finishes with           | /todo?title=fw.z             |
@@ -301,7 +301,7 @@ GET /todo?page=0&pageSize=50
 #### Formatting
 
 By default all APIs return data in JSON format. This API call allows to request data in CSV format (export to Excel).
-This feature is using [csv-express](https://github.com/nulltask/csv-express).
+This feature is using [csv-express](https://github.com/jczaplew/csv-express).
 
 ```
 GET /<model.id>?format=csv
