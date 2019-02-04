@@ -92,11 +92,19 @@ function sqlMany(m, req, allFields, wCount){
                     var cond=cs[0];
                     if(sqlOperators[cond]){
                         if((cond==='eq' || cond==='ne') && dico.fieldIsText(f)){
-                            sqlParams.push(cs[1]);
-                            if(f.type==='text' || f.type==='textmultiline' || f.type==='html'){
-                                sqlWs.push('LOWER(t1."'+f.column+'")'+sqlOperators[cond]+'LOWER($'+sqlParams.length+')');
+                            if(cs[1]==='null'){
+                                if(cond==='eq'){
+                                    sqlWs.push(' t1."'+f.column+'" IS NULL')
+                                }else{
+                                    sqlWs.push(' t1."'+f.column+'" IS NOT NULL')
+                                }
                             }else{
-                                sqlWs.push('t1."'+f.column+'"'+sqlOperators[cond]+'$'+sqlParams.length);
+                                sqlParams.push(cs[1]);
+                                if(f.type==='text' || f.type==='textmultiline' || f.type==='html'){
+                                    sqlWs.push('LOWER(t1."'+f.column+'")'+sqlOperators[cond]+'LOWER($'+sqlParams.length+')');
+                                }else{
+                                    sqlWs.push('t1."'+f.column+'"'+sqlOperators[cond]+'$'+sqlParams.length);
+                                }
                             }
                         }else{
                             let w='t1."'+f.column+'"'+sqlOperators[cond];
