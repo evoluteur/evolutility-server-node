@@ -2,7 +2,7 @@
 
 Model-driven RESTful backend for CRUD and more, using Node.js, Express, and PostgreSQL.
 
-Evolutility-Server-Node provides a set of generic REST endpoints for CRUD (Create, Read, Update, Delete) and simple charts based on models rather than code.
+Evolutility-Server-Node provides a set of generic REST endpoints for CRUD (Create, Read, Update, Delete) and simple charts. These views can adapt to different data structures according to their models.
  
 For a matching model-driven Web UI, use [Evolutility-UI-React](http://github.com/evoluteur/evolutility-ui-react) or [Evolutility-UI-jQuery](http://github.com/evoluteur/evolutility-ui-jquery).
 
@@ -203,16 +203,17 @@ More sample models:
 
 <a name="API"></a>
 ## API
-Evolutility-Server-Node provides a generic RESTful API for CRUD (Create, Read, Update, Delete) and more.
-It is a partial server-side Javascript implementation of [PostgREST](http://postgrest.com) using [Node.js](https://nodejs.org/en/), [Express](http://expressjs.com/) and [PostgreSQL](http://www.postgresql.org/).
+Evolutility-Server-Node provides a generic RESTful API for CRUD (Create, Read, Update, Delete) and more. It uses [Node.js](https://nodejs.org/en/), [Express](http://expressjs.com/) and [PostgreSQL](http://www.postgresql.org/).
+The API is inspired from [PostgREST](http://postgrest.com).
 
 When running Evolutility-Server-Node locally, the url for the "todo" app is 
 [http://localhost:2000/api/v1/evolutility/todo](http://localhost:2000/api/v1/evolutility/todo).
 
+
 ### Requesting Information
 
 #### Get One
-To get a specific record by ID, use "< ObjectName >/ID".
+Gets a specific record by ID.
 
 ```
 GET /<model.id>/<id>
@@ -221,7 +222,7 @@ GET /todo/12
 ```
 
 #### Get Many
-Every model is exposed. You can query lists of items by using the model ID.
+Gets a list of records.
 
 ```
 GET /<model.id>
@@ -342,6 +343,7 @@ PUT /<model.id>/<id>
 PUT /todo/5
 { title: 'Finish testing', priority: 2}
 ```
+
 Notes: The request returns the updated record. It is not standard but it saves the UI a subsequent call.
 
 
@@ -365,11 +367,12 @@ Returns the list of Objects and their APIs (only objects flagged active are incl
 ```
 GET /
 ```
-Note: This end-point must be enabled in the configuration with {apiInfo: true}.
+
+Note: This end-point can be disabled in the configuration with {apiInfo: false}.
 
 #### Charts
 
-For charts data, it is possible to get aggregated data for field of types lov, boolean, integer, decimal, and money.
+For charts data, it is possible to get aggregated data for field of types lov, boolean, integer, decimal, and money. Use the attribute "noCharts" to exclude a field from Charts.
 
 ```
 GET /<model.id>/chart/<field id>
@@ -406,6 +409,7 @@ POST /<model.id>/upload/<id>
 
 POST /comics/upload/5
 ```
+
 With query parameters: file and "field.id".
 
 
