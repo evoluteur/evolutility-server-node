@@ -16,7 +16,7 @@ module.exports = [
         "email": "abc@abc.com",
         "url": "http://abc.com",
         "document": "",
-        "image": ""
+        "image": "test/bug.gif"
     },
     {
         "id": 2,
