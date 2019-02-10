@@ -17,6 +17,14 @@ module.exports = [
     },
     {
         wine_id: 1,
+        drink_date: "2019-01-10",
+        robe: "light",
+        nose: "light fruit",
+        taste: "fruity",
+        notes: ""
+    },
+    {
+        wine_id: 1,
         drink_date: "2018-12-12",
         robe: "light",
         nose: "light fruit",
@@ -75,6 +83,13 @@ module.exports = [
     {
         wine_id: 5,
         drink_date: "2018-10-22",
+        robe: "rich",
+        nose: "strong",
+        taste: "very good"
+    }
+    {
+        wine_id: 5,
+        drink_date: "2019-02-02",
         robe: "rich",
         nose: "strong",
         taste: "very good"
