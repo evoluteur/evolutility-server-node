@@ -110,24 +110,24 @@ var winecellar_lovs = {
     ],
 
     country: [
-        { id: 1, icon:"wine/flag/ar.png", text: "Argentina"},
-        { id: 2, icon:"wine/flag/at.png", text: "Austria"},
-        { id: 3, icon:"wine/flag/bg.png", text: "Bulgaria"},
-        { id: 4, icon:"wine/flag/ca.png", text: "Canada"},
-        { id: 5, icon:"wine/flag/cl.png", text: "Chile"},
-        { id: 6, icon:"wine/flag/cy.png", text: "Cyprus"},
-        { id: 7, icon:"wine/flag/fr.png", text: "France"},
-        { id: 8, icon:"wine/flag/de.png", text: "Germany"},
-        { id: 9, icon:"wine/flag/gr.png", text: "Greece"},
-        { id: 10, icon:"wine/flag/hu.png", text: "Hungary"},
-        { id: 11, icon:"wine/flag/it.png", text: "Italy"},
-        { id: 12, icon:"wine/flag/lu.png", text: "Luxembourg"},
-        { id: 13, icon:"wine/flag/nz.png", text: "New Zealand"},
-        { id: 14, icon:"wine/flag/pt.png", text: "Portugal"},
-        { id: 15, icon:"wine/flag/za.png", text: "South Africa"},
-        { id: 16, icon:"wine/flag/es.png", text: "Spain"},
-        { id: 17, icon:"wine/flag/ch.png", text: "Switzerland"},
-        { id: 18, icon:"wine/flag/us.png", text: "United States"}
+        { id: 1, icon:"wine/flags/ar.png", text: "Argentina"},
+        { id: 2, icon:"wine/flags/at.png", text: "Austria"},
+        { id: 3, icon:"wine/flags/bg.png", text: "Bulgaria"},
+        { id: 4, icon:"wine/flags/ca.png", text: "Canada"},
+        { id: 5, icon:"wine/flags/cl.png", text: "Chile"},
+        { id: 6, icon:"wine/flags/cy.png", text: "Cyprus"},
+        { id: 7, icon:"wine/flags/fr.png", text: "France"},
+        { id: 8, icon:"wine/flags/de.png", text: "Germany"},
+        { id: 9, icon:"wine/flags/gr.png", text: "Greece"},
+        { id: 10, icon:"wine/flags/hu.png", text: "Hungary"},
+        { id: 11, icon:"wine/flags/it.png", text: "Italy"},
+        { id: 12, icon:"wine/flags/lu.png", text: "Luxembourg"},
+        { id: 13, icon:"wine/flags/nz.png", text: "New Zealand"},
+        { id: 14, icon:"wine/flags/pt.png", text: "Portugal"},
+        { id: 15, icon:"wine/flags/za.png", text: "South Africa"},
+        { id: 16, icon:"wine/flags/es.png", text: "Spain"},
+        { id: 17, icon:"wine/flags/ch.png", text: "Switzerland"},
+        { id: 18, icon:"wine/flags/us.png", text: "United States"}
     ]
 
 };
