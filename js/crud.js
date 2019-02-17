@@ -50,13 +50,14 @@ function csvHeader(fields){
 
 // - returns SQL for query returning a set of records
 function sqlMany(m, req, allFields, wCount){
-    let fs = allFields ? m.fields : m.fields.filter(dico.fieldInMany),
+    const pkid = m.pkey
+    let fs = allFields ? m.fields : m.fields.filter(dico.fieldInMany),    
         sqlParams = [];
         if(allFields && fs.length===0){
             fs=allFields.slice(0, 5)
         }
     // ---- SELECTION
-    let sqlSel = 't1.id, '+sqls.select(fs, false, true);
+    let sqlSel = 't1.'+pkid+' as id, '+sqls.select(fs, false, true);
     dico.systemManyFields.forEach((f) => {
         sqlSel += ', t1.'+f.column
         if(f.type===ft.int){
@@ -86,7 +87,7 @@ function sqlMany(m, req, allFields, wCount){
     var sqlWs = [];
     for (var n in req.query){
         if (req.query.hasOwnProperty(n)) {
-            var f = (n==='id') ? {column:'id'} : m.fieldsH[n];
+            var f = (n===pkid) ? {column:pkid} : m.fieldsH[n];
             if(f && ['select', 'filter', 'search', 'order', 'page', 'pageSize'].indexOf(f.column)<0){
                 var cs = req.query[n].split('.');
                 if(cs.length){
@@ -247,11 +248,12 @@ function getOne(req, res) {
 
     const mid = req.params.entity,
         m = dico.getModel(mid),
+        pkid = m.pkey,
         id = req.params.id;
 
     if(m){
         let sqlParams = []
-        let sql = 'SELECT t1.id, '+sqls.select(m.fields, m.collections, true)
+        let sql = 'SELECT t1.'+pkid+' as id, '+sqls.select(m.fields, m.collections, true)
 
         dico.systemFields.forEach(function(f){
             sql += ', t1.'+f.column
@@ -259,7 +261,7 @@ function getOne(req, res) {
         sql += ' FROM '+m.schemaTable+' AS t1'+sqls.sqlFromLOVs(m.fields, schema)
         if(parseInt(id)){
             sqlParams.push(id)
-            sql += ' WHERE t1.id=$1'
+            sql += ' WHERE t1.'+pkid+'=$1'
         }else{
             return errors.badRequest(res, 'Invalid id: "'+id+'".')
         }
@@ -283,6 +285,7 @@ function insertOne(req, res) {
     logger.logReq('INSERT ONE', req);
 
     const m = dico.getModel(req.params.entity),
+        pkid = m.pkey,
         q = sqls.namedValues(m, req, 'insert');
 
     if(q.invalids){
@@ -291,7 +294,7 @@ function insertOne(req, res) {
         const ps = q.names.map((n, idx) => '$'+(idx+1));
         const sql = 'INSERT INTO '+m.schemaTable+
             ' ("'+q.names.join('","')+'") values('+ps.join(',')+')'+
-            ' RETURNING id, '+sqls.select(m.fields, false, null, 'C')+';';
+            ' RETURNING '+pkid+' as id, '+sqls.select(m.fields, false, null, 'C')+';';
 
         query.runQuery(res, sql, q.values, true);
     }else{
@@ -318,6 +321,7 @@ function updateOne(req, res) {
     logger.logReq('UPDATE ONE', req);
 
     const m = dico.getModel(req.params.entity),
+        pkid = m.pkey,
         id = req.params.id,
         q = sqls.namedValues(m, req, 'update');
     
@@ -326,8 +330,8 @@ function updateOne(req, res) {
     }else if(m && id && q.names.length){
         q.values.push(id);
         let sql = 'UPDATE '+m.schemaTable+' AS t1 SET '+ q.names.join(',') + 
-            ' WHERE id=$'+q.values.length+
-            ' RETURNING id, '+sqls.select(m.fields, false, null, 'U')+';';
+            ' WHERE '+pkid+'=$'+q.values.length+
+            ' RETURNING '+pkid+' as id, '+sqls.select(m.fields, false, null, 'U')+';';
 
         query.runQuery(res, sql, q.values, true);
     }else{
@@ -345,12 +349,13 @@ function deleteOne(req, res) {
     logger.logReq('DELETE ONE', req);
 
     const m = dico.getModel(req.params.entity),
+        pkid = m.pkey,
         id = req.params.id;
 
     if(m && id){
         // SQL Query > Delete Data
         var sql = 'DELETE FROM '+m.schemaTable+
-                ' WHERE id=$1 RETURNING id::integer AS id;';
+                ' WHERE '+pkid+'=$1 RETURNING '+pkid+'::integer AS id;';
                 
         query.runQuery(res, sql, [id], true);
     }else{

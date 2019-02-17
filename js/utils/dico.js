@@ -140,6 +140,9 @@ function prepModel(m){
 			if(m.collections && !m.collecsH){
 				m.collecsH = hById(m.collections);
 			}
+			if(!m.pkey){
+				m.pkey = 'id';
+			}
 			m.prepared = true;
 		}
 		return m;

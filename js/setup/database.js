@@ -53,20 +53,21 @@ var ft_postgreSQL = {
 function model2SQL(mid){
     // -- generates SQL script to create a Postgres DB table for the ui model
     var m = prepModel(models[mid]),
+        pkid = m.pkey,
         tableName = m.table || m.id,
         tableNameSchema = schema+'."'+tableName+'"',
         fieldsAttr = {},
         fields = m.fields,
         fieldsH = m.fieldsH,
         //subCollecs = m.collections,
-        fs = ['id serial primary key'],
+        fs = [pkid+' serial primary key'],
         sql, sql0, 
         sqlIdx='',
         sqlData = '';
 
     // fields
     fields.forEach(function(f){
-        if(f.column && f.column!=='id' && f.type!=='formula' && !fieldsAttr[f.column]){
+        if(f.column && f.column!==pkid && f.type!=='formula' && !fieldsAttr[f.column]){
             fieldsAttr[f.column] = true;
             // skip fields specified in config
             if(['c_date','u_date','c_uid','u_uid','nb_comments','nb_ratings','avg_ratings'].indexOf(f.column)<0){
@@ -137,7 +138,7 @@ function model2SQL(mid){
             var f, v;
             for(var fid in row){
                 f = fieldsH[fid];
-                if(f && fid!=='id'){
+                if(f && fid!==pkid){
                     v = row[fid];
                     ns.push('"'+(f.column || f.id)+'"');
                     if(f.type===ft.lov){
