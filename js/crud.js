@@ -8,6 +8,7 @@
  ********************************************************* */
 
 const dico = require('./utils/dico'),
+    ft = dico.fieldTypes,
     sqls = require('./utils/sql-select'),
     query = require('./utils/query'),
     errors = require('./utils/errors.js'),
@@ -32,7 +33,7 @@ function csvHeader(fields){
     let h = {'id': 'ID'}
 
     fields.forEach((f) => {
-        if(f.type==='lov'){
+        if(f.type===ft.lov){
             h[f.id] = fieldId(f)+' ID';
             h[f.id+'_txt'] = fieldId(f);
         }else{
@@ -58,7 +59,7 @@ function sqlMany(m, req, allFields, wCount){
     let sqlSel = 't1.id, '+sqls.select(fs, false, true);
     dico.systemManyFields.forEach((f) => {
         sqlSel += ', t1.'+f.column
-        if(f.type==='integer'){
+        if(f.type===ft.int){
             sqlSel += '::integer'
         }
     })
@@ -100,7 +101,7 @@ function sqlMany(m, req, allFields, wCount){
                                 }
                             }else{
                                 sqlParams.push(cs[1]);
-                                if(f.type==='text' || f.type==='textmultiline' || f.type==='html'){
+                                if(f.type===ft.text || f.type===ft.textml || f.type===ft.html){
                                     sqlWs.push('LOWER(t1."'+f.column+'")'+sqlOperators[cond]+'LOWER($'+sqlParams.length+')');
                                 }else{
                                     sqlWs.push('t1."'+f.column+'"'+sqlOperators[cond]+'$'+sqlParams.length);
@@ -108,7 +109,7 @@ function sqlMany(m, req, allFields, wCount){
                             }
                         }else{
                             let w='t1."'+f.column+'"'+sqlOperators[cond];
-                            if(cond==='in' && (f.type==='lov' || f.type==='list')){
+                            if(cond==='in' && (f.type===ft.lov || f.type===ft.list)){
                                 sqlWs.push(w+'('+cs[1].split(',').map(li => {
                                     sqlParams.push(li);
                                     return '$'+sqlParams.length
@@ -381,7 +382,7 @@ function lovOne(req, res) {
             }
         }
         if(f){
-            const col = f.lovcolumn||'name'
+            const col = f.lovcolumn || 'name'
             let sql = 'SELECT id, "'+col+'" as text'
             
             if(f.lovicon){

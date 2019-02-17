@@ -8,6 +8,7 @@
  ********************************************************* */
 
 const dico = require('./utils/dico'),
+    ft = dico.fieldTypes,
     query = require('./utils/query'),
     errors = require('./utils/errors.js'),
     logger = require('./utils/logger'),
@@ -34,7 +35,7 @@ function chartField(req, res) {
                 const col = '"'+f.column+'"',
                     sqlFrom = ' FROM '+m.schemaTable+' AS t1';
                     
-                if(f.type==='lov' && f.lovtable){
+                if(f.type===ft.lov && f.lovtable){
                     const clov = f.lovcolumn||'name';
 
                     sql='SELECT t2.id, t2.'+clov+'::text AS label, '+sqlCount+
@@ -42,7 +43,7 @@ function chartField(req, res) {
                         ' LEFT JOIN '+schema+'."'+f.lovtable+'" AS t2'+
                             ' ON t1.'+col+'=t2.id'+
                         ' GROUP BY t2.id, t2.'+clov;
-                }else if(f.type==='boolean'){
+                }else if(f.type===ft.bool){
                     const cId = 'CASE '+col+' WHEN true THEN 1 ELSE 0 END',
                         cLabel = 'CASE '+col+' WHEN true THEN \'Yes\' ELSE \'No\' END';
 
