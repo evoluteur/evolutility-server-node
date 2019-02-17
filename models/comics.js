@@ -41,8 +41,8 @@ module.exports =  {
             id: 'language', column: 'language_id', type: 'lov', label: 'Language', inMany: true,
             lovicon: true,
             list: [
-                {id: 2, text: 'French', icon:'flag_fr.gif'},
-                {id: 1, text: 'American', icon:'flag_us.gif'}
+                {id: 2, text: 'French', icon:'comics/flags/fr.png'},
+                {id: 1, text: 'American', icon:'comics/flags/us.png'}
             ],
             lovtable: 'comics_language'
         },
