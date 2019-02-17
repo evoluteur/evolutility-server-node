@@ -17,7 +17,7 @@ var pg = require('pg'),
 
 const ft = fieldTypes;
 var models = require('../../models/all_models.js');
-var data = require('../../models/data/all_modelsdata.js');
+var data = require('../../models/data/all_data.js');
 
 // - options; mostly from in config.js
 var config = require(path.join(__dirname, '../', '../', 'config')),
