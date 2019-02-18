@@ -1,3 +1,7 @@
+/*
+    Sample data from https://www.briandunning.com/sample-data/
+*/
+
 module.exports = [
     {
       "firstname": "James",
@@ -6510,5 +6514,6 @@ module.exports = [
         }
     }
     c.category = newCategory
+    c.country = 'US'
     return c
 })
