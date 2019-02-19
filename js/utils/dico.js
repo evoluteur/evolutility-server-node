@@ -105,20 +105,12 @@ const fieldInCharts = f => fieldChartable(f) && !f.noCharts
 
 const fieldChartable = f => f.type===ft.lov || f.type===ft.list || f.type===ft.bool || fieldIsNumber(f)
 
-function hById(arr){
-	var objH={};
-	if(arr){
-		arr.forEach(function(o){
-			objH[o.id] = o; 
-		});
-	}
-	return objH;
-}
-
 function prepModel(m){
 	if(m){
 		if(!m.prepared){
+			// - Model
 			m.schemaTable = schema+'."'+(m.table || m.id)+'"';
+			// - Fields
 			m.fieldsH = {}
 			m.fields.forEach(function(f, idx){
 				if(f.type==='lov'){
@@ -128,6 +120,7 @@ function prepModel(m){
 					m.fieldsH[f.id] = f; 
 				}
 			})
+			// - Search
 			if(m.searchFields){
 				if(!Array.isArray(m.searchFields)){
 					m.searchFields = [m.searchFields]
@@ -137,8 +130,17 @@ function prepModel(m){
 					return f.inMany && fieldIsText(f.type)
 				}).map(f => f.id)
 			}
+			// - Collections
 			if(m.collections && !m.collecsH){
-				m.collecsH = hById(m.collections);
+				m.collecsH = {}
+				m.collections.forEach(c => {
+					m.collecsH[c.id] = c
+					c.fields.forEach((f, idx) => {
+						if(f.type==='lov'){
+							f.t2 = 't_'+idx
+						}
+					})
+				})
 			}
 			if(!m.pkey){
 				m.pkey = 'id';
