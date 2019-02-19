@@ -138,7 +138,7 @@ Multiple Master-Details can be specified with collections.
 | order        | "asc"/"desc" for sorting by the first field in fields.      |
 | fields       | Array of fields. Fields in collections do not need all properties of Fields in objects.      |
 
-Example of collection in [Wine cellar](https://github.com/evoluteur/evolutility-server-node/blob/master/models/winecellar.js).
+Example of collection in [Wine cellar](https://github.com/evoluteur/evolutility-server-node/blob/master/models/pim/winecellar.js).
 
 
 ### Sample model
@@ -196,10 +196,10 @@ module.exports = {
 ```
 
 More sample models: 
- [Address book](https://github.com/evoluteur/evolutility-server-node/blob/master/models/contact.js),
- [Restaurants list](https://github.com/evoluteur/evolutility-server-node/blob/master/models/restaurant.js),
- [Wine cellar](https://github.com/evoluteur/evolutility-server-node/blob/master/models/winecellar.js),
- [Graphic novels inventory](https://github.com/evoluteur/evolutility-server-node/blob/master/models/comics.js). 
+ [Address book](https://github.com/evoluteur/evolutility-server-node/blob/master/models/pim/contact.js),
+ [Restaurants list](https://github.com/evoluteur/evolutility-server-node/blob/master/models/pim/restaurant.js),
+ [Wine cellar](https://github.com/evoluteur/evolutility-server-node/blob/master/models/pim/winecellar.js),
+ [Graphic novels inventory](https://github.com/evoluteur/evolutility-server-node/blob/master/models/pim/comics.js). 
  
 
 <a name="API"></a>

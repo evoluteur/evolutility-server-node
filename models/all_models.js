@@ -1,9 +1,15 @@
 module.exports = {
-	todo: require('./todo'),
-	contact: require('./contact'),
-	comics: require('./comics'),
-	restaurant: require('./restaurant'),
-	winecellar: require('./winecellar'),
-	winetasting: require('./winetasting'),
-	test: require('./test'),
+  todo: require('./pim/todo'),
+  contact: require('./pim/contact'),
+  comics: require('./pim/comics'),
+  restaurant: require('./pim/restaurant'),
+  winecellar: require('./pim/winecellar'),
+  winetasting: require('./pim/winetasting'),
+
+  album: require('./music/album'),
+  artist: require('./music/artist'),
+  track: require('./music/track'),
+
+  test: require('./tests/test'),
+  
 };
