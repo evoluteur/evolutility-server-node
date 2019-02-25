@@ -63,7 +63,8 @@ function model2SQL(mid){
         fs = [pkid+' serial primary key'],
         sql, sql0, 
         sqlIdx='',
-        sqlData = '';
+        sqlData = '',
+        sqlComments = '';
 
     // fields
     fields.forEach(function(f){
@@ -71,17 +72,19 @@ function model2SQL(mid){
             fieldsAttr[f.column] = true;
             // skip fields specified in config
             if(['c_date','u_date','c_uid','u_uid','nb_comments','nb_ratings','avg_ratings'].indexOf(f.column)<0){
-                sql0 = ' "'+f.column+'" '+(ft_postgreSQL[f.type]||'text');
+                const fcolumn = '"'+f.column+'"'
+                sql0 = ' '+fcolumn+' '+(ft_postgreSQL[f.type]||'text');
                 if(f.type===ft.lov){
                         if(f.deletetrigger){
                             sql0 += ' NOT NULL REFERENCES '+schema+'."'+f.lovtable+'"(id) ON DELETE CASCADE'
                         }
                         sqlIdx += 'CREATE INDEX idx_'+tableName+'_'+f.column.toLowerCase()+
-                            ' ON '+schema+'."'+tableName+'" USING btree ("'+f.column+'");\n';
+                            ' ON '+tableNameSchema+' USING btree ('+fcolumn+');\n';
                 }else if(f.required){
                     sql0 += ' not null';
                 }
                 fs.push(sql0);
+                sqlComments += 'COMMENT ON COLUMN '+tableNameSchema+'.'+fcolumn+' IS \''+f.label.replace(/'/g,'')+'\';\n'
             }
         }
     });
@@ -126,9 +129,12 @@ function model2SQL(mid){
 
     // - track updates
     if(config.wTimestamp){
-        sql+='\nCREATE TRIGGER tr_u_'+tableName+' BEFORE UPDATE ON '+schema+'.'+tableName+
+        sql += '\nCREATE TRIGGER tr_u_'+tableName+' BEFORE UPDATE ON '+schema+'.'+tableName+
                 ' FOR EACH ROW EXECUTE PROCEDURE '+schema+'.u_date();\n';
     }
+
+    // Column description
+    sql += sqlComments
 
     // -- insert sample data
     if(data[mid]){
@@ -193,12 +199,11 @@ function model2SQL(mid){
                 const insertSQL = 'INSERT INTO '+t+'(id, name'+(icons ? ', icon':'')+') VALUES ';
                 if(f.list){
                     sql += insertSQL;
-                    sql += f.list.map(function(item){
-                        return '(' + 
-                            item.id + ',' + stringValue(item.text) + 
-                            (icons ? ',\'' + (item.icon || '')+ '\'' : '') + 
-                        ')'
-                    }).join(',\n')+';\n\n';
+                    sql += f.list.map(icons ? 
+                        (item) => '(' + item.id + ',' + stringValue(item.text) + ',\'' + (item.icon || '') + '\')'
+                         : 
+                        (item) => '(' + item.id + ',' + stringValue(item.text)+ ')'
+                    ).join(',\n')+';\n\n';
                 }
                 lovIncluded.push(t)
             }
