@@ -1,6 +1,6 @@
 {
   "name": "evolutility-server-node",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Model-driven RESTful endpoints for CRUD and more, using Node.js, Express, and Postgres.",
   "license": "MIT",
   "homepage": "https://github.com/evoluteur/evolutility-server-node",
@@ -13,36 +13,36 @@
   "scripts": {
     "start": "supervisor ./bin/www"
   },
+  "dependencies": {
+    "chalk": "~2.4.2",
+    "body-parser": "~1.18.3",
+    "csv-express": "~1.2.2",
+    "debug": "~4.1.1",
+    "express": "~4.16.4",
+    "formidable": "~1.2.1",
+    "helmet": "~3.15.0",
+    "pg": "^7.8.0",
+    "pg-connection-string": "~2.0.0",
+    "shortid": "~2.2.14",
+    "supervisor": "~0.12.0",
+    "underscore": "~1.9.1"
+  },
   "keywords": [
     "low code",
     "CRUD",
     "model-driven",
     "MDA",
-    "REST",
     "platform",
+    "REST",
     "metadata",
     "database",
     "nodejs",
     "ORM",
     "SQL",
     "generator",
-    "express",
+    "API",
     "postgres",
     "javascript",
     "DRY"
-  ],
-  "dependencies": {
-    "express": "~4.16.4",
-    "csv-express": "~1.2.2",
-    "body-parser": "~1.18.3",
-    "helmet": "~3.15.0",
-    "debug": "~4.1.1",
-    "chalk": "~2.4.2",
-    "formidable": "~1.2.1",
-    "shortid": "~2.2.14",
-    "pg": "^7.8.0",
-    "pg-connection-string": "~2.0.0",
-    "supervisor": "~0.12.0",
-    "underscore": "~1.9.1"
-  }
+  ]
 }
