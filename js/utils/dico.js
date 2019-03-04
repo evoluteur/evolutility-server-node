@@ -148,10 +148,9 @@ function prepModel(m){
 			m.prepared = true;
 		}
 		return m;
-	}else{
-		console.log('Error in "prepModel": model ="'+m+'".')
-		return null;
 	}
+	console.error('Error in "prepModel": model ="'+m+'".')
+	return null;
 }
 
 module.exports = {

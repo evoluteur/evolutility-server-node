@@ -67,7 +67,7 @@ module.exports = [
   },
   {
     "id": 5,
-    "name": "L’ardoise Bistro",
+    "name": "L’Ardoise Bistro",
     "cuisine": 1,
     "price": 3,
     "web": "http://www.ardoisesf.com/",

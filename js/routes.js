@@ -17,7 +17,7 @@ const express = require('express'),
 	charts = require('./charts'),
 	info = require('./info');
 
-logger.ascii_art();
+logger.startupMessage();
 
 /*
 // ======  file server ====================================
