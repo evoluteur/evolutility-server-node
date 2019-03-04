@@ -4,7 +4,7 @@
  * Simple formatted console logger (not logging to file).
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2018 Olivier Giulieri
+ * (c) 2019 Olivier Giulieri
  ********************************************************* */
 
 const config = require('../../config.js'),
@@ -12,33 +12,48 @@ const config = require('../../config.js'),
 	chalk = require('chalk'),
 	consoleLog = config.consoleLog;
 
+const asciiArt = 
+'  ______          _           _ _ _\n'+
+' |  ____|        | |      /| (_) (_)/|\n'+
+' | |____   _____ | |_   _| |_ _| |_| |_ _   _\n'+
+' |  __\\ \\ / / _ \\| | | | | __| | | | __| | | |\n'+
+' | |___\\ V / (_) | | |_| | |_| | | | |_| |_| |\n'+
+' |______\\_/ \\___/|_|\\__,_|\\__|_|_|_|\\__|\\__, |\n'+
+'         ___  ___ _ ____   _____ _ __    __/ |\n'+
+'  ____  / __|/ _ \\ \'__\\ \\ / / _ \\ \'__|  |___/\n' + 
+' |____| \\__ \\  __/ |   \\ V /  __/ |\n'+
+'        |___/\\___|_|    \\_/ \\___|_|    v'+pkg.version+'\n'
+
 function green(msg){
 	if(consoleLog){
 		console.error(chalk.green(msg));
 	}
 }
 
+function maskedConnection(){
+	// TODO: is there other patterns?
+	const conn = config.connectionString ||''
+	const s = conn.split(':')
+	if(s.length>1) {
+		s[2] = '(SECRET)'+s[2].substring(s[2].indexOf('@'))
+		return s.join(':')
+	}
+	return 'N/A'
+}
+
 module.exports = {
 
-	ascii_art: function(){
-		if(consoleLog){
-			const apiRoot = 'http://localhost:'+config.apiPort+config.apiPath;
+	ascii_art: asciiArt,
 
-			console.log(
-				'  ______          _           _ _ _\n'+
-				' |  ____|        | |      /| (_) (_)/|\n'+
-				' | |____   _____ | |_   _| |_ _| |_| |_ _   _\n'+
-				' |  __\\ \\ / / _ \\| | | | | __| | | | __| | | |\n'+
-				' | |___\\ V / (_) | | |_| | |_| | | | |_| |_| |\n'+
-				' |______\\_/ \\___/|_|\\__,_|\\__|_|_|_|\\__|\\__, |\n'+
-				'         ___  ___ _ ____   _____ _ __    __/ |\n'+
-				'  ____  / __|/ _ \\ \'__\\ \\ / / _ \\ \'__|  |___/\n' + 
-				' |____| \\__ \\  __/ |   \\ V /  __/ |\n'+
-				'        |___/\\___|_|    \\_/ \\___|_|    v'+pkg.version+'\n\n'+
-				apiRoot+'\n\n'+
-				new Date() + '\n'
-			);
+	startupMessage: function(){
+		if(consoleLog){
+			console.log(asciiArt)
 		}
+		console.log('Evolutility server listening on port '+config.apiPort +
+			'\n\n - Evolutility API:     http://localhost:' + config.apiPort + config.apiPath +
+			'\n - Postgres connection: ' + maskedConnection() +
+			'\n - Postgres schema:     ' + config.schema +
+			'\n - Documentation:       ' + pkg.homepage)
 	},
 
 	logReq: function(title, req){
@@ -56,9 +71,12 @@ module.exports = {
 		}
 	},
 
-	logSQL: function (sql){
+	logSQL: function (sql, values){
 		if(consoleLog){
-			console.log('sql = '+sql+'\n');
+			console.log('sql = \n'+sql+'\n');
+			if(values){
+				this.logObject('values = \n', values)
+			}
 		}
 	},
 
