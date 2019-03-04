@@ -127,7 +127,7 @@ function prepModel(m){
 				}
 			}else{
 				m.searchFields = m.fields.filter(f => {
-					return f.inMany && fieldIsText(f.type)
+					return f.inMany && fieldIsText(f)
 				}).map(f => f.id)
 			}
 			// - Collections
