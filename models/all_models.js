@@ -12,4 +12,9 @@ module.exports = {
 
   test: require('./tests/test'),
   
+  
+  world: require('./designer/world'),
+  object: require('./designer/object'),
+  field: require('./designer/field'),
+  //fieldgroup: require('./designer/fieldgroup'),
 };
