@@ -1,13 +1,13 @@
 /*! *******************************************************
  *
  * evolutility-server-node :: utils/database.js
- * Methods to create new database from models.
+ * Methods to create postgres schema and tables from models.
  *
  * https://github.com/evoluteur/evolutility-server-node
  * (c) 2019 Olivier Giulieri
  ********************************************************* */
 
-var pg = require('pg'),
+const pg = require('pg'),
     path = require('path'),
     fs = require('fs'),
     parseConnection = require('pg-connection-string').parse;
@@ -16,17 +16,18 @@ var pg = require('pg'),
     { prepModel, fieldTypes} = require('../utils/dico');
 
 const ft = fieldTypes;
-var models = require('../../models/all_models.js');
-var data = require('../../models/data/all_data.js');
+const models = require('../../models/all_models.js');
+const data = require('../../models/data/all_data.js');
 
 // - options; mostly from in config.js
-var config = require(path.join(__dirname, '../', '../', 'config')),
+const config = require(path.join(__dirname, '../', '../', 'config')),
     schema = '"'+config.schema+'"',
     //dbuser = 'evol',
     dbuser = 'postgres', // DB user
     sqlFile = true;     // log SQL to file
 
-var ft_postgreSQL = {
+const noTZ = ' without time zone'
+const ft_postgreSQL = {
     text: 'text',
     textmultiline: 'text',
     boolean: 'boolean',
@@ -34,8 +35,8 @@ var ft_postgreSQL = {
     decimal: 'double precision',
     money: 'money',
     date: 'date',
-    datetime: 'timestamp without time zone',
-    time: 'time without time zone',
+    datetime: 'timestamp'+noTZ,
+    time: 'time'+noTZ,
     lov: 'integer',
     list: 'text[]', // many values for one field (behave like tags - return an array of strings)
     html: 'text',
@@ -48,19 +49,134 @@ var ft_postgreSQL = {
     json: 'json'
 };
 
+const sysColumns = {
+    'c_date': true,
+    'u_date': true,
+    'c_uid': true,
+    'u_uid': true,
+    'nb_comments': true,
+    'nb_ratings': true,
+    'avg_ratings': true,
+}
 
+const stringValue = v => v ? ("'"+v.replace(/'/g, "''")+"'") : 'NULL'
+
+const lovTable = f => schema+'."'+(f.lovtable ? f.lovtable : (tableName+'_'+f.id))+'"';
+
+function sqlInsert(tableNameSchema, m, data){
+    const { pkey, fieldsH } = m
+    let sqlData = ''
+    // -- insert sample data
+    if(data){
+        let prevCols = ''
+        data.forEach(function(row){
+            var ns=[], vs=[];
+            var f, v;
+            if(row[pkey]){
+                ns.push(pkey)
+                vs.push(row[pkey])
+            }
+            for(let fid in row){
+                const f = fieldsH[fid];
+                if(f && fid!==pkey){
+                    v = row[fid];
+                    ns.push('"'+(f.column || f.id)+'"');
+                    if(f.type===ft.lov){
+                        //TODO: parseint?
+                        v=v||'null'//"['error']";
+                    }else if(f.type===ft.json){
+                        v = "'"+ JSON.stringify(v) +"'";
+                    }else if(_.isArray(v)){
+                        // TODO: 
+                        //v='null';
+                        //v = '['+v.map(stringValue).join(',')+']';
+                        v='null'//"['error']";
+                    }else if(_.isObject(v)){
+                        v = "'"+ JSON.stringify(v) +"'";
+                    }else if(v===null){
+                        v = 'null';
+                    }else if(_.isString(v)){
+                    //}else if(v && (typeof v)==='string'){
+                        v = stringValue(v);
+                    }
+                    vs.push(v);
+                }
+            }
+            const curCols = ns.join(',')
+
+            if(curCols === prevCols){
+                sqlData += ',' 
+            }else{
+                sqlData += (prevCols ? ';\n' : '\n') +
+                    'INSERT INTO ' + tableNameSchema + 
+                    '(' + curCols + ') values'
+                prevCols = curCols
+            }
+            sqlData += '\n(' + vs.join(',') + ')'
+        });
+        sqlData += ';\n'
+    }
+    return sqlData
+}
+
+function sqlCreatePopulateLOV(f, tableName, lovIncluded){
+    const t = lovTable(f);
+    const icons = f.lovicon || false;
+    let sql = ''
+
+    if(lovIncluded.indexOf(t)<0){
+        // - create lov table
+        // TODO: iconfont
+        sql = 'CREATE TABLE IF NOT EXISTS '+t+
+                '(id serial NOT NULL, '+
+                'name text NOT NULL,'+
+                (icons?'icon text,':'')+
+                ' CONSTRAINT '+(tableName+'_'+f.id).toLowerCase()+'_pkey PRIMARY KEY (id));\n\n';
+        
+        // - populate lov table
+        const insertSQL = 'INSERT INTO '+t+'(id, name'+(icons ? ', icon':'')+') VALUES ';
+        if(f.list){
+            sql += insertSQL;
+            sql += f.list.map(icons ? 
+                (item) => '(' + item.id + ',' + stringValue(item.text) + ',\'' + (item.icon || '') + '\')'
+                 : 
+                (item) => '(' + item.id + ',' + stringValue(item.text)+ ')'
+            ).join(',\n')+';\n\n';
+        }
+        lovIncluded.push(t)
+    }
+    return sql
+}
+
+function sqlSchemaWithData(){
+    let sql = 'CREATE SCHEMA '+schema+' AUTHORIZATION '+dbuser+';\n\n';
+    let sqlData = ''
+    if(config.wTimestamp){
+        sql += 'CREATE OR REPLACE FUNCTION '+schema+'.u_date() RETURNS trigger\n'+
+            '    LANGUAGE plpgsql\n'+
+            '    AS $$\n'+
+            '  BEGIN\n    NEW.u_date = now();\n    RETURN NEW;\n  END;\n$$;\n\n';
+    }
+    for(let mid in models){
+        const sqls = model2SQL(mid);
+        sql += sqls[0]
+        sqlData += sqls[1]
+    }
+    return {
+        sql: sql,
+        sqlData: sqlData,
+    }
+}
 
 function model2SQL(mid){
     // -- generates SQL script to create a Postgres DB table for the ui model
-    var m = prepModel(models[mid]),
-        pkid = m.pkey,
-        tableName = m.table || m.id,
+    const m = prepModel(models[mid]);
+    let { pkey, fields } = m
+    let tableName = m.table || m.id,
         tableNameSchema = schema+'."'+tableName+'"',
         fieldsAttr = {},
-        fields = m.fields,
-        fieldsH = m.fieldsH,
         //subCollecs = m.collections,
-        fs = [pkid+' serial primary key'],
+        fs = [pkey+' serial primary key'],
         sql, sql0, 
         sqlIdx='',
         sqlData = '',
@@ -68,10 +184,10 @@ function model2SQL(mid){
 
     // fields
     fields.forEach(function(f){
-        if(f.column && f.column!==pkid && f.type!=='formula' && !fieldsAttr[f.column]){
+        if(f.column && f.column!==pkey && f.type!=='formula' && !fieldsAttr[f.column]){
             fieldsAttr[f.column] = true;
             // skip fields specified in config
-            if(['c_date','u_date','c_uid','u_uid','nb_comments','nb_ratings','avg_ratings'].indexOf(f.column)<0){
+            if(!sysColumns[f.column]){
                 const fcolumn = '"'+f.column+'"'
                 sql0 = ' '+fcolumn+' '+(ft_postgreSQL[f.type]||'text');
                 if(f.type===ft.lov){
@@ -88,10 +204,11 @@ function model2SQL(mid){
             }
         }
     });
+
     // - "who-is" columns to track creation and last modification.
     if(config.wTimestamp){
-        fs.push('c_date timestamp without time zone DEFAULT timezone(\'utc\'::text, now())');
-        fs.push('u_date timestamp without time zone DEFAULT timezone(\'utc\'::text, now())');
+        fs.push('c_date timestamp'+noTZ+' DEFAULT timezone(\'utc\'::text, now())');
+        fs.push('u_date timestamp'+noTZ+' DEFAULT timezone(\'utc\'::text, now())');
     }
     // - "who-is" columns to track user who created and last modified the record.
     if(config.wWhoIs){
@@ -117,13 +234,6 @@ function model2SQL(mid){
         });
     }
 */
-    function stringValue(v){
-        if(v){
-            return "'"+v.replace(/'/g, "''")+"'";
-        }
-        return 'NULL';
-    }
-
     sql = 'CREATE TABLE '+tableNameSchema+'(\n' + fs.join(',\n') + ');\n';
     sql += sqlIdx;
 
@@ -138,137 +248,68 @@ function model2SQL(mid){
 
     // -- insert sample data
     if(data[mid]){
-        data[mid].forEach(function(row, idx){
-            sqlData+='INSERT INTO '+tableNameSchema;
-            var ns=[], vs=[];
-            var f, v;
-            for(var fid in row){
-                f = fieldsH[fid];
-                if(f && fid!==pkid){
-                    v = row[fid];
-                    ns.push('"'+(f.column || f.id)+'"');
-                    if(f.type===ft.lov){
-                        //TODO: parseint?
-                        v=v||'null'//"['error']";
-                    }else if(f.type===ft.json){
-                        v = "'"+ JSON.stringify(v) +"'";
-                    }else if(_.isArray(v)){
-                        // TODO: 
-                        //v='null';
-                        //v = '['+v.map(stringValue).join(',')+']';
-                        v='null'//"['error']";
-                    }else if(_.isObject(v)){
-                        v = "'"+ JSON.stringify(v) +"'";
-                    }else if(v===null){
-                        v = 'null';
-                    }else if(_.isString(v)){
-                    //}else if(v && (typeof v)==='string'){
-                        v = stringValue(v);
-                    }
-                    vs.push(v);
-                    fn = f.column || f.id;
-                }
-            }
-            sqlData+='('+ns.join(',')+') values('+vs.join(',')+');\n\n';
-        });
+        sqlData += sqlInsert(tableNameSchema, m, data[mid])
     }
 
     // - add lov tables
-    function lovTable(f){
-        return schema+'."'+(f.lovtable ? f.lovtable : (tableName+'_'+f.id))+'"';
-    }
-
     var lovFields=fields.filter(function(f){
         return (f.type===ft.lov || f.type===ft.list) && !f.object
     })
     var lovIncluded=[]
     if(lovFields){
-        lovFields.forEach(function(f, idx){
-            var t = lovTable(f);
-            var icons = f.lovicon || false;
-            if(lovIncluded.indexOf(t)<0){
-                // - create lov table
-                // TODO: iconfont
-                sql += 'CREATE TABLE IF NOT EXISTS '+t+
-                        '(id serial NOT NULL, '+
-                        'name text NOT NULL,'+
-                        (icons?'icon text,':'')+
-                        ' CONSTRAINT '+(tableName+'_'+f.id).toLowerCase()+'_pkey PRIMARY KEY (id));\n\n';
-                
-                // - populate lov table
-                const insertSQL = 'INSERT INTO '+t+'(id, name'+(icons ? ', icon':'')+') VALUES ';
-                if(f.list){
-                    sql += insertSQL;
-                    sql += f.list.map(icons ? 
-                        (item) => '(' + item.id + ',' + stringValue(item.text) + ',\'' + (item.icon || '') + '\')'
-                         : 
-                        (item) => '(' + item.id + ',' + stringValue(item.text)+ ')'
-                    ).join(',\n')+';\n\n';
-                }
-                lovIncluded.push(t)
-            }
-        })
+        lovFields.forEach(f => {sql += sqlCreatePopulateLOV(f, tableName, lovIncluded)})
     }
 
     return [sql, sqlData];
 }
 
-var sql = 'CREATE SCHEMA '+schema+' AUTHORIZATION '+dbuser+';\n\n';
-var sqlData = ''
-if(config.wTimestamp){
-    sql+='CREATE OR REPLACE FUNCTION '+schema+'.u_date() RETURNS trigger\n'+
-        '    LANGUAGE plpgsql\n'+
-        '    AS $$\n'+
-        '  BEGIN\n    NEW.u_date = now();\n    RETURN NEW;\n  END;\n$$;\n\n';
-}
-
-for(var mid in models){
-    var sqls = model2SQL(mid);
-    sql += sqls[0]
-    sqlData += sqls[1]
-}
-
-console.log(sql);
-
-if(sqlFile){
-    const d = new Date()
-    const fId = d.toISOString().replace(/:/g,'')
-    let header = `-- Evolutility v${version}
--- SQL Script to create Evolutility database on PostgreSQL.
+function logToFile(sql, isData){
+    if(sqlFile){
+        const d = new Date()
+        const fId = d.toISOString().replace(/:/g,'')
+        const action = isData ? 'populate' : 'create' 
+        const fileName = 'evol-db-'+(isData ? 'data':'schema')+'-'+fId+'.sql'
+        const header = 
+`-- Evolutility v${version}
+-- SQL Script to ${action} Evolutility demo DB on PostgreSQL.
 -- ${homepage}
--- ${d}\n\n`;
+-- ${d}\n\n`
 
-    fs.writeFile('evol-db-schema-'+fId+'.sql', header + sql, function(err){
-        if (err){
-            throw err;
-        }
-    })
-
-    header = header.replace('create', 'populate');
-    fs.writeFile('evol-db-data-'+fId+'.sql', header + sqlData, function(err){
-        if (err){
-            throw err;
-        }
-    })  
-}
-
-var dbConfig = parseConnection(config.connectionString)
-dbConfig.max = 10; // max number of clients in the pool 
-dbConfig.idleTimeoutMillis = 30000; // max client idle time before being closed
-var pool = new pg.Pool(dbConfig);
-pool.connect(function(err, client, done) {
-    console.log(sql);
-    client.query(sql, function(err, data) {
-        if(err){ 
-            done();
-            throw err;
-        }
-        client.query(sqlData, function(err, data) {
-            done();
-            if(err){
+        fs.writeFile(fileName, header + sql, function(err){
+            if (err){
                 throw err;
             }
-            console.log(sqlData);
         })
-    })
-});
+    }    
+}
+
+function createSchema(){
+    let { sql, sqlData } = sqlSchemaWithData()
+    const dbConfig = parseConnection(config.connectionString)
+    dbConfig.max = 10; // max number of clients in the pool 
+    dbConfig.idleTimeoutMillis = 30000; // max client idle time before being closed
+    const pool = new pg.Pool(dbConfig);
+    
+    pool.connect(function(err, client, done) {
+        // - Create schema and tables
+        console.log(sql);
+        logToFile(sql, false)
+        client.query(sql, function(err, data) {
+            if(err){ 
+                done();
+                throw err;
+            }
+            // - Populate tables
+            console.log(sqlData);
+            logToFile(sqlData, true)
+            client.query(sqlData, function(err, data) {
+                done();
+                if(err){
+                    throw err;
+                }
+            })
+        })
+    })    
+}
+
+createSchema()
