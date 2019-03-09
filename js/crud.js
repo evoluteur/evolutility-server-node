@@ -246,12 +246,12 @@ function getMany(req, res) {
 function getOne(req, res) {
     logger.logReq('GET ONE', req);
 
-    const mid = req.params.entity,
-        m = dico.getModel(mid),
-        pkid = m.pkey,
-        id = req.params.id;
+    const id = req.params.id,
+        mid = req.params.entity,
+        m = dico.getModel(mid)
 
     if(m){
+        const pkid = m.pkey
         let sqlParams = []
         let sql = 'SELECT t1.'+pkid+' as id, '+sqls.select(m.fields, m.collections, true)
 
