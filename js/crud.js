@@ -409,6 +409,11 @@ function lovOne(req, res) {
 // -----------------    SUB-COLLECTIONS   -----------------------------------------------
 // --------------------------------------------------------------------------------------
 
+// - helper for ORDER BY
+const collecOrderBy = collec => 
+    (collec.orderby ? collec.orderby : collec.fields[0].column) +
+        (collec.order==='desc' ? ' DESC' : ' ASC')
+
 // - returns sub-collection (nested in UI but relational in DB)
 function collecOne(req, res) {
     logger.logReq('GET ONE-COLLEC', req);
@@ -425,7 +430,7 @@ function collecOne(req, res) {
                 ' FROM '+schema+'."'+collec.table+'" AS t1'+
                     sqls.sqlFromLOVs(collec.fields, schema)+
                 ' WHERE t1."'+collec.column+'"=$1'+
-                ' ORDER BY t1.'+collec.fields[0].column+(collec.order==='desc'?' DESC':' ASC')+
+                ' ORDER BY t1.'+collecOrderBy(collec)+
                 ' LIMIT '+defaultPageSize+';';
 
         query.runQuery(res, sql, sqlParams, false);        
