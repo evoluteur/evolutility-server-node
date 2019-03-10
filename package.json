@@ -1,6 +1,6 @@
 {
   "name": "evolutility-server-node",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Model-driven RESTful endpoints for CRUD and more, using Node.js, Express, and Postgres.",
   "license": "MIT",
   "homepage": "https://github.com/evoluteur/evolutility-server-node",
@@ -28,7 +28,7 @@
     "underscore": "~1.9.1"
   },
   "keywords": [
-    "low code",
+    "low-code",
     "CRUD",
     "model-driven",
     "MDA",
