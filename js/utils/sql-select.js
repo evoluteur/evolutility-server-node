@@ -18,13 +18,13 @@ var columnName = {
 	'order': (f) => {
 		// - generate sql ORDER BY clause (for 1 field)
 		if(f){
-			if(f.type==='lov' && f.lovtable){
+			if(f.type===ft.lov && f.lovtable){
 				return '"'+f.id+'_txt"';
 			}else{
 				var col = 't1."'+f.column+'"';
 				if(f.type===ft.bool){
 					return 'CASE WHEN '+col+'=TRUE THEN TRUE ELSE FALSE END'
-				}else if(f.type==='text'){
+				}else if(f.type===ft.text){
 					// TODO: better way?
 					return 'LOWER('+col+')'
 				}
@@ -45,18 +45,18 @@ module.exports = {
 
 		if(fields){
 			fields.forEach(function(f, idx){
-				if(f.type==='lov' && action!=='C' && action!=='U'){
+				if(f.type===ft.lov && action!=='C' && action!=='U'){
 					sqlfs.push(f.t2+'.'+(f.lovcolumn ? f.lovcolumn : 'name')+' AS "'+f.id+'_txt"')
 					if(f.lovicon){
 						sqlfs.push(f.t2+'.icon AS "'+f.id+'_icon"')
 					}
 				}
 				let sql = tQuote+f.column
-				//if(f.type==='money'){
+				//if(f.type===ft.money){
 					//sql += '"::money'
-				//}else if(f.type==='integer'){
+				//}else if(f.type===ft.int){
 					//sql += '"::integer'
-				//}else if(f.type==='decimal'){
+				//}else if(f.type===ft.dec){
 					//sql += '"::float'
 				//}else{
 					sql += '"'
@@ -101,18 +101,18 @@ module.exports = {
 							vs.push(JSON.stringify(fv));
 							ns.push(fnName(f, vs.length));
 							break;
-						case 'boolean':
+						case ft.bool:
 							if(f.required && fv==='false'){
 								addInvalid(f.id, fv, 'required')
 							}
 							vs.push((fv&&fv!=='false')?'TRUE':'FALSE');
 							ns.push(fnName(f, vs.length));
 							break;
-						case 'date':
-						case 'time':
-						case 'datetime':
+						case ft.date:
+						case ft.time:
+						case ft.datetime:
 							// TODO: date validation
-						case 'lov':
+						case ft.lov:
 							vs.push((!fv)?null:fv);
 							ns.push(fnName(f, vs.length));
 							break;
