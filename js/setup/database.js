@@ -200,7 +200,9 @@ function model2SQL(mid){
                     sql0 += ' not null';
                 }
                 fs.push(sql0);
-                sqlComments += 'COMMENT ON COLUMN '+tableNameSchema+'.'+fcolumn+' IS \''+f.label.replace(/'/g,'')+'\';\n'
+                if(f.label){
+                    sqlComments += 'COMMENT ON COLUMN '+tableNameSchema+'.'+fcolumn+' IS \''+f.label.replace(/'/g,'')+'\';\n'
+                }
             }
         }
     });
