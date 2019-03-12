@@ -51,7 +51,7 @@ module.exports = {
 			"required": true,
 			"maxLength": 100,
 			"inMany": true,
-			"column": "entity_name"
+			"column": "entity"
 		},
 		{
 			"id": "name",
@@ -92,6 +92,7 @@ module.exports = {
 			"id": "collec-fields",
 			"table": "evol_field",
 			"column": "object_id",
+			orderby: 'position', // column but should be fieldid
 			"object": "field",
 			"fields": [
 				{
@@ -99,6 +100,14 @@ module.exports = {
 					"type": "text",
 					"label": "Label",
 					"column": "label"
+				},
+				{
+					"id": "type",
+					"type": "lov",
+					"label": "Type",
+					"lovicon": true,
+					"column": "type_id",
+					"lovtable": "evol_field_type",
 				},
 				{
 					"id": "column",

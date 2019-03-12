@@ -12,4 +12,8 @@ module.exports = {
 	track: require('./music/track-data'),
 
 	test: require('./test/test-data'),
+
+	world: require('./designer/world-data'),
+	object: require('./designer/object-data'),
+	field: require('./designer/field-data'),
 };
