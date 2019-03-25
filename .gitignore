@@ -1,5 +1,9 @@
 client/public/
 
+models-db
+models-all
+models-full
+
 evol-db-*.sql
 
 node_modules

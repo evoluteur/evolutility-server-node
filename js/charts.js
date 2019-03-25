@@ -4,7 +4,7 @@
  * Charts and grph data
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2018 Olivier Giulieri
+ * (c) 2019 Olivier Giulieri
  ********************************************************* */
 
 const dico = require('./utils/dico'),
@@ -23,10 +23,10 @@ function chartField(req, res) {
 
     const mid = req.params.entity,
         m = dico.getModel(mid),
-        fid = req.params.field;
-    let sqlParams = [],
-        sql;
-    const sqlCount = 'count(*)::integer AS value';
+        fid = req.params.field,
+        sqlCount = 'count(*)::integer AS value';
+    let sql,
+        sqlParams = [];
 
     if(m && fid){
         let f = m.fieldsH[fid];

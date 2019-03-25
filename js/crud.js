@@ -22,12 +22,7 @@ const schema = '"'+(config.schema || 'evolutility')+'"',
 // - build the header row for CSV export
 const csvHeaderColumn = config.csvHeader || 'label'
 
-function fieldId(f){
-    if(csvHeaderColumn==='label'){
-        return f.label || f.id
-    }
-    return f.id
-}
+const fieldId = f => csvHeaderColumn==='label' ? (f.label || f.id) : f.id
 
 function csvHeader(fields){
     let h = {'id': 'ID'}
@@ -43,7 +38,6 @@ function csvHeader(fields){
     return h;
 }
 
-
 // --------------------------------------------------------------------------------------
 // -----------------    GET MANY   ------------------------------------------------------
 // --------------------------------------------------------------------------------------
@@ -54,11 +48,11 @@ function sqlMany(m, req, allFields, wCount){
     let fs = allFields ? m.fields : m.fields.filter(dico.fieldInMany),    
         sqlParams = [];
         if(allFields && fs.length===0){
-            fs=allFields.slice(0, 5)
+            fs = allFields.slice(0, 5)
         }
     // ---- SELECTION
     let sqlSel = 't1.'+pkid+' as id, '+sqls.select(fs, false, true);
-    dico.systemManyFields.forEach((f) => {
+    dico.systemFields.forEach((f) => {
         sqlSel += ', t1.'+f.column
         if(f.type===ft.int){
             sqlSel += '::integer'
@@ -150,13 +144,12 @@ function sqlMany(m, req, allFields, wCount){
 
     // ---- SEARCHING
     if(req.query.search){ // TODO: use FTS
-        var sqlWsSearch = [];
-
         if(!m.searchFields){
             console.error('No searchFields are specified in model.')
         }else{
+            var sqlWsSearch = [];
             logger.logObject('search fields', m.searchFields);
-            var sqlP='"'+sqlOperators.ct+'$'+(sqlParams.length+1);
+            var sqlP = '"'+sqlOperators.ct+'$'+(sqlParams.length+1);
             m.searchFields.forEach(function(fid){
                 sqlWsSearch.push('t1."'+m.fieldsH[fid].column+sqlP);
             });
@@ -230,7 +223,7 @@ function getMany(req, res) {
         const format = req.query.format || null,
             isCSV = format==='csv',
             sq = sqlMany(m, req, isCSV, !isCSV),
-            sql = query.sqlQuery(sq);
+            sql = sqls.sqlQuery(sq);
 
         query.runQuery(res, sql, sq.params, false, format, isCSV ? csvHeader(m.fields) : null);
     }else{
@@ -329,7 +322,7 @@ function updateOne(req, res) {
         returnInvalid(res, q.invalids)
     }else if(m && id && q.names.length){
         q.values.push(id);
-        let sql = 'UPDATE '+m.schemaTable+' AS t1 SET '+ q.names.join(',') + 
+        const sql = 'UPDATE '+m.schemaTable+' AS t1 SET '+ q.names.join(',') + 
             ' WHERE '+pkid+'=$'+q.values.length+
             ' RETURNING '+pkid+' as id, '+sqls.select(m.fields, false, null, 'U')+';';
 
@@ -349,13 +342,12 @@ function deleteOne(req, res) {
     logger.logReq('DELETE ONE', req);
 
     const m = dico.getModel(req.params.entity),
-        pkid = m.pkey,
         id = req.params.id;
 
     if(m && id){
         // SQL Query > Delete Data
         var sql = 'DELETE FROM '+m.schemaTable+
-                ' WHERE '+pkid+'=$1 RETURNING '+pkid+'::integer AS id;';
+                ' WHERE '+m.pkid+'=$1 RETURNING '+m.pkid+'::integer AS id;';
                 
         query.runQuery(res, sql, [id], true);
     }else{

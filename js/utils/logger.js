@@ -13,16 +13,16 @@ const config = require('../../config.js'),
 	consoleLog = config.consoleLog;
 
 const asciiArt = 
-'  ______          _           _ _ _\n'+
-' |  ____|        | |      /| (_) (_)/|\n'+
-' | |____   _____ | |_   _| |_ _| |_| |_ _   _\n'+
-' |  __\\ \\ / / _ \\| | | | | __| | | | __| | | |\n'+
-' | |___\\ V / (_) | | |_| | |_| | | | |_| |_| |\n'+
-' |______\\_/ \\___/|_|\\__,_|\\__|_|_|_|\\__|\\__, |\n'+
-'         ___  ___ _ ____   _____ _ __    __/ |\n'+
-'  ____  / __|/ _ \\ \'__\\ \\ / / _ \\ \'__|  |___/\n' + 
-' |____| \\__ \\  __/ |   \\ V /  __/ |\n'+
-'        |___/\\___|_|    \\_/ \\___|_|    v'+pkg.version+'\n'
+`  ______          _           _ _ _
+ |  ____|        | |      /| (_) (_)/|
+ | |____   _____ | |_   _| |_ _| |_| |_ _   _
+ |  __\\ \\ / / _ \\| | | | | __| | | | __| | | |
+ | |___\\ V / (_) | | |_| | |_| | | | |_| |_| |
+ |______\\_/ \\___/|_|\\__,_|\\__|_|_|_|\\__|\\__, |
+         ___  ___ _ ____   _____ _ __    __/ |
+  ____  / __|/ _ \\ \'__\\ \\ / / _ \\ \'__|  |___/
+ |____| \\__ \\  __/ |   \\ V /  __/ |
+        |___/\\___|_|    \\_/ \\___|_|    v`+pkg.version
 
 function green(msg){
 	if(consoleLog){
@@ -32,9 +32,9 @@ function green(msg){
 
 function maskedConnection(){
 	// TODO: is there other patterns?
-	const conn = config.connectionString ||''
+	const conn = config.connectionString || ''
 	const s = conn.split(':')
-	if(s.length>1) {
+	if(s.length>1){
 		s[2] = '(SECRET)'+s[2].substring(s[2].indexOf('@'))
 		return s.join(':')
 	}
@@ -45,18 +45,18 @@ module.exports = {
 
 	ascii_art: asciiArt,
 
-	startupMessage: function(){
+	startupMessage(){
 		if(consoleLog){
 			console.log(asciiArt)
 		}
-		console.log('Evolutility server listening on port '+config.apiPort +
+		console.log('\nEvolutility server listening on port '+config.apiPort +
 			'\n\n - Evolutility API:     http://localhost:' + config.apiPort + config.apiPath +
 			'\n - Postgres connection: ' + maskedConnection() +
 			'\n - Postgres schema:     ' + config.schema +
 			'\n - Documentation:       ' + pkg.homepage)
 	},
 
-	logReq: function(title, req){
+	logReq(title, req){
 		if(consoleLog){
 			console.log(chalk.cyan('\n--- '+title+' : '+req.params.entity+' ---'));
 			console.log('params = '+JSON.stringify(req.params, null, 2));
@@ -65,13 +65,13 @@ module.exports = {
 		}
 	},
 
-	logObject: function(title, obj){
+	logObject(title, obj){
 		if(consoleLog){
 			console.log(title+' = '+JSON.stringify(obj, null, 2));
 		}
 	},
 
-	logSQL: function (sql, values){
+	logSQL(sql, values){
 		if(consoleLog){
 			console.log('sql = \n'+sql+'\n');
 			if(values){
@@ -80,17 +80,17 @@ module.exports = {
 		}
 	},
 
-	logCount: function(nbRecords){
+	logCount(nbRecords){
 		green('Sending '+nbRecords+' records.');
 	},
 	
 	green: green,
 
-	logSuccess: function(msg){
+	logSuccess(msg){
 		green(msg);
 	},
 
-	logError: function(err, modeInfo){
+	logError(err, modeInfo){
 		if(consoleLog){
 			console.error(chalk.red(err));
 			if(modeInfo){
@@ -99,7 +99,7 @@ module.exports = {
 		}
 	},
 
-	errorMsg: function(err, method){
+	errorMsg(err, method){
 		if(consoleLog){
 			this.logError(err);
 			return {

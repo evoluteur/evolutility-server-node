@@ -40,8 +40,7 @@ var ft = {
 };
 
 // - fields for comments, ratings...
-var systemFields = [] 		// all system fields
-var systemManyFields = []	// system fields in list and cards views
+var systemFields = [] 		// system fields to track records creation date, comments...
 var f
 
 if(config.wTimestamp){
@@ -74,7 +73,6 @@ if(config.wComments){
     	type: 'integer',
     	column:'nb_comments',
     }
-    systemManyFields.push(f)
     systemFields.push(f)
 }
 // - tracking ratings.
@@ -83,13 +81,11 @@ if(config.wRating){
     	type: 'integer',
     	column:'nb_ratings',
     }
-    systemManyFields.push(f)
     systemFields.push(f)
 	f = {
     	type: 'integer',
     	column:'avg_ratings',
     }
-    systemManyFields.push(f)
     systemFields.push(f)
 }
 
@@ -149,7 +145,7 @@ function prepModel(m){
 		}
 		return m;
 	}
-	console.error('Error in "prepModel": model ="'+m+'".')
+	console.error('Error: undefined model.')
 	return null;
 }
 
@@ -173,5 +169,4 @@ module.exports = {
 	fieldChartable: fieldChartable,
 
 	systemFields: systemFields,
-    systemManyFields: systemManyFields,
 }

@@ -3,7 +3,7 @@
  * evolutility-server-node :: info.js
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2018 Olivier Giulieri
+ * (c) 2019 Olivier Giulieri
  ********************************************************* */
 
 const {fieldInCharts} = require('./utils/dico'),
@@ -12,6 +12,16 @@ const {fieldInCharts} = require('./utils/dico'),
     models = require('../models/all_models'),
     config = require('../config.js');
 
+function getCharts(baseUrl, model) {
+    const charts = []
+    model.fields.forEach(function(f){
+        if(fieldInCharts(f)){
+            charts.push(baseUrl+'/chart/'+f.id)
+        }
+    })
+    return charts
+}
+
 // - returns list of all models and URLs to query them
 function apis(req, res) {
     logger.logReq('GET API', req);
@@ -19,22 +29,15 @@ function apis(req, res) {
     const baseUrl = req.protocol+'://'+req.headers.host+req.url
     const ms=[];
 
-    if(config.apiInfo){ 
+    if(config.apiInfo){
         for (let mid in models){
-            const model=models[mid]
+            const model = models[mid]
             if(model.active){
-                const charts = []
-                model.fields.forEach(function(f){
-                    if(fieldInCharts(f)){
-                        charts.push(baseUrl+mid+'/chart/'+f.id)
-                    }
-                })
                 ms.push({
                     id: mid,
-                    //title: model.title || model.label || '',
                     list: baseUrl+mid,
-                    charts: charts,
-                    stats: baseUrl+mid+'/stats'
+                    charts: getCharts(baseUrl+mid, model),
+                    stats: baseUrl+mid+'/stats',
                 })
             }
         }

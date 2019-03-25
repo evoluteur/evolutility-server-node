@@ -10,8 +10,7 @@
 const pg = require('pg'),
     path = require('path'),
     fs = require('fs'),
-    parseConnection = require('pg-connection-string').parse;
-    _ = require('underscore'),
+    parseConnection = require('pg-connection-string').parse,
     { version, homepage } = require('../../package.json'),
     { prepModel, fieldTypes} = require('../utils/dico');
 
@@ -71,7 +70,6 @@ function sqlInsert(tableNameSchema, m, data){
         let prevCols = ''
         data.forEach(function(row){
             var ns=[], vs=[];
-            var f, v;
             if(row[pkey]){
                 ns.push(pkey)
                 vs.push(row[pkey])
@@ -79,31 +77,34 @@ function sqlInsert(tableNameSchema, m, data){
             for(let fid in row){
                 const f = fieldsH[fid];
                 if(f && fid!==pkey){
-                    v = row[fid];
-                    ns.push('"'+(f.column || f.id)+'"');
-                    if(f.type===ft.lov){
-                        //TODO: parseint?
-                        v=v||'null'//"['error']";
-                    }else if(f.type===ft.json){
-                        v = "'"+ JSON.stringify(v) +"'";
-                    }else if(_.isArray(v)){
-                        // TODO: 
-                        //v='null';
-                        //v = '['+v.map(stringValue).join(',')+']';
-                        v='null'//"['error']";
-                    }else if(_.isObject(v)){
-                        v = "'"+ JSON.stringify(v) +"'";
-                    }else if(v===null){
-                        v = 'null';
-                    }else if(_.isString(v)){
-                    //}else if(v && (typeof v)==='string'){
-                        v = stringValue(v);
+                    let v = row[fid];
+                    if(v!==null){
+                        ns.push('"'+(f.column || f.id)+'"');
+                        if(f.type===ft.lov){
+                            //TODO: parseint?
+                            v = v || null //"['error']";
+                        }else if(f.type===ft.json){
+                            v = "'"+ JSON.stringify(v) +"'";
+                        }else if(Array.isArray(v)){
+                            // TODO: 
+                            //v='null';
+                            //v = '['+v.map(stringValue).join(',')+']';
+                            v = null //"['error']";
+                        }else if(typeof(v)==='object'){
+                            if(v){
+                                v = "'"+ JSON.stringify(v) +"'";
+                            }else{
+                                v = null
+                            }
+                        }else if(typeof(v)==='string'){
+                        //}else if(v && (typeof v)==='string'){
+                            v = stringValue(v);
+                        }
+                        vs.push(v);
                     }
-                    vs.push(v);
                 }
             }
             const curCols = ns.join(',')
-
             if(curCols === prevCols){
                 sqlData += ',' 
             }else{
@@ -168,6 +169,8 @@ function sqlSchemaWithData(){
     }
 }
 
+const sqlComment = (target, targetName, targetId) => 'COMMENT ON '+target+' '+targetName+' IS \''+targetId.replace(/'/g,'')+'\';\n'
+
 function model2SQL(mid){
     // -- generates SQL script to create a Postgres DB table for the ui model
     const m = prepModel(models[mid]);
@@ -201,7 +204,7 @@ function model2SQL(mid){
                 }
                 fs.push(sql0);
                 if(f.label){
-                    sqlComments += 'COMMENT ON COLUMN '+tableNameSchema+'.'+fcolumn+' IS \''+f.label.replace(/'/g,'')+'\';\n'
+                    sqlComments += sqlComment('COLUMN', tableNameSchema+'.'+fcolumn, f.label)
                 }
             }
         }
@@ -245,7 +248,8 @@ function model2SQL(mid){
                 ' FOR EACH ROW EXECUTE PROCEDURE '+schema+'.u_date();\n';
     }
 
-    // Column description
+    // Comments on table and columns with description
+    sql += sqlComment('TABLE', tableNameSchema, m.title || m.label || m.table)
     sql += sqlComments
 
     // -- insert sample data
@@ -267,9 +271,9 @@ function model2SQL(mid){
 
 function logToFile(sql, isData){
     if(sqlFile){
-        const d = new Date()
-        const fId = d.toISOString().replace(/:/g,'')
-        const action = isData ? 'populate' : 'create' 
+        const d = new Date(),
+            fId = d.toISOString().replace(/:/g,''),
+            action = isData ? 'populate' : 'create' 
         const fileName = 'evol-db-'+(isData ? 'data':'schema')+'-'+fId+'.sql'
         const header = 
 `-- Evolutility v${version}

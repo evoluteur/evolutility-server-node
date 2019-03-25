@@ -3,7 +3,7 @@
  * evolutility-server-node :: utils/sql-select.js
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2018 Olivier Giulieri
+ * (c) 2019 Olivier Giulieri
  ********************************************************* */
 
 const dico = require('./dico')
@@ -34,12 +34,32 @@ var columnName = {
 	}
 }
 
+// - concatenate SQL query
+function sqlQuery(q){
+    let sql = 'SELECT '+q.select+
+        ' FROM '+q.from;
+    if(q.where.length){
+        sql += ' WHERE '+q.where.join(' AND ');
+    }
+    if(q.group) {
+        sql += ' GROUP BY '+q.group;
+    }
+    if(q.order) {
+        sql += ' ORDER BY '+q.order;
+    }
+    sql += ' LIMIT '+(q.limit || defaultPageSize);
+    if(q.offset) {
+        sql += ' OFFSET '+parseInt(q.offset, 10);
+    }
+    return sql;
+}
+
 module.exports = {
 
 	columnName: columnName,
 	
 	// - returns the SELECT clause for SQL queries
-	select: function(fields, collecs, table, action){
+	select(fields, collecs, table, action){
 		var sqlfs = [],
 			tQuote = table ? 't1."' : '"';
 
@@ -77,7 +97,7 @@ module.exports = {
 	},
 
 	// - returns lists of names, values, invalids (for Insert or Update) 
-	namedValues: function(m, req, action){
+	namedValues(m, req, action){
 		var fnName = columnName[action],
 			ns = [],
 			vs = [],
@@ -156,7 +176,7 @@ module.exports = {
 	},
 
 	// - returns sql (obj) ORDER BY clause for many fields
-	sqlOrderFields: function(m, fullOrder){
+	sqlOrderFields(m, fullOrder){
 		const qos = fullOrder.split(',');
 
 		return qos.map(function(qo){
@@ -173,7 +193,7 @@ module.exports = {
 	},
 
 	// - returns SQL list of joined tables for lov fields
-	sqlFromLOVs: function(fields, schema){
+	sqlFromLOVs(fields, schema){
 		let sql = '';
 
 		fields.forEach(function(f, idx){
@@ -183,6 +203,8 @@ module.exports = {
 			}
 		})
 		return sql;
-	}
+	},
+
+    sqlQuery: sqlQuery,
 
 }
