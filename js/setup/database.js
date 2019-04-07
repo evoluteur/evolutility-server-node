@@ -1,11 +1,10 @@
-/*! *******************************************************
- *
+/*! 
  * evolutility-server-node :: utils/database.js
  * Methods to create postgres schema and tables from models.
  *
  * https://github.com/evoluteur/evolutility-server-node
  * (c) 2019 Olivier Giulieri
- ********************************************************* */
+ */
 
 const pg = require('pg'),
     path = require('path'),
@@ -65,6 +64,7 @@ const lovTable = f => schema+'."'+(f.lovtable ? f.lovtable : (tableName+'_'+f.id
 function sqlInsert(tableNameSchema, m, data){
     const { pkey, fieldsH } = m
     let sqlData = ''
+    let maxId = -1
     // -- insert sample data
     if(data){
         let prevCols = ''
@@ -73,6 +73,9 @@ function sqlInsert(tableNameSchema, m, data){
             if(row[pkey]){
                 ns.push(pkey)
                 vs.push(row[pkey])
+                if(row[pkey] > maxId){
+                    maxId = row[pkey]
+                }
             }
             for(let fid in row){
                 const f = fieldsH[fid];
@@ -110,12 +113,18 @@ function sqlInsert(tableNameSchema, m, data){
             }else{
                 sqlData += (prevCols ? ';\n' : '\n') +
                     'INSERT INTO ' + tableNameSchema + 
-                    '(' + curCols + ') values'
+                    '(' + curCols + ') VALUES'
                 prevCols = curCols
             }
             sqlData += '\n(' + vs.join(',') + ')'
         });
         sqlData += ';\n'
+
+        if(maxId>0){
+            maxId++
+            sqlData += '\nALTER SEQUENCE '+schema+
+                '."'+m.table+'_'+pkey+'_seq" RESTART WITH '+maxId+';\n'
+        }
     }
     return sqlData
 }
@@ -124,25 +133,34 @@ function sqlCreatePopulateLOV(f, tableName, lovIncluded){
     const t = lovTable(f);
     const icons = f.lovicon || false;
     let sql = ''
+    let maxId = -1
 
     if(lovIncluded.indexOf(t)<0){
         // - create lov table
-        // TODO: iconfont
-        sql = 'CREATE TABLE IF NOT EXISTS '+t+
-                '(id serial NOT NULL, '+
-                'name text NOT NULL,'+
-                (icons?'icon text,':'')+
-                ' CONSTRAINT '+(tableName+'_'+f.id).toLowerCase()+'_pkey PRIMARY KEY (id));\n\n';
+        // TODO: icon font
+        sql = '\nCREATE TABLE IF NOT EXISTS '+t+
+                '(\n id serial primary key,\n'+
+                ' name text NOT NULL'+
+                (icons?',\n icon text':'')+
+                '\n);\n\n';
         
         // - populate lov table
         const insertSQL = 'INSERT INTO '+t+'(id, name'+(icons ? ', icon':'')+') VALUES ';
         if(f.list){
             sql += insertSQL;
-            sql += f.list.map(icons ? 
-                (item) => '(' + item.id + ',' + stringValue(item.text) + ',\'' + (item.icon || '') + '\')'
-                 : 
-                (item) => '(' + item.id + ',' + stringValue(item.text)+ ')'
-            ).join(',\n')+';\n\n';
+            sql += f.list.map(item => {
+                if(item.id && item.id > maxId){
+                    maxId = item.id
+                }
+                let txt = '(' + item.id + ',' + stringValue(item.text)
+                txt += icons ? (',\'' + (item.icon || '') + '\')') : ')'
+                return txt
+            }).join(',\n')+';\n\n';
+            if(maxId){
+                maxId++
+                sql += 'ALTER SEQUENCE '+schema+
+                    '."'+f.lovtable+'_id_seq" RESTART WITH '+maxId+';\n\n'
+            }
         }
         lovIncluded.push(t)
     }
@@ -159,7 +177,7 @@ function sqlSchemaWithData(){
             '  BEGIN\n    NEW.u_date = now();\n    RETURN NEW;\n  END;\n$$;\n\n';
     }
     for(let mid in models){
-        const sqls = model2SQL(mid);
+        const sqls = sqlModel(mid);
         sql += sqls[0]
         sqlData += sqls[1]
     }
@@ -171,7 +189,27 @@ function sqlSchemaWithData(){
 
 const sqlComment = (target, targetName, targetId) => 'COMMENT ON '+target+' '+targetName+' IS \''+targetId.replace(/'/g,'')+'\';\n'
 
-function model2SQL(mid){
+const sqlIndex = (index, table, column) => 'CREATE INDEX idx_'+index+' ON '+table+' USING btree ('+column+');\n';
+/*
+function sqlSearch(m){
+    const table = m.table||m.id
+    const schemaTable = schema+'."'+table+'"'
+    const fn = schema + '.search_' + table
+    const searchColumn = f => 't1.'+f.column+' ilike (\'%\' || search || \'%\') '
+    let searchColumns = m.searchFields
+
+return `
+create function ${fn}(search text) returns setof ${schemaTable} as $$
+select t1.*
+from ${schemaTable} as t1
+where t1.headline ilike ('%' || search || '%') or t1.body ilike ('%' || search || '%')
+$$ language sql stable;
+
+comment on function ${fn}(text) is 'Returns ${m.namePlural} containing a given search term.';
+`
+}
+*/
+function sqlModel(mid){
     // -- generates SQL script to create a Postgres DB table for the ui model
     const m = prepModel(models[mid]);
     let { pkey, fields } = m
@@ -197,8 +235,7 @@ function model2SQL(mid){
                         if(f.deletetrigger){
                             sql0 += ' NOT NULL REFERENCES '+schema+'."'+f.lovtable+'"(id) ON DELETE CASCADE'
                         }
-                        sqlIdx += 'CREATE INDEX idx_'+tableName+'_'+f.column.toLowerCase()+
-                            ' ON '+tableNameSchema+' USING btree ('+fcolumn+');\n';
+                        sqlIdx += sqlIndex(tableName+'_'+f.column.toLowerCase(), tableNameSchema, fcolumn)
                 }else if(f.required){
                     sql0 += ' not null';
                 }
@@ -212,34 +249,34 @@ function model2SQL(mid){
 
     // - "who-is" columns to track creation and last modification.
     if(config.wTimestamp){
-        fs.push('c_date timestamp'+noTZ+' DEFAULT timezone(\'utc\'::text, now())');
-        fs.push('u_date timestamp'+noTZ+' DEFAULT timezone(\'utc\'::text, now())');
+        fs.push(' c_date timestamp'+noTZ+' DEFAULT timezone(\'utc\'::text, now())');
+        fs.push(' u_date timestamp'+noTZ+' DEFAULT timezone(\'utc\'::text, now())');
     }
     // - "who-is" columns to track user who created and last modified the record.
     if(config.wWhoIs){
-        fs.push('c_uid integer');
-        fs.push('u_uid integer');   
+        fs.push(' c_uid integer');
+        fs.push(' u_uid integer');   
     }
 
     // - tracking number of comments.
     if(config.wComments){
-        fs.push('nb_comments integer DEFAULT 0');
+        fs.push(' nb_comments integer DEFAULT 0');
     }
 
     // - tracking ratings.
     if(config.wRating){
-        fs.push('nb_ratings integer DEFAULT 0');
-        fs.push('avg_ratings integer DEFAULT NULL'); // smallint ?
+        fs.push(' nb_ratings integer DEFAULT 0');
+        fs.push(' avg_ratings integer DEFAULT NULL'); // smallint ?
     }
 /*
     // subCollecs - as json columns
     if(subCollecs){
         subCollecs.forEach(function(c, idx){
-            fs.push(' "'+(c.column || c.id)+'" json');
+            fs.push('  "'+(c.column || c.id)+'" json');
         });
     }
 */
-    sql = 'CREATE TABLE '+tableNameSchema+'(\n' + fs.join(',\n') + ');\n';
+    sql = '\nCREATE TABLE '+tableNameSchema+'(\n' + fs.join(',\n') + '\n);\n';
     sql += sqlIdx;
 
     // - track updates
@@ -270,6 +307,7 @@ function model2SQL(mid){
 }
 
 function logToFile(sql, isData){
+    console.log(sql)
     if(sqlFile){
         const d = new Date(),
             fId = d.toISOString().replace(/:/g,''),
@@ -289,33 +327,41 @@ function logToFile(sql, isData){
     }    
 }
 
-function createSchema(){
+function createSchema(runSQL = true, logFile = true){
     let { sql, sqlData } = sqlSchemaWithData()
-    const dbConfig = parseConnection(config.connectionString)
-    dbConfig.max = 10; // max number of clients in the pool 
-    dbConfig.idleTimeoutMillis = 30000; // max client idle time before being closed
-    const pool = new pg.Pool(dbConfig);
-    
-    pool.connect(function(err, client, done) {
-        // - Create schema and tables
-        console.log(sql);
-        logToFile(sql, false)
-        client.query(sql, function(err, data) {
-            if(err){ 
-                done();
-                throw err;
+
+    if(runSQL){
+        const dbConfig = parseConnection(config.connectionString)
+        dbConfig.max = 10; // max number of clients in the pool 
+        dbConfig.idleTimeoutMillis = 30000; // max client idle time before being closed
+        const pool = new pg.Pool(dbConfig);
+        
+        pool.connect(function(err, client, done) {
+            // - Create schema and tables
+            if(logFile) {
+                logToFile(sql, false)
             }
-            // - Populate tables
-            console.log(sqlData);
-            logToFile(sqlData, true)
-            client.query(sqlData, function(err, data) {
-                done();
-                if(err){
+            client.query(sql, function(err, data) {
+                if(err){ 
+                    done();
                     throw err;
                 }
+                // - Populate tables
+                if(logFile) {
+                    logToFile(sqlData, true)
+                }
+                client.query(sqlData, function(err, data) {
+                    done();
+                    if(err){
+                        throw err;
+                    }
+                })
             })
         })
-    })    
+    }else if(logFile) {
+        logToFile(sql, false)
+        logToFile(sqlData, true)
+    }
 }
 
-createSchema()
+createSchema(true, true)
