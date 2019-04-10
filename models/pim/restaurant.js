@@ -23,7 +23,6 @@ var lov_prices = [
 ];
 
 module.exports = {
-    
     id: 'restaurant',
     active: true,
     table: 'restaurant',

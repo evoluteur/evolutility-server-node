@@ -20,10 +20,10 @@ module.exports = {
             label: 'Category', inMany: true,
             lovtable: 'task_category',
             list: [
-                {id: 1, text: 'Home'},
+                {id: 1, text: 'Personal'},
                 {id: 2, text: 'Work'},
                 {id: 3, text: 'Fun'},
-                {id: 4, text: 'Others'},
+                {id: 4, text: 'Projects'},
                 {id: 5, text: 'Misc.'}
             ]
         },

@@ -1,19 +1,18 @@
-/*! ***************************************************************************
- *
+/*!
  * evolutility :: utils/dico.js
  * Helper functions for metadata
  *
  * https://github.com/evoluteur/evolutility
  * (c) 2019 Olivier Giulieri
- *************************************************************************** */
+ */
 
-var models = require('../../models/all_models'),
-	config = require('../../config.js');
-
-var schema = '"'+(config.schema || 'evolutility')+'"';
+const models = require('../../models/all_models'),
+	config = require('../../config.js'),
+	modelIds = Object.keys(models),
+	schema = '"'+(config.schema || 'evolutility')+'"';
 
 // - Field Types
-var ft = {
+const ft = {
 	text: 'text',
 	textml: 'textmultiline',
 	bool: 'boolean',
@@ -37,11 +36,11 @@ var ft = {
 	json: 'json',
 	//rating: 'rating',
 	//widget: 'widget'
-};
+}
 
 // - fields for comments, ratings...
-var systemFields = [] 		// system fields to track records creation date, comments...
-var f
+let systemFields = [] 		// system fields to track records creation date, comments...
+let f
 
 if(config.wTimestamp){
     systemFields.push({
@@ -152,6 +151,8 @@ function prepModel(m){
 module.exports = {
 
 	fieldTypes: ft,
+
+	modelIds: modelIds,
 
 	getModel: mId => prepModel(models[mId]),
 

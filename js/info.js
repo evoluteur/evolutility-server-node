@@ -1,10 +1,9 @@
-/*! *******************************************************
- *
+/*!
  * evolutility-server-node :: info.js
  *
  * https://github.com/evoluteur/evolutility-server-node
  * (c) 2019 Olivier Giulieri
- ********************************************************* */
+ */
 
 const {fieldInCharts} = require('./utils/dico'),
     logger = require('./utils/logger'),
@@ -24,7 +23,7 @@ function getCharts(baseUrl, model) {
 
 // - returns list of all models and URLs to query them
 function apis(req, res) {
-    logger.logReq('GET API', req);
+    logger.logReq('GET APIs', req);
 
     const baseUrl = req.protocol+'://'+req.headers.host+req.url
     const ms=[];
@@ -38,6 +37,7 @@ function apis(req, res) {
                     list: baseUrl+mid,
                     charts: getCharts(baseUrl+mid, model),
                     stats: baseUrl+mid+'/stats',
+                    csv: baseUrl+mid+'?format=csv',
                 })
             }
         }

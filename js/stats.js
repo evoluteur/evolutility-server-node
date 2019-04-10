@@ -1,11 +1,11 @@
-/*! *******************************************************
+/*!
  * 
  * evolutility-server-node :: stats.js
  * Some data on the object like the min, max, average, and total for numeric fields.
  *
  * https://github.com/evoluteur/evolutility-server-node
  * (c) 2019 Olivier Giulieri
- ********************************************************* */
+ */
 
 var dico = require('./utils/dico'),
     query = require('./utils/query'),
@@ -15,7 +15,7 @@ var dico = require('./utils/dico'),
 
 const ft = dico.fieldTypes
 
-function minMax(fn, f){
+function sqlAggregate(fn, f){
     const num = f.type===ft.money ? '::numeric' : ''
     let tcast = '';
 
@@ -47,18 +47,20 @@ function numbers(req, res) {
         m.fields.forEach(function(f){
             if(dico.fieldIsNumeric(f)){
                 if(!dico.fieldIsDateOrTime(f)){
-                    sql += minMax('avg', f)
+                    sql += sqlAggregate('avg', f)
                 }
                 if(f.type===ft.money || f.type===ft.int){
-                    sql += minMax('sum', f)
+                    sql += sqlAggregate('sum', f)
                 }
-                sql += minMax('min', f)
-                sql += minMax('max', f)
+                sql += sqlAggregate('min', f)
+                sql += sqlAggregate('max', f)
             }
         })
         if(config.wTimestamp){
-            sql += ', max(u_date) AS u_date_max'
-            sql += ', (SELECT count(id)::integer '+sqlFROM+' WHERE u_date > NOW() - interval \'7 days\')  AS u_date_week_count'
+            sql += ', max(u_date) AS u_date_max' +
+                ', (SELECT count(id)::integer '+sqlFROM+
+                    ' WHERE u_date > NOW() - interval \'7 days\')'+
+                    ' AS u_date_week_count'
         }
         if(config.wComments){
             sql += ', sum(nb_comments::int)::int AS nb_comments'

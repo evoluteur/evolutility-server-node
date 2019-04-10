@@ -1,11 +1,10 @@
-/*! *******************************************************
- *
+/*! 
  * evolutility-server-node :: crud.js
  * CRUD (Create, Read, Update, Delete) end-points
  *
  * https://github.com/evoluteur/evolutility-server-node
  * (c) 2019 Olivier Giulieri
- ********************************************************* */
+*/
 
 const dico = require('./utils/dico'),
     ft = dico.fieldTypes,
@@ -35,7 +34,7 @@ function csvHeader(fields){
             h[f.id] = fieldId(f);
         }
     });
-    return h;
+    return h
 }
 
 // --------------------------------------------------------------------------------------
@@ -43,13 +42,23 @@ function csvHeader(fields){
 // --------------------------------------------------------------------------------------
 
 // - returns SQL for query returning a set of records
-function sqlMany(m, req, allFields, wCount){
+function SQLgetMany(m, req, isCSV, wCount){
     const pkid = m.pkey
-    let fs = allFields ? m.fields : m.fields.filter(dico.fieldInMany),    
-        sqlParams = [];
-        if(allFields && fs.length===0){
-            fs = allFields.slice(0, 5)
+    let sqlParams = [];
+    let fs
+
+    if(isCSV){
+        // - get all fields for CSV download
+        fs = m.fields
+    }else{
+        // - only get fields w/ inMany=true
+        fs = m.fields.filter(dico.fieldInMany)
+        // - if no fields are inMany then take the first 5 fields
+        if(fs.length===0){
+            fs = m.fields.slice(0, 5)
         }
+    }  
+
     // ---- SELECTION
     let sqlSel = 't1.'+pkid+' as id, '+sqls.select(fs, false, true);
     dico.systemFields.forEach((f) => {
@@ -78,14 +87,14 @@ function sqlMany(m, req, allFields, wCount){
         'nn': ' IS '
     };
 
-    var sqlWs = [];
-    for (var n in req.query){
+    let sqlWs = [];
+    for (let n in req.query){
         if (req.query.hasOwnProperty(n)) {
-            var f = (n===pkid) ? {column:pkid} : m.fieldsH[n];
+            const f = (n===pkid) ? {column:pkid} : m.fieldsH[n];
             if(f && ['select', 'filter', 'search', 'order', 'page', 'pageSize'].indexOf(f.column)<0){
-                var cs = req.query[n].split('.');
+                const cs = req.query[n].split('.');
                 if(cs.length){
-                    var cond=cs[0];
+                    const cond=cs[0];
                     if(sqlOperators[cond]){
                         if((cond==='eq' || cond==='ne') && dico.fieldIsText(f)){
                             if(cs[1]==='null'){
@@ -170,15 +179,14 @@ function sqlMany(m, req, allFields, wCount){
     }
     
     // ---- ORDERING
-    sqlOrder='';
-    var qOrder=req.query?req.query.order:null;
+    let sqlOrder = ''
+    const qOrder = req.query ? req.query.order : null
     if(qOrder){
         if(qOrder.indexOf(',')>-1){
             var qOs=qOrder.split(',');
             if(qOs){
-                sqlOrder+=qOs.map(qOs, function(qo){
-                    return sqls.sqlOrderFields(m, qo)
-                }).join(',');
+                sqlOrder += qOs.map(qOs, qo => sqls.sqlOrderFields(m, qo))
+                    .join(',');
             }
         }else{
             sqlOrder+=sqls.sqlOrderFields(m, qOrder);
@@ -188,8 +196,8 @@ function sqlMany(m, req, allFields, wCount){
     }
 
     // ---- LIMITING & PAGINATION
-    let offset=0,
-        qPage=req.query.page||0, 
+    let offset = 0,
+        qPage = req.query.page || 0, 
         qPageSize;
 
     if(req.query.format==='csv'){
@@ -221,8 +229,8 @@ function getMany(req, res) {
     
     if(m){
         const format = req.query.format || null,
-            isCSV = format==='csv',
-            sq = sqlMany(m, req, isCSV, !isCSV),
+            isCSV = format === 'csv',
+            sq = SQLgetMany(m, req, isCSV, !isCSV),
             sql = sqls.sqlQuery(sq);
 
         query.runQuery(res, sql, sq.params, false, format, isCSV ? csvHeader(m.fields) : null);
@@ -235,30 +243,39 @@ function getMany(req, res) {
 // -----------------    GET ONE   -------------------------------------------------------
 // --------------------------------------------------------------------------------------
 
+function SQLgetOne(id, m, res){
+    const pkid = m.pkey
+    let sqlParams = []
+    let sql = 'SELECT t1.'+pkid+' as id, '+sqls.select(m.fields, m.collections, true)
+
+    dico.systemFields.forEach(function(f){
+        sql += ', t1.'+f.column
+    })
+    sql += ' FROM '+m.schemaTable+' AS t1'+sqls.sqlFromLOVs(m.fields, schema)
+    if(parseInt(id)){
+        sqlParams.push(id)
+        sql += ' WHERE t1.'+pkid+'=$1'
+    }else{
+        const invalidID = 'Invalid id: "'+id+'".'
+        return res ? errors.badRequest(res, invalidID) : ('ERROR: '+invalidID)
+    }
+    sql += ' LIMIT 1;'
+    return {
+        sql: sql,
+        sqlParams: sqlParams,
+    }
+}
+
 // - get one record by ID
 function getOne(req, res) {
     logger.logReq('GET ONE', req);
-
     const id = req.params.id,
         mid = req.params.entity,
         m = dico.getModel(mid)
 
     if(m){
-        const pkid = m.pkey
-        let sqlParams = []
-        let sql = 'SELECT t1.'+pkid+' as id, '+sqls.select(m.fields, m.collections, true)
+        let { sql, sqlParams } = SQLgetOne(id, m, res)
 
-        dico.systemFields.forEach(function(f){
-            sql += ', t1.'+f.column
-        })
-        sql += ' FROM '+m.schemaTable+' AS t1'+sqls.sqlFromLOVs(m.fields, schema)
-        if(parseInt(id)){
-            sqlParams.push(id)
-            sql += ' WHERE t1.'+pkid+'=$1'
-        }else{
-            return errors.badRequest(res, 'Invalid id: "'+id+'".')
-        }
-        sql += ' LIMIT 1;';
         if(!sqlParams.length){
             sqlParams = null
         }
@@ -276,7 +293,6 @@ function getOne(req, res) {
 // - insert a single record
 function insertOne(req, res) {
     logger.logReq('INSERT ONE', req);
-
     const m = dico.getModel(req.params.entity),
         pkid = m.pkey,
         q = sqls.namedValues(m, req, 'insert');
@@ -312,7 +328,6 @@ function returnInvalid(res, invalids){
 // - update a single record
 function updateOne(req, res) {
     logger.logReq('UPDATE ONE', req);
-
     const m = dico.getModel(req.params.entity),
         pkid = m.pkey,
         id = req.params.id,
@@ -340,7 +355,6 @@ function updateOne(req, res) {
 // - delete a single record
 function deleteOne(req, res) {
     logger.logReq('DELETE ONE', req);
-
     const m = dico.getModel(req.params.entity),
         id = req.params.id;
 
@@ -363,7 +377,6 @@ function deleteOne(req, res) {
 // - returns list of possible values for a field (usually for dropdown)
 function lovOne(req, res) {
     logger.logReq('LOV ONE', req);
-
     const mid = req.params.entity,
         m = dico.getModel(mid),
         fid = req.params.field
@@ -409,7 +422,6 @@ const collecOrderBy = collec =>
 // - returns sub-collection (nested in UI but relational in DB)
 function collecOne(req, res) {
     logger.logReq('GET ONE-COLLEC', req);
-
     const mid = req.params.entity
         m = dico.getModel(mid),
         collecId = req.params.collec,
@@ -436,10 +448,11 @@ function collecOne(req, res) {
 // --------------------------------------------------------------------------------------
 
 module.exports = {
-
     // - CRUD
     getMany: getMany,
+    SQLgetMany: SQLgetMany,
     getOne: getOne,
+    SQLgetOne: SQLgetOne,
     insertOne: insertOne,
     updateOne: updateOne,
     deleteOne: deleteOne,

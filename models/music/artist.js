@@ -5,6 +5,7 @@
 
 module.exports = {
 	"id": "artist",
+    "active": true,
 	"table": "music_artist",
 	"titleField": "name",
 	"fields": [
