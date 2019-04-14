@@ -2,7 +2,7 @@ module.exports = [
     {
         "id": 1,
         "title": "To-Do List",
-        "active": false,
+        "active": true,
         "world": 1,
         "table": "todo",
         "entity": "todo",
@@ -13,7 +13,7 @@ module.exports = [
     {
         "id": 2,
         "title": "Address Book",
-        "active": false,
+        "active": true,
         "world": 1,
         "table": "contact",
         "entity": "contact",
@@ -24,7 +24,7 @@ module.exports = [
     {
         "id": 3,
         "title": "Graphic novels",
-        "active": false,
+        "active": true,
         "world": 1,
         "table": "comics",
         "entity": "comics",
@@ -35,7 +35,7 @@ module.exports = [
     {
         "id": 4,
         "title": "Restaurants",
-        "active": false,
+        "active": true,
         "world": 1,
         "table": "restaurant",
         "entity": "restaurant",
@@ -46,7 +46,7 @@ module.exports = [
     {
         "id": 5,
         "title": "Wine Cellar",
-        "active": false,
+        "active": true,
         "world": 1,
         "table": "wine",
         "entity": "winecellar",
@@ -57,7 +57,7 @@ module.exports = [
     {
         "id": 6,
         "title": "Wine Tasting",
-        "active": false,
+        "active": true,
         "world": 1,
         "table": "wine_tasting",
         "entity": "winetasting",
@@ -68,7 +68,7 @@ module.exports = [
     {
         "id": 7,
         "title": "Albums",
-        "active": false,
+        "active": true,
         "world": 2,
         "table": "album",
         "entity": "album",
@@ -79,7 +79,7 @@ module.exports = [
     {
         "id": 8,
         "title": "Artists",
-        "active": false,
+        "active": true,
         "world": 2,
         "table": "artist",
         "entity": "artist",
@@ -90,7 +90,7 @@ module.exports = [
     {
         "id": 9,
         "title": "Tracks",
-        "active": false,
+        "active": true,
         "world": 2,
         "table": "track",
         "entity": "track",
