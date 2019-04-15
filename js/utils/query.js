@@ -73,10 +73,6 @@ function runQuery(res, sql, values, singleRecord, format, header){
     })
 }
 
-    });
-
-}
-
 // --------------------------------------------------------------------------------------
 
 module.exports = {
