@@ -1,10 +1,9 @@
-/*! *******************************************************
- *
+/*!
  * evolutility-server-node :: routes.js
  *
  * https://github.com/evoluteur/evolutility-server-node
  * (c) 2019 Olivier Giulieri
- ********************************************************* */
+ */
 
 const express = require('express'),
 	router = express.Router(),
@@ -15,7 +14,8 @@ const express = require('express'),
 	crud = require('./crud'),
 	stats = require('./stats'),
 	charts = require('./charts'),
-	info = require('./info');
+	info = require('./info'),
+	dbStructure = require('./utils/db-structure');
 
 logger.startupMessage();
 
@@ -33,6 +33,14 @@ if(config.apiInfo){
 
 // ======  Version ====================================
 router.get(apiPath+'version', info.version);
+
+// ====== DB: query for list of tables and columns ====================================
+if(config.dbStructure){
+	// - all tables (except evol*)
+	router.get(apiPath+'db/tables', dbStructure.getTables);
+	// - columns of specific table
+	router.get(apiPath+'db/:table/columns', dbStructure.getColumns);
+}
 
 // ======  GET STATS ====================================
 router.get(apiPath+':entity/stats', stats.numbers);

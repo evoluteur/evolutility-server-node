@@ -1,11 +1,10 @@
-/*! *******************************************************
- *
+/*!
  * evolutility-server-node :: utils/logger.js
  * Simple formatted console logger (not logging to file).
  *
  * https://github.com/evoluteur/evolutility-server-node
  * (c) 2019 Olivier Giulieri
- ********************************************************* */
+ */
 
 const config = require('../../config.js'),
 	pkg = require('../../package.json'),
@@ -49,16 +48,20 @@ module.exports = {
 		if(consoleLog){
 			console.log(asciiArt)
 		}
-		console.log('\nEvolutility server listening on port '+config.apiPort +
-			'\n\n - Evolutility API:     http://localhost:' + config.apiPort + config.apiPath +
+		console.log('\nEvolutility server listening on port '+config.apiPort + '\n' +
+			'\n - REST API:            http://localhost:' + config.apiPort + config.apiPath +
 			'\n - Postgres connection: ' + maskedConnection() +
 			'\n - Postgres schema:     ' + config.schema +
 			'\n - Documentation:       ' + pkg.homepage)
 	},
 
-	logReq(title, req){
+	logHeader(ql, action, entity){
+		console.log(chalk.cyan('\n'+ql+' > '+action+' : '+entity));
+	},
+
+	logReq(title, req, reqType = 'REST'){
 		if(consoleLog){
-			console.log(chalk.cyan('\n--- '+title+' : '+req.params.entity+' ---'));
+			this.logHeader(reqType, title, req.params && req.params.entity)
 			console.log('params = '+JSON.stringify(req.params, null, 2));
 			console.log('query = '+JSON.stringify(req.query, null, 2));
 			console.log('body = '+JSON.stringify(req.body, null, 2));

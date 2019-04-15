@@ -363,7 +363,7 @@ In addition to CRUD, Evolutility-Server-Node provides a few endpoints for Charts
 
 #### Discovery
 
-Returns the list of Objects and their APIs (only objects flagged active are included).
+Returns the list of active Objects and their "GET" APIs.
 
 ```
 GET /
@@ -422,6 +422,26 @@ If the model has collections defined, they can be queried with this end-point.
 GET /<model.id>/collec/<collection.id>?id=<id>
 
 GET /winecellar/collec/wine_tasting?id=1
+```
+
+
+#### Schema tables and columns
+
+These endpoints query for the database structure (rather than the data), and returns lists of tables and columns.
+
+List of schema tables (props: table, type, readOnly).
+
+```
+GET /db/tables
+```
+
+List of columns (props: column, type, required) for a specified table.
+
+```
+GET /db/<table>/columns
+
+GET /db/contact/columns
+GET /db/task/columns
 ```
 
 
