@@ -1,10 +1,9 @@
-/*! *******************************************************
- *
+/*!
  * evolutility-server-node :: utils/sql-select.js
  *
  * https://github.com/evoluteur/evolutility-server-node
  * (c) 2019 Olivier Giulieri
- ********************************************************* */
+ */
 
 const dico = require('./dico')
 const ft = dico.fieldTypes
@@ -116,6 +115,10 @@ module.exports = {
 			if(f.column!='id' && f.type!='formula' && !f.readOnly){
 				var fv=req.body[f.id];
 				if(fv!==null && fv!==undefined){
+					const isNum = dico.fieldIsNumber(f)
+					if(fv==='' && isNum){
+						fv = null;
+					}
 					switch(f.type){
 						case 'panel-list':
 							vs.push(JSON.stringify(fv));
