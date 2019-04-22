@@ -58,7 +58,7 @@ function numbers(req, res) {
         })
         if(config.wTimestamp){
             sql += ', max(u_date) AS u_date_max' +
-                ', (SELECT count(id)::integer '+sqlFROM+
+                ', (SELECT count('+m.pKey+')::integer '+sqlFROM+
                     ' WHERE u_date > NOW() - interval \'7 days\')'+
                     ' AS u_date_week_count'
         }
