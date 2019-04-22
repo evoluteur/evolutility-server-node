@@ -1,11 +1,10 @@
-/*! *******************************************************
- *
+/*!
  * evolutility-server-node :: charts.js
  * Charts and grph data
  *
  * https://github.com/evoluteur/evolutility-server-node
  * (c) 2019 Olivier Giulieri
- ********************************************************* */
+ */
 
 const dico = require('./utils/dico'),
     ft = dico.fieldTypes,
@@ -35,12 +34,12 @@ function chartField(req, res) {
                 const col = '"'+f.column+'"',
                     sqlFrom = ' FROM '+m.schemaTable+' AS t1';
                     
-                if(f.type===ft.lov && f.lovtable){
-                    const clov = f.lovcolumn||'name';
+                if(f.type===ft.lov && f.lovTable){
+                    const clov = f.lovColumn||'name';
 
                     sql='SELECT t2.id, t2.'+clov+'::text AS label, '+sqlCount+
                         sqlFrom+
-                        ' LEFT JOIN '+schema+'."'+f.lovtable+'" AS t2'+
+                        ' LEFT JOIN '+schema+'."'+f.lovTable+'" AS t2'+
                             ' ON t1.'+col+'=t2.id'+
                         ' GROUP BY t2.id, t2.'+clov;
                 }else if(f.type===ft.bool){

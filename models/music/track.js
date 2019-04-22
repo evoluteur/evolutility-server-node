@@ -24,8 +24,8 @@ module.exports = {
 			"object": "album",
 			"inMany": true,
 			"column": "album_id",
-			"lovtable": "music_album",
-			"lovcolumn": "title"
+			"lovTable": "music_album",
+			"lovColumn": "title"
 		},
 		{
 			"id": "length",
@@ -74,7 +74,7 @@ module.exports = {
 			],
 			"inMany": true,
 			"column": "genre_id",
-			"lovtable": "music_genre"
+			"lovTable": "music_genre"
 		}
 	],
 	"collections": []

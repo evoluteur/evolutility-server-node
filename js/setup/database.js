@@ -59,7 +59,7 @@ const sysColumns = {
 
 const stringValue = v => v ? ("'"+v.replace(/'/g, "''")+"'") : 'NULL'
 
-const lovTable = f => schema+'."'+(f.lovtable ? f.lovtable : (tableName+'_'+f.id))+'"';
+const lovTable = f => schema+'."'+(f.lovTable ? f.lovTable : (tableName+'_'+f.id))+'"';
 
 function sqlInsert(tableNameSchema, m, data){
     const { pkey, fieldsH } = m
@@ -131,7 +131,7 @@ function sqlInsert(tableNameSchema, m, data){
 
 function sqlCreatePopulateLOV(f, tableName, lovIncluded){
     const t = lovTable(f);
-    const icons = f.lovicon || false;
+    const icons = f.lovIcon || false;
     let sql = ''
     let maxId = -1
 
@@ -159,7 +159,7 @@ function sqlCreatePopulateLOV(f, tableName, lovIncluded){
             if(maxId){
                 maxId++
                 sql += 'ALTER SEQUENCE '+schema+
-                    '."'+f.lovtable+'_id_seq" RESTART WITH '+maxId+';\n\n'
+                    '."'+f.lovTable+'_id_seq" RESTART WITH '+maxId+';\n\n'
             }
         }
         lovIncluded.push(t)
@@ -232,8 +232,8 @@ function sqlModel(mid){
                 const fcolumn = '"'+f.column+'"'
                 sql0 = ' '+fcolumn+' '+(ft_postgreSQL[f.type]||'text');
                 if(f.type===ft.lov){
-                        if(f.deletetrigger){
-                            sql0 += ' NOT NULL REFERENCES '+schema+'."'+f.lovtable+'"(id) ON DELETE CASCADE'
+                        if(f.deleteTrigger){
+                            sql0 += ' NOT NULL REFERENCES '+schema+'."'+f.lovTable+'"(id) ON DELETE CASCADE'
                         }
                         sqlIdx += sqlIndex(tableName+'_'+f.column.toLowerCase(), tableNameSchema, fcolumn)
                 }else if(f.required){

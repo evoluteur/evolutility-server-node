@@ -387,18 +387,18 @@ function lovOne(req, res) {
             // -- if field id = entity id, then use the entity itself as the lov
             f = {
                 id: 'entity',
-                lovcolumn: m.fields[0].column,
-                lovtable: m.table
+                lovColumn: m.fields[0].column,
+                lovTable: m.table
             }
         }
         if(f){
-            const col = f.lovcolumn || 'name'
+            const col = f.lovColumn || 'name'
             let sql = 'SELECT id, "'+col+'" as text'
             
-            if(f.lovicon){
+            if(f.lovIcon){
                 sql+=',icon'
             }
-            sql+=' FROM '+schema+'."'+f.lovtable+
+            sql+=' FROM '+schema+'."'+f.lovTable+
                 '" ORDER BY UPPER("'+col+'") ASC LIMIT '+lovSize+';';
             query.runQuery(res, sql, null, false);
         }else{

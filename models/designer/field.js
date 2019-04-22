@@ -90,12 +90,12 @@ module.exports = {
 					"icon": "designer/ft-url.gif"
 				}
 			],
-			"lovicon": true,
+			"lovIcon": true,
 			"defaultValue": 1,
 			"inMany": true,
 			"column": "type_id",
-			"lovtable": "evol_field_type",
-			"lovcolumn": "name"
+			"lovTable": "evol_field_type",
+			"lovColumn": "name"
 		},
 		{
 			"id": "column",
@@ -120,29 +120,29 @@ module.exports = {
 			"object": "object",
 			"required": true,
 			"noCharts": true,
-			"lovicon": false,
+			"lovIcon": false,
 			"inMany": true,
 			"column": "object_id",
-			"lovtable": "evol_object",
-			"lovcolumn": "title",
-			"deletetrigger": true
+			"lovTable": "evol_object",
+			"lovColumn": "title",
+			"deleteTrigger": true
 		},
 		{
-			"id": "lovtable",
+			"id": "lovTable",
 			"type": "text",
 			"label": "LOV Table",
 			"maxLength": 100,
 			"column": "lovtable"
 		},
 		{
-			"id": "lovcolumn",
+			"id": "lovColumn",
 			"type": "text",
 			"label": "LOV column",
 			"maxLength": 100,
 			"column": "lovcolumn"
 		},
 		{
-			"id": "lovicon",
+			"id": "lovIcon",
 			"type": "text",
 			"label": "LOV Icon",
 			"maxLength": 100,
@@ -153,7 +153,7 @@ module.exports = {
 			"type": "boolean",
 			"label": "List",
 			"inMany": true,
-			"column": "inMany"
+			"column": "inmany"
 		},
 		{
 			"id": "position",
@@ -212,7 +212,7 @@ module.exports = {
 			"type": "integer",
 			"label": "Min. length",
 			"noCharts": true,
-			"column": "minLength"
+			"column": "minlength"
 		},
 		{
 			"id": "maxLength",
@@ -220,42 +220,42 @@ module.exports = {
 			"label": "Max. length",
 			"noCharts": true,
 			"maxLength": 7,
-			"column": "maxLength"
+			"column": "maxlength"
 		},
 		{
-			"id": "minvalue",
-			"type": "integer",
+			"id": "minValue",
+			"type": "decimal",
 			"label": "Min. value",
 			"noCharts": true,
 			"maxLength": 4,
-			"column": "minValue"
+			"column": "minvalue"
 		},
 		{
-			"id": "maxvalue",
-			"type": "integer",
+			"id": "maxValue",
+			"type": "decimal",
 			"label": "Max. value",
 			"noCharts": true,
 			"maxLength": 4,
-			"column": "maxValue"
+			"column": "maxvalue"
 		},
 		{
 			"id": "regExp",
 			"type": "text",
 			"label": "Regular Expression",
 			"maxLength": 100,
-			"column": "regExp"
+			"column": "regexp"
 		},
 		{
 			"id": "noCharts",
 			"type": "boolean",
 			"label": "Exclude from Charts",
-			"column": "noCharts"
+			"column": "nocharts"
 		},
 		{
 			"id": "chartType",
 			"type": "text",
 			"label": "Default Chart Type",
-			"column": "chartType"
+			"column": "charttype"
 		},
 		{
 			"id": "help",
@@ -275,10 +275,10 @@ module.exports = {
 			"id": "defaultValue",
 			"type": "text",
 			"label": "Default Value",
-			"column": "defaultValue"
+			"column": "defaultvalue"
 		},
 		{
-			"id": "deletetrigger",
+			"id": "deleteTrigger",
 			"type": "boolean",
 			"label": "Delete trigger",
 			"column": "deletetrigger"

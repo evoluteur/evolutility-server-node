@@ -30,10 +30,10 @@ module.exports = {
 			"type": "lov",
 			"label": "World",
 			"object": "world",
-			"lovicon": false,
+			"lovIcon": false,
 			"inMany": true,
 			"column": "world_id",
-			"lovtable": "evol_world"
+			"lovTable": "evol_world"
 		},
 		{
 			"id": "table",
@@ -60,7 +60,7 @@ module.exports = {
 			"required": true,
 			"maxLength": 50,
 			"inMany": true,
-			"column": "name"
+			"column": "Name"
 		},
 		{
 			"id": "namePlural",
@@ -68,7 +68,7 @@ module.exports = {
 			"label": "name (plural)",
 			"required": true,
 			"maxLength": 50,
-			"column": "namePlural"
+			"column": "nameplural"
 		},
 		{
 			"id": "icon",
@@ -105,9 +105,9 @@ module.exports = {
 					"id": "type",
 					"type": "lov",
 					"label": "Type",
-					"lovicon": true,
+					"lovIcon": true,
 					"column": "type_id",
-					"lovtable": "evol_field_type",
+					"lovTable": "evol_field_type",
 				},
 				{
 					"id": "column",
@@ -118,7 +118,7 @@ module.exports = {
 					"id": "inMany",
 					"type": "boolean",
 					"label": "List",
-					"column": "inMany"
+					"column": "inmany"
 				},
 				{
 					"id": "width",

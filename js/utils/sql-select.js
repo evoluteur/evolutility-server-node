@@ -17,7 +17,7 @@ var columnName = {
 	'order': (f) => {
 		// - generate sql ORDER BY clause (for 1 field)
 		if(f){
-			if(f.type===ft.lov && f.lovtable){
+			if(f.type===ft.lov && f.lovTable){
 				return '"'+f.id+'_txt"';
 			}else{
 				var col = 't1."'+f.column+'"';
@@ -65,8 +65,8 @@ module.exports = {
 		if(fields){
 			fields.forEach(function(f, idx){
 				if(f.type===ft.lov && action!=='C' && action!=='U'){
-					sqlfs.push(f.t2+'.'+(f.lovcolumn ? f.lovcolumn : 'name')+' AS "'+f.id+'_txt"')
-					if(f.lovicon){
+					sqlfs.push(f.t2+'.'+(f.lovColumn ? f.lovColumn : 'name')+' AS "'+f.id+'_txt"')
+					if(f.lovIcon){
 						sqlfs.push(f.t2+'.icon AS "'+f.id+'_icon"')
 					}
 				}
@@ -148,11 +148,13 @@ module.exports = {
 									addInvalid(f.id, fv, 'max = '+f.max)
 								}
 							}
-							if(f.maxLength && fv.length>f.maxLength){
-								addInvalid(f.id, fv, 'maxLength = '+f.maxLength)
-							}
-							if(f.minLength && fv.length<f.minLength){
-								addInvalid(f.id, fv, 'minLength = '+f.minLength)
+							if(!isNum){
+								if(f.maxLength && fv.length>f.maxLength){
+									addInvalid(f.id, fv, 'maxLength = '+f.maxLength)
+								}
+								if(f.minLength && fv.length<f.minLength){
+									addInvalid(f.id, fv, 'minLength = '+f.minLength)
+								}
 							}
 							vs.push(fv);
 							ns.push(fnName(f, vs.length));
@@ -200,8 +202,8 @@ module.exports = {
 		let sql = '';
 
 		fields.forEach(function(f, idx){
-			if(f.type==='lov' && f.lovtable){
-				sql += ' LEFT JOIN '+schema+'."'+f.lovtable+'" AS '+f.t2+
+			if(f.type==='lov' && f.lovTable){
+				sql += ' LEFT JOIN '+schema+'."'+f.lovTable+'" AS '+f.t2+
 					' ON t1."'+f.column+'"='+f.t2+'.id';
 			}
 		})

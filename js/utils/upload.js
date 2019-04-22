@@ -1,10 +1,9 @@
-/*! *******************************************************
- *
+/*!
  * evolutility-server-node :: utils/upload.js
  *
  * https://github.com/evoluteur/evolutility-server-node
  * (c) 2019 Olivier Giulieri
- ********************************************************* */
+ */
 
 const path = require('path'),
     formidable = require('formidable'),

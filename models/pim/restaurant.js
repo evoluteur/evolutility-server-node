@@ -44,7 +44,7 @@ module.exports = {
             column: 'cuisine_id',
             label: 'Cuisine', width: 38,
             list: lov_cuisines,
-            lovtable: 'restaurant_cuisine',
+            lovTable: 'restaurant_cuisine',
             inMany: true
         },
         {
@@ -52,7 +52,7 @@ module.exports = {
             column: 'price_id',
             label: 'Price', width: 30,
             list: lov_prices,
-            lovtable: 'restaurant_price',
+            lovTable: 'restaurant_price',
             inMany: true
         },
         {

@@ -94,7 +94,7 @@ module.exports = {
             label: 'Category',
             inMany: true,
             list: contact_LOVs.categories,
-            lovtable: 'contact_category'
+            lovTable: 'contact_category'
         },
         {
             type: 'textmultiline', 

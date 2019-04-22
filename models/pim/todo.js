@@ -18,7 +18,7 @@ module.exports = {
         {
             id: 'category', column: 'category_id', type: 'lov', 
             label: 'Category', inMany: true,
-            lovtable: 'task_category',
+            lovTable: 'task_category',
             list: [
                 {id: 1, text: 'Personal'},
                 {id: 2, text: 'Work'},
@@ -31,7 +31,7 @@ module.exports = {
             id: 'priority', column: 'priority_id', type: 'lov', 
             label: 'Priority', 
             required: true, inMany: true,
-            lovtable: 'task_priority',
+            lovTable: 'task_priority',
             list: [
                 {id: 1, text: '1 - ASAP'},
                 {id: 2, text: '2 - Urgent'},

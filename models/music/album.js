@@ -31,8 +31,8 @@ module.exports = {
 			"required": true,
 			"inMany": true,
 			"column": "artist_id",
-			"lovtable": "music_artist",
-			"lovcolumn": "name"
+			"lovTable": "music_artist",
+			"lovColumn": "name"
 		},
 		{
 			"id": "description",
@@ -70,7 +70,7 @@ module.exports = {
 					"type": "lov",
 					"label": "Genre",
 					"column": "genre_id",
-					"lovtable": "music_genre"
+					"lovTable": "music_genre"
 				},
 				{
 					"id": "length",

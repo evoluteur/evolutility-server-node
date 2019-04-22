@@ -40,7 +40,7 @@ const fields = [
 		"list": flavors,
 		"inMany": true,
 		"column": "f_lov",
-		"lovtable": "z_test_flavor"
+		"lovTable": "z_test_flavor"
 	},
 	{
 		"id": "parent",
@@ -50,7 +50,7 @@ const fields = [
 		"required": true,
 		"inMany": true,
 		"column": "parent_id",
-		"lovtable": "z_test"
+		"lovTable": "z_test"
 	},
 	{
 		"id": "lovlc",
@@ -59,7 +59,7 @@ const fields = [
 		"list": flavors,
 		"defaultValue": 5,
 		"column": "f_lovlc",
-		"lovtable": "z_test_flavor"
+		"lovTable": "z_test_flavor"
 	},
 	{
 		"id": "date",

@@ -12,10 +12,10 @@ module.exports = {
     fields: [
         { 
             id: 'wine_id', column: 'wine_id', type: 'lov', 
-            lovtable: 'wine',
+            lovTable: 'wine',
             label: 'Wine', inMany: true,
             required: true,
-			deletetrigger: true,
+			deleteTrigger: true,
         },
         { 
             id: 'drink_date', column: 'drink_date', type: 'date', 

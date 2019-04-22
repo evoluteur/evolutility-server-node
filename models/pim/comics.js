@@ -31,7 +31,7 @@ module.exports =  {
                 {id: 13, text: 'Western'},
                 {id: 9, text: 'Youth'},
             ],
-            lovtable: 'comics_genre'
+            lovTable: 'comics_genre'
         },
         {
             id: 'authors', column: 'authors', type: 'text', inMany: true,
@@ -39,12 +39,12 @@ module.exports =  {
         },
         {
             id: 'language', column: 'language_id', type: 'lov', label: 'Language', inMany: true,
-            lovicon: true,
+            lovIcon: true,
             list: [
                 {id: 2, text: 'French', icon:'comics/flags/fr.png'},
                 {id: 1, text: 'American', icon:'comics/flags/us.png'}
             ],
-            lovtable: 'comics_language'
+            lovTable: 'comics_language'
         },
         {
             id: 'serie_nb', column: 'serie_nb', type: 'integer', inMany: true,
