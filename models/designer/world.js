@@ -5,7 +5,6 @@
 
 module.exports = {
 	"id": "world",
-	"pkey": "id",
 	"table": "evol_world",
 	"titleField": "name",
 	"fields": [

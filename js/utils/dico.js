@@ -105,6 +105,9 @@ function prepModel(m){
 		if(!m.prepared){
 			// - Model
 			m.schemaTable = schema+'."'+(m.table || m.id)+'"';
+			if(!m.pKey){
+				m.pKey = 'id';
+			}
 			// - Fields
 			m.fieldsH = {}
 			m.fields.forEach(function(f, idx){
@@ -136,9 +139,6 @@ function prepModel(m){
 						}
 					})
 				})
-			}
-			if(!m.pkey){
-				m.pkey = 'id';
 			}
 			m.prepared = true;
 		}

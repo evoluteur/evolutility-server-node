@@ -62,7 +62,7 @@ const stringValue = v => v ? ("'"+v.replace(/'/g, "''")+"'") : 'NULL'
 const lovTable = f => schema+'."'+(f.lovTable ? f.lovTable : (tableName+'_'+f.id))+'"';
 
 function sqlInsert(tableNameSchema, m, data){
-    const { pkey, fieldsH } = m
+    const { pKey, fieldsH } = m
     let sqlData = ''
     let maxId = -1
     // -- insert sample data
@@ -70,16 +70,16 @@ function sqlInsert(tableNameSchema, m, data){
         let prevCols = ''
         data.forEach(function(row){
             var ns=[], vs=[];
-            if(row[pkey]){
-                ns.push(pkey)
-                vs.push(row[pkey])
-                if(row[pkey] > maxId){
-                    maxId = row[pkey]
+            if(row[pKey]){
+                ns.push(pKey)
+                vs.push(row[pKey])
+                if(row[pKey] > maxId){
+                    maxId = row[pKey]
                 }
             }
             for(let fid in row){
                 const f = fieldsH[fid];
-                if(f && fid!==pkey){
+                if(f && fid!==pKey){
                     let v = row[fid];
                     if(v!==null){
                         ns.push('"'+(f.column || f.id)+'"');
@@ -123,7 +123,7 @@ function sqlInsert(tableNameSchema, m, data){
         if(maxId>0){
             maxId++
             sqlData += '\nALTER SEQUENCE '+schema+
-                '."'+m.table+'_'+pkey+'_seq" RESTART WITH '+maxId+';\n'
+                '."'+m.table+'_'+pKey+'_seq" RESTART WITH '+maxId+';\n'
         }
     }
     return sqlData
@@ -212,12 +212,12 @@ comment on function ${fn}(text) is 'Returns ${m.namePlural} containing a given s
 function sqlModel(mid){
     // -- generates SQL script to create a Postgres DB table for the ui model
     const m = prepModel(models[mid]);
-    let { pkey, fields } = m
+    let { pKey, fields } = m
     let tableName = m.table || m.id,
         tableNameSchema = schema+'."'+tableName+'"',
         fieldsAttr = {},
         //subCollecs = m.collections,
-        fs = [pkey+' serial primary key'],
+        fs = [pKey+' serial primary key'],
         sql, sql0, 
         sqlIdx='',
         sqlData = '',
@@ -225,7 +225,7 @@ function sqlModel(mid){
 
     // fields
     fields.forEach(function(f){
-        if(f.column && f.column!==pkey && f.type!=='formula' && !fieldsAttr[f.column]){
+        if(f.column && f.column!==pKey && f.type!=='formula' && !fieldsAttr[f.column]){
             fieldsAttr[f.column] = true;
             // skip fields specified in config
             if(!sysColumns[f.column]){

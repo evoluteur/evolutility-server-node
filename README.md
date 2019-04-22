@@ -97,7 +97,7 @@ Models contain the name of the driving table and the list of fields/columns pres
 |--------------|-----------------------------------------|
 | id           | Unique key to identify the entity (used as API parameter). |
 | table        | Driving database table name (there are secondary tables for fields of type "lov"). |
-| pkey         | Name of the Primary key column (single column of type serial). Default to "id". In the data the key is always called "id". |
+| pKey         | Name of the Primary key column (single column of type serial). Default to "id". In the data the key is always called "id". |
 | fields       | Array of fields.                        |
 | titleField   | Field id for the column value used as record title. |
 | searchFields | Array of field ids for fields used to perform searches.  |  
