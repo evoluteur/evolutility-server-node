@@ -19,6 +19,10 @@ const express = require('express'),
     helmet = require('helmet'),
     bodyParser = require('body-parser');
 
+const expressGraphQL = require('express-graphql');
+
+const { graphQL } = require('./config');
+
 var routes = require('./js/routes');
 
 const app = express();
@@ -38,6 +42,15 @@ app.use(function(req, res, next) {
   next();
 });
 
+// - GraphQL server
+if(graphQL){
+    app.use('/graphql', expressGraphQL({
+        schema: require('./js/graphql-schema'),
+        graphiql: true
+    }))
+}
+
+// - REST server
 app.use('/', routes);
 
 // catch 404 and forward to error handler

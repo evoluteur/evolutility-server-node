@@ -50,6 +50,9 @@ module.exports = {
 		}
 		console.log('\nEvolutility server listening on port '+config.apiPort + '\n' +
 			'\n - REST API:            http://localhost:' + config.apiPort + config.apiPath +
+			(config.graphQL ? 
+				'\n - GraphQL UI:          http://localhost:' + config.apiPort + '/graphql' 
+				: '') +
 			'\n - Postgres connection: ' + maskedConnection() +
 			'\n - Postgres schema:     ' + config.schema +
 			'\n - Documentation:       ' + pkg.homepage)

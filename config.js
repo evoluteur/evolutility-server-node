@@ -6,6 +6,8 @@ module.exports = {
 	apiPort: process.env.PORT || 2000,
 	dbStructure: true,
 
+	graphQL: true,
+
 	// DB connection
 	connectionString: process.env.DATABASE_URL || 'postgres://evol:love@localhost:5432/Evolutility', 
 	schema: 'evolutility',
