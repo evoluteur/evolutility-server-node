@@ -374,7 +374,8 @@ function lovOne(req, res) {
     logger.logReq('LOV ONE', req);
     const mid = req.params.entity,
         m = dico.getModel(mid),
-        fid = req.params.field
+        fid = req.params.field,
+        search = req.query.search
     let f = m.fieldsH[fid];
 
     if(m){
@@ -388,14 +389,18 @@ function lovOne(req, res) {
         }
         if(f){
             const col = f.lovColumn || 'name'
+            let params = null
             let sql = 'SELECT id, "'+col+'" as text'
-            
             if(f.lovIcon){
-                sql+=',icon'
+                sql+=', icon'
             }
-            sql+=' FROM '+schema+'."'+f.lovTable+
-                '" ORDER BY UPPER("'+col+'") ASC LIMIT '+lovSize+';';
-            query.runQuery(res, sql, null, false);
+            sql += ' FROM '+schema+'."'+f.lovTable+'"'
+            if(search){
+                sql += ' WHERE "'+col+'" ILIKE $1'
+                params = [searchParam(search)]
+            }
+            sql += ' ORDER BY UPPER("'+col+'") ASC LIMIT '+lovSize+';';
+            query.runQuery(res, sql, params, false);
         }else{
             res.json(logger.errorMsg('Invalid field \''+fid+'\'.', 'lovOne'));
         }

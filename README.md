@@ -394,12 +394,13 @@ GET /todo/stats
 
 #### Lists of Values
 
-Dropdown fields in the UI (field.type="lov" in the model) have a REST endpoint to get the list of values (used for dropdowns in the UI).
+Dropdown fields in the UI (field.type="lov" in the model) have a REST endpoint to get the list of values (used for dropdowns in the UI). This endpoint can also take a search query parameter.
 
 ```
 GET /<model.id>/lov/<field.id>
 
 GET /todo/lov/category
+GET /todo/lov/category?search=pro
 ```
 
 #### File upload
