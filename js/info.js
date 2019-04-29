@@ -5,40 +5,61 @@
  * (c) 2019 Olivier Giulieri
  */
 
-const {fieldInCharts} = require('./utils/dico'),
+const path = require('path'),
+    { fieldInCharts, fieldTypes } = require('./utils/dico'),
+    ft = fieldTypes,
     logger = require('./utils/logger'),
     pkg = require('../package.json'),
     models = require('../models/all_models'),
-    config = require('../config.js');
+    config = require('../config.js')
 
-function getCharts(baseUrl, model) {
-    const charts = []
+function getFieldsAPIs(protocol, baseUrl, model) {
+    const apis = {
+        charts: [],
+        lovs: [],
+    }
     model.fields.forEach(function(f){
         if(fieldInCharts(f)){
-            charts.push(baseUrl+'/chart/'+f.id)
+            apis.charts.push(protocol+path.join(baseUrl, model.id, 'chart', f.id))
+        }
+        if(f.type===ft.lov){
+            apis.lovs.push(protocol+path.join(baseUrl, model.id, 'lov', f.id))
         }
     })
-    return charts
+    return apis
 }
 
-// - returns list of all models and URLs to query them
+function baseURL(req){
+    return req.headers.host+req.url
+    //return req.headers.host+req.url.replace('/rest_api', '')
+}
+
+const entityAPIs = (protocol, baseUrl, model) => {
+    const pathToModel = protocol+path.join(baseUrl, model.id)
+    const { charts, lovs } = getFieldsAPIs(protocol, baseUrl, model)
+    return {
+        id: model.id,
+        list: pathToModel,
+        lovs: lovs,
+        charts: charts,
+        stats: pathToModel + '/stats',
+        csv: pathToModel+'?format=csv',
+        //rest_api: pathToModel+'/api'
+    }
+}
+
+// - returns list endpoints URLs for all active models
 function apis(req, res) {
     logger.logReq('GET APIs', req);
-
-    const baseUrl = req.protocol+'://'+req.headers.host+req.url
-    const ms=[];
+    const baseUrl = baseURL(req)
+    const ms = [];
+    const protocol = req.protocol+'://'
 
     if(config.apiInfo){
         for (let mid in models){
             const model = models[mid]
             if(model.active){
-                ms.push({
-                    id: mid,
-                    list: baseUrl+mid,
-                    charts: getCharts(baseUrl+mid, model),
-                    stats: baseUrl+mid+'/stats',
-                    csv: baseUrl+mid+'?format=csv',
-                })
+                ms.push(entityAPIs(protocol, baseUrl, model))
             }
         }
     }
@@ -48,7 +69,6 @@ function apis(req, res) {
 // - returns version number (from package.json)
 function version(req, res) {
     logger.logReq('GET VERSION', req);
-
     return res.json({
         name: pkg.name,
         version: pkg.version
@@ -58,8 +78,6 @@ function version(req, res) {
 // --------------------------------------------------------------------------------------
 
 module.exports = {
-
 	version: version,
     apis: apis,
-
 }
