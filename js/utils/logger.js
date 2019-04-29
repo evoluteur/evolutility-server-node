@@ -59,7 +59,7 @@ module.exports = {
 	},
 
 	logHeader(ql, action, entity){
-		console.log(chalk.cyan('\n'+ql+' > '+action+' : '+entity));
+		console.log(chalk.cyan('\n'+ql+' > '+action+' : '+(entity?entity:'')))
 	},
 
 	logReq(title, req, reqType = 'REST'){
@@ -96,11 +96,11 @@ module.exports = {
 		green(msg);
 	},
 
-	logError(err, modeInfo){
+	logError(err, moreInfo){
 		if(consoleLog){
 			console.error(chalk.red(err));
-			if(modeInfo){
-				console.error(chalk.red(modeInfo))
+			if(moreInfo){
+				console.error(chalk.red(moreInfo))
 			}
 		}
 	},

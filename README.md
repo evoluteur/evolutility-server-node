@@ -83,6 +83,7 @@ Configuration options are set in the file [config.js](https://github.com/evolute
 | wRating | Allow for user ratings. |
 | wTimestamp | Timestamp columns u_date and c_date w/ date of record creation and last update. |
 
+| schemaQueries | Enables endpoints to query for lists of tables and columns in the database schema. |
 
 <a name="Models"></a>
 ## Models
@@ -363,7 +364,7 @@ In addition to CRUD, Evolutility-Server-Node provides a few endpoints for Charts
 
 #### Discovery
 
-Returns the list of active Objects and their "GET" APIs.
+Returns the list of active objects and their "GET" APIs.
 
 ```
 GET /

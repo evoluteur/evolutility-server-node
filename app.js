@@ -17,13 +17,11 @@
 const express = require('express'),
     path = require('path'),
     helmet = require('helmet'),
-    bodyParser = require('body-parser');
+    bodyParser = require('body-parser'),
+    routes = require('./js/routes');
 
 const expressGraphQL = require('express-graphql');
-
 const { graphQL } = require('./config');
-
-var routes = require('./js/routes');
 
 const app = express();
 
@@ -32,7 +30,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, './client', 'public')));
 
-// prevent denial of cross origin requests
+// - prevent denial of cross origin requests
 // TODO: REMOVE IF UNNECESSARY
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -53,7 +51,7 @@ if(graphQL){
 // - REST server
 app.use('/', routes);
 
-// catch 404 and forward to error handler
+// - catch 404 and forward to error handler
 app.use(function(err, req, res, next) {
     //var err = new Error('Not Found');
     //err.status = 404;
@@ -85,6 +83,5 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
-
 
 module.exports = app;

@@ -22,6 +22,23 @@ const schema = '"'+(config.schema || 'evolutility')+'"',
 const csvHeaderColumn = config.csvHeader || 'label'
 
 const fieldId = f => csvHeaderColumn==='label' ? (f.label || f.id) : f.id
+const searchParam = search => search ? '%'+search.replace(/%/g, '\%')+'%' : '%'
+const sqlOperators = {
+    'eq': '=',
+    'ne': '<>',
+    'gt': '>',
+    'lt': '<',
+    'gte': '>=',
+    'lte': '<=',
+    'ct': ' ILIKE ',
+    'sw': ' ILIKE ',
+    'fw': ' ILIKE ',
+    'in': ' IN ',
+    '0': '=',
+    '1': '=',
+    'null': ' IS ',
+    'nn': ' IS '
+}
 
 function csvHeader(fields){
     let h = {'id': 'ID'}
@@ -70,23 +87,6 @@ function SQLgetMany(m, req, isCSV, wCount){
     const sqlFrom = m.schemaTable + ' AS t1' + sqls.sqlFromLOVs(fs, schema);
 
     // ---- FILTERING
-    const sqlOperators = {
-        'eq': '=',
-        'ne': '<>',
-        'gt': '>',
-        'lt': '<',
-        'gte': '>=',
-        'lte': '<=',
-        'ct': ' ILIKE ',
-        'sw': ' ILIKE ',
-        'fw': ' ILIKE ',
-        'in': ' IN ',
-        '0': '=',
-        '1': '=',
-        'null': ' IS ',
-        'nn': ' IS '
-    };
-
     let sqlWs = [];
     for (let n in req.query){
         if (req.query.hasOwnProperty(n)) {
@@ -163,7 +163,7 @@ function SQLgetMany(m, req, isCSV, wCount){
                 sqlWsSearch.push('t1."'+m.fieldsH[fid].column+sqlP);
             });
             if(sqlWsSearch.length){
-                sqlParams.push('%'+req.query.search.replace(/%/g, '\%')+'%');
+                sqlParams.push(searchParam(req.query.search));
                 sqlWs.push('('+sqlWsSearch.join(' OR ')+')');
             }
         }
@@ -274,7 +274,6 @@ function getOne(req, res) {
 
     if(m){
         let { sql, sqlParams } = SQLgetOne(id, m, res)
-
         if(!sqlParams.length){
             sqlParams = null
         }
@@ -339,7 +338,6 @@ function updateOne(req, res) {
         const sql = 'UPDATE '+m.schemaTable+' AS t1 SET '+ q.names.join(',') + 
             ' WHERE '+m.pKey+'=$'+q.values.length+
             ' RETURNING '+m.pKey+' as id, '+sqls.select(m.fields, false, null, 'U')+';';
-
         query.runQuery(res, sql, q.values, true);
     }else{
         errors.badRequest(res)
@@ -440,8 +438,6 @@ function collecOne(req, res) {
     }
 }
 
-
-// --------------------------------------------------------------------------------------
 // --------------------------------------------------------------------------------------
 
 module.exports = {
