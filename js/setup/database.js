@@ -247,7 +247,7 @@ function sqlModel(mid){
         }
     });
 
-    // - "who-is" columns to track creation and last modification.
+    // - "timestamp" columns to track creation and last modification.
     if(config.wTimestamp){
         fs.push(' c_date timestamp'+noTZ+' DEFAULT timezone(\'utc\'::text, now())');
         fs.push(' u_date timestamp'+noTZ+' DEFAULT timezone(\'utc\'::text, now())');

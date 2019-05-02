@@ -25,7 +25,6 @@ router.get('/', function(req, res, next) {
   res.sendFile(path.join(__dirname, '../', '../', 'index.html'));
 }); */
 
-
 // ======  APIs DISCOVERY ====================================
 if(config.apiInfo){
 	router.get(apiPath+'/', info.apis);
@@ -35,7 +34,7 @@ if(config.apiInfo){
 router.get(apiPath+'version', info.version);
 
 // ====== DB: query for list of tables and columns ====================================
-if(config.dbStructure){
+if(config.schemaQueries){
 	// - all tables (except evol*)
 	router.get(apiPath+'db/tables', dbStructure.getTables);
 	// - columns of specific table
