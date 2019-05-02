@@ -1,5 +1,4 @@
 /*!
- * 
  * evolutility-server-node :: stats.js
  * Some data on the object like the min, max, average, and total for numeric fields.
  *
@@ -57,13 +56,18 @@ function numbers(req, res) {
             }
         })
         if(config.wTimestamp){
+            // - last update
             sql += ', max(u_date) AS u_date_max' +
+                // - number of insert & updates this week
                 ', (SELECT count('+m.pKey+')::integer '+sqlFROM+
                     ' WHERE u_date > NOW() - interval \'7 days\')'+
-                    ' AS u_date_week_count'
+                    ' AS u_date_week_count' +
+                // - first insert
+                ', min(c_date) AS c_date_min' 
         }
         if(config.wComments){
-            sql += ', sum(nb_comments::int)::int AS nb_comments'
+            // - number of comments
+            sql += ', sum(nb_comments::integer)::integer AS nb_comments'
         }
         sql += sqlFROM
         query.runQuery(res, sql, [], true);
