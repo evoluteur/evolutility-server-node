@@ -193,6 +193,12 @@ module.exports = {
 			"column": "format"
 		},
 		{
+			"id": "labelShort",
+			"label": "Short label",
+			"type": "text",
+			"column": "labelshort"
+		},
+		{
 			"id": "required",
 			"type": "boolean",
 			"label": "Required",

@@ -44,6 +44,12 @@ module.exports = {
 			"column": "table"
 		},
 		{
+			"id": "pKey",
+			"column": "pkey",
+			"label": "Primary key column",
+			"type": "text",
+		},
+		{
 			"id": "entity",
 			"type": "text",
 			"label": "Entity Id",
@@ -59,7 +65,7 @@ module.exports = {
 			"required": true,
 			"maxLength": 50,
 			"inMany": true,
-			"column": "Name"
+			"column": "name"
 		},
 		{
 			"id": "namePlural",
