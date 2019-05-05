@@ -7,7 +7,7 @@
 */
 
 const graphql = require('graphql'),
-    { connectionString } = require('../config'),
+    config = require('../config'),
     pgp = require('pg-promise')(),
     crud = require('./crud'),
     logger = require('./utils/logger'),
@@ -17,9 +17,8 @@ const graphql = require('graphql'),
     errors = require('./utils/errors')
 
 const mIds = dico.modelIds
-
 const db = {}
-db.conn = pgp(connectionString);
+db.conn = pgp(config.connectionString);
 
 const {
    GraphQLObjectType,
@@ -78,7 +77,13 @@ const model2gqlObjectType = m => {
             // - add "shadow field" for text value of list/lov item
             fields[f.id+'_txt'] = gqlFieldLOVText(f)
         }
-    });
+    })
+    
+    // - "timestamp" columns to track creation and last modification.
+    if(config.wTimestamp){
+        fields['c_date'] = gqlField({type: ft.datetime})
+        fields['u_date'] =  gqlField({type: ft.datetime})
+    }
     return new GraphQLObjectType({
         name: m.id,
         fields: fields,
