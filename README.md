@@ -68,22 +68,22 @@ In a web browser, go to the url [http://localhost:2000/api/v1/evolutility/todo](
 Configuration options are set in the file [config.js](https://github.com/evoluteur/evolutility-server-node/blob/master/config.js).
 
 
-| Option       | Description                             |
-|--------------|-----------------------------------------|
-| apiPath   | Path for REST API (i.e.: "/api/v1/evolutility/").|
-| apiPort   | Port for REST API (i.e.: 2000). |
+| Option        | Description                             |
+|---------------|-----------------------------------------|
+| apiPath       | Path for REST API (i.e.: "/api/v1/evolutility/"). |
+| apiPort       | Port for REST API (i.e.: 2000). |
 | connectionString | DB connection string (i.e.: "postgres://evol:love@localhost:5432/evol"). |
-| schema | DB schema name (i.e.: "evolutility").|
-| pageSize | Number of rows per page in pagination (default = 50).|
-| lovSize | Maximum number of values allowed for form dropdowns (default = 100). |
-| csvSize | Maximum number of rows in CSV export (default = 1000).|
-| csvHeader | CSV list of labels for CSV export| | uploadPath | path for pictures and documents uploads (i.e.: "../evolutility-ui-react/public/pix/").|
-| consoleLog | Log SQL statements to console.|
-| wComments | Allow for user comments. |
-| wRating | Allow for user ratings. |
-| wTimestamp | Timestamp columns u_date and c_date w/ date of record creation and last update. |
+| schema        | DB schema name (i.e.: "evolutility").|
+| pageSize      | Number of rows per page in pagination (default = 50).|
+| lovSize       | Maximum number of values allowed for form dropdowns (default = 100). |
+| csvSize       | Maximum number of rows in CSV export (default = 1000).|
+| csvHeader     | CSV list of labels for CSV export| | uploadPath | path for pictures and documents uploads (i.e.: "../evolutility-ui-react/public/pix/").|
+| consoleLog    | Log SQL statements to console.|
+| wComments     | Allow for user comments (not implemented yet). |
+| wRating       | Allow for user ratings (not implemented yet). |
+| wTimestamp    | Timestamp columns u_date and c_date w/ date of record creation and last update. |
 | schemaQueries | Enables endpoints to query for lists of tables and columns in the database schema. |
-| GraphQL | Set GraphQL = true to unable GraphQL (Work In Progress) |
+| GraphQL       | Set GraphQL = true to unable GraphQL (Work In Progress) |
 
 <a name="Models"></a>
 ## Models
@@ -110,16 +110,16 @@ Models contain the name of the driving table and the list of fields/columns pres
 |--------------|---------------------------------------|
 | id           | Unique key for the field (can be the same as column but doesn't have to be). |
 | column       | Database column name for the field.    |
-| lovTable     | Table to join to for field value (only for fields of type "lov"). |  
-| lovColumn    | Column name (in the lovTable) for field value (only for fields of type "lov"). |  
+| lovTable     | Table to join to for field value (only for fields of type "lov"). |
+| lovColumn    | Column name (in the lovTable) for field value (only for fields of type "lov"). |
 | lovIcon      | Set to True to include icon with LOV items (only for fields of type "lov").    |
 | object       | Model id for the object to link to (only for fields of type "lov").    |
 | type         | Field type is not a database column type but more a UI field type. Possible field types: <ul><li>boolean</li><li>date</li><li>datetime</li><li>decimal</li><li>document</li><li>email</li><li>image</li><li>integer</li><li>lov (list of values)</li><li>money</li><li>text</li><li>textmultiline</li><li>time</li><li>url</li></ul> |
 | required     | Determines if the field is required for saving.      |
-| readonly     | Prevents field modification.          |                      
-| inMany       | Determines if the field is present (by default) in lists of records. | 
-| max, min     | Maximum/Minimum value allowed (only applies to numeric fields).      |    
-| maxLength, minLength | Maximum/Minimum length allowed (only applies to text fields).      | 
+| readOnly     | Display field as readOnly (not editable).            |
+| inMany       | Determines if the field is present (by default) in lists of records. |
+| max, min     | Maximum/Minimum value allowed (only applies to numeric fields).      |
+| maxLength, minLength | Maximum/Minimum length allowed (only applies to text fields).|
 | unique       | Values must be unique (not implemented yet).   |
 | noCharts     | Forbids charts on the field.   |
 | deleteTrigger | Deleting records in the lovTable will trigger a cascade delete (this property is only used while creating the database). |
@@ -133,7 +133,7 @@ Multiple Master-Details can be specified with collections.
 | Property     | Meaning                               |
 |--------------|---------------------------------------|
 | id           | Unique key for the collection.        |
-| table        | DB Table to query.      |
+| table        | DB Table to query (master table, other tables will be included in the query for "lov" fields). |
 | column       | Column in the detail table to match against id of object. |
 | object       | Model id for the object to display (optional).            |
 | order        | "asc"/"desc" for sorting by the first field in fields.      |

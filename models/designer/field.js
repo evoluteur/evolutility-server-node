@@ -206,7 +206,7 @@ module.exports = {
 			"column": "required"
 		},
 		{
-			"id": "readonly",
+			"id": "readOnly",
 			"type": "boolean",
 			"label": "Read only",
 			"defaultValue": false,

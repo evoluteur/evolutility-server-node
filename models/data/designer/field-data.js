@@ -1303,7 +1303,7 @@ module.exports = [
     "label": "Read only",
     "type": 3,
     "column": "readonly",
-    "fid": "readonly",
+    "fid": "readOnly",
     "object": 11,
     "inMany": false,
     "position": 128,
