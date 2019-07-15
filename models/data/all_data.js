@@ -1,3 +1,11 @@
+/*
+  ___         _      _   _ _ _ _         
+ | __|_ _____| |_  _| |_(_) (_) |_ _  _  
+ | _|\ V / _ \ | || |  _| | | |  _| || | 
+ |___|\_/\___/_|\_,_|\__|_|_|_|\__|\_, | 
+                                   |__/  
+https://github.com/evoluteur/evolutility-models
+*/
 
 module.exports = {
 	todo: require('./pim/todo-data'),

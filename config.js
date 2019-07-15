@@ -12,6 +12,7 @@ module.exports = {
 	connectionString: process.env.DATABASE_URL || 'postgres://evol:love@localhost:5432/Evolutility', 
 	schema: 'evolutility',
 
+	// OPTIONS
 	// Pagination and maximum number of rows
 	pageSize: 50,
 	lovSize: 100,
@@ -22,7 +23,6 @@ module.exports = {
 	wTimestamp: true,
 	// - "WhoIs" columns u_uid and c_uid w/ userid of creator and last modifier
 	wWhoIs: false,
-
 	// - Comments & Ratings (community feature) 
 	wComments: false,
 	wRating: false,

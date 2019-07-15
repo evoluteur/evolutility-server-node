@@ -187,7 +187,7 @@ function sqlSchemaWithData(){
     }
 }
 
-const sqlComment = (target, targetName, targetId) => 'COMMENT ON '+target+' '+targetName+' IS \''+targetId.replace(/'/g,'')+'\';\n'
+const sqlComment = (target, targetName, targetId) => 'COMMENT ON '+target+' '+targetName+' IS \''+(targetId?targetId.replace(/'/g,''):'')+'\';\n'
 
 const sqlIndex = (index, table, column) => 'CREATE INDEX idx_'+index+' ON '+table+' USING btree ('+column+');\n';
 /*
@@ -336,11 +336,11 @@ function createSchema(runSQL = true, logFile = true){
         dbConfig.idleTimeoutMillis = 30000; // max client idle time before being closed
         const pool = new pg.Pool(dbConfig);
         
+        if(logFile) {
+            logToFile(sql, false)
+        }
         pool.connect(function(err, client, done) {
             // - Create schema and tables
-            if(logFile) {
-                logToFile(sql, false)
-            }
             client.query(sql, function(err, data) {
                 if(err){ 
                     done();

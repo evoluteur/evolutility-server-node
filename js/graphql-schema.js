@@ -84,6 +84,23 @@ const model2gqlObjectType = m => {
         fields['c_date'] = gqlField({type: ft.datetime})
         fields['u_date'] =  gqlField({type: ft.datetime})
     }
+    /*
+    // - "who-is" columns to track user who created and last modified the record.
+    if(config.wWhoIs){
+        fields['c_uid'] =  gqlField({type: 'date'})
+        fields['u_uid'] = gqlField({type: 'date'})
+    }
+    */
+    // - tracking number of comments.
+    if(config.wComments){
+        fields['nb_comments'] =  gqlField({type: ft.int})
+    }
+    // - tracking ratings.
+    if(config.wRating){
+        fields['nb_ratings'] =  gqlField({type: ft.int})
+        fields['avg_ratings'] =  gqlField({type: ft.dec})
+    } 
+    
     return new GraphQLObjectType({
         name: m.id,
         fields: fields,
@@ -173,7 +190,7 @@ const makeGQLschema = () => {
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: makeGQLschema(),
-    description: 'Evolutility'
+    description: 'Evolutility active models.'
 })
 
 module.exports = new GraphQLSchema({

@@ -11,8 +11,8 @@ For a matching model-driven Web UI, use [Evolutility-UI-React](http://github.com
 1. [Installation](#Installation)
 2. [Setup](#Setup)
 3. [Configuration](#Configuration)
-4. [Models](#Models)
-5. [API](#API)
+4. [Models](#Models): [Object](#Object) - [Field](#Field) - [Collection](#Collection)
+5. [API](#API): [Get](#API_Get) - [Update](#API_Update) - [More](#API_Extras)
 6. [License](#License)
 
 
@@ -59,7 +59,7 @@ npm start
 
 **Note**: The database creation and population scripts are logged in the files "evol-db-schema-{datetime}.sql" and  "evol-db-data-{datetime}.sql".
 
-In a web browser, go to the url [http://localhost:2000/api/v1/evolutility/todo](http://localhost:2000/api/v1/evolutility/todo).
+In a web browser, go to [http://localhost:2000/api/v1/](http://localhost:2000/api/v1/) for REST or [http://localhost:2000/graphql](http://localhost:2000/graphql) for GraphQL.
 
 
 <a name="Configuration"></a>
@@ -70,7 +70,7 @@ Configuration options are set in the file [config.js](https://github.com/evolute
 
 | Option        | Description                             |
 |---------------|-----------------------------------------|
-| apiPath       | Path for REST API (i.e.: "/api/v1/evolutility/"). |
+| apiPath       | Path for REST API (i.e.: "/api/v1/"). |
 | apiPort       | Port for REST API (i.e.: 2000). |
 | connectionString | DB connection string (i.e.: "postgres://evol:love@localhost:5432/evol"). |
 | schema        | DB schema name (i.e.: "evolutility").|
@@ -91,7 +91,7 @@ Configuration options are set in the file [config.js](https://github.com/evolute
 To be accessible by the REST API, each database table must be described in a model.
 Models contain the name of the driving table and the list of fields/columns present in the API.
 
-
+<a name="Object"></a>
 ### Object
 
 | Property     | Description                             |
@@ -103,7 +103,7 @@ Models contain the name of the driving table and the list of fields/columns pres
 | titleField   | Field id for the column value used as record title. |
 | searchFields | Array of field ids for fields used to perform searches.  |  
 
-
+<a name="Field"></a>
 ### Field
 
 | Property     | Description                           |
@@ -125,7 +125,7 @@ Models contain the name of the driving table and the list of fields/columns pres
 | deleteTrigger | Deleting records in the lovTable will trigger a cascade delete (this property is only used while creating the database). |
 
 
-
+<a name="Collection"></a>
 ### Collection
 
 Multiple Master-Details can be specified with collections. 
@@ -142,6 +142,7 @@ Multiple Master-Details can be specified with collections.
 Example of collection in [Wine cellar](https://github.com/evoluteur/evolutility-server-node/blob/master/models/pim/winecellar.js).
 
 
+<a name="SampleModel"></a>
 ### Sample model
 
 Below is the model for a To-Do app.
@@ -209,9 +210,9 @@ Evolutility-Server-Node provides a generic RESTful API for CRUD (Create, Read, U
 The API is inspired from [PostgREST](http://postgrest.com).
 
 When running Evolutility-Server-Node locally, the url for the "todo" app is 
-[http://localhost:2000/api/v1/evolutility/todo](http://localhost:2000/api/v1/evolutility/todo).
+[http://localhost:2000/api/v1/todo](http://localhost:2000/api/v1/todo).
 
-
+<a name="API_Get"></a>
 ### Requesting Information
 
 #### Get One
@@ -313,6 +314,7 @@ GET /todo?format=csv
 ```
 Notes: In the returned data every object has an extra property "\_full_count" which indicate the total number of records in the query (before limit).
 
+<a name="API_Update"></a>
 ### Updating Data
 
 #### Record creation
@@ -358,6 +360,7 @@ DELETE /<model.id>/<id>
 DELETE /todo/5
 ```
 
+<a name="API_Extras"></a>
 ### Extras endpoints
 
 In addition to CRUD, Evolutility-Server-Node provides a few endpoints for Charts, Lists of values, file upload, and API discovery.
