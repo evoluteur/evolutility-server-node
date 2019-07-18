@@ -168,7 +168,8 @@ function sqlCreatePopulateLOV(f, tableName, lovIncluded){
 }
 
 function sqlSchemaWithData(){
-    let sql = 'CREATE SCHEMA '+schema+' AUTHORIZATION '+dbuser+';\n\n';
+    let sql = 'SET TIMEZONE=\'America/Los_angeles\';\n\n'+
+            'CREATE SCHEMA '+schema+' AUTHORIZATION '+dbuser+';\n\n';
     let sqlData = ''
     if(config.wTimestamp){
         sql += 'CREATE OR REPLACE FUNCTION '+schema+'.u_date() RETURNS trigger\n'+
