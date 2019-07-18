@@ -71,15 +71,15 @@ module.exports = {
 					}
 				}
 				let sql = tQuote+f.column
-				//if(f.type===ft.money){
-					//sql += '"::money'
-				//}else if(f.type===ft.int){
-					//sql += '"::integer'
-				//}else if(f.type===ft.dec){
-					//sql += '"::float'
-				//}else{
+				if(f.type===ft.money){
+					sql += '"::numeric::float8'
+				/*}else if(f.type===ft.int){
+					sql += '"::integer'
+				}else if(f.type===ft.dec){
+					sql += '"::float8'*/
+				}else{
 					sql += '"'
-				//}
+				}
 				if(f.column && f.id!=f.column){
 					sql += ' AS "'+f.id+'"'
 				}
