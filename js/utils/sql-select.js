@@ -70,15 +70,13 @@ module.exports = {
 						sqlfs.push(f.t2+'.icon AS "'+f.id+'_icon"')
 					}
 				}
-				let sql = tQuote+f.column
+				let sql = tQuote+f.column+'"'
 				if(f.type===ft.money){
-					sql += '"::numeric::float8'
+					sql += '::numeric::float8'
 				/*}else if(f.type===ft.int){
-					sql += '"::integer'
+					sql += '::integer'
 				}else if(f.type===ft.dec){
-					sql += '"::float8'*/
-				}else{
-					sql += '"'
+					sql += '::float8'*/
 				}
 				if(f.column && f.id!=f.column){
 					sql += ' AS "'+f.id+'"'

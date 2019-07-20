@@ -222,6 +222,7 @@ function SQLgetMany(m, req, isCSV, wCount){
 }
 
 // - returns a set of records (filtered and sorted)
+// - sample url: http://localhost:3000/api/v1/todo?category=eq.3&order=title.asc&pageSize=50
 function getMany(req, res) {
     logger.logReq('GET MANY', req);
     const mid = req.params.entity,
@@ -266,6 +267,7 @@ function SQLgetOne(id, m, res){
 }
 
 // - get one record by ID
+// - sample url: http://localhost:3000/api/v1/todo/16
 function getOne(req, res) {
     logger.logReq('GET ONE', req);
     const id = req.params.id,
@@ -274,7 +276,7 @@ function getOne(req, res) {
 
     if(m){
         let { sql, sqlParams } = SQLgetOne(id, m, res)
-        if(!sqlParams.length){
+        if(!(sqlParams && sqlParams.length)){
             sqlParams = null
         }
         query.runQuery(res, sql, sqlParams, true);        
@@ -370,6 +372,7 @@ function deleteOne(req, res) {
 // --------------------------------------------------------------------------------------
 
 // - returns list of possible values for a field (usually for dropdown)
+// - sample url: http://localhost:2000/api/v1/todo/lov/category
 function lovOne(req, res) {
     logger.logReq('LOV ONE', req);
     const mid = req.params.entity,
@@ -420,6 +423,7 @@ const collecOrderBy = collec =>
         (collec.order==='desc' ? ' DESC' : ' ASC')
 
 // - returns sub-collection (nested in UI but relational in DB)
+// - sample url: http://localhost:3000/api/v1/winecellar/collec/wine_tasting?id=1
 function collecOne(req, res) {
     logger.logReq('GET ONE-COLLEC', req);
     const mid = req.params.entity

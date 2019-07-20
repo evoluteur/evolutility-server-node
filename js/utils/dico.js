@@ -44,31 +44,31 @@ let f
 
 if(config.wTimestamp){
     systemFields.push({
-    	// record creation date
+    	// - record creation date
     	type: 'datetime',
     	column:'c_date',
     },
     {
-    	// record last update date
+    	// - record last update date
     	type: 'datetime',
     	column:'u_date',
     })
 }
 if(config.wWhoIs){
     systemFields.push({
-    	// record creator (user.id)
+    	// - record creator (user.id)
     	type: 'integer',
     	column:'c_uid',
     },
     {
-    	// record last editor (user.id)
+    	// - record last editor (user.id)
     	type: 'integer',
     	column:'u_uid',
     })
 }
 if(config.wComments){
 	f = {
-    	// number of comments about the record
+    	// - number of comments about the record
     	type: 'integer',
     	column:'nb_comments',
     }
@@ -89,16 +89,12 @@ if(config.wRating){
 }
 
 const fieldIsNumber = f => f.type===ft.int || f.type===ft.dec || f.type===ft.money
-
 const fieldIsText = f => [ft.text, ft.textml, ft.url, ft.html, ft.email].indexOf(f.type)>-1
-
 const fieldIsDateOrTime = f => f.type===ft.date || f.type===ft.datetime || f.type===ft.time
-
 const fieldIsNumeric = f => fieldIsNumber(f) || fieldIsDateOrTime(f)
 
-const fieldInCharts = f => fieldChartable(f) && !f.noCharts
-
 const fieldChartable = f => f.type===ft.lov || f.type===ft.list || f.type===ft.bool || fieldIsNumber(f)
+const fieldInCharts = f => fieldChartable(f) && !f.noCharts
 
 function prepModel(m){
 	if(m){

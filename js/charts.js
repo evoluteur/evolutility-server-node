@@ -17,6 +17,7 @@ const schema = '"'+(config.schema || 'evolutility')+'"',
     defaultPageSize = config.pageSize || 50;
 
 // - returns data for a single charts
+// - sample url: http://localhost:2000/api/v1/todo/chart/category
 function chartField(req, res) {
     logger.logReq('GET CHART', req);
 
