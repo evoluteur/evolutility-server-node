@@ -31,7 +31,7 @@ function chartField(req, res) {
     if(m && fid){
         let f = m.fieldsH[fid];
         if(f){
-            if(!f.noCharts){
+            if(dico.fieldInCharts){
                 const col = '"'+f.column+'"',
                     sqlFrom = ' FROM '+m.schemaTable+' AS t1';
                     
@@ -46,11 +46,15 @@ function chartField(req, res) {
                 }else if(f.type===ft.bool){
                     const cId = 'CASE '+col+' WHEN true THEN 1 ELSE 0 END',
                         cLabel = 'CASE '+col+' WHEN true THEN \'Yes\' ELSE \'No\' END';
-
                     sql='SELECT '+cId+'::integer AS id, '+
                             cLabel+'::text AS label, '+sqlCount+
                         sqlFrom+
                         ' GROUP BY '+cId+','+cLabel;
+                }else if(dico.fieldIsNumber(f)){
+                    const numbersColType = f.type===ft.int ? '::integer' : ''
+                    sql='SELECT '+col+numbersColType+' AS id, '+col+'::text AS label, '+sqlCount+
+                        sqlFrom+
+                        ' GROUP BY '+col;
                 }else{ // TODO: bukets
                     sql='SELECT '+col+'::text AS label, '+sqlCount+
                         sqlFrom+
