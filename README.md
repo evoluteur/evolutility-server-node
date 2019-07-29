@@ -367,13 +367,20 @@ In addition to CRUD, Evolutility-Server-Node provides a few endpoints for Charts
 
 #### Discovery
 
-Returns the list of active objects and their "GET" APIs.
+Returns the list of all active objects with urls to their REST end-points.
 
 ```
 GET /
 ```
 
-Note: This end-point can be disabled in the configuration with {apiInfo: false}.
+It is also possible to get a more detailed list of REST end-points for a specific model.
+
+```
+GET /?id=<model.id>
+```
+
+
+Note: These end-point can be disabled in the configuration with {apiInfo: false}.
 
 #### Charts
 

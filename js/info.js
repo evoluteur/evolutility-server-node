@@ -13,7 +13,7 @@ const path = require('path'),
     models = require('../models/all_models'),
     config = require('../config.js')
 
-function getFieldsAPIs(protocol, baseUrl, model) {
+function getFieldsAPIs(model, protocol, baseUrl) {
     const apis = {
         charts: [],
         lovs: [],
@@ -30,40 +30,73 @@ function getFieldsAPIs(protocol, baseUrl, model) {
 }
 
 function baseURL(req){
-    return req.headers.host+req.url
-    //return req.headers.host+req.url.replace('/rest_api', '')
+    //return req.headers.host+req.url
+    return req.headers.host+req.url.split('?')[0]
 }
 
-const entityAPIs = (protocol, baseUrl, model) => {
+const entityAPIs = (model, protocol, baseUrl, fullDescription) => {
     const pathToModel = protocol+path.join(baseUrl, model.id)
-    const { charts, lovs } = getFieldsAPIs(protocol, baseUrl, model)
-    return {
+    const { charts, lovs } = getFieldsAPIs(model, protocol, baseUrl)
+    let mi = {
         id: model.id,
+        title: model.title || model.label,
         list: pathToModel,
         lovs: lovs,
         charts: charts,
         stats: pathToModel + '/stats',
         csv: pathToModel+'?format=csv',
-        //rest_api: pathToModel+'/api'
     }
+    if(fullDescription){
+        mi.crud = {
+            "create": {
+                method: 'POST',
+                url: pathToModel+'/',
+            },
+            "read": {
+                method: 'GET',
+                url: pathToModel+'/{id}',
+            },
+            "update": {
+                method: 'PUT',
+                url: pathToModel+'/{id}',
+            },
+            "delete": {
+                method: 'DELETE',
+                url: pathToModel+'/{id}',
+            },
+        }
+    }else{
+        mi.apis = protocol+baseUrl+'?id='+model.id
+    }
+    return mi
 }
 
 // - returns list endpoints URLs for all active models
 function apis(req, res) {
-    logger.logReq('GET APIs', req);
+    logger.logReq('GET APIs', req)
     const baseUrl = baseURL(req)
-    const ms = [];
     const protocol = req.protocol+'://'
+    let ms = []
 
     if(config.apiInfo){
-        for (let mid in models){
-            const model = models[mid]
-            if(model.active){
-                ms.push(entityAPIs(protocol, baseUrl, model))
+        let mid = req.query.id
+        if(mid){
+            // - single model (doesn't need to be active)
+            const m = models[mid]
+            if(m){
+                ms = entityAPIs(m, protocol, baseUrl, true);
+            }
+        }else{
+            // - all active models
+            for (let mid in models){
+                const model = models[mid]
+                if(model.active){
+                    ms.push(entityAPIs(model, protocol, baseUrl, false))
+                }
             }
         }
     }
-    return res.json(ms);
+    return res.json(ms)
 }
 
 // - returns version number (from package.json)
