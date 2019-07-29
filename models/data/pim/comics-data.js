@@ -9,7 +9,7 @@ module.exports = [{
   "serie_nb": 6,
   "language": 1,
   "notes": "",
-  "pix": "comics/androitsheep1.jpeg",
+  "pix": "comics/androidssheep.jpg",
   url_amazon: "https://smile.amazon.com/Androids-Dream-Electric-Sheep-Vol-ebook/dp/B01E0IR7G2",
   url_bdfugue: "https://www.bdfugue.com/do-androids-dream-of-electric-sheep",
 },

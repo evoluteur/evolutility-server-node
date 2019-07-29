@@ -1,11 +1,12 @@
 /*
-  Evolutility DB Model for Artists
-  https://github.com/evoluteur/evolutility-server-node
+  Evolutility DB model for Artists
+ https://github.com/evoluteur/evolutility-server-node
 */
 
 module.exports = {
 	"id": "artist",
-    "active": true,
+	"title": "Artists",
+	"pKey": "id",
 	"table": "music_artist",
 	"titleField": "name",
 	"fields": [
@@ -13,6 +14,7 @@ module.exports = {
 			"id": "name",
 			"type": "text",
 			"label": "Name",
+			"required": true,
 			"inMany": true,
 			"column": "name"
 		},
@@ -23,10 +25,10 @@ module.exports = {
 			"column": "url"
 		},
 		{
-			"id": "url_wiki",
-			"type": "url_wiki",
-			"label": "Wikipedia",
-			"column": "url"
+			"id": "bdate",
+			"type": "date",
+			"label": "Birth date",
+			"column": "bdate"
 		},
 		{
 			"id": "photo",

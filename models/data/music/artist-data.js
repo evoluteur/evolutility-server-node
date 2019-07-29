@@ -2,6 +2,7 @@ module.exports = [
     {
         id: 1,
         name: "Snatam Kaur",
+        bdate: '1972-06-19',
         photo: "music/snatam_kaur.jpg",
         url: 'https://www.snatamkaur.com/',
         description: 'Through inspirational concerts, workshops, immersion courses and retreats, the much-beloved devotional singer and Grammy nominated recording artist Snatam Kaur shares the power of Sikh sacred mantras with all the world. Possessed of an incandescently luminous voice and a deep knowledge of Kundalini yoga, her concerts and events are joyous occasions and a source of solace for our troubled times.',
@@ -16,12 +17,14 @@ module.exports = [
     {
         id: 3,
         name: "Sade",
+        bdate: '1959-01-16',
         photo: "music/sade.jpg",
         url: 'https://www.sade.com/',
     },
     {
         id: 4,
         name: "Moby",
+        bdate: '1965-09-11',
         photo: "music/moby.jpg",
         url: 'http://moby.com',
     },

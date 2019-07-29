@@ -1,11 +1,12 @@
 /*
-  Evolutility DB Model for Albums
-  https://github.com/evoluteur/evolutility-server-node
+  Evolutility DB model for Albums
+ https://github.com/evoluteur/evolutility-server-node
 */
 
 module.exports = {
 	"id": "album",
-    "active": true,
+	"title": "Albums",
+	"pKey": "id",
 	"table": "music_album",
 	"titleField": "name",
 	"fields": [

@@ -1,11 +1,12 @@
 /*
-  Evolutility DB Model for Tracks
-  https://github.com/evoluteur/evolutility-server-node
+  Evolutility DB model for Tracks
+ https://github.com/evoluteur/evolutility-server-node
 */
 
 module.exports = {
 	"id": "track",
-    "active": true,
+	"title": "Tracks",
+	"pKey": "id",
 	"table": "music_track",
 	"titleField": "name",
 	"fields": [
