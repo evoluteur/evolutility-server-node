@@ -81,8 +81,8 @@ const model2gqlObjectType = m => {
     
     // - "timestamp" columns to track creation and last modification.
     if(config.wTimestamp){
-        fields['c_date'] = gqlField({type: ft.datetime})
-        fields['u_date'] =  gqlField({type: ft.datetime})
+        fields[config.createdDateColumn] = gqlField({type: ft.datetime})
+        fields[config.updatedDateColumn] = gqlField({type: ft.datetime})
     }
     /*
     // - "who-is" columns to track user who created and last modified the record.

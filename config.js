@@ -27,6 +27,10 @@ module.exports = {
 	wComments: false,
 	wRating: false,
 
+    // - Columns containing created and last updated dates
+    createdDateColumn: 'c_date',
+    updatedDateColumn: 'u_date',
+
 	// - API discovery
 	apiInfo: true,
 

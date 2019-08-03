@@ -46,12 +46,12 @@ if(config.wTimestamp){
     systemFields.push({
     	// - record creation date
     	type: 'datetime',
-    	column:'c_date',
+    	column: config.createdDateColumn,
     },
     {
     	// - record last update date
     	type: 'datetime',
-    	column:'u_date',
+    	column: config.updatedDateColumn,
     })
 }
 if(config.wWhoIs){
