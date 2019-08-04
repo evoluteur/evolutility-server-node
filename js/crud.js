@@ -114,27 +114,37 @@ function SQLgetMany(m, req, isCSV, wCount){
                         }else{
                             let w='t1."'+f.column+'"'+sqlOperators[cond];
                             if(cond==='in' && (f.type===ft.lov || f.type===ft.list)){
+                                // - in list
                                 sqlWs.push(w+'('+cs[1].split(',').map(li => {
                                     sqlParams.push(li);
                                     return '$'+sqlParams.length
                                 }).join(',')+')'); 
-                            }else if(cond==='0'){ // false
+                            }else if(cond==='0'){ 
+                                // - false
                                 sqlWs.push('('+w+'false OR t1."'+f.column+'" IS NULL)');
-                            }else if(cond==='1'){ // true
+                            }else if(cond==='1'){ 
+                                // - true
                                 sqlWs.push(w+'true');
-                            }else if(cond==='null'){ // empty        
+                            }else if(cond==='nn'){ 
+                                // - not empty        
                                 sqlWs.push(' NOT '+w+'NULL');
+                            }else if(cond==='null'){ 
+                                // - empty        
+                                sqlWs.push(w+'NULL');
                             }else{
                                 if(cond==='nct'){ // not contains
                                     //TODO replace % in cs[1]
                                     sqlParams.push('%'+cs[1]+'%');
                                     sqlWs.push(' NOT '+w+'$'+sqlParams.length);
                                 }else{
-                                    if(cond==='sw'){ // start with
+                                    if(cond==='sw'){ 
+                                        // - start with
                                         sqlParams.push(cs[1]+'%');
-                                    }else if(cond==='fw'){ // finishes with
+                                    }else if(cond==='fw'){ 
+                                        // - finishes with
                                         sqlParams.push('%'+cs[1]);
-                                    }else if(cond==='ct'){ // contains
+                                    }else if(cond==='ct'){ 
+                                        // - contains
                                         sqlParams.push('%'+cs[1]+'%');
                                     }else{
                                         sqlParams.push(cs[1]);
