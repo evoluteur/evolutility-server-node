@@ -81,7 +81,9 @@ Configuration options are set in the file [config.js](https://github.com/evolute
 | consoleLog    | Log SQL statements to console.|
 | wComments     | Allow for user comments (not implemented yet). |
 | wRating       | Allow for user ratings (not implemented yet). |
-| wTimestamp    | Timestamp columns u_date and c_date w/ date of record creation and last update. |
+| wTimestamp    | Timestamp columns w/ date of record creation and last update. |
+| createdDateColumn | Column containing created date (default `c_date`) |
+| updatedDateColumn | Column containing last update date (default `u_date`) |
 | schemaQueries | Enables endpoints to query for lists of tables and columns in the database schema. |
 | GraphQL       | Set GraphQL = true to unable GraphQL (Work In Progress) |
 

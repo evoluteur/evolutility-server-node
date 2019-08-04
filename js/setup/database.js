@@ -175,7 +175,7 @@ function sqlSchemaWithData(){
         sql += 'CREATE OR REPLACE FUNCTION '+schema+'.u_date() RETURNS trigger\n'+
             '    LANGUAGE plpgsql\n'+
             '    AS $$\n'+
-            '  BEGIN\n    NEW.u_date = now();\n    RETURN NEW;\n  END;\n$$;\n\n';
+            '  BEGIN\n    NEW.'+config.updatedDateColumn+' = now();\n    RETURN NEW;\n  END;\n$$;\n\n';
     }
     for(let mid in models){
         const sqls = sqlModel(mid);
@@ -250,8 +250,8 @@ function sqlModel(mid){
 
     // - "timestamp" columns to track creation and last modification.
     if(config.wTimestamp){
-        fs.push(' c_date timestamp'+noTZ+' DEFAULT timezone(\'utc\'::text, now())');
-        fs.push(' u_date timestamp'+noTZ+' DEFAULT timezone(\'utc\'::text, now())');
+        fs.push(config.createdDateColumn+' timestamp'+noTZ+' DEFAULT timezone(\'utc\'::text, now())');
+        fs.push(config.updatedDateColumn+' timestamp'+noTZ+' DEFAULT timezone(\'utc\'::text, now())');
     }
     // - "who-is" columns to track user who created and last modified the record.
     if(config.wWhoIs){
