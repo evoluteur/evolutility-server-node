@@ -86,9 +86,7 @@ module.exports = {
 		}
 	},
 
-	logCount(nbRecords){
-		green('Sending '+nbRecords+' records.');
-	},
+	logCount: (nbRecords, prep) => green('Sending '+nbRecords + (prep ? ' prepared' : '') + ' records.'),
 	
 	green: green,
 

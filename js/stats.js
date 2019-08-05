@@ -32,6 +32,40 @@ function sqlAggregate(fn, f){
     return ', '+fn+'("'+f.column+'"'+num+')'+tcast+' AS "'+f.id+'_'+fn+'"'
 }
 
+const fnPrep = fields => data => {
+    // - nesting data per field
+    const pStats = {
+        count: data.count,
+    }
+    if(config.wTimestamp){
+        // - last update
+        pStats.u_date_max = data.u_date_max
+        // - number of updates this week
+        pStats.u_date_week_count = data.u_date_week_count
+        // - first insert
+        pStats.c_date_min = data.c_date_min
+    }
+    if(config.wComments){
+        pStats.nb_comments = data.nb_comments
+    }
+    fields.forEach((f)=>{
+        if(dico.fieldIsNumeric(f)){ 
+            let item = {
+                min: data[f.id+'_min'],
+                max: data[f.id+'_max'],
+            }
+            if(data[f.id+'_avg']){
+                item.avg = data[f.id+'_avg']
+            }
+            if(data[f.id+'_sum']){
+                item.sum = data[f.id+'_sum']
+            }
+            pStats[f.id] = item
+        }
+    })
+    return pStats
+}
+
 // - returns a summary on a single table
 function numbers(req, res) {
     logger.logReq('GET STATS', req);
@@ -70,7 +104,7 @@ function numbers(req, res) {
             sql += ', sum(nb_comments::integer)::integer AS nb_comments'
         }
         sql += sqlFROM
-        query.runQuery(res, sql, [], true);
+        query.runQuery(res, sql, [], true, null, null, fnPrep(m.fields));
     }else{
         errors.badRequest(res, 'Invalid model: "'+mid+'".')
     }

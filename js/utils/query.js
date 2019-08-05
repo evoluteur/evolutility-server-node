@@ -25,7 +25,7 @@ pool.on('error', function (err, client) {
 })
 
 // - run a query and return the result in request
-function runQuery(res, sql, values, singleRecord, format, header){
+function runQuery(res, sql, values, singleRecord, format, header, fnPrep = null){
     logger.logSQL(sql);
 
     // Get a Postgres client from the connection pool 
@@ -53,8 +53,13 @@ function runQuery(res, sql, values, singleRecord, format, header){
                     }
                     return null;    
                 }else if(singleRecord){
-                    logger.logCount(results.length || 0);
-                    return res.json(results.length?results[0]:null);
+                    if(fnPrep){
+                        logger.logCount(1, true);
+                        return res.json(fnPrep(results[0]));
+                    }else{
+                        logger.logCount(1);
+                        return res.json(results.length?results[0]:null);
+                    }
                 }else{
                     res.setHeader('_count', nbRecords);
                     if(nbRecords && results[0]._full_count){
