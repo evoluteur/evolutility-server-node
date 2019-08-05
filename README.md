@@ -1,4 +1,6 @@
-# Evolutility-Server-Node
+# Evolutility-Server-Node &middot; [![GitHub license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/evoluteur/evolutility-server-node/blob/master/LICENSE.md) [![npm version](https://img.shields.io/npm/v/evolutility-server-node)](https://www.npmjs.com/package/evolutility-server-node) 
+
+
 
 Model-driven RESTful backend for CRUD and more, using Node.js, Express, and PostgreSQL.
 
