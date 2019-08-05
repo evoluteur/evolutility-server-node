@@ -166,7 +166,7 @@ const gqlMany = m => ({
         logger.logSQL(sql)
         return db.conn.query(sql, sqlProps.params) //.one(sql)
             .then(data => {
-                logger.logSuccess('Sending '+data.length+' record.')
+                logger.logSuccess('Sending '+data.length+' records.')
                 return data
             })
             .catch(err => {

@@ -4,7 +4,7 @@ Model-driven RESTful backend for CRUD and more, using Node.js, Express, and Post
 
 Evolutility-Server-Node provides a set of generic REST endpoints for CRUD (Create, Read, Update, Delete) and simple charts. These views can adapt to different data structures according to their models.
  
-For a matching model-driven Web UI, use [Evolutility-UI-React](http://github.com/evoluteur/evolutility-ui-react) or [Evolutility-UI-jQuery](http://github.com/evoluteur/evolutility-ui-jquery).
+For a matching model-driven Web UI, use [Evolutility-UI-React](http://github.com/evoluteur/evolutility-ui-react) or [Evolutility-UI-jQuery](http://evoluteur.github.io/evolutility-ui-jquery/).
 
 
 ### Table of Contents
@@ -82,10 +82,10 @@ Configuration options are set in the file [config.js](https://github.com/evolute
 | wComments     | Allow for user comments (not implemented yet). |
 | wRating       | Allow for user ratings (not implemented yet). |
 | wTimestamp    | Timestamp columns w/ date of record creation and last update. |
-| createdDateColumn | Column containing created date (default `c_date`) |
-| updatedDateColumn | Column containing last update date (default `u_date`) |
+| createdDateColumn | Column containing created date (default `c_date`). |
+| updatedDateColumn | Column containing last update date (default `u_date`). |
 | schemaQueries | Enables endpoints to query for lists of tables and columns in the database schema. |
-| GraphQL       | Set GraphQL = true to unable GraphQL (Work In Progress) |
+| GraphQL       | Set to true to enable GraphQL UI (Work In Progress). |
 
 <a name="Models"></a>
 ## Models
@@ -379,10 +379,13 @@ It is also possible to get a more detailed list of REST end-points for a specifi
 
 ```
 GET /?id=<model.id>
+
+GET /?id=todo
+GET /?id=contact
+
 ```
 
-
-Note: These end-point can be disabled in the configuration with {apiInfo: false}.
+Note: These end-point must be enabled in the configuration with { apiInfo: true }.
 
 #### Charts
 
@@ -406,7 +409,7 @@ GET /todo/stats
 
 #### Lists of Values
 
-Dropdown fields in the UI (field.type="lov" in the model) have a REST endpoint to get the list of values (used for dropdowns in the UI). This endpoint can also take a search query parameter.
+Dropdown fields in the UI (field.type="lov" in the model) have a REST endpoint to get the list of values. This endpoint can also take a search query parameter.
 
 ```
 GET /<model.id>/lov/<field.id>
@@ -452,12 +455,13 @@ GET /db/tables
 List of columns (props: column, type, required) for a specified table.
 
 ```
-GET /db/<table>/columns
+GET /db/<table_name>/columns
 
 GET /db/contact/columns
 GET /db/task/columns
 ```
 
+Note: These end-point must be enabled in the configuration with { schemaQueries: true }.
 
 #### API version
 
