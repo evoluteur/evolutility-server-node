@@ -1,12 +1,20 @@
 /*
-  Evolutility DB Model for Fields
+  Evolutility DB model for Fields
   https://github.com/evoluteur/evolutility-server-node
 */
 
 module.exports = {
 	"id": "field",
+	"title": "Fields",
+	"pKey": "id",
 	"table": "evol_field",
 	"titleField": "label",
+	"searchFields": [
+		"label",
+		"column",
+		"help",
+		"description"
+	],
 	"fields": [
 		{
 			"id": "label",
@@ -66,7 +74,7 @@ module.exports = {
 				{
 					"id": 9,
 					"text": "Date-time",
-					"icon": "designer/ft-datehm.gif"
+					"icon": "designer/ft-datetime.gif"
 				},
 				{
 					"id": 10,
@@ -131,7 +139,7 @@ module.exports = {
 			"type": "text",
 			"label": "LOV Table",
 			"maxLength": 100,
-			"column": "lovtable"
+			"column": "lovTable"
 		},
 		{
 			"id": "lovColumn",
@@ -158,6 +166,7 @@ module.exports = {
 			"id": "position",
 			"type": "integer",
 			"label": "Position",
+			"noCharts": true,
 			"maxLength": 3,
 			"column": "position"
 		},
@@ -194,8 +203,8 @@ module.exports = {
 		},
 		{
 			"id": "labelShort",
-			"label": "Short label",
 			"type": "text",
+			"label": "Label",
 			"column": "labelshort"
 		},
 		{
@@ -229,7 +238,7 @@ module.exports = {
 		},
 		{
 			"id": "minValue",
-			"type": "decimal",
+			"type": "integer",
 			"label": "Min. value",
 			"noCharts": true,
 			"maxLength": 4,
@@ -237,7 +246,7 @@ module.exports = {
 		},
 		{
 			"id": "maxValue",
-			"type": "decimal",
+			"type": "integer",
 			"label": "Max. value",
 			"noCharts": true,
 			"maxLength": 4,

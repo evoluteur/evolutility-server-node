@@ -1,6 +1,6 @@
 /*
   Evolutility DB model for Artists
- https://github.com/evoluteur/evolutility-server-node
+  https://github.com/evoluteur/evolutility-server-node
 */
 
 module.exports = {

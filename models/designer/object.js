@@ -1,12 +1,20 @@
 /*
-  Evolutility DB Model for Object
+  Evolutility DB model for Objects
   https://github.com/evoluteur/evolutility-server-node
 */
 
 module.exports = {
 	"id": "object",
+	"title": "Objects",
+	"pKey": "id",
 	"table": "evol_object",
 	"titleField": "title",
+	"searchFields": [
+		"title",
+		"name",
+		"table",
+		"description"
+	],
 	"fields": [
 		{
 			"id": "title",
@@ -27,7 +35,7 @@ module.exports = {
 		{
 			"id": "world",
 			"type": "lov",
-			"label": "World",
+			"label": "App",
 			"object": "world",
 			"lovIcon": false,
 			"inMany": true,
@@ -45,14 +53,14 @@ module.exports = {
 		},
 		{
 			"id": "pKey",
-			"column": "pkey",
-			"label": "Primary key column",
 			"type": "text",
+			"label": "Primary key column",
+			"column": "pkey"
 		},
 		{
 			"id": "entity",
 			"type": "text",
-			"label": "Entity Id",
+			"label": "Object Id",
 			"required": true,
 			"maxLength": 100,
 			"inMany": true,
@@ -85,6 +93,18 @@ module.exports = {
 			"column": "icon"
 		},
 		{
+			"id": "titleField",
+			"type": "text",
+			"label": "Title field",
+			"column": "titlefield"
+		},
+		{
+			"id": "searchFields",
+			"type": "textmultiline",
+			"label": "Search fields",
+			"column": "searchfields"
+		},
+		{
 			"id": "description",
 			"type": "textmultiline",
 			"label": "Description",
@@ -97,7 +117,6 @@ module.exports = {
 			"id": "collec-fields",
 			"table": "evol_field",
 			"column": "object_id",
-			orderby: 'position', // column but should be fieldid
 			"object": "field",
 			"fields": [
 				{
@@ -107,17 +126,18 @@ module.exports = {
 					"column": "label"
 				},
 				{
+					"id": "column",
+					"label": "Column",
+					"column": "dbcolumn"
+				},
+				{
 					"id": "type",
 					"type": "lov",
 					"label": "Type",
 					"lovIcon": true,
 					"column": "type_id",
 					"lovTable": "evol_field_type",
-				},
-				{
-					"id": "column",
-					"label": "column",
-					"column": "dbcolumn"
+					"lovColumn": "name"
 				},
 				{
 					"id": "inMany",
