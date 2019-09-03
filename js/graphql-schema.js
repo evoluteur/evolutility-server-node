@@ -14,11 +14,11 @@ const graphql = require('graphql'),
     dico = require('./utils/dico'),
     ft = dico.fieldTypes,
     sqls = require('./utils/sql-select'),
-    errors = require('./utils/errors')
+    errors = require('./utils/errors'),
+    query = require('./utils/query')
 
 const mIds = dico.modelIds
-const db = {}
-db.conn = pgp(config.connectionString);
+const db = query.db;
 
 const {
    GraphQLObjectType,
