@@ -303,22 +303,26 @@ function getOne(req, res) {
 // - insert a single record
 function insertOne(req, res) {
     logger.logReq('INSERT ONE', req);
-    const m = dico.getModel(req.params.entity),
-        pKey = m.pKey || 'id',
-        q = sqls.namedValues(m, req, 'insert');
-
-    if(q.invalids){
-        returnInvalid(res, q.invalids)
-    }else if(m && q.names.length){
-        const ps = q.names.map((n, idx) => '$'+(idx+1));
-        const selectId = pKey==='id' ? pKey : '"'+pKey+'" as id'
-        const sql = 'INSERT INTO '+m.schemaTable+
-            ' ("'+q.names.join('","')+'") values('+ps.join(',')+')'+
-            ' RETURNING '+selectId+', '+sqls.select(m.fields, false, null, 'C')+';';
-
-        query.runQuery(res, sql, q.values, true);
+    const m = dico.getModel(req.params.entity)
+    if(!m){
+        return errors.badRequest(res)
     }else{
-        errors.badRequest(res)
+        const pKey = m.pKey || 'id',
+            q = sqls.namedValues(m, req, 'insert');
+
+        if(q.invalids){
+            returnInvalid(res, q.invalids)
+        }else if(m && q.names.length){
+            const ps = q.names.map((n, idx) => '$'+(idx+1));
+            const selectId = pKey==='id' ? pKey : '"'+pKey+'" as id'
+            const sql = 'INSERT INTO '+m.schemaTable+
+                ' ("'+q.names.join('","')+'") values('+ps.join(',')+')'+
+                ' RETURNING '+selectId+', '+sqls.select(m.fields, false, null, 'C')+';';
+
+            query.runQuery(res, sql, q.values, true);
+        }else{
+            errors.badRequest(res)
+        }
     }
 }
 

@@ -139,7 +139,7 @@ module.exports = {
 			"type": "text",
 			"label": "LOV Table",
 			"maxLength": 100,
-			"column": "lovTable"
+			"column": "lovtable"
 		},
 		{
 			"id": "lovColumn",

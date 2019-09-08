@@ -210,11 +210,11 @@ More sample models:
 
 <a name="API"></a>
 ## API
-Evolutility-Server-Node provides a generic RESTful API for CRUD (Create, Read, Update, Delete) and more. It uses [Node.js](https://nodejs.org/en/), [Express](http://expressjs.com/) and [PostgreSQL](http://www.postgresql.org/).
+Evolutility-Server-Node provides a generic RESTful API for CRUD (Create, Read, Update, Delete) and more. It uses [Node.js](https://nodejs.org/en/), [Express](http://expressjs.com/), [PostgreSQL](http://www.postgresql.org/), and [PG-Promise](https://github.com/vitaly-t/pg-promise).
 The API is inspired from [PostgREST](http://postgrest.com).
 
-When running Evolutility-Server-Node locally, the url for the "todo" app is 
-[http://localhost:2000/api/v1/todo](http://localhost:2000/api/v1/todo).
+When running Evolutility-Server-Node locally, the base url is 
+[http://localhost:2000/api/v1/](http://localhost:2000/api/v1/).
 
 <a name="API_Get"></a>
 ### Requesting Information
