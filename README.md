@@ -364,6 +364,14 @@ DELETE /<model.id>/<id>
 DELETE /todo/5
 ```
 
+To delete multiple records at once, pass multiple ids (separated by commas).
+
+```
+DELETE /<model.id>/<id1>,<id2>,<id3>
+
+DELETE /todo/5,7,12
+```
+
 <a name="API_Extras"></a>
 ### Extras endpoints
 

@@ -358,20 +358,35 @@ function updateOne(req, res) {
 
 
 // --------------------------------------------------------------------------------------
-// -----------------    DELETE ONE   ----------------------------------------------------
+// -----------------    DELETE ONE / MANY  ----------------------------------------------
 // --------------------------------------------------------------------------------------
 
 // - delete a single record
-function deleteOne(req, res) {
+function deleteX(req, res) {
     logger.logReq('DELETE ONE', req);
     const m = dico.getModel(req.params.entity),
         id = req.params.id
+    let sql = 'DELETE FROM '+m.schemaTable+' WHERE '+m.pKey,
+        params = null
 
-    if(m && id){
-        // SQL Query > Delete Data
-        const sql = 'DELETE FROM '+m.schemaTable+
-                ' WHERE '+m.pKey+'=$1 RETURNING '+m.pKey+'::integer AS id;'
-        query.runQuery(res, sql, [id], true);
+    if(m){
+        const ids=id.split(',') 
+        if(ids.length===1){
+            // SQL Query > Delete Data
+            sql += '=$1 RETURNING '+m.pKey+'::integer AS id;'
+            params = [id]
+        }else{
+            if(ids.length){
+                console.log(ids)
+                sql += ' IN('+ids.map((i, idx)=>'$'+(idx+1)).join(',')+')'+
+                ' RETURNING '+m.pKey+'::integer AS id';
+                params = ids
+            }else{
+                errors.badRequest(res)
+                return
+            }
+        }
+        query.runQuery(res, sql, params, ids.length===1);
     }else{
         errors.badRequest(res)
     }
@@ -467,7 +482,7 @@ module.exports = {
     SQLgetOne: SQLgetOne,
     insertOne: insertOne,
     updateOne: updateOne,
-    deleteOne: deleteOne,
+    deleteX: deleteX,
 
     // - Sub-collections
     getCollec: collecOne,

@@ -56,7 +56,7 @@ router.patch(apiPath+':entity/:id', crud.updateOne);
 router.put(apiPath+':entity/:id', crud.updateOne);
 router.post(apiPath+':entity/upload/:id', upload.uploadOne);
 // -  DELETE ONE -
-router.delete(apiPath+':entity/:id', crud.deleteOne);
+router.delete(apiPath+':entity/:id', crud.deleteX);
 // -  LOV -
 router.get(apiPath+':entity/lov/:field', crud.lovOne);
 // -  SUB-COLLECTIONS  -
