@@ -24,6 +24,7 @@
     "graphql": "~14.5.4",
     "formidable": "~1.2.1",
     "helmet": "~3.20.1",
+    "simple-node-logger": "~18.12.23",
     "pg": "^7.12.1",
     "pg-connection-string": "~2.1.0",
     "pg-promise": "^9.1.2",

@@ -18,7 +18,6 @@ function getTables(req, res) {
         ', CASE WHEN is_insertable_into=\'YES\' THEN false ELSE true END as "readOnly"'+ 
         ' FROM information_schema.tables'+
         ' WHERE table_schema=$1 AND table_name NOT LIKE \'evol%\' ORDER BY table_name'
-    logger.logSQL(sql)
     query.runQuery(res, sql, [config.schema])
 }
 
@@ -30,9 +29,9 @@ function getColumns(req, res) {
         var sql = 'SELECT column_name as column, data_type as type'+
             ', CASE WHEN is_nullable=\'YES\' THEN false ELSE true END as "required"'+
             ' FROM information_schema.columns AS t1'+
-            ' WHERE table_name=$1 AND table_schema=$2 '
-        logger.logSQL(sql)
-        query.runQuery(res, sql, [table, config.schema])
+            ' WHERE table_name=$1 AND table_schema=$2 ',
+            params = [table, config.schema]
+        query.runQuery(res, sql, params)
         //TODO: add comments and constraints
         //sql = 'SELECT * FROM information_schema.constraint_column_usage '+
         //' WHERE table_name=$1 AND table_schema=$2';  

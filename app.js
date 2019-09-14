@@ -18,10 +18,9 @@ const express = require('express'),
     path = require('path'),
     helmet = require('helmet'),
     bodyParser = require('body-parser'),
-    routes = require('./js/routes');
-
-const expressGraphQL = require('express-graphql');
-const { graphQL } = require('./config');
+    routes = require('./js/routes'),
+    expressGraphQL = require('express-graphql'),
+    { graphQL } = require('./config');
 
 const app = express();
 

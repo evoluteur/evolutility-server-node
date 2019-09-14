@@ -1,7 +1,6 @@
 # Evolutility-Server-Node &middot; [![GitHub license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/evoluteur/evolutility-server-node/blob/master/LICENSE.md) [![npm version](https://img.shields.io/npm/v/evolutility-server-node)](https://www.npmjs.com/package/evolutility-server-node) 
 
 
-
 Model-driven RESTful backend for CRUD and more, using Node.js, Express, and PostgreSQL.
 
 Evolutility-Server-Node provides a set of generic REST endpoints for CRUD (Create, Read, Update, Delete) and simple charts. These views can adapt to different data structures according to their models.
@@ -80,7 +79,8 @@ Configuration options are set in the file [config.js](https://github.com/evolute
 | lovSize       | Maximum number of values allowed for form dropdowns (default = 100). |
 | csvSize       | Maximum number of rows in CSV export (default = 1000).|
 | csvHeader     | CSV list of labels for CSV export| | uploadPath | path for pictures and documents uploads (i.e.: "../evolutility-ui-react/public/pix/").|
-| consoleLog    | Log SQL statements to console.|
+| consoleLog    | Log SQL and errors to console.|
+| fileLog       | Log SQL and errors to file.|
 | wComments     | Allow for user comments (not implemented yet). |
 | wRating       | Allow for user ratings (not implemented yet). |
 | wTimestamp    | Timestamp columns w/ date of record creation and last update. |

@@ -37,7 +37,8 @@ module.exports = {
 	// Directory for uploaded files
 	uploadPath: '../evolutility-ui-react/public/pix/',
 
-	// Console log
+	// Logs
 	consoleLog: true,
+	fileLog: false,
 
 };

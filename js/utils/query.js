@@ -61,6 +61,7 @@ function runQuery(res, sql, values, singleRecord, format, header, fnPrep){
             }
         })
         .catch(err => {
+            logger.logError(err)
             if(err.code===0){
                 if(format==='csv'){
                     // - sending something to avoid empty page in browser
@@ -71,7 +72,6 @@ function runQuery(res, sql, values, singleRecord, format, header, fnPrep){
                     return res.json([]);
                 }
             }
-            console.log(err)
             errors.badRequest(res, 'Database error.', 500)
         })
 }

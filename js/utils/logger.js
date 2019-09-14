@@ -9,7 +9,20 @@
 const config = require('../../config.js'),
 	pkg = require('../../package.json'),
 	chalk = require('chalk'),
+	_ = require('underscore'),
+	fileLog = config.fileLog,
 	consoleLog = config.consoleLog;
+
+let log = {}
+if(fileLog){
+	const SimpleNodeLogger = require('simple-node-logger'),
+		opts = {
+			logFilePath:'evolutility-server.log',
+			timestampFormat:'YYYY-MM-DD HH:mm:ss.SSS'
+		}
+	log = SimpleNodeLogger.createSimpleLogger( opts );
+}
+
 
 const asciiArt = 
 `  ______          _           _ _ _
@@ -39,6 +52,7 @@ function maskedConnection(){
 	}
 	return 'N/A'
 }
+const pubConnection = maskedConnection()
 
 module.exports = {
 
@@ -48,37 +62,53 @@ module.exports = {
 		if(consoleLog){
 			console.log(asciiArt)
 		}
+		const restPath = 'http://localhost:' + config.apiPort + config.apiPath
 		console.log('\nEvolutility server listening on port '+config.apiPort + '\n' +
-			'\n - REST API:            http://localhost:' + config.apiPort + config.apiPath +
+			'\n - REST API:            ' + restPath +
 			(config.graphQL ? 
 				'\n - GraphQL UI:          http://localhost:' + config.apiPort + '/graphql' 
 				: '') +
-			'\n - Postgres connection: ' + maskedConnection() +
+			'\n - Postgres connection: ' + pubConnection +
 			'\n - Postgres schema:     ' + config.schema +
 			'\n - Documentation:       ' + pkg.homepage)
+		if(fileLog){
+			log.info('Starting Evolutility-Server-Node schema='+config.schema+' db='+pubConnection+'url='+restPath)
+		}
 	},
 
 	logHeader(ql, action, entity){
-		console.log(chalk.cyan('\n'+ql+' > '+action+' : '+(entity?entity:'')))
+		console.log(chalk.cyan(ql+' > '+action+' : '+(entity?entity:'')))
 	},
 
 	logReq(title, req, reqType = 'REST'){
 		if(consoleLog){
 			this.logHeader(reqType, title, req.params && req.params.entity)
-			console.log('params = '+JSON.stringify(req.params, null, 2));
-			console.log('query = '+JSON.stringify(req.query, null, 2));
-			console.log('body = '+JSON.stringify(req.body, null, 2));
+			if(!_.isEmpty(req.query)){
+				console.log('params = '+JSON.stringify(req.params, null, 2));
+			}
+			if(!_.isEmpty(req.query)){
+				console.log('query = '+JSON.stringify(req.query, null, 2));
+			}
+			if(!_.isEmpty(req.body)){
+				console.log('body = '+JSON.stringify(req.body, null, 2));
+			}
 		}
-	},
-
-	logObject(title, obj){
-		if(consoleLog){
-			console.log(title+' = '+JSON.stringify(obj, null, 2));
+		if(fileLog){
+			log.info(
+				reqType+'-'+title+'-'+(req.params && req.params.entity),
+				{
+					params: req.params,
+					query: req.query,
+					body: req.body
+				}
+			)
 		}
 	},
 
 	logSQL(sql, values){
-		if(consoleLog){
+		if(fileLog){
+			log.info('sql = ', sql)
+		}else if(consoleLog){
 			console.log('sql = \n'+sql+'\n');
 			if(values){
 				this.logObject('values = \n', values)
@@ -86,7 +116,13 @@ module.exports = {
 		}
 	},
 
-	logCount: (nbRecords, prep) => green('Sending '+nbRecords + (prep ? ' prepared' : '') + ' records.'),
+	logCount: (nbRecords, prep) => {
+		const msg = 'Sending '+nbRecords + (prep ? ' prepared' : '') + ' records.'
+		if(fileLog){
+			log.info(msg) 
+		}
+		return green(msg)
+	},
 	
 	green: green,
 
@@ -101,9 +137,15 @@ module.exports = {
 				console.error(chalk.red(moreInfo))
 			}
 		}
+		if(fileLog){
+			log.error(err, moreInfo)
+		}
 	},
 
 	errorMsg(err, method){
+		if(fileLog){
+			log.error(err)
+		}
 		if(consoleLog){
 			this.logError(err);
 			return {
@@ -116,5 +158,11 @@ module.exports = {
 			}
 		}
 	},
+
+	logToFile(mType, msg){
+		if(fileLog){
+			log[mType](msg)
+		}
+	}
 
 };
