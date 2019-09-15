@@ -80,7 +80,7 @@ Configuration options are set in the file [config.js](https://github.com/evolute
 | csvSize       | Maximum number of rows in CSV export (default = 1000).|
 | csvHeader     | CSV list of labels for CSV export| | uploadPath | path for pictures and documents uploads (i.e.: "../evolutility-ui-react/public/pix/").|
 | consoleLog    | Log SQL and errors to console.|
-| fileLog       | Log SQL and errors to file.|
+| fileLog       | Log SQL and errors to a file. Log files are named like "evol-2019-09-15.log". |
 | wComments     | Allow for user comments (not implemented yet). |
 | wRating       | Allow for user ratings (not implemented yet). |
 | wTimestamp    | Timestamp columns w/ date of record creation and last update. |

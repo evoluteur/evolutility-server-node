@@ -17,7 +17,7 @@ let log = {}
 if(fileLog){
 	const SimpleNodeLogger = require('simple-node-logger'),
 		opts = {
-			logFilePath:'evolutility-server.log',
+			logFilePath:'evol-'+(new Date()).toISOString().substring(0, 10)+'.log',
 			timestampFormat:'YYYY-MM-DD HH:mm:ss.SSS'
 		}
 	log = SimpleNodeLogger.createSimpleLogger( opts );
@@ -95,7 +95,7 @@ module.exports = {
 		}
 		if(fileLog){
 			log.info(
-				reqType+'-'+title+'-'+(req.params && req.params.entity),
+				reqType+' > '+title+' '+(req.params && req.params.entity),
 				{
 					params: req.params,
 					query: req.query,
