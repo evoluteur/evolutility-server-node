@@ -8,7 +8,6 @@
 
 const graphql = require('graphql'),
     config = require('../config'),
-    pgp = require('pg-promise')(),
     crud = require('./crud'),
     logger = require('./utils/logger'),
     dico = require('./utils/dico'),

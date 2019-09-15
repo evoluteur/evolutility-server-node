@@ -167,7 +167,6 @@ function SQLgetMany(m, req, isCSV, wCount){
             console.error('No searchFields are specified in model.')
         }else{
             var sqlWsSearch = [];
-            logger.logObject('search fields', m.searchFields);
             const sqlP = '"'+sqlOperators.ct+'$'+(sqlParams.length+1);
             m.searchFields.forEach(function(fid){
                 sqlWsSearch.push('t1."'+m.fieldsH[fid].column+sqlP);
@@ -175,6 +174,7 @@ function SQLgetMany(m, req, isCSV, wCount){
             if(sqlWsSearch.length){
                 sqlParams.push(searchParam(req.query.search));
                 sqlWs.push('('+sqlWsSearch.join(' OR ')+')');
+                //logger.logObject('search fields', m.searchFields);
             }
         }
     }

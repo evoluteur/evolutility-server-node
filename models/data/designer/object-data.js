@@ -134,7 +134,7 @@ module.exports = [
     },
     {
         "id": 13,
-        "title": "Worlds",
+        "title": "Apps",
         "active": false,
         "world": 5,
         "table": "world",

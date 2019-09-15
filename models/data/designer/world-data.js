@@ -1,9 +1,9 @@
 module.exports = [
   {
     "id": 1,
-    "name": "PIM",
+    "name": "Organizer",
     "active": true,
-    "description": "Personal Information Manager (PIM)",
+    "description": "Personal Organizer w/ address book, to-do list, restaurants...",
     "position": 10
   },
   {
@@ -23,7 +23,7 @@ module.exports = [
   {
     "id": 5,
     "name": "Designer",
-    "active": true,
+    "active": false,
     "description": "Apps to create other apps.",
     "position": 50
   }

@@ -72,17 +72,22 @@ module.exports = {
 			'\n - Postgres schema:     ' + config.schema +
 			'\n - Documentation:       ' + pkg.homepage)
 		if(fileLog){
-			log.info('Starting Evolutility-Server-Node schema='+config.schema+' db='+pubConnection+'url='+restPath)
+			log.info('STARTING Evolutility-Server-Node schema='+config.schema+' db='+pubConnection+'url='+restPath)
 		}
 	},
 
 	logHeader(ql, action, entity){
-		console.log(chalk.cyan(ql+' > '+action+' : '+(entity?entity:'')))
+		const msg=ql+' > '+action+' : '+(entity?entity:'')
+		if(fileLog){
+			log.info(msg)
+		}
+		console.log(chalk.cyan(msg))
+
 	},
 
 	logReq(title, req, reqType = 'REST'){
+		this.logHeader(reqType, title, req.params && req.params.entity)
 		if(consoleLog){
-			this.logHeader(reqType, title, req.params && req.params.entity)
 			if(!_.isEmpty(req.query)){
 				console.log('params = '+JSON.stringify(req.params, null, 2));
 			}
@@ -95,13 +100,20 @@ module.exports = {
 		}
 		if(fileLog){
 			log.info(
-				reqType+' > '+title+' '+(req.params && req.params.entity),
 				{
 					params: req.params,
 					query: req.query,
 					body: req.body
 				}
 			)
+		}
+	},
+
+	logObject(title, obj){
+		if(fileLog){
+			log.info(title+' = ', obj)
+		}else if(consoleLog){
+			console.log(title+' = '+JSON.stringify(obj, null, 2));
 		}
 	},
 
