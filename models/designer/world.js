@@ -6,6 +6,7 @@
 module.exports = {
 	"id": "world",
 	"title": "Applications",
+	"world": "designer",
 	"pKey": "id",
 	"table": "evol_world",
 	"titleField": "name",

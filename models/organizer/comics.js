@@ -6,6 +6,7 @@
 module.exports = {
 	"id": "comics",
 	"title": "Graphic Novels",
+	"world": "organizer",
 	"pKey": "id",
 	"table": "comics",
 	"titleField": "title",

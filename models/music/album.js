@@ -6,6 +6,7 @@
 module.exports = {
 	"id": "album",
 	"title": "Albums",
+	"world": "music",
 	"pKey": "id",
 	"table": "music_album",
 	"titleField": "name",

@@ -6,6 +6,7 @@
 module.exports = {
 	"id": "artist",
 	"title": "Artists",
+	"world": "music",
 	"pKey": "id",
 	"table": "music_artist",
 	"titleField": "name",

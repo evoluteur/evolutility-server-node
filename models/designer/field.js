@@ -6,6 +6,7 @@
 module.exports = {
 	"id": "field",
 	"title": "Fields",
+	"world": "designer",
 	"pKey": "id",
 	"table": "evol_field",
 	"titleField": "label",
@@ -109,7 +110,7 @@ module.exports = {
 			"type": "text",
 			"label": "Column",
 			"required": true,
-			"maxLength": 100,
+			"maxLength": 63,
 			"column": "dbcolumn"
 		},
 		{
@@ -138,21 +139,21 @@ module.exports = {
 			"id": "lovTable",
 			"type": "text",
 			"label": "LOV Table",
-			"maxLength": 100,
+			"maxLength": 63,
 			"column": "lovtable"
 		},
 		{
 			"id": "lovColumn",
 			"type": "text",
 			"label": "LOV column",
-			"maxLength": 100,
+			"maxLength": 63,
 			"column": "lovcolumn"
 		},
 		{
 			"id": "lovIcon",
 			"type": "text",
 			"label": "LOV Icon",
-			"maxLength": 100,
+			"maxLength": 63,
 			"column": "lovicon"
 		},
 		{

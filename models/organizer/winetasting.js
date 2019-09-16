@@ -6,6 +6,7 @@
 module.exports = {
 	"id": "winetasting",
 	"title": "Wine tastings",
+	"world": "organizer",
 	"pKey": "id",
 	"table": "wine_tasting",
 	"titleField": "drink_date",

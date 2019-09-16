@@ -6,6 +6,7 @@
 module.exports = {
 	"id": "restaurant",
 	"title": "Restaurants",
+	"world": "organizer",
 	"pKey": "id",
 	"table": "restaurant",
 	"titleField": "name",

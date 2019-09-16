@@ -6,6 +6,7 @@
 module.exports = {
 	"id": "contact",
 	"title": "Address book",
+	"world": "organizer",
 	"pKey": "id",
 	"table": "contact",
 	"titleField": "fistname",

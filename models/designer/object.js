@@ -6,6 +6,7 @@
 module.exports = {
 	"id": "object",
 	"title": "Objects",
+	"world": "designer",
 	"pKey": "id",
 	"table": "evol_object",
 	"titleField": "title",
@@ -47,7 +48,7 @@ module.exports = {
 			"type": "text",
 			"label": "DB Table name",
 			"required": true,
-			"maxLength": 100,
+			"maxLength": 63,
 			"inMany": true,
 			"column": "table"
 		},

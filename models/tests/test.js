@@ -140,9 +140,11 @@ const fields = [
 
 module.exports = {
 	"id": "test",
+	world: 'tests',
 	"table": "z_test",
 	"titleField": "name",
 	"fields": fields,
+	"active": true,
 	"collections": [
 		{
 			"id": "children",
