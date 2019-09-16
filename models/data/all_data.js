@@ -8,12 +8,12 @@ https://github.com/evoluteur/evolutility-models
 */
 
 module.exports = {
-	todo: require('./pim/todo-data'),
-	contact: require('./pim/contact-data'),
-	comics: require('./pim/comics-data'),
-	winecellar: require('./pim/winecellar-data'),
-	winetasting: require('./pim/winetasting-data'),
-	restaurant: require('./pim/restaurant-data'),
+	todo: require('./organizer/todo-data'),
+	contact: require('./organizer/contact-data'),
+	comics: require('./organizer/comics-data'),
+	winecellar: require('./organizer/winecellar-data'),
+	winetasting: require('./organizer/winetasting-data'),
+	restaurant: require('./organizer/restaurant-data'),
 	
 	album: require('./music/album-data'),
 	artist: require('./music/artist-data'),
