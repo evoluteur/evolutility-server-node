@@ -6,28 +6,30 @@
  * (c) 2019 Olivier Giulieri
  */
 
-var dico = require('./utils/dico'),
+const dico = require('./utils/dico'),
     query = require('./utils/query'),
     errors = require('./utils/errors.js'),
     logger = require('./utils/logger'),
-    config = require('../config.js');
-
-const ft = dico.fieldTypes
+    config = require('../config.js'),
+    ft = dico.fieldTypes
 
 function sqlAggregate(fn, f){
-    const num = f.type===ft.money ? '::numeric' : ''
-    let tcast = '';
+    let num = tcast = '';
 
-    if(fn!=='avg'){
+    if(f.type===ft.money){
+        tcast = '::numeric::float8'
+        num = '::numeric'
+    }else if(fn==='avg'){
+        // - note: update the code below if we add avg for date fields
+        tcast = '::numeric::float8'
+    }else{ // min, max, sum
         switch(f.type){
             case ft.int:
             case ft.dec:
-            case ft.money:
+                //tcast = '::numeric'+f.type
                 tcast = '::'+f.type
                 break
-        }        
-    }else{
-        tcast = '::'+f.type
+        }  
     }
     return ', '+fn+'("'+f.column+'"'+num+')'+tcast+' AS "'+f.id+'_'+fn+'"'
 }
