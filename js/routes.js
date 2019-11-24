@@ -12,6 +12,8 @@ const express = require('express'),
 	config = require('../config'),
 	apiPath = config.apiPath,
 	crud = require('./crud'),
+	list = require('./list'),
+	lov = require('./lov'),
 	stats = require('./stats'),
 	charts = require('./charts'),
 	info = require('./info'),
@@ -44,9 +46,11 @@ if(config.schemaQueries){
 // ======  GET STATS ====================================
 router.get(apiPath+':entity/stats', stats.numbers);
 
-// ======  CRUD ====================================
+// ======  LIST ====================================
 // -  GET MANY -
-router.get(apiPath+':entity', crud.getMany);
+router.get(apiPath+':entity', list.getMany);
+
+// ======  CRUD ====================================
 // -  GET ONE   -
 router.get(apiPath+':entity/:id', crud.getOne);
 // -  INSERT ONE -
@@ -57,10 +61,11 @@ router.put(apiPath+':entity/:id', crud.updateOne);
 router.post(apiPath+':entity/upload/:id', upload.uploadOne);
 // -  DELETE ONE -
 router.delete(apiPath+':entity/:id', crud.deleteX);
-// -  LOV -
-router.get(apiPath+':entity/lov/:field', crud.lovOne);
 // -  SUB-COLLECTIONS  -
 router.get(apiPath+':entity/collec/:collec', crud.getCollec);
+
+// ======  LOV ====================================
+router.get(apiPath+':entity/lov/:field', lov.lovOne);
 
 // ======  GET CHARTS ====================================
 router.get(apiPath+':entity/chart/:field', charts.chartField);

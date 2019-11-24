@@ -9,6 +9,7 @@
 const graphql = require('graphql'),
     config = require('../config'),
     crud = require('./crud'),
+    list = require('./list'),
     logger = require('./utils/logger'),
     dico = require('./utils/dico'),
     ft = dico.fieldTypes,
@@ -160,7 +161,7 @@ const gqlMany = m => ({
     //args: { search: { type: GraphQLString } },
     resolve(parentValue, args) {
         logger.logHeader('GraphQL', 'GET MANY', m.id)
-        const sqlProps = crud.SQLgetMany(m, {query: args}, true, false)
+        const sqlProps = list.SQLgetMany(m, {query: args}, true, false)
         const sql = sqls.sqlQuery(sqlProps)
         logger.logSQL(sql)
         return db.conn.query(sql, sqlProps.params) //.one(sql)
