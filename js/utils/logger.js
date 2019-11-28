@@ -10,9 +10,8 @@ const config = require('../../config.js'),
 	pkg = require('../../package.json'),
 	chalk = require('chalk'),
 	_ = require('underscore'),
-	fileLog = config.fileLog,
-	consoleLog = config.consoleLog;
-
+	fileLog = config.logToFile,
+	consoleLog = config.logToConsole;
 let log = {}
 if(fileLog){
 	const SimpleNodeLogger = require('simple-node-logger'),

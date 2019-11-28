@@ -46,6 +46,24 @@ After installing Evolutility-Server-Node, follow these steps:
 
 3. Maybe, also change other config options in the same file.
 
+| Option     | Description        | Example            |
+|------------|--------------------|--------------------|
+| apiPath    | Path to REST API (can use "proxy" from package.json). | "/api/v1/" |
+| apiPort    | Port for the REST API. | 2000 |
+| connectionString  | Database connection string. | "postgres://evol:love@localhost:5432/Evolutility" |
+| schema     | Database schema.        | "evolutility" |
+| graphQL    | Enable GraphQL queries. | true |
+| uploadPath | Path to uploaded files. | "../evolutility-ui-react/public/pix/" |
+| apiInfo    | Enable API discovery (on root and per model). | true |
+| pageSize   | Page size in pagination.  | 50 |
+| lovSize    | Maximum number of items in list of values. | 100  |
+| csvSize    | Maximum number of items in CSV exports.    | 1000 |
+| csvHeader  | Use fields id or labels in CSV header.     | id/label |
+| locale     | Date format (no translation yet). | en/fr |
+| wTimestamp | Add timestamp columns u_date and c_date to track record creation and update times. | true |
+| logToConsole | Log to console. | true |
+| logToFile    | Log to file (log file is named "evol<date>.log" as in "evol-2019-11-21.log").    | true |
+
 4. In the command line type the following:
 
 ```bash
@@ -84,8 +102,8 @@ Configuration options are set in the file [config.js](https://github.com/evolute
 | lovSize       | Maximum number of values allowed for form dropdowns (default = 100). |
 | csvSize       | Maximum number of rows in CSV export (default = 1000).|
 | csvHeader     | CSV list of labels for CSV export| | uploadPath | path for pictures and documents uploads (i.e.: "../evolutility-ui-react/public/pix/").|
-| consoleLog    | Log SQL and errors to console.|
-| fileLog       | Log SQL and errors to a file. Log files are named like "evol-2019-09-15.log". |
+| logToConsole    | Log SQL and errors to console.|
+| logToFile       | Log SQL and errors to a file. Log files are named like "evol-2019-09-15.log". |
 | wComments     | Allow for user comments (not implemented yet). |
 | wRating       | Allow for user ratings (not implemented yet). |
 | wTimestamp    | Timestamp columns w/ date of record creation and last update. |

@@ -45,7 +45,7 @@ module.exports = {
 	updatedDateColumn: 'u_date',
 
 	// - Logs (to file and console)
-	consoleLog: true,
-	fileLog: false,
+	logToConsole: true,
+	logToFile: false,
 
 };
