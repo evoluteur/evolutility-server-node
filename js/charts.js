@@ -17,16 +17,28 @@ const schema = '"'+(config.schema || 'evolutility')+'"',
     defaultPageSize = config.pageSize || 50;
 
 // - returns data for a single charts
-// - sample url: http://localhost:2000/api/v1/todo/chart/category
+// - sample REST url: http://localhost:2000/api/v1/todo/chart/category
 function chartField(req, res) {
-    logger.logReq('GET CHART', req);
+    logger.logReq('GET CHARTS', req);
 
-    const mid = req.params.entity,
-        m = dico.getModel(mid),
+    const m = dico.getModel(req.params.entity),
         fid = req.params.field,
-        sqlCount = 'count(*)::integer AS value';
-    let sql,
-        sqlParams = [];
+        {sql, sqlParams = [], errorMessage} = SQLchartField(m, fid)
+
+    if(errorMessage){ 
+        //TODO: proper error handling
+        errors.badRequest(res, errorMessage)
+    }else{
+        query.runQuery(res, sql, sqlParams, false); 
+    } 
+}
+
+function SQLchartField(m, fid) {
+    const sqlCount = 'count(*)::integer AS value';
+    
+let sql,
+    sqlParams = [],
+    withError = null;
 
     if(m && fid){
         let f = m.fieldsH[fid];
@@ -62,17 +74,21 @@ function chartField(req, res) {
                 }
                 sql += ' ORDER BY label ASC'+
                     ' LIMIT '+defaultPageSize+';';
-
-                query.runQuery(res, sql, sqlParams, false);
-                 
             }else{
-                errors.badRequest(res, 'The field "'+fid+'" is not allowed for Charts.')
+                withError = 'The field "'+fid+'" is not allowed for Charts.'
             }
         }else{
-            errors.badRequest(res, 'Invalid field: "'+fid+'".')
+            withError = 'Invalid field: "'+fid+'".'
         }
     }else{
-        errors.badRequest(res, 'Invalid model: "'+mid+'".')
+        withError = 'Invalid model: "'+mid+'".'
+    }
+    return withError ? {
+        hasError: true,
+        errorMessage: withError,
+    } : {
+        sql: sql,
+        sqlParams: sqlParams
     }
 }
 
@@ -81,5 +97,6 @@ function chartField(req, res) {
 module.exports = {
 
     chartField: chartField,
+    SQLchartField: SQLchartField,
 
 }

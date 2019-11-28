@@ -9,6 +9,7 @@
 const graphql = require('graphql'),
     config = require('../config'),
     crud = require('./crud'),
+    charts = require('./charts'),
     list = require('./list'),
     logger = require('./utils/logger'),
     dico = require('./utils/dico'),
@@ -177,12 +178,52 @@ const gqlMany = m => ({
     }
 })
 
+const gqlCharts = m => ({
+    type: new GraphQLList( new GraphQLObjectType({
+        name: m.id+'_charts',
+        fields: {
+            id: {
+                type: GraphQLString,
+                description: 'Group Id for convenience'
+            },
+            label:{
+                type: GraphQLString,
+                description: 'Group label'
+            },
+            value:{
+                type: GraphQLInt,
+                description: 'Group count'
+            }
+        },
+        description: m.name || m.table
+    })),
+    description: m.namePlural || m.title || m.label || m.id,
+    args: { fieldId: { type: GraphQLString } },
+    resolve(parentValue, args) {
+        logger.logHeader('GraphQL', 'GET CHARTS', m.id + ' - ' + args.fieldId)
+        const sqlProps = charts.SQLchartField(m, args.fieldId)
+        const sql = sqlProps.sql
+        logger.logSQL(sql)
+        return db.conn.query(sql, sqlProps.params)
+            .then(data => {
+                logger.logSuccess('Sending '+data.length+' records.')
+                return data
+            })
+            .catch(err => {
+                // TODO: this doesn't seem to go through
+                logger.logError(err, 'Server error in GraphQL request (n).')
+                return  errors.badRequest(res, 'Server error in GraphQL request (n).')
+            });
+    }
+})
+
 const makeGQLschema = () => {
     let gqlSoCalledFields = {}
     mIds.forEach(mid => {
         const m = dico.getModel(mid)
         gqlSoCalledFields[mid] = gqlOne(m)
         gqlSoCalledFields[mid+'s'] = gqlMany(m)
+        gqlSoCalledFields[mid+'_charts'] = gqlCharts(m)
     })
     return gqlSoCalledFields
 }

@@ -13,9 +13,9 @@ For a matching model-driven Web UI, use [Evolutility-UI-React](http://github.com
 2. [Setup](#Setup)
 3. [Configuration](#Configuration)
 4. [Models](#Models): [Object](#Object) - [Field](#Field) - [Collection](#Collection)
-5. [API](#API): [Get](#API_Get) - [Update](#API_Update) - [More](#API_Extras)
-6. [License](#License)
-
+5. [REST API](#API): [Get](#API_Get) - [Update](#API_Update) - [More](#API_Extras)
+6. [GraphQL](#GraphQL): [List](#GraphQL_list) - [Object by Id](#GraphQL_by_id) - [Charts data](#GraphQL_charts_data)
+7. [License](#License)
 
 <a name="Installation"></a>
 ## Installation
@@ -33,6 +33,8 @@ or use the [npm package](https://www.npmjs.com/package/evolutility-server-node):
 npm install evolutility-server-node
 ```
 
+Dependencies: [Node.js](https://nodejs.org/en/), [Express](http://expressjs.com/), [PostgreSQL](http://www.postgresql.org/), and [PG-Promise](https://github.com/vitaly-t/pg-promise).
+ 
 <a name="Setup"></a>
 ## Setup
 
@@ -60,7 +62,10 @@ npm start
 
 **Note**: The database creation and population scripts are logged in the files "evol-db-schema-{datetime}.sql" and  "evol-db-data-{datetime}.sql".
 
-In a web browser, go to [http://localhost:2000/api/v1/](http://localhost:2000/api/v1/) for REST or [http://localhost:2000/graphql](http://localhost:2000/graphql) for GraphQL.
+URLs on localhost:
+
+- REST: [http://localhost:2000/api/v1/](http://localhost:2000/api/v1/)
+- GraphQL: [http://localhost:2000/graphql](http://localhost:2000/graphql)
 
 
 <a name="Configuration"></a>
@@ -140,7 +145,7 @@ Multiple Master-Details can be specified with collections.
 | table        | DB Table to query (master table, other tables will be included in the query for "lov" fields). |
 | column       | Column in the detail table to match against id of object. |
 | object       | Model id for the object to display (optional).            |
-| order        | "asc"/"desc" for sorting by the first field in fields.      |
+| orderby      | SQL where clause, e.g. orderby="id DESC".                 |
 | fields       | Array of fields. Fields in collections do not need all properties of Fields in objects.      |
 
 Example of collection in [Wine cellar](https://github.com/evoluteur/evolutility-server-node/blob/master/models/organizer/winecellar.js).
@@ -209,9 +214,8 @@ More sample models:
  
 
 <a name="API"></a>
-## API
-Evolutility-Server-Node provides a generic RESTful API for CRUD (Create, Read, Update, Delete) and more. It uses [Node.js](https://nodejs.org/en/), [Express](http://expressjs.com/), [PostgreSQL](http://www.postgresql.org/), and [PG-Promise](https://github.com/vitaly-t/pg-promise).
-The API is inspired from [PostgREST](http://postgrest.com).
+## REST API
+Evolutility-Server-Node provides a generic RESTful API for CRUD (Create, Read, Update, Delete) and more. It is inspired from [PostgREST](http://postgrest.com).
 
 When running Evolutility-Server-Node locally, the base url is 
 [http://localhost:2000/api/v1/](http://localhost:2000/api/v1/).
@@ -237,6 +241,7 @@ GET /<model.id>
 GET /todo
 ```
 
+<a name="Filtering"></a>
 #### Filtering
 You can filter result rows by adding conditions on fields, each condition is a query string parameter. 
 
@@ -480,6 +485,97 @@ This endpoint gets the API version (as specified in the project's package.json f
 ```
 GET /version
 ```
+
+<a name="GraphQL"></a>
+## GraphQL
+
+Evolutility-Server-Node provides a GraphQL interface using the same models as the REST API. 
+
+By default GraphiQL runs at 
+[http://localhost:2000/graphql](http://localhost:2000/graphql). It can be enabled or disabled in config.js.
+
+
+<a name="GraphQL_list"></a>
+### List of objects
+
+All objects flagged as active are exposed for queries with search and filters. Filter use the same [syntax for conditions](#Filtering) as the REST API (for example: { firstname: "sw.A" } for "Firstname starts with "A").
+
+Fields of type "lov" (List of values) are represented as 2 fields for Id and value.
+
+```
+{ 
+  # List - priority tasks not completed
+	urgent_tasks: todos ( complete: "false", priority: "lt.3" ){
+	    title
+	    description
+	    priority
+	    priority_txt
+	    category
+	    category_txt
+	    complete
+  }
+  # List - contacts w/ firstname starts w/ "A" and search for "ab"
+  	ab_a_contacts:contacts (search: "ab", firstname: "sw.A") { 
+	    id
+	    firstname
+	    lastname
+	    category_txt
+	    email
+  }
+}
+
+```
+
+[View in GraphiQL](http://localhost:2000/graphql?query=%7B%20%0A%20%20%23%20List%20-%20priority%20tasks%20not%20completed%0A%09urgent_tasks%3A%20todos%20(%20complete%3A%20%22false%22%2C%20priority%3A%22lt.3%22%20)%7B%0A%09%20%20%20%20title%0A%09%20%20%20%20description%0A%09%20%20%20%20priority%0A%09%20%20%20%20priority_txt%0A%09%20%20%20%20category%0A%09%20%20%20%20category_txt%0A%09%20%20%20%20complete%0A%20%20%7D%0A%20%20%23%20List%20-%20contacts%20w%2F%20firstname%20starts%20w%2F%20%22A%22%20and%20search%20for%20%22ab%22%0A%20%20%09ab_a_contacts%3Acontacts%20(search%3A%20%22ab%22%2C%20firstname%3A%20%22sw.A%22)%20%7B%20%0A%09%20%20%20%20id%0A%09%20%20%20%20firstname%0A%09%20%20%20%20lastname%0A%09%20%20%20%20category_txt%0A%09%20%20%20%20email%0A%20%20%7D%0A%7D).
+
+<a name="GraphQL_by_id"></a>
+### Object by Id
+
+All objects flagged as active are exposed for querying a single record by Id.
+
+```
+# contact w/ id = 1
+{ 
+	contact (id: 1 ){
+    firstname
+    lastname
+    category_txt
+    email
+  }
+}
+
+```
+[View in GraphiQL](http://localhost:2000/graphql?query=%23%20contact%20by%20Id%0A%7B%20%0A%20%20%20%20contact%20(id%3A%201%20)%7B%0A%20%20%20%20firstname%0A%20%20%20%20lastname%0A%20%20%20%20category_txt%0A%20%20%20%20email%0A%20%20%7D%0A%7D)
+
+<a name="GraphQL_charts_data"></a>
+### Charts data
+
+For all objects records can be aggregated and counted by field (for fields of numeric or "lov" types).
+
+```
+{ 
+  # Charts - contacts by categories
+  contacts_by_category: contact_charts(fieldId:"category"){
+    label 
+    value
+  }
+  # Charts - tasks by priorities
+  task_by_priority: todo_charts(fieldId:"priority") {
+    label 
+    value
+  }
+  # Charts - restaurants by cuisine
+  restaurants_by_cuisine: restaurant_charts(fieldId:"cuisine") {
+    label 
+    value
+  }
+}
+
+```
+
+
+[View in GraphiQL](http://localhost:2000/graphql?query=%7B%20%0A%20%20%23%20Charts%20-%20contacts%20by%20categories%0A%20%20contacts_by_category%3A%20contact_Charts(fieldId%3A%22category%22)%7B%0A%20%20%20%20label%20%0A%20%20%20%20value%0A%20%20%7D%0A%20%20%23%20Charts%20-%20tasks%20by%20priorities%0A%20%20task_by_priority%3A%20todo_Charts(fieldId%3A%22priority%22)%20%7B%0A%20%20%20%20label%20%0A%20%20%20%20value%0A%20%20%7D%0A%20%20%23%20Charts%20-%20restaurants%20by%20cuisine%0A%20%20restaurants_by_cuisine%3A%20restaurant_Charts(fieldId%3A%22cuisine%22)%20%7B%0A%20%20%20%20label%20%0A%20%20%20%20value%0A%20%20%7D%0A%7D%20)
+
 
 
 <a name="License"></a>
