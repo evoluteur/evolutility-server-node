@@ -93,7 +93,7 @@ const fieldIsText = f => [ft.text, ft.textml, ft.url, ft.html, ft.email].indexOf
 const fieldIsDateOrTime = f => f.type===ft.date || f.type===ft.datetime || f.type===ft.time
 const fieldIsNumeric = f => fieldIsNumber(f) || fieldIsDateOrTime(f)
 
-const fieldChartable = f => f.type===ft.lov || f.type===ft.list || f.type===ft.bool || fieldIsNumber(f)
+const fieldChartable = f => f.type===ft.lov || f.type===ft.bool || fieldIsNumber(f)
 const fieldInCharts = f => fieldChartable(f) && !f.noCharts
 
 function prepModel(m){

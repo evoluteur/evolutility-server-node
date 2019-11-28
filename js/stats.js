@@ -25,9 +25,10 @@ function sqlAggregate(fn, f){
     }else{ // min, max, sum
         switch(f.type){
             case ft.int:
-            case ft.dec:
-                //tcast = '::numeric'+f.type
                 tcast = '::'+f.type
+                break
+            case ft.dec:
+                tcast = '::numeric::float8'
                 break
         }  
     }
@@ -50,7 +51,7 @@ const fnPrep = fields => data => {
     if(config.wComments){
         pStats.nb_comments = data.nb_comments
     }
-    fields.forEach((f)=>{
+    fields.forEach(f => {
         if(dico.fieldIsNumeric(f)){ 
             let item = {
                 min: data[f.id+'_min'],

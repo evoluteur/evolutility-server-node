@@ -72,7 +72,7 @@ function runQuery(res, sql, values, singleRecord, format, header, fnPrep){
                     return res.json([]);
                 }
             }
-            errors.badRequest(res, 'Database error.', 500)
+            return errors.badRequest(res, 'Database error - '+err.message, 500)
         })
 }
 

@@ -42,7 +42,7 @@ function fieldType(f){
     }else if(f.type===ft.dec){
         gqlType = GraphQLFloat
     }else if(f.type===ft.list){
-        gqlType = GraphQLList
+        gqlType = GraphQLList(GraphQLInt)
     }else{
         gqlType = GraphQLString
     }/*

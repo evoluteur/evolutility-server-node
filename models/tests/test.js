@@ -62,6 +62,17 @@ const fields = [
 		"lovTable": "z_test_flavor"
 	},
 	{
+		"id": "list",
+		"type": "list",
+		"label": "Multiselect",
+		//"required": true,
+		"list": flavors,
+		"column": "f_list",
+		"inMany": true,
+		"width": 100,
+		"lovTable": "z_test_flavor"
+	},
+	{
 		"id": "date",
 		"type": "date",
 		"label": "Date",

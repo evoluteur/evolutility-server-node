@@ -36,7 +36,7 @@ const ft_postgreSQL = {
     datetime: 'timestamp'+noTZ,
     time: 'time'+noTZ,
     lov: 'integer',
-    list: 'text[]', // many values for one field (behave like tags - return an array of strings)
+    list: 'integer[]', // many values for one field (array of integer for ids in lovTable)
     html: 'text',
     email: 'text',
     pix: 'text',
@@ -59,7 +59,8 @@ const sysColumns = {
 
 const stringValue = v => v ? ("'"+v.replace(/'/g, "''")+"'") : 'NULL'
 
-const lovTable = f => schema+'."'+(f.lovTable ? f.lovTable : (tableName+'_'+f.id))+'"';
+const lovTable = (f, tableName) => f.lovTable ? f.lovTable : (tableName+'_'+f.id);
+const lovTableWithSchema = (f, tableName) => schema+'."'+lovTable(f, tableName)+'"';
 
 function sqlInsert(tableNameSchema, m, data){
     const { pKey, fieldsH } = m
@@ -130,7 +131,7 @@ function sqlInsert(tableNameSchema, m, data){
 }
 
 function sqlCreatePopulateLOV(f, tableName, lovIncluded){
-    const t = lovTable(f);
+    const t = lovTableWithSchema(f, tableName);
     const icons = f.lovIcon || false;
     let sql = ''
     let maxId = -1
@@ -156,10 +157,11 @@ function sqlCreatePopulateLOV(f, tableName, lovIncluded){
                 txt += icons ? (',\'' + (item.icon || '') + '\')') : ')'
                 return txt
             }).join(',\n')+';\n\n';
+            const t = lovTable(f, tableName);
             if(maxId){
                 maxId++
                 sql += 'ALTER SEQUENCE '+schema+
-                    '."'+f.lovTable+'_id_seq" RESTART WITH '+maxId+';\n\n'
+                    '."'+t+'_id_seq" RESTART WITH '+maxId+';\n\n'
             }
         }
         lovIncluded.push(t)

@@ -141,7 +141,7 @@ Models contain the name of the driving table and the list of fields/columns pres
 | lovColumn    | Column name (in the lovTable) for field value (only for fields of type "lov"). |
 | lovIcon      | Set to True to include icon with LOV items (only for fields of type "lov").    |
 | object       | Model id for the object to link to (only for fields of type "lov").    |
-| type         | Field type is not a database column type but more a UI field type. Possible field types: <ul><li>boolean</li><li>date</li><li>datetime</li><li>decimal</li><li>document</li><li>email</li><li>image</li><li>integer</li><li>lov (list of values)</li><li>money</li><li>text</li><li>textmultiline</li><li>time</li><li>url</li></ul> |
+| type         | Field type is not a database column type but more a UI field type. Possible field types: <ul><li>boolean</li><li>date</li><li>datetime</li><li>decimal</li><li>document</li><li>email</li><li>image</li><li>integer</li><li>lov (list of values)</li><li>list (multiselect)</li><li>money</li><li>text</li><li>textmultiline</li><li>time</li><li>url</li></ul> |
 | required     | Determines if the field is required for saving.      |
 | readOnly     | Display field as readOnly (not editable).            |
 | inMany       | Determines if the field is present (by default) in lists of records. |
@@ -533,7 +533,7 @@ Fields of type "lov" (List of values) are represented as 2 fields for Id and val
 	    complete
   }
   # List - contacts w/ firstname starts w/ "A" and search for "ab"
-  	ab_a_contacts:contacts (search: "ab", firstname: "sw.A") { 
+  	ab_a_contacts: contacts (search: "ab", firstname: "sw.A") { 
 	    id
 	    firstname
 	    lastname
@@ -554,11 +554,11 @@ All objects flagged as active are exposed for querying a single record by Id.
 ```
 # contact w/ id = 1
 { 
-	contact (id: 1 ){
-    firstname
-    lastname
-    category_txt
-    email
+    contact (id: 1 ){
+        firstname
+        lastname
+        category_txt
+        email
   }
 }
 
