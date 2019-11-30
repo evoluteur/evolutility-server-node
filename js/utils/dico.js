@@ -98,7 +98,7 @@ const fieldInCharts = f => fieldChartable(f) && !f.noCharts
 
 function prepModel(m){
 	if(m){
-		if(!m.prepared){
+		if(!m._prepared){
 			// - Model
 			m.schemaTable = schema+'."'+(m.table || m.id)+'"';
 			if(!m.pKey){
@@ -136,7 +136,7 @@ function prepModel(m){
 					})
 				})
 			}
-			m.prepared = true;
+			m._prepared = true;
 		}
 		return m;
 	}
