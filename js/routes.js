@@ -17,6 +17,7 @@ const express = require('express'),
 	stats = require('./stats'),
 	charts = require('./charts'),
 	info = require('./info'),
+	designer = require('./designer'),
 	dbStructure = require('./utils/db-structure');
 
 logger.startupMessage();
@@ -41,6 +42,14 @@ if(config.schemaQueries){
 	router.get(apiPath+'db/tables', dbStructure.getTables);
 	// - columns of specific table
 	router.get(apiPath+'db/:table/columns', dbStructure.getColumns);
+}
+
+// ======  Models in DB ====================================
+if(config.apiDesigner){
+	// - Models
+	//router.post(apiPath+'md/model', designer.importModel);
+	router.get(apiPath+'md/models', designer.getModels);
+	router.get(apiPath+'md/model/:id', designer.getModel);
 }
 
 // ======  GET STATS ====================================

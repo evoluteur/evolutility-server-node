@@ -499,6 +499,26 @@ GET /db/task/columns
 
 Note: These end-point must be enabled in the configuration with { schemaQueries: true }.
 
+#### Models
+
+When storing models in evol_object and evol_field tables, they can be queried through REST.
+
+Get all models flagged as active.
+
+```
+GET /md/models
+```
+
+Get a model by ID (integer).
+
+```
+GET /md/model/<modelid>
+
+GET /md/model/1
+```
+
+Note: Schema and Models end-points must be enabled in the configuration with { apiDesigner: true }.
+
 #### API version
 
 This endpoint gets the API version (as specified in the project's package.json file).

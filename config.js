@@ -15,9 +15,6 @@ module.exports = {
 	// - GraphQL support
 	graphQL: true,
 
-	// - Permission to query DB schema for list of tables and columns
-	schemaQueries: false,
-
 	// - API discovery
 	apiInfo: true,
 
@@ -47,5 +44,11 @@ module.exports = {
 	// - Logs (to file and console)
 	logToConsole: true,
 	logToFile: false,
+
+	// - Designer
+	// - Enables storing models in the database (in tables "evol_%")
+	apiDesigner: false,
+	// - Query DB schema for list of tables and columns
+	schemaQueries: false,
 
 };
