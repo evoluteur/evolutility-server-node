@@ -52,7 +52,7 @@ const fnPrep = fields => data => {
         pStats.nb_comments = data.nb_comments
     }
     fields.forEach(f => {
-        if(dico.fieldIsNumeric(f)){ 
+        if(dico.fieldIsNumeric(f) && !f.noStats){ 
             let item = {
                 min: data[f.id+'_min'],
                 max: data[f.id+'_max'],
@@ -77,37 +77,43 @@ function numbers(req, res) {
         m = dico.getModel(mid)
         
     if(m){
-        let sql = 'SELECT count(*)::integer AS count';
-        const sqlFROM = ' FROM '+m.schemaTable;  
+        if(!m.noStats){
+            let sql = 'SELECT count(*)::integer AS count';
+            const sqlFROM = ' FROM '+m.schemaTable;  
 
-        m.fields.forEach(function(f){
-            if(dico.fieldIsNumeric(f)){
-                if(!dico.fieldIsDateOrTime(f)){
-                    sql += sqlAggregate('avg', f)
+            m.fields.forEach(function(f){
+                if(dico.fieldIsNumeric(f) && !f.noStats){
+                    if(!dico.fieldIsDateOrTime(f)){
+                        sql += sqlAggregate('avg', f)
+                    }
+                    if(f.type===ft.money || f.type===ft.int){
+                        sql += sqlAggregate('sum', f)
+                    }
+                    sql += sqlAggregate('min', f)
+                    sql += sqlAggregate('max', f)
+                //}else if(f.type===ft.lov){
+                //    sql += ',(select id, count("'+f.column+'")::integer FROM '+m.schemaTable+' GROUP BY id LIMIT 3)'
                 }
-                if(f.type===ft.money || f.type===ft.int){
-                    sql += sqlAggregate('sum', f)
-                }
-                sql += sqlAggregate('min', f)
-                sql += sqlAggregate('max', f)
+            })
+            if(config.wTimestamp){
+                // - last update
+                sql += ', max('+config.updatedDateColumn+') AS u_date_max' +
+                    // - number of insert & updates this week
+                    ', (SELECT count('+m.pKey+')::integer '+sqlFROM+
+                        ' WHERE '+config.updatedDateColumn+' > NOW() - interval \'7 days\')'+
+                        ' AS u_date_week_count' +
+                    // - first insert
+                    ', min('+config.createdDateColumn+') AS c_date_min' 
             }
-        })
-        if(config.wTimestamp){
-            // - last update
-            sql += ', max('+config.updatedDateColumn+') AS u_date_max' +
-                // - number of insert & updates this week
-                ', (SELECT count('+m.pKey+')::integer '+sqlFROM+
-                    ' WHERE '+config.updatedDateColumn+' > NOW() - interval \'7 days\')'+
-                    ' AS u_date_week_count' +
-                // - first insert
-                ', min('+config.createdDateColumn+') AS c_date_min' 
+            if(config.wComments){
+                // - number of comments
+                sql += ', sum(nb_comments::integer)::integer AS nb_comments'
+            }
+            sql += sqlFROM
+            query.runQuery(res, sql, [], true, null, null, fnPrep(m.fields));
+        }else{
+            errors.badRequest(res, 'noStats set on model "'+mid+'".')
         }
-        if(config.wComments){
-            // - number of comments
-            sql += ', sum(nb_comments::integer)::integer AS nb_comments'
-        }
-        sql += sqlFROM
-        query.runQuery(res, sql, [], true, null, null, fnPrep(m.fields));
     }else{
         errors.badRequest(res, 'Invalid model: "'+mid+'".')
     }

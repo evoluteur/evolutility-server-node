@@ -24,6 +24,7 @@ module.exports = [
         id: 4, 
         title: "Lovers Rock", 
         artist: 3, 
+        url: "https://smile.amazon.com/Lovers-Rock-Sade/dp/B00JRBGE62",
         cover: "music/sade-loversrock.jpg"
     },
     {
@@ -37,6 +38,7 @@ module.exports = [
         id: 6, 
         title: "18", 
         artist: 4, 
+        url: "https://smile.amazon.com/18-Moby/dp/B000063S6Z",
         cover: "music/moby-18.jpg"
     },
     {

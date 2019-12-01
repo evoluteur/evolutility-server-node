@@ -43,7 +43,7 @@ let sql,
     if(m && fid){
         let f = m.fieldsH[fid];
         if(f){
-            if(dico.fieldInCharts){
+            if(dico.fieldInCharts(f)){
                 const col = '"'+f.column+'"',
                     sqlFrom = ' FROM '+m.schemaTable+' AS t1';
                     

@@ -129,6 +129,8 @@ Models contain the name of the driving table and the list of fields/columns pres
 | fields       | Array of fields.                        |
 | titleField   | Field id for the column value used as record title. |
 | searchFields | Array of field ids for fields used to perform searches.  |  
+| noCharts     | No Charts or Dashboard views.   |
+| noStats      | No Stats on the object.         |
 
 <a name="Field"></a>
 ### Field
@@ -148,7 +150,8 @@ Models contain the name of the driving table and the list of fields/columns pres
 | max, min     | Maximum/Minimum value allowed (only applies to numeric fields).      |
 | maxLength, minLength | Maximum/Minimum length allowed (only applies to text fields).|
 | unique       | Values must be unique (not implemented yet).   |
-| noCharts     | Forbids charts on the field.   |
+| noCharts     | Exclude field from charts.      |
+| noStats     | Exclude field from Stats.      |
 | deleteTrigger | Deleting records in the lovTable will trigger a cascade delete (this property is only used while creating the database). |
 
 

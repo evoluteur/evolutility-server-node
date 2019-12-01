@@ -5,8 +5,8 @@ function badRequest(res, msg, errorCode = 400) {
 	
 	logger.logError(msg)
     res.statusMessage = errorMsg
-    res.status(errorCode).end();
-    return res
+    res.status(errorCode)//.end();
+    return res.json({error: errorMsg})
 }
 
 module.exports = {
