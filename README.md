@@ -1,9 +1,9 @@
 # Evolutility-Server-Node &middot; [![GitHub license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/evoluteur/evolutility-server-node/blob/master/LICENSE.md) [![npm version](https://img.shields.io/npm/v/evolutility-server-node)](https://www.npmjs.com/package/evolutility-server-node) 
 
 
-Model-driven RESTful backend for CRUD and more, using Node.js, Express, and PostgreSQL.
+Model-driven REST or GraphQL backend for CRUD and more, using Node.js, Express, and PostgreSQL.
 
-Evolutility-Server-Node provides a set of generic REST endpoints for CRUD (Create, Read, Update, Delete) and simple charts. These views can adapt to different data structures according to their models.
+Evolutility-Server-Node provides a set of generic [REST](#API) or [GraphQL](#GraphQL) endpoints for CRUD (Create, Read, Update, Delete) and simple charts. 
  
 For a matching model-driven Web UI, use [Evolutility-UI-React](http://github.com/evoluteur/evolutility-ui-react) or [Evolutility-UI-jQuery](http://evoluteur.github.io/evolutility-ui-jquery/).
 
@@ -12,9 +12,9 @@ For a matching model-driven Web UI, use [Evolutility-UI-React](http://github.com
 1. [Installation](#Installation)
 2. [Setup](#Setup)
 3. [Configuration](#Configuration)
-4. [Models](#Models): [Object](#Object) - [Field](#Field) - [Collection](#Collection)
-5. [REST API](#API): [Get](#API_Get) - [Update](#API_Update) - [More](#API_Extras)
-6. [GraphQL](#GraphQL): [List](#GraphQL_list) - [Object by Id](#GraphQL_by_id) - [Charts data](#GraphQL_charts_data)
+4. [Models](#Models): [Object](#Object) - [Field](#Field) - [Collection](#Collection) - [Sample model](#SampleModel)
+5. [REST API](#API): [Get](#API_Get) - [Update](#API_Update) - [Charts](#API_Charts) - [More](#API_Extras)
+6. [GraphQL](#GraphQL): [Object by Id](#GraphQL_by_id) - [List](#GraphQL_list) - [Charts data](#GraphQL_charts_data)
 7. [License](#License)
 
 <a name="Installation"></a>
@@ -118,6 +118,12 @@ Configuration options are set in the file [config.js](https://github.com/evolute
 To be accessible by the REST API, each database table must be described in a model.
 Models contain the name of the driving table and the list of fields/columns present in the API.
 
+- [Object](#Object)
+- [Field](#Field)
+- [Collection](#Collection)
+- [Sample model](#SampleModel)
+
+
 <a name="Object"></a>
 ### Object
 
@@ -151,7 +157,7 @@ Models contain the name of the driving table and the list of fields/columns pres
 | maxLength, minLength | Maximum/Minimum length allowed (only applies to text fields).|
 | unique       | Values must be unique (not implemented yet).   |
 | noCharts     | Exclude field from charts.      |
-| noStats     | Exclude field from Stats.      |
+| noStats      | Exclude field from Stats.       |
 | deleteTrigger | Deleting records in the lovTable will trigger a cascade delete (this property is only used while creating the database). |
 
 
@@ -166,7 +172,7 @@ Multiple Master-Details can be specified with collections.
 | table        | DB Table to query (master table, other tables will be included in the query for "lov" fields). |
 | column       | Column in the detail table to match against id of object. |
 | object       | Model id for the object to display (optional).            |
-| orderby      | SQL where clause, e.g. orderby="id DESC".                 |
+| orderBy      | Column(s) to sort by, e.g. { orderBy: "name" }.                 |
 | fields       | Array of fields. Fields in collections do not need all properties of Fields in objects.      |
 
 Example of collection in [Wine cellar](https://github.com/evoluteur/evolutility-server-node/blob/master/models/organizer/winecellar.js).
@@ -237,6 +243,11 @@ More sample models:
 <a name="API"></a>
 ## REST API
 Evolutility-Server-Node provides a generic RESTful API for CRUD (Create, Read, Update, Delete) and more. It is inspired from [PostgREST](http://postgrest.com).
+
+- [Get](#API_Get)
+- [Update](#API_Update) 
+- [Charts](#API_Charts)
+- [More](#API_Extras)
 
 When running Evolutility-Server-Node locally, the base url is 
 [http://localhost:2000/api/v1/](http://localhost:2000/api/v1/).
@@ -423,6 +434,7 @@ GET /?id=contact
 
 Note: These end-point must be enabled in the configuration with { apiInfo: true }.
 
+<a name="API_Charts"></a>
 #### Charts
 
 For charts data, it is possible to get aggregated data for field of types lov, boolean, integer, decimal, and money. Use the attribute "noCharts" to exclude a field from Charts.
@@ -477,6 +489,26 @@ GET /<model.id>/collec/<collection.id>?id=<id>
 GET /winecellar/collec/wine_tasting?id=1
 ```
 
+<a name="Models"></a>
+#### Models
+
+When storing models in evol_object and evol_field tables, they can be queried through REST.
+
+Get all models flagged as active.
+
+```
+GET /md/models
+```
+
+Get a model by ID (integer).
+
+```
+GET /md/model/<modelid>
+
+GET /md/model/1
+```
+
+Note: Schema and Models end-points must be enabled in the configuration with { apiDesigner: true }.
 
 #### Schema tables and columns
 
@@ -499,26 +531,6 @@ GET /db/task/columns
 
 Note: These end-point must be enabled in the configuration with { schemaQueries: true }.
 
-#### Models
-
-When storing models in evol_object and evol_field tables, they can be queried through REST.
-
-Get all models flagged as active.
-
-```
-GET /md/models
-```
-
-Get a model by ID (integer).
-
-```
-GET /md/model/<modelid>
-
-GET /md/model/1
-```
-
-Note: Schema and Models end-points must be enabled in the configuration with { apiDesigner: true }.
-
 #### API version
 
 This endpoint gets the API version (as specified in the project's package.json file).
@@ -532,14 +544,36 @@ GET /version
 
 Evolutility-Server-Node provides a GraphQL interface using the same models as the REST API. 
 
+- [Object by Id](#GraphQL_by_id)
+- [List](#GraphQL_list)
+- [Charts data](#GraphQL_charts_data)
+
 By default GraphiQL runs at 
 [http://localhost:2000/graphql](http://localhost:2000/graphql). It can be enabled or disabled in config.js.
 
+<a name="GraphQL_by_id"></a>
+### Object by Id
+
+For getting a single record by Id.
+
+```
+# contact w/ id = 1
+{ 
+    contact (id: 1 ){
+        firstname
+        lastname
+        category_txt
+        email
+  }
+}
+
+```
+[View in GraphiQL](http://localhost:2000/graphql?query=%23%20contact%20by%20Id%0A%7B%20%0A%20%20%20%20contact%20(id%3A%201%20)%7B%0A%20%20%20%20firstname%0A%20%20%20%20lastname%0A%20%20%20%20category_txt%0A%20%20%20%20email%0A%20%20%7D%0A%7D)
 
 <a name="GraphQL_list"></a>
 ### List of objects
 
-All objects flagged as active are exposed for queries with search and filters. Filter use the same [syntax for conditions](#Filtering) as the REST API (for example: { firstname: "sw.A" } for "Firstname starts with "A").
+All objects are exposed for queries with search and filters. Filter use the same [syntax for conditions](#Filtering) as the REST API (for example: { firstname: "sw.A" } for "Firstname starts with "A").
 
 Fields of type "lov" (List of values) are represented as 2 fields for Id and value.
 
@@ -568,25 +602,6 @@ Fields of type "lov" (List of values) are represented as 2 fields for Id and val
 ```
 
 [View in GraphiQL](http://localhost:2000/graphql?query=%7B%20%0A%20%20%23%20List%20-%20priority%20tasks%20not%20completed%0A%09urgent_tasks%3A%20todos%20(%20complete%3A%20%22false%22%2C%20priority%3A%22lt.3%22%20)%7B%0A%09%20%20%20%20title%0A%09%20%20%20%20description%0A%09%20%20%20%20priority%0A%09%20%20%20%20priority_txt%0A%09%20%20%20%20category%0A%09%20%20%20%20category_txt%0A%09%20%20%20%20complete%0A%20%20%7D%0A%20%20%23%20List%20-%20contacts%20w%2F%20firstname%20starts%20w%2F%20%22A%22%20and%20search%20for%20%22ab%22%0A%20%20%09ab_a_contacts%3Acontacts%20(search%3A%20%22ab%22%2C%20firstname%3A%20%22sw.A%22)%20%7B%20%0A%09%20%20%20%20id%0A%09%20%20%20%20firstname%0A%09%20%20%20%20lastname%0A%09%20%20%20%20category_txt%0A%09%20%20%20%20email%0A%20%20%7D%0A%7D).
-
-<a name="GraphQL_by_id"></a>
-### Object by Id
-
-All objects flagged as active are exposed for querying a single record by Id.
-
-```
-# contact w/ id = 1
-{ 
-    contact (id: 1 ){
-        firstname
-        lastname
-        category_txt
-        email
-  }
-}
-
-```
-[View in GraphiQL](http://localhost:2000/graphql?query=%23%20contact%20by%20Id%0A%7B%20%0A%20%20%20%20contact%20(id%3A%201%20)%7B%0A%20%20%20%20firstname%0A%20%20%20%20lastname%0A%20%20%20%20category_txt%0A%20%20%20%20email%0A%20%20%7D%0A%7D)
 
 <a name="GraphQL_charts_data"></a>
 ### Charts data
