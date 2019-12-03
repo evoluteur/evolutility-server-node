@@ -9,6 +9,7 @@ module.exports = {
 	"world": "organizer",
 	"pKey": "id",
 	"table": "task",
+	"active": true,
 	"titleField": "title",
 	"searchFields": [
 		"title",
@@ -111,5 +112,6 @@ module.exports = {
 			"column": "description"
 		}
 	],
-	"collections": []
+	"collections": [],
+	"noStats": true
 }

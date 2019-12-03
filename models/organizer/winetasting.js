@@ -9,6 +9,7 @@ module.exports = {
 	"world": "organizer",
 	"pKey": "id",
 	"table": "wine_tasting",
+	"active": true,
 	"titleField": "drink_date",
 	"searchFields": [
 		"robe",
@@ -69,5 +70,6 @@ module.exports = {
 			"column": "notes"
 		}
 	],
-	"collections": []
+	"collections": [],
+	"noStats": true
 }

@@ -9,6 +9,7 @@ module.exports = {
 	"world": "organizer",
 	"pKey": "id",
 	"table": "contact",
+	"active": true,
 	"titleField": "fistname",
 	"searchFields": [
 		"lastname",
@@ -181,5 +182,6 @@ module.exports = {
 			"column": "notes"
 		}
 	],
-	"collections": []
+	"collections": [],
+	"noStats": true
 }

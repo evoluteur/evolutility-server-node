@@ -118,8 +118,8 @@ module.exports = {
 			"id": "collec-fields",
 			"table": "evol_field",
 			"column": "object_id",
-			"orderby": "position, t1.id",
 			"object": "field",
+			"orderBy": "position, t1.id",
 			"fields": [
 				{
 					"id": "label",

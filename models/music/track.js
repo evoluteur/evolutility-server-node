@@ -9,6 +9,7 @@ module.exports = {
 	"world": "music",
 	"pKey": "id",
 	"table": "music_track",
+	"active": true,
 	"titleField": "name",
 	"fields": [
 		{
@@ -24,6 +25,7 @@ module.exports = {
 			"type": "lov",
 			"label": "Album",
 			"object": "album",
+			"lovIcon": false,
 			"inMany": true,
 			"column": "album_id",
 			"lovTable": "music_album",
@@ -74,10 +76,12 @@ module.exports = {
 					"text": "Reggae"
 				}
 			],
+			"lovIcon": false,
 			"inMany": true,
 			"column": "genre_id",
 			"lovTable": "music_genre"
 		}
 	],
-	"collections": []
+	"collections": [],
+	"noStats": true
 }

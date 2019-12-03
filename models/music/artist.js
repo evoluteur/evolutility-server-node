@@ -9,6 +9,7 @@ module.exports = {
 	"world": "music",
 	"pKey": "id",
 	"table": "music_artist",
+	"active": true,
 	"titleField": "name",
 	"fields": [
 		{
@@ -51,7 +52,7 @@ module.exports = {
 			"table": "music_album",
 			"column": "artist_id",
 			"object": "album",
-			"order": "title",
+			"orderBy": "title",
 			"fields": [
 				{
 					"id": "title",
@@ -67,5 +68,7 @@ module.exports = {
 				}
 			]
 		}
-	]
+	],
+	"noCharts": true,
+	"noStats": true
 }

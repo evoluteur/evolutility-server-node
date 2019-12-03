@@ -89,11 +89,12 @@ function sqlInsert(tableNameSchema, m, data){
                             v = v || null //"['error']";
                         }else if(f.type===ft.json){
                             v = "'"+ JSON.stringify(v) +"'";
-                        }else if(Array.isArray(v)){
-                            // TODO: 
-                            //v='null';
-                            //v = '['+v.map(stringValue).join(',')+']';
-                            v = null //"['error']";
+                        }else if(f.type===ft.list){
+                            if(Array.isArray(v)){
+                                v = "'{" + v.join(',') + "}'";
+                            }else{
+                                v='null';
+                            }
                         }else if(typeof(v)==='object'){
                             if(v){
                                 v = "'"+ JSON.stringify(v) +"'";

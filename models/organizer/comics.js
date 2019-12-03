@@ -9,6 +9,7 @@ module.exports = {
 	"world": "organizer",
 	"pKey": "id",
 	"table": "comics",
+	"active": true,
 	"titleField": "title",
 	"searchFields": [
 		"title",

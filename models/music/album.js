@@ -9,6 +9,7 @@ module.exports = {
 	"world": "music",
 	"pKey": "id",
 	"table": "music_album",
+	"active": true,
 	"titleField": "name",
 	"fields": [
 		{
@@ -31,6 +32,7 @@ module.exports = {
 			"label": "Artist",
 			"object": "artist",
 			"required": true,
+			"lovIcon": false,
 			"inMany": true,
 			"column": "artist_id",
 			"lovTable": "music_artist",
@@ -58,7 +60,7 @@ module.exports = {
 			"table": "music_track",
 			"column": "album_id",
 			"object": "track",
-			"order": "name",
+			"orderBy": "name",
 			"fields": [
 				{
 					"id": "name",
@@ -71,6 +73,7 @@ module.exports = {
 					"id": "genre",
 					"type": "lov",
 					"label": "Genre",
+					"lovIcon": false,
 					"column": "genre_id",
 					"lovTable": "music_genre"
 				},
@@ -83,5 +86,6 @@ module.exports = {
 				}
 			]
 		}
-	]
+	],
+	"noStats": true
 }

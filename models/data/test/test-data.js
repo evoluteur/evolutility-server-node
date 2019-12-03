@@ -7,6 +7,7 @@ module.exports = [
         "textmultiline": "ABCDEF",
         "lov": 2,
         "lovlc": 5,
+        "list": [2, 3],
         "date": "2019-01-01",
         "datetime": null,
         "time": null,
@@ -27,6 +28,7 @@ module.exports = [
         "textmultiline": "EFGHIJ",
         "lov": 1,
         "lovlc": 1,
+        "list": [1, 2, 4],
         "date": "2019-02-01",
         "datetime": null,
         "time": null,
@@ -45,6 +47,7 @@ module.exports = [
         "textmultiline": "Long text Long text Long text Long text Long text Long text Long text Long text Long text Long text Long text Long text Long text Long text Long text Long text Long text Long text Long text Long text Long text Long text Long text",
         "lov": 4,
         "lovlc": 5,
+        "list": [1, 2, 3],
         "date": "2019-12-24",
         "datetime": "2019-12-24",
         "time": "",
@@ -56,5 +59,5 @@ module.exports = [
         "url": "http://someUrlsAreTooStrangeToRememberITHINKAOEFDJIJDQFSKJRKDLFVJWDFKJJDFKLXDFG.com",
         "document": "",
         "image": ""
-    } 
+    }
 ];

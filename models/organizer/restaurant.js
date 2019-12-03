@@ -9,6 +9,7 @@ module.exports = {
 	"world": "organizer",
 	"pKey": "id",
 	"table": "restaurant",
+	"active": true,
 	"titleField": "name",
 	"searchFields": [
 		"name",
@@ -191,5 +192,6 @@ module.exports = {
 			"column": "zip"
 		}
 	],
-	"collections": []
+	"collections": [],
+	"noStats": true
 }
