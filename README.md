@@ -259,7 +259,7 @@ When running Evolutility-Server-Node locally, the base url is
 Gets a specific record by ID.
 
 ```
-GET /<model.id>/<id>
+GET /{model.id}/{id}
 
 GET /todo/12
 ```
@@ -268,7 +268,7 @@ GET /todo/12
 Gets a list of records.
 
 ```
-GET /<model.id>
+GET /{model.id}
 
 GET /todo
 ```
@@ -278,7 +278,7 @@ GET /todo
 You can filter result rows by adding conditions on fields, each condition is a query string parameter. 
 
 ```
-GET /<model.id>/<field.id>=<operator>.<value>
+GET /{model.id}/{field.id}={operator}.{value}
 
 GET /todo?title=sw.a
 GET /todo?priority=in.1,2,3
@@ -313,7 +313,7 @@ For each field a sub-set of the operators below will be supported by the API (de
 You can search for a specific string across multiple fields at once with the "search" parameter. The list of fields to be searched is specified with "searchFields" in the model (if unspecified, text fields flagged with "inMany" for list view will be used).
 
 ```
-GET /<model.id>/search=<value>
+GET /{model.id}?search={value}
 
 GET /todo?search=translation
 ```
@@ -323,7 +323,7 @@ GET /todo?search=translation
 The reserved word "order" reorders the response rows. It uses a comma-separated list of fields and directions:
 
 ```
-GET /<model.id>?order=<field.id>.<asc/desc>
+GET /{model.id}?order={field.id}.{asc/desc}
 
 GET /todo?order=priority.desc,title.asc
 ```
@@ -334,11 +334,10 @@ GET /todo?order=duedate
 
 #### Limiting and Pagination
 
-
 The reserved words "page" and "pageSize" limits the response rows.
 
 ```
-GET /<model.id>?page=<pageindex>&pageSize=<pagesize>
+GET /{model.id}?page={pageindex}&pageSize={pagesize}
 
 GET /todo?page=0&pageSize=50
 ```
@@ -349,7 +348,7 @@ By default all APIs return data in JSON format. This API call allows to request 
 This feature is using [csv-express](https://github.com/jczaplew/csv-express).
 
 ```
-GET /<model.id>?format=csv
+GET /{model.id}?format=csv
 
 GET /todo?format=csv
 ```
@@ -363,7 +362,7 @@ Notes: In the returned data every object has an extra property "\_full_count" wh
 To create a row in a database table post a JSON object whose keys are the names of the columns you would like to create. Missing keys will be set to default values when applicable.
 
 ```
-POST <model.id> {<data>}
+POST {model.id} {data}
 
 POST /todo
 { title: 'Finish testing', priority: 2}
@@ -376,14 +375,14 @@ Even though it is a "POST", the request also returns the newly created record. I
 PATCH or PUT can be used to update specific records.
 
 ```
-PATCH /<model.id>/<id>
+PATCH /{model.id}/{id} {data}
 
 PATCH /todo/5
 { title: 'Finish testing', priority: 2}
 ```
 
 ```
-PUT /<model.id>/<id>
+PUT /{model.id}/{id} {data}
 
 PUT /todo/5
 { title: 'Finish testing', priority: 2}
@@ -396,7 +395,7 @@ Notes: The request returns the updated record. It is not standard but it saves t
 Simply use the DELETE verb with the id of the record to remove. 
 
 ```
-DELETE /<model.id>/<id>
+DELETE /{model.id}/{id}
 
 DELETE /todo/5
 ```
@@ -404,7 +403,7 @@ DELETE /todo/5
 To delete multiple records at once, pass multiple ids (separated by commas).
 
 ```
-DELETE /<model.id>/<id1>,<id2>,<id3>
+DELETE /{model.id}/{id1},{id2},{id3}
 
 DELETE /todo/5,7,12
 ```
@@ -425,7 +424,7 @@ GET /
 It is also possible to get a more detailed list of REST end-points for a specific model.
 
 ```
-GET /?id=<model.id>
+GET /?id={model.id}
 
 GET /?id=todo
 GET /?id=contact
@@ -440,7 +439,7 @@ Note: These end-point must be enabled in the configuration with { apiInfo: true 
 For charts data, it is possible to get aggregated data for field of types lov, boolean, integer, decimal, and money. Use the attribute "noCharts" to exclude a field from Charts.
 
 ```
-GET /<model.id>/chart/<field id>
+GET /{model.id}/chart/{field id}
 
 GET /todo/chart/category
 ```
@@ -450,7 +449,7 @@ GET /todo/chart/category
 Returns the total count, and the min, max, average, and total for numeric fields in the model.
 
 ```
-GET /<model.id>/stats
+GET /{model.id}/stats
 
 GET /todo/stats
 ```
@@ -460,7 +459,7 @@ GET /todo/stats
 Dropdown fields in the UI (field.type="lov" in the model) have a REST endpoint to get the list of values. This endpoint can also take a search query parameter.
 
 ```
-GET /<model.id>/lov/<field.id>
+GET /{model.id}/lov/{field.id}
 
 GET /todo/lov/category
 GET /todo/lov/category?search=pro
@@ -471,7 +470,7 @@ GET /todo/lov/category?search=pro
 This endpoint lets you upload a file. The current (naive) implementation simply saves the file on the file server in a folder named like the model id (inside the folder specified by the option "uploadPath" in config.js).
 
 ```
-POST /<model.id>/upload/<id>
+POST /{model.id}/upload/{id}
 
 POST /comics/upload/5
 ```
@@ -484,7 +483,7 @@ With query parameters: file and "field.id".
 If the model has collections defined, they can be queried with this end-point.
 
 ```
-GET /<model.id>/collec/<collection.id>?id=<id>
+GET /{model.id}/collec/{collection.id}?id={id}
 
 GET /winecellar/collec/wine_tasting?id=1
 ```
@@ -503,7 +502,7 @@ GET /md/models
 Get a model by ID (integer).
 
 ```
-GET /md/model/<modelid>
+GET /md/model/{modelid}
 
 GET /md/model/1
 ```
@@ -523,7 +522,7 @@ GET /db/tables
 List of columns (props: column, type, required) for a specified table.
 
 ```
-GET /db/<table_name>/columns
+GET /db/{table_name}/columns
 
 GET /db/contact/columns
 GET /db/task/columns
@@ -557,7 +556,6 @@ By default GraphiQL runs at
 For getting a single record by Id.
 
 ```
-# contact w/ id = 1
 { 
     contact (id: 1 ){
         firstname
@@ -579,8 +577,8 @@ Fields of type "lov" (List of values) are represented as 2 fields for Id and val
 
 ```
 { 
-  # List - priority tasks not completed
-	urgent_tasks: todos ( complete: "false", priority: "lt.3" ){
+    # List - priority tasks not completed
+    todos ( complete: "false", priority: "lt.3" ){
 	    title
 	    description
 	    priority
@@ -589,8 +587,8 @@ Fields of type "lov" (List of values) are represented as 2 fields for Id and val
 	    category_txt
 	    complete
   }
-  # List - contacts w/ firstname starts w/ "A" and search for "ab"
-  	ab_a_contacts: contacts (search: "ab", firstname: "sw.A") { 
+    # List - contacts w/ firstname starts w/ "A" and search for "ab"
+  	contacts (search: "ab", firstname: "sw.A") { 
 	    id
 	    firstname
 	    lastname
