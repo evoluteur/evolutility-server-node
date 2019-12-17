@@ -310,7 +310,8 @@ module.exports = [
 		"object": 3,
 		"inMany": true,
 		"position": 27,
-		"width": 15
+		"width": 15,
+		noCharts: true,
 	},
 	{
 		"id": 28,
@@ -321,7 +322,8 @@ module.exports = [
 		"object": 3,
 		"inMany": true,
 		"position": 28,
-		"width": 15
+		"width": 15,
+		noCharts: true,
 	},
 	{
 		"id": 29,

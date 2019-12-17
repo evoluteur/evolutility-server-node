@@ -8,7 +8,39 @@ module.exports = [
         "entity": "todo",
         "name": "task",
         "namePlural": "tasks",
-        "icon": "todo.gif"
+        "icon": "todo.gif",
+        "groups": [
+            {
+                "id": "p1",
+                "type": "panel",
+                "label": "Task",
+                "width": 62,
+                "fields": [
+                    "title",
+                    "duedate",
+                    "category"
+                ]
+            },
+            {
+                "id": "p2",
+                "type": "panel",
+                "label": "Status",
+                "width": 38,
+                "fields": [
+                    "priority",
+                    "complete"
+                ]
+            },
+            {
+                "id": "p3",
+                "type": "panel",
+                "label": "Task Description",
+                "width": 100,
+                "fields": [
+                    "description"
+                ]
+            }
+        ]
     },
     {
         "id": 2,
@@ -19,7 +51,54 @@ module.exports = [
         "entity": "contact",
         "name": "contact",
         "namePlural": "contacts",
-        "icon": "contact.gif"
+        "icon": "contact.gif",
+        "groups": [
+            {
+                "type": "panel",
+                "label": "Identity",
+                "width": 62,
+                "fields": [
+                    "lastname",
+                    "firstname",
+                    "jobtitle",
+                    "company",
+                    "email",
+                    "web"
+                ]
+            },
+            {
+                "type": "panel",
+                "label": "Contact Info",
+                "width": 38,
+                "fields": [
+                    "phone",
+                    "phonehome",
+                    "phonecell",
+                    "fax"
+                ]
+            },
+            {
+                "type": "panel",
+                "label": "Address",
+                "width": 62,
+                "fields": [
+                    "address",
+                    "city",
+                    "state",
+                    "zip",
+                    "country"
+                ]
+            },
+            {
+                "type": "panel",
+                "label": "Misc.",
+                "width": 38,
+                "fields": [
+                    "category",
+                    "notes"
+                ]
+            }
+        ]
     },
     {
         "id": 3,
@@ -30,7 +109,38 @@ module.exports = [
         "entity": "comics",
         "name": "serie",
         "namePlural": "series",
-        "icon": "comics.png"
+        "icon": "comics.png",
+        groups: [
+            {
+                "id": "serie",
+                "type": "panel",
+                "label": "Serie",
+                "width": 70,
+                "fields": [
+                    "title",
+                    "authors",
+                    "genre",
+                    "serie_nb",
+                    "have_nb",
+                    "have",
+                    "language",
+                    "complete",
+                    "finished",
+                    "url_bdfugue",
+                    "url_amazon",
+                    "notes"
+                ]
+            },
+            {
+                "id": "pix",
+                "type": "panel",
+                "label": "Album Cover",
+                "width": 30,
+                "fields": [
+                    "pix"
+                ]
+            }
+        ]
     },
     {
         "id": 4,
@@ -41,7 +151,19 @@ module.exports = [
         "entity": "restaurant",
         "name": "restaurant",
         "namePlural": "restaurants",
-        "icon": "resto.gif"
+        "icon": "resto.gif",
+        "groups": [
+            {
+              id:"pResto", type:"panel", 
+              label: "Restaurant", width: 62,
+              fields: ['name','cuisine','schedule','yelp','price','notes','hours','favorite']
+            },
+            {
+              id:"pContact", type:"panel", 
+              label: "Contact", width: 38,
+              fields: ['phone','web','address','city','state','zip',]
+            },
+        ]
     },
     {
         "id": 5,
@@ -52,7 +174,77 @@ module.exports = [
         "entity": "winecellar",
         "name": "wine",
         "namePlural": "wines",
-        "icon": "wine-bottle.png"
+        "icon": "wine-bottle.png",
+        "groups": [
+            {
+                "type": "panel",
+                "label": "Wine",
+                "width": 80,
+                "fields": [
+                    "name",
+                    "vintage",
+                    "winery",
+                    "bsize",
+                    "grape",
+                    "type",
+                    "appellation",
+                    "country",
+                    "region",
+                    "area"
+                ]
+            },
+            {
+                "type": "panel",
+                "label": "Bottle Label",
+                "width": 20,
+                "fields": [
+                    "label_img"
+                ]
+            },
+            {
+                "type": "panel",
+                "label": "Purchase",
+                "width": 100,
+                "fields": [
+                    "buying_date",
+                    "price",
+                    "value",
+                    "purchased",
+                    "remaining",
+                    "notes"
+                ]
+            },
+            {
+                "type": "panel",
+                "label": "Drinking",
+                "width": 62,
+                "fields": [
+                    "drink_from",
+                    "drink_to",
+                    "peak_from",
+                    "peak_to",
+                    "meal"
+                ]
+            },
+            {
+                "type": "panel",
+                "label": "Score",
+                "width": 38,
+                "fields": [
+                    "score",
+                    "score_parker",
+                    "score_winespectator"
+                ]
+            },
+            {
+                "type": "panel",
+                "label": "Comments",
+                "width": 100,
+                "fields": [
+                    "comments"
+                ]
+            }
+        ]
     },
     {
         "id": 6,
@@ -63,7 +255,31 @@ module.exports = [
         "entity": "winetasting",
         "name": "wine tasting",
         "namePlural": "wine tastings",
-        "icon": "wine.gif"
+        "icon": "wine.gif",
+        "groups": [
+            {
+                "id": "p1",
+                "type": "panel",
+                "label": "Degustation",
+                "width": 62,
+                "fields": [
+                    "drink_date",
+                    "wine_id",
+                    "notes"
+                ]
+            },
+            {
+                "id": "p2",
+                "type": "panel",
+                "label": "Evaluation",
+                "width": 38,
+                "fields": [
+                    "taste",
+                    "robe",
+                    "nose"
+                ]
+            }
+        ]
     },
     {
         "id": 7,
@@ -74,7 +290,32 @@ module.exports = [
         "entity": "album",
         "name": "album",
         "namePlural": "albums",
-        "icon": "cd.png"
+        "icon": "cd.png",
+        "groups": [
+            {
+                "id": "p-album",
+                "type": "panel",
+                "label": "Album",
+                "table": 'music_album',
+                "column": 'album_id',
+                "width": 70,
+                "fields": [
+                    "title",
+                    "artist",
+                    "url",
+                    'description'
+                ]
+            },
+            {
+                "id": "p-cover",
+                "type": "panel",
+                "label": "Cover",
+                "width": 30,
+                "fields": [
+                    "cover"
+                ]
+            }
+        ]
     },
     {
         "id": 8,
@@ -85,7 +326,30 @@ module.exports = [
         "entity": "artist",
         "name": "artist",
         "namePlural": "artists",
-        "icon": "star.png"
+        "icon": "star.png",
+        "groups": [
+            {
+                "id": "g1",
+                "type": "panel",
+                "label": "Artist",
+                "width": 70,
+                "fields": [
+                    "name",
+                    "url",
+                    "bdate",
+                    'description'
+                ]
+            },
+            {
+                "id": "g2",
+                "type": "panel",
+                "label": "Photo",
+                "width": 30,
+                "fields": [
+                    "photo"
+                ]
+            }
+        ]
     },
     {
         "id": 9,

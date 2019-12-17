@@ -24,6 +24,7 @@ const camelProp = {
     'minvalue': 'minValue',
     'maxvalue': 'maxValue',
     'regexp': 'regExp',
+    'nocharts': 'noCharts',
 }
 const camelPropSQL = p => 't1."'+p+'"'+(camelProp[p] ? (' AS "'+camelProp[p]+'"') : '')
 const col2id = id => camelProp[id] || id
@@ -37,6 +38,7 @@ const objProps = {
         "nameplural",
         "icon",
         "description",
+        "groups",
         //"c_date",
         //"u_date",
     ],
@@ -88,6 +90,7 @@ const fldProps = {
         "maxvalue",
         "regexp",
         "help",
+        "nocharts",
         //"c_date",
         //"u_date"
     ],
@@ -112,6 +115,7 @@ const fldProps = {
         "maxvalue",
         "regexp",
         "help",
+        "nocharts",
         //"c_date",
         //"u_date"
     ],

@@ -36,12 +36,24 @@ module.exports = {
 		{
 			"id": "world",
 			"type": "lov",
-			"label": "App",
+			"label": "World",
 			"object": "world",
 			"lovIcon": false,
 			"inMany": true,
 			"column": "world_id",
 			"lovTable": "evol_world"
+		},
+		{
+			"id": "noCharts",
+			"type": "boolean",
+			"label": "No Charts",
+			"column": "nocharts"
+		},
+		{
+			"id": "noStats",
+			"type": "boolean",
+			"label": "No Stats",
+			"column": "nostats"
 		},
 		{
 			"id": "table",
@@ -111,6 +123,12 @@ module.exports = {
 			"label": "Description",
 			"maxLength": 250,
 			"column": "description"
+		},
+		{
+			"id": "groups",
+			"type": "json",
+			"label": "Fields groups",
+			"column": "groups"
 		}
 	],
 	"collections": [
