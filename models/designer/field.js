@@ -84,7 +84,7 @@ module.exports = {
 				},
 				{
 					"id": 11,
-					"text": "List (dropdown)",
+					"text": "LoV (dropdown)",
 					"icon": "designer/ft-lov.gif"
 				},
 				{
@@ -96,6 +96,16 @@ module.exports = {
 					"id": 13,
 					"text": "Link",
 					"icon": "designer/ft-url.gif"
+				},
+				{
+					"id": 14,
+					"text": "List (multiselect)",
+					"icon": "designer/ft-list.gif"
+				},
+				{
+					"id": 15,
+					"text": "JSON",
+					"icon": "designer/ft-json.png"
 				}
 			],
 			"lovIcon": true,

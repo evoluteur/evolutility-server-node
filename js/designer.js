@@ -119,7 +119,8 @@ const fldProps = {
 
 const ftMap = {},
     ftMap2 = {},
-    arrFieldTypes = [
+    arrFieldTypes = [ 
+        // Keep in the same order as DB ids
         "text",
         "textmultiline",
         "boolean",
@@ -133,6 +134,8 @@ const ftMap = {},
         "lov",
         "email",
         "url",
+        "list",
+        "json",
     ]
 
 arrFieldTypes.forEach((tid, idx) => {

@@ -7,7 +7,7 @@ module.exports = [
         "textmultiline": "ABCDEF",
         "lov": 2,
         "lovlc": 5,
-        "list": [2, 3],
+        "list": [1,2,3],
         "date": "2019-01-01",
         "datetime": null,
         "time": null,
@@ -18,7 +18,8 @@ module.exports = [
         "email": "abc@abc.com",
         "url": "http://abc.com",
         "document": "",
-        "image": "test/bug.gif"
+        "image": "test/bug.gif",
+        "json": [{"a": 123, "b": "abc"},{"a": 5}],
     },
     {
         "id": 2,
@@ -28,7 +29,7 @@ module.exports = [
         "textmultiline": "EFGHIJ",
         "lov": 1,
         "lovlc": 1,
-        "list": [1, 2, 4],
+        "list": [3,4],
         "date": "2019-02-01",
         "datetime": null,
         "time": null,
@@ -38,6 +39,7 @@ module.exports = [
         "boolean": false,
         "email": "efghij@efghij.com",
         "url": "http://efghij.com",
+        "json": {"a": 1, "b": "zzzzzz"},
     },
     {
         "id": 3,
@@ -47,7 +49,7 @@ module.exports = [
         "textmultiline": "Long text Long text Long text Long text Long text Long text Long text Long text Long text Long text Long text Long text Long text Long text Long text Long text Long text Long text Long text Long text Long text Long text Long text",
         "lov": 4,
         "lovlc": 5,
-        "list": [1, 2, 3],
+        "list": [3,4],
         "date": "2019-12-24",
         "datetime": "2019-12-24",
         "time": "",
@@ -58,6 +60,7 @@ module.exports = [
         "email": "long_long_long_long_long_long_long_long_long_email@gmail.com",
         "url": "http://someUrlsAreTooStrangeToRememberITHINKAOEFDJIJDQFSKJRKDLFVJWDFKJJDFKLXDFG.com",
         "document": "",
-        "image": ""
-    }
+        "image": "",
+        "json": {"a": 10, "b": "This is another test."},
+    } 
 ];

@@ -87,22 +87,19 @@ function sqlInsert(tableNameSchema, m, data){
                         if(f.type===ft.lov){
                             //TODO: parseint?
                             v = v || null //"['error']";
-                        }else if(f.type===ft.json){
-                            v = "'"+ JSON.stringify(v) +"'";
                         }else if(f.type===ft.list){
                             if(Array.isArray(v)){
                                 v = "'{" + v.join(',') + "}'";
                             }else{
                                 v='null';
                             }
-                        }else if(typeof(v)==='object'){
-                            if(v){
-                                v = "'"+ JSON.stringify(v) +"'";
+                        }else if(f.type===ft.json){
+                            if(typeof(v)==='string'){
+                                v="'"+v+"'"
                             }else{
-                                v = null
+                                v = "'"+ JSON.stringify(v) +"'";
                             }
                         }else if(typeof(v)==='string'){
-                        //}else if(v && (typeof v)==='string'){
                             v = stringValue(v);
                         }
                         vs.push(v);
