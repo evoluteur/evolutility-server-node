@@ -339,7 +339,6 @@ function createSchema(runSQL = true, logFile = true){
         
         if(logFile) {
             logToFile(sql, false)
-            logToFile(sqlData, true)
         }
         pool.connect(function(err, client, done) {
             // - Create schema and tables

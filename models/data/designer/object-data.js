@@ -244,6 +244,49 @@ module.exports = [
                     "comments"
                 ]
             }
+        ],
+        "collections": [
+            {
+                "id": "wine_tasting",
+                "title": 'Degustations',
+                "table": "wine_tasting",
+                "column": "wine_id",
+                "object": "winetasting",
+                "order": "desc",
+                "fields": [
+                    {
+                        "id": "drink_date",
+                        "column": "drink_date",
+                        "type": "date",
+                        "label": "Date",
+                        "required": true
+                    },
+                    {
+                        "id": "robe",
+                        "column": "robe",
+                        "type": "text",
+                        "label": "Robe"
+                    },
+                    {
+                        "id": "nose",
+                        "column": "nose",
+                        "type": "text",
+                        "label": "Nose"
+                    },
+                    {
+                        "id": "taste",
+                        "column": "taste",
+                        "type": "text",
+                        "label": "Taste"
+                    },
+                    {
+                        "id": "notes",
+                        "column": "notes",
+                        "type": "textmultiline",
+                        "label": "Note"
+                    }
+                ]
+            }
         ]
     },
     {
@@ -315,6 +358,40 @@ module.exports = [
                     "cover"
                 ]
             }
+        ],
+        "collections": [
+            {
+                "id": "music_track",
+                "label": "Tracks",
+                "icon": "music.png",
+                "table": "music_track",
+                "column": "album_id",
+                "orderBy": "name",
+                "object": "track",
+                "fields": [
+                    {
+                        "id": "name",
+                        "type": "text",
+                        "label": "Track",
+                        "column": "name",
+                        "inMany": true, 
+                    },
+                    {
+                        "id": "genre",
+                        "type": "lov",
+                        "label": "Genre",
+                        "column": "genre_id",
+                        "lovTable": "music_genre",
+                    },
+                    {
+                        "id": "length",
+                        "type": "text",
+                        "label": "Length",
+                        "column": "length",
+                        "inMany": true
+                    },
+                ]
+            }
         ]
     },
     {
@@ -347,6 +424,31 @@ module.exports = [
                 "width": 30,
                 "fields": [
                     "photo"
+                ]
+            }
+        ],
+        "collections": [
+            {
+                "id": "music_album",
+                "label": "Albums",
+                "icon": "cd.png",
+                "table": "music_album",
+                "object": "album",
+                "column": "artist_id",
+                "orderBy": "title",
+                "fields": [
+                    {
+                        "id": "title",
+                        "type": "text",
+                        "label": "Title",
+                        "column": "title",
+                    },
+                    {
+                        "id": "cover", 
+                        "column": "cover", 
+                        "type": "image", 
+                        "label": "Cover",
+                    }
                 ]
             }
         ]

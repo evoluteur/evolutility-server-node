@@ -39,6 +39,7 @@ const objProps = {
         "icon",
         "description",
         "groups",
+        "collections",
         //"c_date",
         //"u_date",
     ],
@@ -47,6 +48,7 @@ const objProps = {
         "table",
         "pkey",
         "active",
+        "collections",
     ]
 }
 /*

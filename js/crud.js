@@ -179,24 +179,23 @@ function collecOne(req, res) {
     const mid = req.params.entity
         m = dico.getModel(mid),
         collecId = req.params.collec,
-        collec = m.collecsH[collecId],
-        pId = parseInt(req.query.id, 10);
+        collec = m.collecsH[collecId]
 
     if(m && collec){
-        const sqlParams = [pId],
-            sql = 'SELECT t1.id, '+sqls.select(collec.fields, null, 't1')+
-                ' FROM '+schema+'."'+collec.table+'" AS t1'+
-                    sqls.sqlFromLOVs(collec.fields, schema)+
-                ' WHERE t1."'+collec.column+'"=$1'+
-                ' ORDER BY t1.'+collecOrderBy(collec)+
-                ' LIMIT '+defaultPageSize+';';
-
-        query.runQuery(res, sql, sqlParams, false);        
+        const sqlParams = [parseInt(req.query.id, 10)];
+        query.runQuery(res, SQLCollecOne(collec), sqlParams, false);        
     }else{
         errors.badRequest(res)
     }
 }
 
+const SQLCollecOne = collec => 'SELECT t1.id, '+sqls.select(collec.fields, null, 't1')+
+    ' FROM '+schema+'."'+collec.table+'" AS t1'+
+        sqls.sqlFromLOVs(collec.fields, schema)+
+    ' WHERE t1."'+collec.column+'"=$1'+
+    ' ORDER BY t1.'+collecOrderBy(collec)+
+    ' LIMIT '+defaultPageSize+';';
+                
 // --------------------------------------------------------------------------------------
 
 module.exports = {

@@ -129,6 +129,12 @@ module.exports = {
 			"type": "json",
 			"label": "Fields groups",
 			"column": "groups"
+		},
+		{
+			"id": "collections",
+			"type": "json",
+			"label": "Collections",
+			"column": "collections"
 		}
 	],
 	"collections": [
