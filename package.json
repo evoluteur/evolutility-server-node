@@ -1,6 +1,6 @@
 {
   "name": "evolutility-server-node",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Model-driven generic REST or GraphQL endpoints for CRUD and more, using Node.js, Express, and Postgres.",
   "license": "MIT",
   "homepage": "https://github.com/evoluteur/evolutility-server-node",
