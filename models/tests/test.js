@@ -47,7 +47,7 @@ const fields = [
 		"type": "lov",
 		"label": "Parent",
 		"object": "test",
-		"required": true,
+		"required": false,
 		"inMany": true,
 		"column": "parent_id",
 		"lovTable": "z_test"

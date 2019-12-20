@@ -27,7 +27,7 @@ module.exports = {
 			"column": "drink_date"
 		},
 		{
-			"id": "wine_id",
+			"id": "wine",
 			"type": "lov",
 			"label": "Wine",
 			"object": "winecellar",
