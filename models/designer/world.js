@@ -10,10 +10,6 @@ module.exports = {
 	"pKey": "id",
 	"table": "evol_world",
 	"titleField": "name",
-	"searchFields": [
-		"name",
-		"description"
-	],
 	"fields": [
 		{
 			"id": "name",
@@ -22,6 +18,7 @@ module.exports = {
 			"required": true,
 			"maxLength": 100,
 			"inMany": true,
+			"inSearch": true,
 			"column": "name"
 		},
 		{
@@ -36,6 +33,7 @@ module.exports = {
 			"type": "textmultiline",
 			"label": "Description",
 			"maxLength": 500,
+			"inSearch": true,
 			"column": "description"
 		},
 		{

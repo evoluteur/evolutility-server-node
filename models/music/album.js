@@ -18,6 +18,7 @@ module.exports = {
 			"label": "Title",
 			"required": true,
 			"inMany": true,
+			"inSearch": true,
 			"column": "title"
 		},
 		{
@@ -44,6 +45,7 @@ module.exports = {
 			"label": "Description",
 			"maxLength": 1000,
 			"inMany": false,
+			"inSearch": true,
 			"column": "description"
 		},
 		{

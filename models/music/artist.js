@@ -18,6 +18,7 @@ module.exports = {
 			"label": "Name",
 			"required": true,
 			"inMany": true,
+			"inSearch": true,
 			"column": "name"
 		},
 		{
@@ -43,6 +44,7 @@ module.exports = {
 			"id": "description",
 			"type": "textmultiline",
 			"label": "Description",
+			"inSearch": true,
 			"column": "description"
 		}
 	],

@@ -11,12 +11,6 @@ module.exports = {
 	"table": "wine_tasting",
 	"active": true,
 	"titleField": "drink_date",
-	"searchFields": [
-		"robe",
-		"nose",
-		"taste",
-		"notes"
-	],
 	"fields": [
 		{
 			"id": "drink_date",
@@ -44,6 +38,7 @@ module.exports = {
 			"label": "Taste",
 			"maxLength": 100,
 			"inMany": true,
+			"inSearch": true,
 			"column": "taste"
 		},
 		{
@@ -52,6 +47,7 @@ module.exports = {
 			"label": "Robe",
 			"maxLength": 100,
 			"inMany": true,
+			"inSearch": true,
 			"column": "robe"
 		},
 		{
@@ -60,6 +56,7 @@ module.exports = {
 			"label": "Nose",
 			"maxLength": 100,
 			"inMany": true,
+			"inSearch": true,
 			"column": "nose"
 		},
 		{
@@ -67,6 +64,7 @@ module.exports = {
 			"type": "textmultiline",
 			"label": "Note",
 			"inMany": true,
+			"inSearch": true,
 			"column": "notes"
 		}
 	],

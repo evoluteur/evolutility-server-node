@@ -11,10 +11,6 @@ module.exports = {
 	"table": "task",
 	"active": true,
 	"titleField": "title",
-	"searchFields": [
-		"title",
-		"description"
-	],
 	"fields": [
 		{
 			"id": "title",
@@ -23,6 +19,7 @@ module.exports = {
 			"required": true,
 			"maxLength": 255,
 			"inMany": true,
+			"inSearch": true,
 			"column": "title"
 		},
 		{
@@ -109,6 +106,7 @@ module.exports = {
 			"label": "Description",
 			"maxLength": 1000,
 			"inMany": false,
+			"inSearch": true,
 			"column": "description"
 		}
 	],

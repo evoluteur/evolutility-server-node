@@ -10,12 +10,6 @@ module.exports = {
 	"pKey": "id",
 	"table": "evol_field",
 	"titleField": "label",
-	"searchFields": [
-		"label",
-		"column",
-		"help",
-		"description"
-	],
 	"fields": [
 		{
 			"id": "label",
@@ -24,6 +18,7 @@ module.exports = {
 			"required": true,
 			"maxLength": 100,
 			"inMany": true,
+			"inSearch": true,
 			"column": "label"
 		},
 		{
@@ -121,6 +116,7 @@ module.exports = {
 			"label": "Column",
 			"required": true,
 			"maxLength": 63,
+			"inSearch": true,
 			"column": "dbcolumn"
 		},
 		{
@@ -129,6 +125,7 @@ module.exports = {
 			"label": "Field ID",
 			"required": true,
 			"inMany": true,
+			"inSearch": true,
 			"column": "fid"
 		},
 		{
@@ -169,9 +166,23 @@ module.exports = {
 		{
 			"id": "inMany",
 			"type": "boolean",
-			"label": "List",
+			"label": "In List",
 			"inMany": true,
 			"column": "inmany"
+		},
+		{
+			"id": "inSearch",
+			"type": "boolean",
+			"label": "In Search",
+			"inMany": true,
+			"column": "insearch"
+		},
+		{
+			"id": "noFilter",
+			"type": "boolean",
+			"label": "In Filter",
+			"inMany": true,
+			"column": "nofilter"
 		},
 		{
 			"id": "position",
@@ -277,16 +288,11 @@ module.exports = {
 			"column": "nocharts"
 		},
 		{
-			"id": "chartType",
-			"type": "text",
-			"label": "Default Chart Type",
-			"column": "charttype"
-		},
-		{
 			"id": "help",
 			"type": "textmultiline",
 			"label": "Help",
 			"maxLength": 500,
+			"inSearch": true,
 			"column": "help"
 		},
 		{
@@ -294,6 +300,7 @@ module.exports = {
 			"type": "textmultiline",
 			"label": "Description",
 			"maxLength": 500,
+			"inSearch": true,
 			"column": "description"
 		},
 		{

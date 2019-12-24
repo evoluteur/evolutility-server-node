@@ -10,12 +10,6 @@ module.exports = {
 	"pKey": "id",
 	"table": "evol_object",
 	"titleField": "title",
-	"searchFields": [
-		"title",
-		"name",
-		"table",
-		"description"
-	],
 	"fields": [
 		{
 			"id": "title",
@@ -24,6 +18,7 @@ module.exports = {
 			"required": true,
 			"maxLength": 200,
 			"inMany": true,
+			"inSearch": true,
 			"column": "title"
 		},
 		{
@@ -62,6 +57,7 @@ module.exports = {
 			"required": true,
 			"maxLength": 63,
 			"inMany": true,
+			"inSearch": true,
 			"column": "table"
 		},
 		{
@@ -77,6 +73,7 @@ module.exports = {
 			"required": true,
 			"maxLength": 100,
 			"inMany": true,
+			"inSearch": true,
 			"column": "entity"
 		},
 		{
@@ -86,6 +83,7 @@ module.exports = {
 			"required": true,
 			"maxLength": 50,
 			"inMany": true,
+			"inSearch": true,
 			"column": "name"
 		},
 		{
@@ -112,16 +110,11 @@ module.exports = {
 			"column": "titlefield"
 		},
 		{
-			"id": "searchFields",
-			"type": "textmultiline",
-			"label": "Search fields",
-			"column": "searchfields"
-		},
-		{
 			"id": "description",
 			"type": "textmultiline",
 			"label": "Description",
 			"maxLength": 250,
+			"inSearch": true,
 			"column": "description"
 		},
 		{
@@ -147,14 +140,14 @@ module.exports = {
 			"fields": [
 				{
 					"id": "label",
-					"type": "text",
+					"column": "label",
 					"label": "Label",
-					"column": "label"
+					"type": "text"
 				},
 				{
 					"id": "column",
-					"label": "Column",
-					"column": "dbcolumn"
+					"column": "dbcolumn",
+					"label": "Column"
 				},
 				{
 					"id": "type",

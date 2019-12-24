@@ -11,12 +11,6 @@ module.exports = {
 	"table": "wine",
 	"active": true,
 	"titleField": "name",
-	"searchFields": [
-		"name",
-		"winery",
-		"appellation",
-		"notes"
-	],
 	"fields": [
 		{
 			"id": "name",
@@ -25,6 +19,7 @@ module.exports = {
 			"required": true,
 			"maxLength": 150,
 			"inMany": true,
+			"inSearch": true,
 			"column": "name"
 		},
 		{
@@ -45,6 +40,7 @@ module.exports = {
 			"required": true,
 			"maxLength": 100,
 			"inMany": true,
+			"inSearch": true,
 			"column": "winery"
 		},
 		{
@@ -448,6 +444,7 @@ module.exports = {
 			"id": "appellation",
 			"type": "text",
 			"label": "Appellation",
+			"inSearch": true,
 			"column": "appellation"
 		},
 		{
@@ -555,6 +552,7 @@ module.exports = {
 			"type": "text",
 			"label": "Region",
 			"maxLength": 100,
+			"inSearch": true,
 			"column": "region"
 		},
 		{
@@ -610,6 +608,7 @@ module.exports = {
 			"type": "textmultiline",
 			"label": "Notes",
 			"maxLength": 150,
+			"inSearch": true,
 			"column": "notes"
 		},
 		{

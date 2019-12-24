@@ -18,6 +18,7 @@ module.exports = {
 			"label": "Name",
 			"required": true,
 			"inMany": true,
+			"inSearch": true,
 			"column": "name"
 		},
 		{

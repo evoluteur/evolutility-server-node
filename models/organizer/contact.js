@@ -11,12 +11,6 @@ module.exports = {
 	"table": "contact",
 	"active": true,
 	"titleField": "fistname",
-	"searchFields": [
-		"lastname",
-		"firstname",
-		"jobtitle",
-		"company"
-	],
 	"fields": [
 		{
 			"id": "lastname",
@@ -25,6 +19,7 @@ module.exports = {
 			"required": true,
 			"maxLength": 50,
 			"inMany": true,
+			"inSearch": true,
 			"column": "lastname"
 		},
 		{
@@ -34,6 +29,7 @@ module.exports = {
 			"required": true,
 			"maxLength": 50,
 			"inMany": true,
+			"inSearch": true,
 			"column": "firstname"
 		},
 		{
@@ -41,6 +37,7 @@ module.exports = {
 			"type": "text",
 			"label": "Title",
 			"maxLength": 50,
+			"inSearch": true,
 			"column": "jobtitle"
 		},
 		{
@@ -49,6 +46,7 @@ module.exports = {
 			"label": "Company",
 			"maxLength": 50,
 			"inMany": true,
+			"inSearch": true,
 			"column": "company"
 		},
 		{
@@ -57,6 +55,7 @@ module.exports = {
 			"label": "email",
 			"maxLength": 100,
 			"inMany": true,
+			"inSearch": true,
 			"column": "email"
 		},
 		{
@@ -118,6 +117,7 @@ module.exports = {
 			"type": "text",
 			"label": "Work Phone",
 			"maxLength": 20,
+			"inSearch": true,
 			"column": "phone"
 		},
 		{
@@ -132,6 +132,7 @@ module.exports = {
 			"type": "text",
 			"label": "Cell.",
 			"maxLength": 20,
+			"inSearch": true,
 			"column": "phonecell"
 		},
 		{
@@ -152,6 +153,7 @@ module.exports = {
 			"type": "text",
 			"label": "City",
 			"maxLength": 100,
+			"inSearch": true,
 			"column": "city"
 		},
 		{

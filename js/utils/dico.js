@@ -120,21 +120,10 @@ function prepModel(m){
 					m.searchFields = [m.searchFields]
 				}
 			}else{
-				m.searchFields = m.fields.filter(f => {
-					return f.inMany && fieldIsText(f)
-				}).map(f => f.id)
-			}
-			// - Collections
-			if(m.collections && !m.collecsH){
-				m.collecsH = {}
-				m.collections.forEach(c => {
-					m.collecsH[c.id] = c
-					c.fields.forEach((f, idx) => {
-						if(f.type==='lov'){
-							f.t2 = 't_'+idx
-						}
-					})
-				})
+				m.searchFields = m.fields.filter(f => f.inSearch).map(f => f.id)
+				if(m.searchFields.length<1){
+					m.searchFields = m.fields.filter(f => f.inMany && fieldIsText(f)).map(f => f.id)
+				}
 			}
 			m._prepared = true;
 		}
@@ -143,6 +132,47 @@ function prepModel(m){
 	console.error('Error: undefined model.')
 	return null;
 }
+
+function prepModelCollecs(m, models){
+	if(m){
+		if(m.collections){
+			// - make collection map
+			m.collecsH = {}
+			m.collections.forEach(c => {
+				if(c.object){
+					const collecModel = models[c.object]
+					if(collecModel){
+						// - if table is not specified get it from collec object
+						if(!c.table){
+							c.table = collecModel.table
+						}
+						// - lookup fields by id
+						const fsh = collecModel.fieldsH
+						c.fields.forEach((f, idx) => {
+							if(typeof(f) === 'string'){
+								c.fields[idx] = JSON.parse(JSON.stringify(fsh[f]||{}))
+							}
+							if(f.type==='lov'){
+								f.t2 = 't_'+idx
+							}
+						})
+					}else{
+						console.log('Model "'+c.object+'" not found in model "'+m.id+'".')
+					}
+				}
+				m.collecsH[c.id] = c
+			})
+		}
+		return m;
+	}
+	return null;
+}
+
+const ms = Object.keys(models)
+console.log(ms)
+// need 2 passes for field map to be populated first, then collecs
+ms.forEach(m => { models[m] = prepModel(models[m]) })
+ms.forEach(m => { models[m] = prepModelCollecs(models[m], models) })
 
 module.exports = {
 

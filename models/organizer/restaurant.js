@@ -11,12 +11,6 @@ module.exports = {
 	"table": "restaurant",
 	"active": true,
 	"titleField": "name",
-	"searchFields": [
-		"name",
-		"web",
-		"notes",
-		"favorites"
-	],
 	"fields": [
 		{
 			"id": "name",
@@ -24,6 +18,7 @@ module.exports = {
 			"label": "Name",
 			"required": true,
 			"inMany": true,
+			"inSearch": true,
 			"column": "name"
 		},
 		{
@@ -141,6 +136,7 @@ module.exports = {
 			"type": "textmultiline",
 			"label": "Notes",
 			"maxLength": 2000,
+			"inSearch": true,
 			"column": "notes"
 		},
 		{
@@ -154,6 +150,7 @@ module.exports = {
 			"type": "textmultiline",
 			"label": "Favorite dish",
 			"maxLength": 2000,
+			"inSearch": true,
 			"column": "favorite"
 		},
 		{
@@ -168,6 +165,7 @@ module.exports = {
 			"type": "textmultiline",
 			"label": "Address",
 			"maxLength": 150,
+			"inSearch": true,
 			"column": "address"
 		},
 		{
@@ -176,6 +174,7 @@ module.exports = {
 			"label": "City",
 			"maxLength": 100,
 			"inMany": true,
+			"inSearch": true,
 			"column": "city"
 		},
 		{

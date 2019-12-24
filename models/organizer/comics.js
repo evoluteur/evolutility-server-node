@@ -11,11 +11,6 @@ module.exports = {
 	"table": "comics",
 	"active": true,
 	"titleField": "title",
-	"searchFields": [
-		"title",
-		"authors",
-		"notes"
-	],
 	"fields": [
 		{
 			"id": "title",
@@ -24,6 +19,7 @@ module.exports = {
 			"required": true,
 			"maxLength": 255,
 			"inMany": true,
+			"inSearch": true,
 			"column": "title"
 		},
 		{
@@ -31,6 +27,7 @@ module.exports = {
 			"type": "text",
 			"label": "Authors",
 			"inMany": true,
+			"inSearch": true,
 			"column": "authors"
 		},
 		{
@@ -183,6 +180,7 @@ module.exports = {
 			"label": "Notes",
 			"maxLength": 1000,
 			"inMany": false,
+			"inSearch": true,
 			"column": "notes"
 		}
 	],

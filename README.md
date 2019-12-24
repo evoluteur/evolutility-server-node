@@ -134,7 +134,6 @@ Models contain the name of the driving table and the list of fields/columns pres
 | pKey         | Name of the Primary key column (single column of type serial). Default to "id". In the data the key is always called "id". |
 | fields       | Array of fields.                        |
 | titleField   | Field id for the column value used as record title. |
-| searchFields | Array of field ids for fields used to perform searches.  |  
 | noCharts     | No Charts or Dashboard views.   |
 | noStats      | No Stats on the object.         |
 
@@ -153,6 +152,7 @@ Models contain the name of the driving table and the list of fields/columns pres
 | required     | Determines if the field is required for saving.      |
 | readOnly     | Display field as readOnly (not editable).            |
 | inMany       | Determines if the field is present (by default) in lists of records. |
+| inSearch     | Determine if the field is used in text searches.                     |
 | max, min     | Maximum/Minimum value allowed (only applies to numeric fields).      |
 | maxLength, minLength | Maximum/Minimum length allowed (only applies to text fields).|
 | unique       | Values must be unique (not implemented yet).   |
