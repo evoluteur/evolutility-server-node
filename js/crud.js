@@ -169,7 +169,7 @@ function deleteX(req, res) {
 
 // - helper for ORDER BY
 const collecOrderBy = collec => 
-    (collec.orderby ? collec.orderby : collec.fields[0].column) +
+    (collec.orderBy ? collec.orderBy : collec.fields[0].column) +
         (collec.order==='desc' ? ' DESC' : ' ASC')
 
 // - returns sub-collection (nested in UI but relational in DB)
