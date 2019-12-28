@@ -20,6 +20,7 @@ module.exports = [
         bdate: '1959-01-16',
         photo: "music/sade.jpg",
         url: 'https://www.sade.com/',
+        description: 'Helen Folasade Adu, is a British singer, songwriter, and actress, known as the lead singer of her eponymous band. Sade is widely considered a musical influence, and her contributions to music have made her a global figure in popular culture for over two decades. She has been credited as one of the most successful British female artists in history.'
     },
     {
         id: 4,
@@ -27,11 +28,13 @@ module.exports = [
         bdate: '1965-09-11',
         photo: "music/moby.jpg",
         url: 'http://moby.com',
+        description: 'Richard Melville Hall (born September 11, 1965), better known as Moby, is an American musician, songwriter, singer, producer, and animal rights activist. He has sold 20 million records worldwide. AllMusic considers him to be "among the most important dance music figures of the early 1990s, helping bring dance music to a mainstream audience both in the United Kingdom and the United States".'
     },
     {
         id: 5,
         name: "Naid",
         photo: "music/naid-varanasi.jpg",
         url: '',
+        description: 'Martin Landquist is a Swedish music producer, recording artist, remixer and songwriter working under the name Nåid. He has produced albums for artists such as a-ha, Jay-Jay Johanson, Linda Sundblad and Kent, and has remixed tracks for artists including The Cardigans. '
     },
 ]

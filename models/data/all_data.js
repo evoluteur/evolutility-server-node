@@ -19,7 +19,7 @@ module.exports = {
 	artist: require('./music/artist-data'),
 	track: require('./music/track-data'),
 
-	test: require('./test/test-data'),
+	test: require('./tests/test-data'),
 
 	world: require('./designer/world-data'),
 	object: require('./designer/object-data'),
