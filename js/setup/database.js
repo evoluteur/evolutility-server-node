@@ -11,11 +11,12 @@ const pg = require('pg'),
     fs = require('fs'),
     parseConnection = require('pg-connection-string').parse,
     { version, homepage } = require('../../package.json'),
-    { prepModel, fieldTypes} = require('../utils/dico');
+    { prepModels, fieldTypes} = require('../utils/dico');
 
 const ft = fieldTypes;
 const models = require('../../models/all_models.js');
 const data = require('../../models/data/all_data.js');
+prepModels()
 
 // - options; mostly from in config.js
 const config = require(path.join(__dirname, '../', '../', 'config')),
@@ -212,7 +213,7 @@ comment on function ${fn}(text) is 'Returns ${m.namePlural} containing a given s
 */
 function sqlModel(mid){
     // -- generates SQL script to create a Postgres DB table for the ui model
-    const m = prepModel(models[mid]);
+    const m = models[mid];
     let { pKey, fields } = m
     let tableName = m.table || m.id,
         tableNameSchema = schema+'."'+tableName+'"',

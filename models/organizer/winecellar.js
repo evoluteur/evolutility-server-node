@@ -19,8 +19,8 @@ module.exports = {
 			"required": true,
 			"maxLength": 150,
 			"inMany": true,
-			"inSearch": true,
-			"column": "name"
+			"column": "name",
+			"inSearch": true
 		},
 		{
 			"id": "vintage",
@@ -40,8 +40,8 @@ module.exports = {
 			"required": true,
 			"maxLength": 100,
 			"inMany": true,
-			"inSearch": true,
-			"column": "winery"
+			"column": "winery",
+			"inSearch": true
 		},
 		{
 			"id": "bsize",
@@ -444,8 +444,8 @@ module.exports = {
 			"id": "appellation",
 			"type": "text",
 			"label": "Appellation",
-			"inSearch": true,
-			"column": "appellation"
+			"column": "appellation",
+			"inSearch": true
 		},
 		{
 			"id": "country",
@@ -552,8 +552,8 @@ module.exports = {
 			"type": "text",
 			"label": "Region",
 			"maxLength": 100,
-			"inSearch": true,
-			"column": "region"
+			"column": "region",
+			"inSearch": true
 		},
 		{
 			"id": "area",
@@ -608,8 +608,8 @@ module.exports = {
 			"type": "textmultiline",
 			"label": "Notes",
 			"maxLength": 150,
-			"inSearch": true,
-			"column": "notes"
+			"column": "notes",
+			"inSearch": true
 		},
 		{
 			"id": "drink_from",
@@ -716,38 +716,13 @@ module.exports = {
 			"table": "wine_tasting",
 			"column": "wine_id",
 			"object": "winetasting",
+			"orderBy": "drink_date",
 			"fields": [
-				{
-					"id": "drink_date",
-					"type": "date",
-					"label": "Date",
-					"required": true,
-					"column": "drink_date"
-				},
-				{
-					"id": "robe",
-					"type": "text",
-					"label": "Robe",
-					"column": "robe"
-				},
-				{
-					"id": "nose",
-					"type": "text",
-					"label": "Nose",
-					"column": "nose"
-				},
-				{
-					"id": "taste",
-					"type": "text",
-					"label": "Taste",
-					"column": "taste"
-				},
-				{
-					"id": "notes",
-					"type": "textmultiline",
-					"label": "Note",
-					"column": "notes"
-				}
+				"drink_date",
+				"robe",
+				"nose",
+				"taste",
+				"notes"
 			]
 		}
 	]

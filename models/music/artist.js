@@ -18,8 +18,8 @@ module.exports = {
 			"label": "Name",
 			"required": true,
 			"inMany": true,
-			"inSearch": true,
-			"column": "name"
+			"column": "name",
+			"inSearch": true
 		},
 		{
 			"id": "url",
@@ -44,8 +44,8 @@ module.exports = {
 			"id": "description",
 			"type": "textmultiline",
 			"label": "Description",
-			"inSearch": true,
-			"column": "description"
+			"column": "description",
+			"inSearch": true
 		}
 	],
 	"collections": [
@@ -56,18 +56,8 @@ module.exports = {
 			"object": "album",
 			"orderBy": "title",
 			"fields": [
-				{
-					"id": "title",
-					"type": "text",
-					"label": "Title",
-					"column": "title"
-				},
-				{
-					"id": "cover",
-					"type": "image",
-					"label": "Cover",
-					"column": "cover"
-				}
+				"title",
+				"cover"
 			]
 		}
 	],

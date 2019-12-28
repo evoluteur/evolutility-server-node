@@ -18,14 +18,8 @@ module.exports = {
 			"label": "Title",
 			"required": true,
 			"inMany": true,
-			"inSearch": true,
-			"column": "title"
-		},
-		{
-			"id": "url",
-			"type": "url",
-			"label": "Amazon",
-			"column": "url"
+			"column": "title",
+			"inSearch": true
 		},
 		{
 			"id": "artist",
@@ -40,13 +34,26 @@ module.exports = {
 			"lovColumn": "name"
 		},
 		{
+			"id": "url",
+			"type": "url",
+			"label": "Amazon",
+			"column": "url"
+		},
+		{
+			"id": "length",
+			"type": "text",
+			"label": "Length",
+			"inMany": true,
+			"column": "length"
+		},
+		{
 			"id": "description",
 			"type": "textmultiline",
 			"label": "Description",
 			"maxLength": 1000,
 			"inMany": false,
-			"inSearch": true,
-			"column": "description"
+			"column": "description",
+			"inSearch": true
 		},
 		{
 			"id": "cover",
@@ -64,28 +71,9 @@ module.exports = {
 			"object": "track",
 			"orderBy": "name",
 			"fields": [
-				{
-					"id": "name",
-					"type": "text",
-					"label": "Track",
-					"inMany": true,
-					"column": "name"
-				},
-				{
-					"id": "genre",
-					"type": "lov",
-					"label": "Genre",
-					"lovIcon": false,
-					"column": "genre_id",
-					"lovTable": "music_genre"
-				},
-				{
-					"id": "length",
-					"type": "text",
-					"label": "Length",
-					"inMany": true,
-					"column": "length"
-				}
+				"name",
+				"genre",
+				"length"
 			]
 		}
 	],

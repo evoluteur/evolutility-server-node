@@ -18,8 +18,8 @@ module.exports = {
 			"required": true,
 			"maxLength": 200,
 			"inMany": true,
-			"inSearch": true,
-			"column": "title"
+			"column": "title",
+			"inSearch": true
 		},
 		{
 			"id": "active",
@@ -57,8 +57,8 @@ module.exports = {
 			"required": true,
 			"maxLength": 63,
 			"inMany": true,
-			"inSearch": true,
-			"column": "table"
+			"column": "table",
+			"inSearch": true
 		},
 		{
 			"id": "pKey",
@@ -73,8 +73,8 @@ module.exports = {
 			"required": true,
 			"maxLength": 100,
 			"inMany": true,
-			"inSearch": true,
-			"column": "entity"
+			"column": "entity",
+			"inSearch": true
 		},
 		{
 			"id": "name",
@@ -83,8 +83,8 @@ module.exports = {
 			"required": true,
 			"maxLength": 50,
 			"inMany": true,
-			"inSearch": true,
-			"column": "name"
+			"column": "name",
+			"inSearch": true
 		},
 		{
 			"id": "namePlural",
@@ -114,20 +114,8 @@ module.exports = {
 			"type": "textmultiline",
 			"label": "Description",
 			"maxLength": 250,
-			"inSearch": true,
-			"column": "description"
-		},
-		{
-			"id": "groups",
-			"type": "json",
-			"label": "Fields groups",
-			"column": "groups"
-		},
-		{
-			"id": "collections",
-			"type": "json",
-			"label": "Collections",
-			"column": "collections"
+			"column": "description",
+			"inSearch": true
 		}
 	],
 	"collections": [
@@ -138,51 +126,13 @@ module.exports = {
 			"object": "field",
 			"orderBy": "position, t1.id",
 			"fields": [
-				{
-					"id": "label",
-					"column": "label",
-					"label": "Label",
-					"type": "text"
-				},
-				{
-					"id": "column",
-					"column": "dbcolumn",
-					"label": "Column"
-				},
-				{
-					"id": "type",
-					"type": "lov",
-					"label": "Type",
-					"lovIcon": true,
-					"column": "type_id",
-					"lovTable": "evol_field_type",
-					"lovColumn": "name"
-				},
-				{
-					"id": "inMany",
-					"type": "boolean",
-					"label": "List",
-					"column": "inmany"
-				},
-				{
-					"id": "width",
-					"type": "integer",
-					"label": "Width",
-					"defaultValue": 100,
-					"column": "width"
-				},
-				{
-					"id": "height",
-					"type": "integer",
-					"label": "Height",
-					"column": "height"
-				},
-				{
-					"id": "required",
-					"type": "boolean",
-					"label": "Required",
-					"column": "required"
-				}
+				"fid",
+				"label",
+				"column",
+				"type",
+				"inMany",
+				"inSearch",
+				"required"
 			]
 		}
 	]

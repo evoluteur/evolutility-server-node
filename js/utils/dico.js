@@ -9,6 +9,7 @@
 const models = require('../../models/all_models'),
 	config = require('../../config.js'),
 	modelIds = Object.keys(models),
+	chalk = require('chalk'),
 	schema = '"'+(config.schema || 'evolutility')+'"';
 
 // - Field Types
@@ -168,11 +169,14 @@ function prepModelCollecs(m, models){
 	return null;
 }
 
-const ms = Object.keys(models)
-console.log(ms)
-// need 2 passes for field map to be populated first, then collecs
-ms.forEach(m => { models[m] = prepModel(models[m]) })
-ms.forEach(m => { models[m] = prepModelCollecs(models[m], models) })
+const prepModels = () => {
+	const ms = Object.keys(models)
+	console.log(chalk.cyan(ms.length+' models:', ms.sort().join(', ')+'.'))
+	// need 2 passes for field map to be populated first, then collections
+	ms.forEach(m => { models[m] = prepModel(models[m])})
+	ms.forEach(m => { models[m] = prepModelCollecs(models[m], models)})
+	return models
+}
 
 module.exports = {
 
@@ -183,6 +187,7 @@ module.exports = {
 	getModel: mId => prepModel(models[mId]),
 
 	prepModel: prepModel,
+	prepModels: prepModels,
 
 	fieldInMany: f =>  f.inList || f.inMany,
 

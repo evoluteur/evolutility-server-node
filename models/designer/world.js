@@ -1,11 +1,11 @@
 /*
-  Evolutility DB model for Applications
+  Evolutility DB model for Worlds
   https://github.com/evoluteur/evolutility-server-node
 */
 
 module.exports = {
 	"id": "world",
-	"title": "Applications",
+	"title": "Worlds",
 	"world": "designer",
 	"pKey": "id",
 	"table": "evol_world",
@@ -18,8 +18,8 @@ module.exports = {
 			"required": true,
 			"maxLength": 100,
 			"inMany": true,
-			"inSearch": true,
-			"column": "name"
+			"column": "name",
+			"inSearch": true
 		},
 		{
 			"id": "active",
@@ -33,8 +33,8 @@ module.exports = {
 			"type": "textmultiline",
 			"label": "Description",
 			"maxLength": 500,
-			"inSearch": true,
-			"column": "description"
+			"column": "description",
+			"inSearch": true
 		},
 		{
 			"id": "position",
@@ -51,24 +51,9 @@ module.exports = {
 			"column": "world_id",
 			"object": "object",
 			"fields": [
-				{
-					"id": "title",
-					"type": "text",
-					"label": "Title",
-					"column": "title"
-				},
-				{
-					"id": "icon",
-					"type": "image",
-					"label": "Icon",
-					"column": "icon"
-				},
-				{
-					"id": "active",
-					"type": "boolean",
-					"label": "Active",
-					"column": "active"
-				}
+				"title",
+				"icon",
+				"active"
 			]
 		}
 	]

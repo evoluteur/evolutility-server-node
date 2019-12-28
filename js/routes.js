@@ -7,6 +7,7 @@
 
 const express = require('express'),
 	router = express.Router(),
+	dico = require('./utils/dico'),
 	logger = require('./utils/logger'),
 	upload = require('./utils/upload'),
 	config = require('../config'),
@@ -21,6 +22,7 @@ const express = require('express'),
 	dbStructure = require('./utils/db-structure');
 
 logger.startupMessage();
+dico.prepModels();
 
 /*
 // ======  file server ====================================
