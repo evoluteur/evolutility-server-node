@@ -19,8 +19,8 @@ module.exports = {
 			"required": true,
 			"maxLength": 255,
 			"inMany": true,
-			"inSearch": true,
-			"column": "title"
+			"column": "title",
+			"inSearch": true
 		},
 		{
 			"id": "duedate",
@@ -106,8 +106,8 @@ module.exports = {
 			"label": "Description",
 			"maxLength": 1000,
 			"inMany": false,
-			"inSearch": true,
-			"column": "description"
+			"column": "description",
+			"inSearch": true
 		}
 	],
 	"collections": [],

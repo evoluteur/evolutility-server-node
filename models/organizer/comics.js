@@ -19,16 +19,16 @@ module.exports = {
 			"required": true,
 			"maxLength": 255,
 			"inMany": true,
-			"inSearch": true,
-			"column": "title"
+			"column": "title",
+			"inSearch": true
 		},
 		{
 			"id": "authors",
 			"type": "text",
 			"label": "Authors",
 			"inMany": true,
-			"inSearch": true,
-			"column": "authors"
+			"column": "authors",
+			"inSearch": true
 		},
 		{
 			"id": "genre",
@@ -180,8 +180,8 @@ module.exports = {
 			"label": "Notes",
 			"maxLength": 1000,
 			"inMany": false,
-			"inSearch": true,
-			"column": "notes"
+			"column": "notes",
+			"inSearch": true
 		}
 	],
 	"collections": []

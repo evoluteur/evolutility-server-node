@@ -38,8 +38,8 @@ module.exports = {
 			"label": "Taste",
 			"maxLength": 100,
 			"inMany": true,
-			"inSearch": true,
-			"column": "taste"
+			"column": "taste",
+			"inSearch": true
 		},
 		{
 			"id": "robe",
@@ -47,8 +47,8 @@ module.exports = {
 			"label": "Robe",
 			"maxLength": 100,
 			"inMany": true,
-			"inSearch": true,
-			"column": "robe"
+			"column": "robe",
+			"inSearch": true
 		},
 		{
 			"id": "nose",
@@ -56,16 +56,16 @@ module.exports = {
 			"label": "Nose",
 			"maxLength": 100,
 			"inMany": true,
-			"inSearch": true,
-			"column": "nose"
+			"column": "nose",
+			"inSearch": true
 		},
 		{
 			"id": "notes",
 			"type": "textmultiline",
 			"label": "Note",
 			"inMany": true,
-			"inSearch": true,
-			"column": "notes"
+			"column": "notes",
+			"inSearch": true
 		}
 	],
 	"collections": [],

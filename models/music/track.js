@@ -18,8 +18,8 @@ module.exports = {
 			"label": "Name",
 			"required": true,
 			"inMany": true,
-			"inSearch": true,
-			"column": "name"
+			"column": "name",
+			"inSearch": true
 		},
 		{
 			"id": "album",
@@ -75,12 +75,23 @@ module.exports = {
 				{
 					"id": 8,
 					"text": "Reggae"
+				},
+				{
+					"id": 9,
+					"text": "Soul"
 				}
 			],
 			"lovIcon": false,
 			"inMany": true,
 			"column": "genre_id",
 			"lovTable": "music_genre"
+		},
+		{
+			"id": "description",
+			"type": "textmultiline",
+			"label": "Description",
+			"column": "description",
+			"inSearch": true
 		}
 	],
 	"collections": [],

@@ -19,8 +19,8 @@ module.exports = {
 			"required": true,
 			"maxLength": 50,
 			"inMany": true,
-			"inSearch": true,
-			"column": "lastname"
+			"column": "lastname",
+			"inSearch": true
 		},
 		{
 			"id": "firstname",
@@ -29,16 +29,16 @@ module.exports = {
 			"required": true,
 			"maxLength": 50,
 			"inMany": true,
-			"inSearch": true,
-			"column": "firstname"
+			"column": "firstname",
+			"inSearch": true
 		},
 		{
 			"id": "jobtitle",
 			"type": "text",
 			"label": "Title",
 			"maxLength": 50,
-			"inSearch": true,
-			"column": "jobtitle"
+			"column": "jobtitle",
+			"inSearch": true
 		},
 		{
 			"id": "company",
@@ -46,8 +46,8 @@ module.exports = {
 			"label": "Company",
 			"maxLength": 50,
 			"inMany": true,
-			"inSearch": true,
-			"column": "company"
+			"column": "company",
+			"inSearch": true
 		},
 		{
 			"id": "email",
@@ -55,8 +55,8 @@ module.exports = {
 			"label": "email",
 			"maxLength": 100,
 			"inMany": true,
-			"inSearch": true,
-			"column": "email"
+			"column": "email",
+			"inSearch": true
 		},
 		{
 			"id": "web",
@@ -113,12 +113,20 @@ module.exports = {
 			"lovTable": "contact_category"
 		},
 		{
-			"id": "phone",
+			"id": "phonework",
 			"type": "text",
 			"label": "Work Phone",
 			"maxLength": 20,
-			"inSearch": true,
-			"column": "phone"
+			"column": "phone",
+			"inSearch": true
+		},
+		{
+			"id": "phonecell",
+			"type": "text",
+			"label": "Cell.",
+			"maxLength": 20,
+			"column": "phonecell",
+			"inSearch": true
 		},
 		{
 			"id": "phonehome",
@@ -126,14 +134,6 @@ module.exports = {
 			"label": "Home Phone",
 			"maxLength": 20,
 			"column": "phonehome"
-		},
-		{
-			"id": "phonecell",
-			"type": "text",
-			"label": "Cell.",
-			"maxLength": 20,
-			"inSearch": true,
-			"column": "phonecell"
 		},
 		{
 			"id": "fax",
@@ -153,8 +153,8 @@ module.exports = {
 			"type": "text",
 			"label": "City",
 			"maxLength": 100,
-			"inSearch": true,
-			"column": "city"
+			"column": "city",
+			"inSearch": true
 		},
 		{
 			"id": "state",

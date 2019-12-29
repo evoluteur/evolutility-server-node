@@ -58,7 +58,7 @@ module.exports = {
 		{
 			"id": "cover",
 			"type": "image",
-			"label": "Album Cover",
+			"label": "Cover",
 			"inMany": true,
 			"column": "cover"
 		}

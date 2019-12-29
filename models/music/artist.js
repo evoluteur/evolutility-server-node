@@ -57,7 +57,8 @@ module.exports = {
 			"orderBy": "title",
 			"fields": [
 				"title",
-				"cover"
+				"cover",
+				"length"
 			]
 		}
 	],

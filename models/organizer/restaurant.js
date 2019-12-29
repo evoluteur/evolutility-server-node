@@ -18,8 +18,8 @@ module.exports = {
 			"label": "Name",
 			"required": true,
 			"inMany": true,
-			"inSearch": true,
-			"column": "name"
+			"column": "name",
+			"inSearch": true
 		},
 		{
 			"id": "cuisine",
@@ -136,8 +136,8 @@ module.exports = {
 			"type": "textmultiline",
 			"label": "Notes",
 			"maxLength": 2000,
-			"inSearch": true,
-			"column": "notes"
+			"column": "notes",
+			"inSearch": true
 		},
 		{
 			"id": "hours",
@@ -150,8 +150,8 @@ module.exports = {
 			"type": "textmultiline",
 			"label": "Favorite dish",
 			"maxLength": 2000,
-			"inSearch": true,
-			"column": "favorite"
+			"column": "favorite",
+			"inSearch": true
 		},
 		{
 			"id": "phone",
@@ -165,8 +165,8 @@ module.exports = {
 			"type": "textmultiline",
 			"label": "Address",
 			"maxLength": 150,
-			"inSearch": true,
-			"column": "address"
+			"column": "address",
+			"inSearch": true
 		},
 		{
 			"id": "city",
@@ -174,8 +174,8 @@ module.exports = {
 			"label": "City",
 			"maxLength": 100,
 			"inMany": true,
-			"inSearch": true,
-			"column": "city"
+			"column": "city",
+			"inSearch": true
 		},
 		{
 			"id": "state",
