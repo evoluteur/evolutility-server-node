@@ -20,11 +20,11 @@ module.exports = [
     "description": "Test object with fields of every type.",
     "position": 30
   },
-  {
+/*  {
     "id": 5,
     "name": "Designer",
     "active": false,
     "description": "Apps to create other apps.",
     "position": 50
-  }
+  }*/
 ]

@@ -18,8 +18,8 @@ module.exports = {
 			"required": true,
 			"maxLength": 100,
 			"inMany": true,
-			"inSearch": true,
-			"column": "label"
+			"column": "label",
+			"inSearch": true
 		},
 		{
 			"id": "type",
@@ -79,7 +79,7 @@ module.exports = {
 				},
 				{
 					"id": 11,
-					"text": "LoV (dropdown)",
+					"text": "Dropdown (lov)",
 					"icon": "designer/ft-lov.gif"
 				},
 				{
@@ -94,7 +94,7 @@ module.exports = {
 				},
 				{
 					"id": 14,
-					"text": "List (multiselect)",
+					"text": "Multiselect (list)",
 					"icon": "designer/ft-list.gif"
 				},
 				{
@@ -116,8 +116,8 @@ module.exports = {
 			"label": "Column",
 			"required": true,
 			"maxLength": 63,
-			"inSearch": true,
-			"column": "dbcolumn"
+			"column": "dbcolumn",
+			"inSearch": true
 		},
 		{
 			"id": "fid",
@@ -125,8 +125,8 @@ module.exports = {
 			"label": "Field ID",
 			"required": true,
 			"inMany": true,
-			"inSearch": true,
-			"column": "fid"
+			"column": "fid",
+			"inSearch": true
 		},
 		{
 			"id": "object",
@@ -226,7 +226,7 @@ module.exports = {
 		{
 			"id": "labelShort",
 			"type": "text",
-			"label": "Label",
+			"label": "Short label",
 			"column": "labelshort"
 		},
 		{
@@ -292,16 +292,16 @@ module.exports = {
 			"type": "textmultiline",
 			"label": "Help",
 			"maxLength": 500,
-			"inSearch": true,
-			"column": "help"
+			"column": "help",
+			"inSearch": true
 		},
 		{
 			"id": "description",
 			"type": "textmultiline",
 			"label": "Description",
 			"maxLength": 500,
-			"inSearch": true,
-			"column": "description"
+			"column": "description",
+			"inSearch": true
 		},
 		{
 			"id": "defaultValue",

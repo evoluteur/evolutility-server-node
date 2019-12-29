@@ -9,38 +9,7 @@ module.exports = [
         "name": "task",
         "namePlural": "tasks",
         "icon": "todo.gif",
-        "groups": [
-            {
-                "id": "p1",
-                "type": "panel",
-                "label": "Task",
-                "width": 62,
-                "fields": [
-                    "title",
-                    "duedate",
-                    "category"
-                ]
-            },
-            {
-                "id": "p2",
-                "type": "panel",
-                "label": "Status",
-                "width": 38,
-                "fields": [
-                    "priority",
-                    "complete"
-                ]
-            },
-            {
-                "id": "p3",
-                "type": "panel",
-                "label": "Task Description",
-                "width": 100,
-                "fields": [
-                    "description"
-                ]
-            }
-        ]
+        "noStats": true,
     },
     {
         "id": 2,
@@ -52,53 +21,7 @@ module.exports = [
         "name": "contact",
         "namePlural": "contacts",
         "icon": "contact.gif",
-        "groups": [
-            {
-                "type": "panel",
-                "label": "Identity",
-                "width": 62,
-                "fields": [
-                    "lastname",
-                    "firstname",
-                    "jobtitle",
-                    "company",
-                    "email",
-                    "web"
-                ]
-            },
-            {
-                "type": "panel",
-                "label": "Contact Info",
-                "width": 38,
-                "fields": [
-                    "phone",
-                    "phonehome",
-                    "phonecell",
-                    "fax"
-                ]
-            },
-            {
-                "type": "panel",
-                "label": "Address",
-                "width": 62,
-                "fields": [
-                    "address",
-                    "city",
-                    "state",
-                    "zip",
-                    "country"
-                ]
-            },
-            {
-                "type": "panel",
-                "label": "Misc.",
-                "width": 38,
-                "fields": [
-                    "category",
-                    "notes"
-                ]
-            }
-        ]
+        "noStats": true,
     },
     {
         "id": 3,
@@ -110,37 +33,6 @@ module.exports = [
         "name": "serie",
         "namePlural": "series",
         "icon": "comics.png",
-        groups: [
-            {
-                "id": "serie",
-                "type": "panel",
-                "label": "Serie",
-                "width": 70,
-                "fields": [
-                    "title",
-                    "authors",
-                    "genre",
-                    "serie_nb",
-                    "have_nb",
-                    "have",
-                    "language",
-                    "complete",
-                    "finished",
-                    "url_bdfugue",
-                    "url_amazon",
-                    "notes"
-                ]
-            },
-            {
-                "id": "pix",
-                "type": "panel",
-                "label": "Album Cover",
-                "width": 30,
-                "fields": [
-                    "pix"
-                ]
-            }
-        ]
     },
     {
         "id": 4,
@@ -152,18 +44,7 @@ module.exports = [
         "name": "restaurant",
         "namePlural": "restaurants",
         "icon": "resto.gif",
-        "groups": [
-            {
-              id:"pResto", type:"panel", 
-              label: "Restaurant", width: 62,
-              fields: ['name','cuisine','schedule','yelp','price','notes','hours','favorite']
-            },
-            {
-              id:"pContact", type:"panel", 
-              label: "Contact", width: 38,
-              fields: ['phone','web','address','city','state','zip',]
-            },
-        ]
+        "noStats": true,
     },
     {
         "id": 5,
@@ -175,119 +56,6 @@ module.exports = [
         "name": "wine",
         "namePlural": "wines",
         "icon": "wine-bottle.png",
-        "groups": [
-            {
-                "type": "panel",
-                "label": "Wine",
-                "width": 80,
-                "fields": [
-                    "name",
-                    "vintage",
-                    "winery",
-                    "bsize",
-                    "grape",
-                    "type",
-                    "appellation",
-                    "country",
-                    "region",
-                    "area"
-                ]
-            },
-            {
-                "type": "panel",
-                "label": "Bottle Label",
-                "width": 20,
-                "fields": [
-                    "label_img"
-                ]
-            },
-            {
-                "type": "panel",
-                "label": "Purchase",
-                "width": 100,
-                "fields": [
-                    "buying_date",
-                    "price",
-                    "value",
-                    "purchased",
-                    "remaining",
-                    "notes"
-                ]
-            },
-            {
-                "type": "panel",
-                "label": "Drinking",
-                "width": 62,
-                "fields": [
-                    "drink_from",
-                    "drink_to",
-                    "peak_from",
-                    "peak_to",
-                    "meal"
-                ]
-            },
-            {
-                "type": "panel",
-                "label": "Score",
-                "width": 38,
-                "fields": [
-                    "score",
-                    "score_parker",
-                    "score_winespectator"
-                ]
-            },
-            {
-                "type": "panel",
-                "label": "Comments",
-                "width": 100,
-                "fields": [
-                    "comments"
-                ]
-            }
-        ],
-        "collections": [
-            {
-                "id": "wine_tasting",
-                "title": 'Degustations',
-                "table": "wine_tasting",
-                "column": "wine_id",
-                "object": "winetasting",
-                "order": "desc",
-                "fields": [
-                    {
-                        "id": "drink_date",
-                        "column": "drink_date",
-                        "type": "date",
-                        "label": "Date",
-                        "required": true
-                    },
-                    {
-                        "id": "robe",
-                        "column": "robe",
-                        "type": "text",
-                        "label": "Robe"
-                    },
-                    {
-                        "id": "nose",
-                        "column": "nose",
-                        "type": "text",
-                        "label": "Nose"
-                    },
-                    {
-                        "id": "taste",
-                        "column": "taste",
-                        "type": "text",
-                        "label": "Taste"
-                    },
-                    {
-                        "id": "notes",
-                        "column": "notes",
-                        "type": "textmultiline",
-                        "label": "Note"
-                    }
-                ]
-            }
-        ]
     },
     {
         "id": 6,
@@ -299,30 +67,7 @@ module.exports = [
         "name": "wine tasting",
         "namePlural": "wine tastings",
         "icon": "wine.gif",
-        "groups": [
-            {
-                "id": "p1",
-                "type": "panel",
-                "label": "Degustation",
-                "width": 62,
-                "fields": [
-                    "drink_date",
-                    "wine_id",
-                    "notes"
-                ]
-            },
-            {
-                "id": "p2",
-                "type": "panel",
-                "label": "Evaluation",
-                "width": 38,
-                "fields": [
-                    "taste",
-                    "robe",
-                    "nose"
-                ]
-            }
-        ]
+        "noStats": true,
     },
     {
         "id": 7,
@@ -334,65 +79,7 @@ module.exports = [
         "name": "album",
         "namePlural": "albums",
         "icon": "cd.png",
-        "groups": [
-            {
-                "id": "p-album",
-                "type": "panel",
-                "label": "Album",
-                "table": 'music_album',
-                "column": 'album_id',
-                "width": 70,
-                "fields": [
-                    "title",
-                    "artist",
-                    "url",
-                    'description'
-                ]
-            },
-            {
-                "id": "p-cover",
-                "type": "panel",
-                "label": "Cover",
-                "width": 30,
-                "fields": [
-                    "cover"
-                ]
-            }
-        ],
-        "collections": [
-            {
-                "id": "music_track",
-                "label": "Tracks",
-                "icon": "music.png",
-                "table": "music_track",
-                "column": "album_id",
-                "orderBy": "name",
-                "object": "track",
-                "fields": [
-                    {
-                        "id": "name",
-                        "type": "text",
-                        "label": "Track",
-                        "column": "name",
-                        "inMany": true, 
-                    },
-                    {
-                        "id": "genre",
-                        "type": "lov",
-                        "label": "Genre",
-                        "column": "genre_id",
-                        "lovTable": "music_genre",
-                    },
-                    {
-                        "id": "length",
-                        "type": "text",
-                        "label": "Length",
-                        "column": "length",
-                        "inMany": true
-                    },
-                ]
-            }
-        ]
+        "noStats": true,
     },
     {
         "id": 8,
@@ -404,54 +91,8 @@ module.exports = [
         "name": "artist",
         "namePlural": "artists",
         "icon": "star.png",
-        "groups": [
-            {
-                "id": "g1",
-                "type": "panel",
-                "label": "Artist",
-                "width": 70,
-                "fields": [
-                    "name",
-                    "url",
-                    "bdate",
-                    'description'
-                ]
-            },
-            {
-                "id": "g2",
-                "type": "panel",
-                "label": "Photo",
-                "width": 30,
-                "fields": [
-                    "photo"
-                ]
-            }
-        ],
-        "collections": [
-            {
-                "id": "music_album",
-                "label": "Albums",
-                "icon": "cd.png",
-                "table": "music_album",
-                "object": "album",
-                "column": "artist_id",
-                "orderBy": "title",
-                "fields": [
-                    {
-                        "id": "title",
-                        "type": "text",
-                        "label": "Title",
-                        "column": "title",
-                    },
-                    {
-                        "id": "cover", 
-                        "column": "cover", 
-                        "type": "image", 
-                        "label": "Cover",
-                    }
-                ]
-            }
-        ]
+        "noStats": true,
+        "noCharts": true,
     },
     {
         "id": 9,
@@ -462,7 +103,8 @@ module.exports = [
         "entity": "track",
         "name": "track",
         "namePlural": "tracks",
-        "icon": "music.png"
+        "icon": "music.png",
+        "noStats": true,
     },
     {
         "id": 10,
@@ -476,7 +118,7 @@ module.exports = [
         "icon": "eye.png",
         "description": "Dummy object with fields of all possible types for easy testing."
     },
-    {
+/*    {
         "id": 11,
         "title": "Fields",
         "active": false,
@@ -489,7 +131,7 @@ module.exports = [
     },
     {
         "id": 12,
-        "title": "Object",
+        "title": "Objects",
         "active": false,
         "world": 5,
         "table": "object",
@@ -500,7 +142,7 @@ module.exports = [
     },
     {
         "id": 13,
-        "title": "Apps",
+        "title": "Worlds",
         "active": false,
         "world": 5,
         "table": "world",
@@ -508,5 +150,5 @@ module.exports = [
         "name": "world",
         "namePlural": "worlds",
         "icon": ""
-    }
+    }*/
 ]

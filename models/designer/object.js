@@ -134,6 +134,33 @@ module.exports = {
 				"inSearch",
 				"required"
 			]
+		},
+		{
+			"id": "collec-groups",
+			"table": "evol_object_group",
+			"column": "object_id",
+			"object": "group",
+			"orderBy": "position, t1.id",
+			"fields": [
+				"gid",
+				"label",
+				"type",
+				"fields"
+			]
+		},
+		{
+			"id": "collec-collecs",
+			"table": "evol_object_collec",
+			"column": "object_id",
+			"object": "collection",
+			"orderBy": "position, t1.id",
+			"fields": [
+				"cid",
+				"label",
+				"column",
+				"object",
+				"fields"
+			]
 		}
 	]
 }

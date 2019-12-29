@@ -24,4 +24,6 @@ module.exports = {
 	world: require('./designer/world-data'),
 	object: require('./designer/object-data'),
 	field: require('./designer/field-data'),
+	group: require('./designer/group-data'),
+	collection: require('./designer/collection-data'),
 };

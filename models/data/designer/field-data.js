@@ -1302,7 +1302,7 @@ module.exports = [
 		"position": 112,
 		"width": 100
 	},
-	{
+/*	{
 		"id": 113,
 		"label": "Label",
 		"type": 1,
@@ -1761,5 +1761,5 @@ module.exports = [
 		"inMany": false,
 		"position": 152,
 		"width": 15
-	}
+	}*/
 ]
