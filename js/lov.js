@@ -39,26 +39,35 @@ function lovOne(req, res) {
         if(f){
             const col = f.lovColumn || 'name'
             let params = null
-            let sql = 'SELECT id, "'+col+'" as text'
-            if(f.lovIcon){
-                sql+=', icon'
-            }
-            sql += ' FROM '+schema+'."'+f.lovTable+'"'
+            let sql = SQLlovOne(f, search)
             if(search){
-                sql += ' WHERE "'+col+'" ILIKE $1'
                 params = [searchParam(search)]
             }
-            sql += ' ORDER BY UPPER("'+col+'") ASC LIMIT '+lovSize+';';
             query.runQuery(res, sql, params, false);
         }else{
-            res.json(logger.errorMsg('Invalid field \''+fid+'\'.', 'lovOne'));
+            res.json(logger.errorMsg('Invalid field "'+fid+'".', 'lovOne'));
         }
     }else{
         errors.badRequest(res)
     }
 }
 
+const SQLlovOne = (f, search) => {
+    const col = f.lovColumn || 'name'
+    let sql = 'SELECT id, "'+col+'" as text'
+    if(f.lovIcon){
+        sql+=', icon'
+    }
+    sql += ' FROM '+schema+'."'+f.lovTable+'"'
+    if(search){
+        sql += ' WHERE "'+col+'" ILIKE $1'
+    }
+    sql += ' ORDER BY UPPER("'+col+'") ASC LIMIT '+lovSize+';';
+    return sql
+}
+
 module.exports = {
     // - LOVs (for dropdowns)
-    lovOne: lovOne
+    lovOne: lovOne,
+    SQLlovOne: SQLlovOne,
 }

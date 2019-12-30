@@ -75,8 +75,8 @@ module.exports = {
 		}
 	},
 
-	logHeader(ql, action, entity){
-		const msg=ql+' > '+action+' : '+(entity?entity:'')
+	logHeader(ql, action, entity, id){
+		const msg = ql+' > '+action+' : '+(entity?entity:'') + (id?' '+id:'')
 		if(fileLog){
 			log.info(msg)
 		}
@@ -85,9 +85,9 @@ module.exports = {
 	},
 
 	logReq(title, req, reqType = 'REST'){
-		this.logHeader(reqType, title, req.params && req.params.entity)
+		this.logHeader(reqType, title, req.params && req.params.entity, req.params && req.params.id)
 		if(consoleLog){
-			if(!_.isEmpty(req.query)){
+			if(!_.isEmpty(req.params)){
 				console.log('params = '+JSON.stringify(req.params, null, 2));
 			}
 			if(!_.isEmpty(req.query)){

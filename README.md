@@ -1,4 +1,4 @@
-# Evolutility-Server-Node &middot; [![GitHub license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/evoluteur/evolutility-server-node/blob/master/LICENSE.md) [![npm version](https://img.shields.io/npm/v/evolutility-server-node)](https://www.npmjs.com/package/evolutility-server-node) 
+# Evolutility-Server-Node &middot; [![GitHub license](https://img.shields.io/github/license/evoluteur/evolutility-server-node)](https://github.com/evoluteur/evolutility-server-node/blob/master/LICENSE.md) [![npm version](https://img.shields.io/npm/v/evolutility-server-node)](https://www.npmjs.com/package/evolutility-server-node) 
 
 
 Model-driven REST or GraphQL backend for CRUD and more, using Node.js, Express, and PostgreSQL.
@@ -173,7 +173,7 @@ Multiple Master-Details can be specified with collections.
 | column       | Column in the detail table to match against id of object. |
 | object       | Model id for the object to display (optional).            |
 | orderBy      | Column(s) to sort by, e.g. { orderBy: "name" }.                 |
-| fields       | Array of fields. Fields in collections do not need all properties of Fields in objects.      |
+| fields       | Array of fields (objects or ids). Fields in collections can be field objects or just ids of field in the collection's object.    |
 
 Example of collection in [Wine cellar](https://github.com/evoluteur/evolutility-server-node/blob/master/models/organizer/winecellar.js).
 
@@ -628,7 +628,7 @@ For all objects records can be aggregated and counted by field (for fields of nu
 ```
 
 
-[View in GraphiQL](http://localhost:2000/graphql?query=%7B%20%0A%20%20%23%20Charts%20-%20contacts%20by%20categories%0A%20%20contacts_by_category%3A%20contact_Charts(fieldId%3A%22category%22)%7B%0A%20%20%20%20label%20%0A%20%20%20%20value%0A%20%20%7D%0A%20%20%23%20Charts%20-%20tasks%20by%20priorities%0A%20%20task_by_priority%3A%20todo_Charts(fieldId%3A%22priority%22)%20%7B%0A%20%20%20%20label%20%0A%20%20%20%20value%0A%20%20%7D%0A%20%20%23%20Charts%20-%20restaurants%20by%20cuisine%0A%20%20restaurants_by_cuisine%3A%20restaurant_Charts(fieldId%3A%22cuisine%22)%20%7B%0A%20%20%20%20label%20%0A%20%20%20%20value%0A%20%20%7D%0A%7D%20)
+[View in GraphiQL](http://localhost:2000/graphql?query=%7B%20%0A%20%20%23%20Charts%20-%20contacts%20by%20categories%0A%20%20contacts_by_category%3A%20contact_charts(fieldId%3A%22category%22)%7B%0A%20%20%20%20label%20%0A%20%20%20%20value%0A%20%20%7D%0A%20%20%23%20Charts%20-%20tasks%20by%20priorities%0A%20%20tasks_by_priority%3A%20todo_charts(fieldId%3A%22priority%22)%20%7B%0A%20%20%20%20label%20%0A%20%20%20%20value%0A%20%20%7D%0A%20%20%23%20Charts%20-%20restaurants%20by%20cuisine%0A%20%20restaurants_by_cuisine%3A%20restaurant_charts(fieldId%3A%22cuisine%22)%20%7B%0A%20%20%20%20label%20%0A%20%20%20%20value%0A%20%20%7D%0A%7D%20)
 
 
 

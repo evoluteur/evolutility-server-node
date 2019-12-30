@@ -35,10 +35,9 @@ function chartField(req, res) {
 
 function SQLchartField(m, fid) {
     const sqlCount = 'count(*)::integer AS value';
-    
-let sql,
-    sqlParams = [],
-    withError = null;
+    let sql,
+        sqlParams = [],
+        withError = null;
 
     if(m && fid){
         let f = m.fieldsH[fid];
@@ -49,7 +48,6 @@ let sql,
                     
                 if(f.type===ft.lov && f.lovTable){
                     const clov = f.lovColumn||'name';
-
                     sql='SELECT t2.id, t2.'+clov+'::text AS label, '+sqlCount+
                         sqlFrom+
                         ' LEFT JOIN '+schema+'."'+f.lovTable+'" AS t2'+
@@ -75,10 +73,10 @@ let sql,
                 sql += ' ORDER BY label ASC'+
                     ' LIMIT '+defaultPageSize+';';
             }else{
-                withError = 'The field "'+fid+'" is not allowed for Charts.'
+                withError = 'Field "'+fid+'" not allowed in Charts.'
             }
         }else{
-            withError = 'Invalid field: "'+fid+'".'
+            withError = 'Field not found: "'+fid+'".'
         }
     }else{
         withError = 'Invalid model: "'+mid+'".'

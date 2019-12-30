@@ -118,10 +118,6 @@ module.exports = {
 						fv = null;
 					}
 					switch(f.type){
-						case 'panel-list':
-							vs.push(JSON.stringify(fv));
-							ns.push(fnName(f, vs.length));
-							break;
 						case ft.bool:
 							if(f.required && fv==='false'){
 								addInvalid(f.id, fv, 'required')

@@ -170,7 +170,7 @@ module.exports = {
 		{
 			"id": "pix",
 			"type": "image",
-			"label": "Album Cover",
+			"label": "Cover",
 			"inMany": true,
 			"column": "pix"
 		},
