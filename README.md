@@ -264,6 +264,14 @@ GET /{model.id}/{id}
 GET /todo/12
 ```
 
+By default this endpoint returns nested collections with the record. For optimization, collections can be ommited by using the parameter "shallow".
+
+```
+GET /{model.id}/{id}?shallow=1
+
+GET /todo/12?shallow=1
+```
+
 #### Get Many
 Gets a list of records.
 
@@ -272,6 +280,7 @@ GET /{model.id}
 
 GET /todo
 ```
+
 
 <a name="Filtering"></a>
 #### Filtering

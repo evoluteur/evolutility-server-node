@@ -7,6 +7,7 @@
 */
 
 const dico = require('./utils/dico'),
+    Promise = require('bluebird'), 
     sqls = require('./utils/sql-select'),
     query = require('./utils/query'),
     errors = require('./utils/errors.js'),
@@ -56,7 +57,31 @@ function getOne(req, res) {
         if(!(sqlParams && sqlParams.length)){
             sqlParams = null
         }
-        query.runQuery(res, sql, sqlParams, true);        
+        if(m.collections && !req.query.shallow){
+            const qCollecs = m.collections.map(collec => query.promiseQuery(SQLCollecOne(collec), [id], false))
+            qCollecs.unshift(query.promiseQuery(sql, sqlParams, true))
+            Promise.all(qCollecs)
+                .then(data => {
+                    if(data && data.length){
+                        const d = data[0]
+                        if(data.length>1){
+                            d.collections = {}
+                            m.collections.forEach((collec, idx) => {
+                                d.collections[collec.id] = data[idx+1]
+                            })
+                        }
+                        res.json(d)
+                    }else{
+                        res.json(data)
+                    }
+                })
+                .catch((err) => {
+                    console.log(err) 
+                    res.json(err)
+                })
+        }else{
+            query.runQuery(res, sql, sqlParams, true); 
+        }     
     }else{
         errors.badRequest(res, 'Invalid model: "'+mid+'".')
     }

@@ -6,6 +6,7 @@
  */
 
 const pgp = require('pg-promise')(),
+    Promise = require('bluebird'), 
     csv = require('csv-express'),
     config = require('../../config.js'),
     parseConnection = require('pg-connection-string').parse,
@@ -18,6 +19,22 @@ dbConfig.idleTimeoutMillis = 30000; // max client idle time before being closed
 
 const db = {}
 db.conn = pgp(config.connectionString);
+
+function promiseQuery(sql, values, singleRecord) {
+    logger.logSQL(sql);
+    return new Promise((resolve, reject) => db.conn[singleRecord ? 'one' : 'many'](sql, values)
+        .then(data => {
+            resolve(data)
+        })
+        .catch((err) => {
+            if(err.message==='No data returned from the query.'){
+                resolve(singleRecord ? null : [])
+            }else{
+                reject(err)
+            }
+        })
+    )
+}
 
 // - run a query and return the result in request
 function runQuery(res, sql, values, singleRecord, format, header, fnPrep){
@@ -66,10 +83,8 @@ function runQuery(res, sql, values, singleRecord, format, header, fnPrep){
                 if(format==='csv'){
                     // - sending something to avoid empty page in browser
                     return res.csv(singleRecord ? {id: null} : [{id: null}]);
-                }else if(singleRecord){
-                    return res.json(null);
                 }else{
-                    return res.json([]);
+                    return res.json(singleRecord ? null : []);
                 }
             }
             return errors.badRequest(res, 'Database error - '+err.message, 500)
@@ -82,5 +97,6 @@ module.exports = {
 
     db: db,
     runQuery: runQuery,
+    promiseQuery: promiseQuery,
 
 }
