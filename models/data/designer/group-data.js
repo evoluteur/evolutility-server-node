@@ -123,7 +123,7 @@ module.exports = [
 		object: 3,
 		"gid": "pix",
 		"type": 1,
-		"label": "Album cover",
+		"label": "Cover",
 		"width": 30,
 		position: 20,
 		"fields": [

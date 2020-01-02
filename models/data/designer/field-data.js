@@ -992,7 +992,7 @@ module.exports = [
 	},
 	{
 		"id": 86,
-		"label": "Album Cover",
+		"label": "Cover",
 		"type": 10,
 		"column": "cover",
 		"fid": "cover",

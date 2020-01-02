@@ -288,6 +288,12 @@ module.exports = {
 			"column": "nocharts"
 		},
 		{
+			"id": "noStats",
+			"type": "boolean",
+			"label": "Exclude from Stats",
+			"column": "nostats"
+		},
+		{
 			"id": "help",
 			"type": "textmultiline",
 			"label": "Help",

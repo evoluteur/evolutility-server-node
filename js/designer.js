@@ -3,7 +3,7 @@
  * Tools to build models ( = build apps)
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2019 Olivier Giulieri
+ * (c) 2020 Olivier Giulieri
 */
 
 const query = require('./utils/query'),
@@ -25,6 +25,7 @@ const camelProp = {
     'maxvalue': 'maxValue',
     'regexp': 'regExp',
     'nocharts': 'noCharts',
+    'nostats': 'noStats',
 }
 const camelPropSQL = p => 't1."'+p+'"'+(camelProp[p] ? (' AS "'+camelProp[p]+'"') : '')
 const col2id = id => camelProp[id] || id
@@ -38,8 +39,8 @@ const objProps = {
         "nameplural",
         "icon",
         "description",
-        "groups",
-        "collections",
+        "nocharts",
+        "nostats",
         //"c_date",
         //"u_date",
     ],
@@ -48,7 +49,11 @@ const objProps = {
         "table",
         "pkey",
         "active",
+        "nocharts",
+        "nostats",
         "collections",
+        //"c_date",
+        //"u_date",
     ]
 }
 /*
@@ -93,6 +98,7 @@ const fldProps = {
         "regexp",
         "help",
         "nocharts",
+        "nostats",
         //"c_date",
         //"u_date"
     ],
