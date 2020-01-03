@@ -1,7 +1,43 @@
 module.exports = [
-
 	{
 		object: 1,
+		"gid": "title",
+		"type": 1,
+		"label": "Task",
+		"width": 62,
+		position: 10,
+		"fields": [
+			"title",
+			"duedate",
+			"category"
+		]
+	},
+	{
+		object: 1,
+		"gid": "status",
+		"type": 1,
+		"label": "Status",
+		"width": 38,
+		position: 20,
+		"fields": [
+			"priority",
+			"complete"
+		]
+	},
+	{
+		object: 1,
+		"gid": "desc",
+		"type": 1,
+		"label": "Task description",
+		"width": 100,
+		position: 30,
+		"fields": [
+			"description"
+		]
+	},
+
+	{
+		object: 2,
 		"gid": "identity",
 		"type": 1,
 		"label": "Identity",
@@ -17,7 +53,7 @@ module.exports = [
 		]
 	},
 	{
-		object: 1,
+		object: 2,
 		"gid": "contact",
 		"type": 1,
 		"label": "Contact info",
@@ -31,7 +67,7 @@ module.exports = [
 		]
 	},
 	{
-		object: 1,
+		object: 2,
 		"gid": "address",
 		"type": 1,
 		"label": "Address",
@@ -46,7 +82,7 @@ module.exports = [
 		]
 	},
 	{
-		object: 1,
+		object: 2,
 		"gid": "misc",
 		"type": 1,
 		"label": "Misc.",
@@ -55,44 +91,6 @@ module.exports = [
 		"fields": [
 			"category",
 			"notes"
-		]
-	},
-
-
-	{
-		object: 2,
-		"gid": "title",
-		"type": 1,
-		"label": "Task",
-		"width": 62,
-		position: 10,
-		"fields": [
-			"title",
-			"duedate",
-			"category"
-		]
-	},
-	{
-		object: 2,
-		"gid": "status",
-		"type": 1,
-		"label": "Status",
-		"width": 38,
-		position: 20,
-		"fields": [
-			"priority",
-			"complete"
-		]
-	},
-	{
-		object: 2,
-		"gid": "desc",
-		"type": 1,
-		"label": "Task description",
-		"width": 100,
-		position: 30,
-		"fields": [
-			"description"
 		]
 	},
 
