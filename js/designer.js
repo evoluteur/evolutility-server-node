@@ -7,6 +7,7 @@
 */
 
 const query = require('./utils/query'),
+    Promise = require('bluebird'), 
     db = query.db,
     logger = require('./utils/logger'),
     errors = require('./utils/errors'),
@@ -18,6 +19,8 @@ const camelProp = {
     'pkey': 'pKey',
     'readonly': 'readOnly',
     'lovtable': 'lovTable',
+    'lovcolumn': 'lovColumn',
+    'dbcolumn': 'column',
     'inmany': 'inMany',
     'minlength': 'minLength',
     'maxlength': 'maxLength',
@@ -29,16 +32,16 @@ const camelProp = {
 }
 const camelPropSQL = p => 't1."'+p+'"'+(camelProp[p] ? (' AS "'+camelProp[p]+'"') : '')
 const col2id = id => camelProp[id] || id
-const objProps = {
+const objCols = {
     ui: [
         "entity",
         "title",
-        //"world_id",
+        "world_id",
         "active",
         "name",
         "nameplural",
         "icon",
-        "description",
+        //"description",
         "nocharts",
         "nostats",
         //"c_date",
@@ -51,28 +54,12 @@ const objProps = {
         "active",
         "nocharts",
         "nostats",
-        "collections",
         //"c_date",
         //"u_date",
     ]
 }
-/*
-const groupProps = [
-    "id",
-    "type",
-    "label",
-    "icon",
-    "css",
-    "fields",
-    "width",
-    "header",
-    "footer",
-    "help",
-    //"c_date",
-    //"u_date",
-]
-*/
-const fldProps = {
+
+const fieldCols = {
     ui: [
         //"fid",
         "label",
@@ -110,9 +97,9 @@ const fldProps = {
         //"fid",
         //"object_id",
         "type_id",
-        //"dbcolumn",
-        //"lovTable",
-        //"lovColumn",
+        "dbcolumn",
+        "lovtable",
+        "lovcolumn",
         "format",
         "required",
         "readonly",
@@ -124,6 +111,7 @@ const fldProps = {
         "regexp",
         "help",
         "nocharts",
+        "nostats",
         //"c_date",
         //"u_date"
     ],
@@ -162,7 +150,7 @@ const trimField = (f, idx) => {
     let field = {}
     field.id=f.id
     field.position = (idx+1)*10
-    fldProps.ui.forEach(prop => {
+    fieldCols.ui.forEach(prop => {
         const fid = col2id(prop)
         const fp = f[fid] || null
         if(fp!==null){
@@ -174,46 +162,81 @@ const trimField = (f, idx) => {
     return field
 }
 
-function getModel(req, res) {
-    logger.logReq('GET one MODEL', req);
-    var id = req.params.id || 0,
-        pkColumn = Number.isInteger(parseInt(id, 10)) ? 'id' : 'entity',
-        sqlParams = [id], //t1.entity AS id2, 
-        sql, sql2
-        
-    const modelType = 'ui' //'db'
-    
+const sqlOrderBy = ' ORDER BY object_id, position'
+function SQLmodelObject(id, modelType='ui') {
     // - Object
-    let cols = objProps[modelType].map(camelPropSQL).join(',')
-    sql = 'SELECT entity as id, '+cols+
-            ' FROM '+schema+'.evol_object AS t1 WHERE t1.'+pkColumn+'=$1 LIMIT 1';
-    cols = fldProps.ui.map(camelPropSQL).join(',')
-    sql2 = 'SELECT (CASE WHEN (fid IS NULL) THEN dbcolumn ELSE fid END) AS id, '+ cols +//', t_2.name AS type_name'+
+    const pkColumn = Number.isInteger(parseInt(id, 10)) ? 'id' : 'entity',
+        cols = objCols[modelType].map(camelPropSQL).join(','),
+        sql = 'SELECT entity as id, '+cols+
+                //', t_2.name as world'+
+            ' FROM '+schema+'.evol_object AS t1 '+
+                //' LEFT JOIN "evolutility"."evol_world" AS t_2 ON t1."world_id"=t_2.id'+
+            ' WHERE t1.'+pkColumn+'=$1 LIMIT 1';
+    logger.logSQL(sql);
+    return sql;
+}
+
+const sqlModelCollecs = (modelType='ui', forAllModels, sqlWhere) => {
+    const extraCols = forAllModels ? 'object_id, ' : ''
+
+    return {
+        fields: SQLmodelFields(modelType='ui', forAllModels, sqlWhere),
+        groups: 'SELECT gid as "id", '+extraCols+'label, width, css, header, footer, fields FROM '+schema+'.evol_object_group t1 WHERE '+ sqlWhere + sqlOrderBy,
+        collections: 'SELECT cid as "id", '+extraCols+'label, dbcolumn as "column", fields FROM '+schema+'.evol_object_collec t1 WHERE'+ sqlWhere + sqlOrderBy,        
+    }
+
+}
+
+function SQLmodelFields(modelType='ui', forAllModels, whereClause) {
+    // - Fields
+    const cols = fieldCols.ui.map(camelPropSQL).join(','),
+        sql = 'SELECT (CASE WHEN (fid IS NULL) THEN dbcolumn ELSE fid END) AS id, '+ 
+                (forAllModels ? 'object_id, ' : '') + cols +//', t_2.name AS type_name'+
             ' FROM '+schema+'.evol_field AS t1' +
                 //' LEFT JOIN "evolutility"."evol_field_type" AS t_2 ON t1."type_id"=t_2.id' +
-            ' WHERE object_id=$1'+
+            ' WHERE '+whereClause+
             ' ORDER BY position, t1.id DESC';
-    logger.logSQL(sql)
-    logger.logSQL(sql2)
+    logger.logSQL(sql);
+    return sql;
+}
+
+function getModel(req, res) {
+    logger.logReq('GET one MODEL', req);
+    const id = req.params.id || 0,
+        sqlParams = [id]
+        
+    const modelType = 'ui' //'db'
 
     let qModel = {}
-    db.conn.task(t => {
-        return t.one(sql, sqlParams)
-            .then(dataM => {
-                if(dataM){
-                    qModel = dataM
-                    return t.many(sql2, sqlParams)
-                }else{
-                    return null
-                }
-            })
-            .catch(error => {
+    db.conn.task(t => t.one(SQLmodelObject(id, modelType), sqlParams)
+        .then(dataM => {
+            if(dataM && dataM.id){
+                const sqlWhere = ' object_id=$1'
+                qModel = dataM
+                const sqls = sqlModelCollecs(modelType, true, sqlWhere)
+                return Promise.all([
+                    query.promiseQuery(sqls.fields, sqlParams, false),
+                    query.promiseQuery(sqls.groups, sqlParams, false),
+                    query.promiseQuery(sqls.collections, sqlParams, false)
+                ])
+            }else{
                 return null
-            });
-    })
-    .then((data) => {
+            }
+        })
+        .catch(err => {
+            return null
+        })
+    )
+    .then(data => {
         if(data){
-            qModel.fields = data.map(trimField)
+            console.log(data) 
+            qModel.fields = data[0].map(trimField)
+            if(data[1]){
+                qModel.groups = data[1].map(cleanGroup)
+            }
+            if(data[2]){
+                qModel.collections = data[2]
+            }
             return res.json(qModel);
         }else{
             return errors.badRequest(res, 'Invalid model ID.')
@@ -221,40 +244,40 @@ function getModel(req, res) {
     })
     .catch(error => {
         console.log(error)
-        return errors.badRequest(res, 'Invalid model ID.')
+        return errors.badRequest(res, 'Error querying for model "'+id+'".')
     });
-/*
-    // - Field Groups
-    sql = 'SELECT t1."'+groupProps.join('", t1."')+'"'+
-    ' FROM '+schema+'.evol_field_group AS t1 WHERE id=$1';
-    promises.push(runQueriesPromise(sql, sqlParams))
-
-    // TODO: Collection
-*/     
 }
 
-function getModels(req, res) {
+const cleanGroup = (g, idx) => {
+    delete g.object_id
+    if(!g.id){
+        g.id = 'g_'+idx
+    }
+    return g
+}
+
+const worlds = {
+    0: 'test',
+    1: 'organizer',
+    2: 'music',
+}
+
+function getModels(req, res, callback) {
     logger.logReq('GET all MODEL', req);
     //var //pkColumn = Number.isInteger(parseInt(id, 10)) ? 'id' : 'entity',
     var maxModels = 20,
-        sqlParams = [true],
-        sql, sql2,
+        sql,
         sqlFWOL = ' FROM '+schema+'.evol_object AS t1 WHERE active=true ORDER BY t1.id LIMIT '+maxModels
 
     const modelType = 'ui' //'db'
-    
+
     // - Object
-    let cols = objProps[modelType].map(camelPropSQL).join(',')
-    cols = objProps.ui.map(camelPropSQL).join(',')
+    let cols = objCols[modelType].map(camelPropSQL).join(',')
+    cols = objCols.ui.map(camelPropSQL).join(',')
     sql = 'SELECT entity as id, id as oid, '+cols+sqlFWOL
-    cols = fldProps.ui.map(camelPropSQL).join(',')
-    sql2 = 'SELECT (CASE WHEN (fid IS NULL) THEN dbcolumn ELSE fid END) AS id, object_id, '+ cols +//', t_2.name AS type_name'+
-            ' FROM '+schema+'.evol_field AS t1' +
-                //' LEFT JOIN "evolutility"."evol_field_type" AS t_2 ON t1."type_id"=t_2.id' +
-            ' WHERE object_id IN (SELECT id '+sqlFWOL+')'+
-            ' ORDER BY object_id, t1.position, t1.id';
     logger.logSQL(sql)
-    logger.logSQL(sql2)
+    const sqlWhere = 'object_id IN (SELECT id '+sqlFWOL+')'
+    cols = fieldCols.ui.map(camelPropSQL).join(',')
 
     let qModel = []
     db.conn.task(t => {
@@ -262,7 +285,13 @@ function getModels(req, res) {
             .then(dataM => {
                 if(dataM){
                     qModel = dataM
-                    return t.many(sql2, sqlParams)
+                    const sqlGetFields = SQLmodelFields(modelType, true, sqlWhere)
+                    logger.logSQL(sqlGetFields)
+                    return Promise.all([
+                        query.promiseQuery(sqlGetFields, null, false),
+                        query.promiseQuery('SELECT gid as "id", object_id, label, width, css, header, footer, fields FROM evolutility.evol_object_group WHERE '+ sqlWhere + sqlOrderBy, null, false),
+                        query.promiseQuery('SELECT cid as "id", object_id, label, dbcolumn as "column", fields FROM evolutility.evol_object_collec WHERE '+ sqlWhere + sqlOrderBy, null, false)
+                    ])
                 }else{
                     return null
                 }
@@ -272,31 +301,50 @@ function getModels(req, res) {
                 return null
             });
         })
-        .then((dataFs) => {
-            if(dataFs){
+        .then(dataCollecs => {
+            if(dataCollecs){
                 const mh = {}
                 qModel.forEach(m => {
-                    m.fields = [ ]
+                    m.world = worlds[m.world_id]
+                    m.fields = []
+                    m.groups = []
+                    m.collections = []
                     mh[''+m.oid] = m
                 })
-                dataFs.forEach(f => {
+                dataCollecs[0].forEach(f => {
                     const m = mh[''+f.object_id]
                     if(m){
                         m.fields.push(trimField(f))
                     }else{
-                        console.log('no model '+f.object_id+'.')
+                        console.log('field - no model '+f.object_id+'.')
+                    }
+                })
+                dataCollecs[1].forEach((g, idx) => {
+                    const m = mh[''+g.object_id]
+                    if(m){
+                        m.groups.push(cleanGroup(g, idx)) 
+                    }else{
+                        console.log('group - no model '+f.object_id+'.')
+                    }
+                })
+                dataCollecs[2].forEach(c => {
+                    const m = mh[''+c.object_id]
+                    if(m){
+                        delete c.object_id
+                        m.collections.push(c)
+                    }else{
+                        console.log('collec - no model '+f.object_id+'.')
                     }
                 })
                 return res.json(qModel);
             }else{
-                return errors.badRequest(res, 'Invalid model ID 2.')
+                return errors.badRequest(res, 'Invalid model ID.')
             }
         })
         .catch(error => {
             console.log(error)
-            return errors.badRequest(res, 'Invalid model ID 1.')
-        });
-            
+            return errors.badRequest(res, 'Invalid model ID.')
+        });   
 }
 
 module.exports = {

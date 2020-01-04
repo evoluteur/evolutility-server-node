@@ -3,10 +3,11 @@
  * Get list of items w/ filtering, and search...
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2019 Olivier Giulieri
+ * (c) 2020 Olivier Giulieri
 */
 
 const dico = require('./utils/dico'),
+    moma = require('./utils/model-manager'),
     ft = dico.fieldTypes,
     sqls = require('./utils/sql-select'),
     query = require('./utils/query'),
@@ -235,7 +236,7 @@ function SQLgetMany(m, req, isCSV, wCount){
 function getMany(req, res) {
     logger.logReq('GET MANY', req);
     const mid = req.params.entity,
-        m = dico.getModel(mid);
+        m = moma.getModel(mid);
     
     if(m){
         const format = req.query.format || null,

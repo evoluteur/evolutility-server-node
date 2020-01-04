@@ -3,10 +3,11 @@
  * CRUD (Create, Read, Update, Delete) end-points
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2019 Olivier Giulieri
+ * (c) 2020 Olivier Giulieri
 */
 
-const dico = require('./utils/dico'),
+const moma = require('./utils/model-manager'),
+    dico = require('./utils/dico'),
     Promise = require('bluebird'), 
     sqls = require('./utils/sql-select'),
     query = require('./utils/query'),
@@ -50,7 +51,7 @@ function getOne(req, res) {
     logger.logReq('GET ONE', req);
     const id = req.params.id,
         mid = req.params.entity,
-        m = dico.getModel(mid)
+        m = moma.getModel(mid)
 
     if(m){
         let { sql, sqlParams } = SQLgetOne(id, m, res)
@@ -95,7 +96,7 @@ function getOne(req, res) {
 // - insert a single record
 function insertOne(req, res) {
     logger.logReq('INSERT ONE', req);
-    const m = dico.getModel(req.params.entity)
+    const m = moma.getModel(req.params.entity)
     if(!m){
         return errors.badRequest(res)
     }else{
@@ -135,7 +136,7 @@ function returnInvalid(res, invalids){
 // - update a single record
 function updateOne(req, res) {
     logger.logReq('UPDATE ONE', req);
-    const m = dico.getModel(req.params.entity),
+    const m = moma.getModel(req.params.entity),
         id = req.params.id,
         q = sqls.namedValues(m, req, 'update');
     
@@ -160,7 +161,7 @@ function updateOne(req, res) {
 // - delete a single record
 function deleteX(req, res) {
     logger.logReq('DELETE ONE', req);
-    const m = dico.getModel(req.params.entity),
+    const m = moma.getModel(req.params.entity),
         id = req.params.id
     let sql = 'DELETE FROM '+m.schemaTable+' WHERE '+m.pKey,
         params = null
@@ -202,7 +203,7 @@ const collecOrderBy = collec =>
 function collecOne(req, res) {
     logger.logReq('GET ONE-COLLEC', req);
     const mid = req.params.entity
-        m = dico.getModel(mid),
+        m = moma.getModel(mid),
         collecId = req.params.collec,
         collec = m.collecsH[collecId]
 

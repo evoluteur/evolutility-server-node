@@ -3,7 +3,7 @@
  * Making a GraphQL Schema from evolutility models
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2019 Olivier Giulieri
+ * (c) 2020 Olivier Giulieri
 */
 
 const graphql = require('graphql'),
@@ -13,12 +13,13 @@ const graphql = require('graphql'),
     list = require('./list'),
     logger = require('./utils/logger'),
     dico = require('./utils/dico'),
+    moma = require('./utils/model-manager'),
     ft = dico.fieldTypes,
     sqls = require('./utils/sql-select'),
     errors = require('./utils/errors'),
     query = require('./utils/query')
 
-const mIds = dico.modelIds
+const mIds = moma.modelIds
 const db = query.db;
 
 const {
@@ -111,7 +112,7 @@ const model2gqlObjectType = m => {
 
 let gqlObjTypes = {}
 mIds.forEach(mid => {
-    gqlObjTypes[mid] = model2gqlObjectType(dico.getModel(mid))
+    gqlObjTypes[mid] = model2gqlObjectType(moma.getModel(mid))
 })
 
 const gqlOne = m => ({
@@ -120,7 +121,7 @@ const gqlOne = m => ({
     args: { id: { type: GraphQLID } },
     resolve(parentValue, args) {
         logger.logHeader('GraphQL', 'GET ONE', m.id)
-        const { sql, sqlParams} = crud.SQLgetOne(args.id, dico.getModel(m.id), {id: args.id})
+        const { sql, sqlParams} = crud.SQLgetOne(args.id, moma.getModel(m.id), {id: args.id})
         logger.logSQL(sql)
         return db.conn.one(sql, sqlParams)
             .then(data => {
@@ -220,7 +221,7 @@ const gqlCharts = m => ({
 const makeGQLschema = () => {
     let gqlSoCalledFields = {}
     mIds.forEach(mid => {
-        const m = dico.getModel(mid)
+        const m = moma.getModel(mid)
         gqlSoCalledFields[mid] = gqlOne(m)
         gqlSoCalledFields[mid+'s'] = gqlMany(m)
         gqlSoCalledFields[mid+'_charts'] = gqlCharts(m)

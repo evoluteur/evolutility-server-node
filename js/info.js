@@ -2,7 +2,7 @@
  * evolutility-server-node :: info.js
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2019 Olivier Giulieri
+ * (c) 2020 Olivier Giulieri
  */
 
 const path = require('path'),
@@ -10,7 +10,7 @@ const path = require('path'),
     ft = fieldTypes,
     logger = require('./utils/logger'),
     pkg = require('../package.json'),
-    models = require('../models/all_models'),
+    { models } = require('./utils/model-manager'),
     config = require('../config.js')
 
 function getFieldsAPIs(model, protocol, baseUrl) {

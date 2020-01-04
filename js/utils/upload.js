@@ -2,14 +2,14 @@
  * evolutility-server-node :: utils/upload.js
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2019 Olivier Giulieri
+ * (c) 2020 Olivier Giulieri
  */
 
 const path = require('path'),
     formidable = require('formidable'),
     shortid = require('shortid'),
     fs = require('fs'),
-    dico = require('./dico'),
+    moma = require('./model-manager'),
     logger = require('./logger'),
     config = require('../../config.js');
 
@@ -19,7 +19,7 @@ module.exports = {
     uploadOne: function uploadOne(req, res){
         logger.logReq('UPLOAD ONE', req);
 
-        const m = dico.getModel(req.params.entity),
+        const m = moma.getModel(req.params.entity),
             id = req.params.id,
             form = new formidable.IncomingForm()
         let fname,

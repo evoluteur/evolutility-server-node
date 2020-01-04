@@ -2,12 +2,11 @@
  * evolutility-server-node :: routes.js
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2019 Olivier Giulieri
+ * (c) 2020 Olivier Giulieri
  */
 
 const express = require('express'),
 	router = express.Router(),
-	dico = require('./utils/dico'),
 	logger = require('./utils/logger'),
 	upload = require('./utils/upload'),
 	config = require('../config'),
@@ -22,7 +21,6 @@ const express = require('express'),
 	dbStructure = require('./utils/db-structure');
 
 logger.startupMessage();
-dico.prepModels();
 
 /*
 // ======  file server ====================================
@@ -49,9 +47,9 @@ if(config.schemaQueries){
 // ======  Models in DB ====================================
 if(config.apiDesigner){
 	// - Models
-	//router.post(apiPath+'md/model', designer.importModel);
-	router.get(apiPath+'md/models', designer.getModels);
-	router.get(apiPath+'md/model/:id', designer.getModel);
+	//router.post(apiPath+'meta/model', designer.importModel);
+	router.get(apiPath+'meta/models', designer.getModels);
+	router.get(apiPath+'meta/model/:id', designer.getModel);
 }
 
 // ======  GET STATS ====================================

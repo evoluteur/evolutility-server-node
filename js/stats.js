@@ -3,10 +3,11 @@
  * Some data on the object like the min, max, average, and total for numeric fields.
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2019 Olivier Giulieri
+ * (c) 2020 Olivier Giulieri
  */
 
-const dico = require('./utils/dico'),
+const moma = require('./utils/model-manager'),
+    dico = require('./utils/dico'),
     query = require('./utils/query'),
     errors = require('./utils/errors.js'),
     logger = require('./utils/logger'),
@@ -74,7 +75,7 @@ function numbers(req, res) {
     logger.logReq('GET STATS', req);
 
     const mid = req.params.entity,
-        m = dico.getModel(mid)
+        m = moma.getModel(mid)
         
     if(m){
         if(!m.noStats){

@@ -505,15 +505,15 @@ When storing models in evol_object and evol_field tables, they can be queried th
 Get all models flagged as active.
 
 ```
-GET /md/models
+GET /meta/models
 ```
 
 Get a model by ID (integer).
 
 ```
-GET /md/model/{modelid}
+GET /meta/model/{modelid}
 
-GET /md/model/1
+GET /meta/model/1
 ```
 
 Note: Schema and Models end-points must be enabled in the configuration with { apiDesigner: true }.
@@ -644,6 +644,6 @@ For all objects records can be aggregated and counted by field (for fields of nu
 <a name="License"></a>
 ## License
 
-Copyright (c) 2019 [Olivier Giulieri](https://evoluteur.github.io/).
+Copyright (c) 2020 [Olivier Giulieri](https://evoluteur.github.io/).
 
 Evolutility-Server-Node is released under the [MIT license](http://github.com/evoluteur/evolutility-server-node/blob/master/LICENSE.md).

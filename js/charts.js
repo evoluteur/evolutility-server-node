@@ -3,10 +3,11 @@
  * Charts and grph data
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2019 Olivier Giulieri
+ * (c) 2020 Olivier Giulieri
  */
 
 const dico = require('./utils/dico'),
+    moma = require('./utils/model-manager'),
     ft = dico.fieldTypes,
     query = require('./utils/query'),
     errors = require('./utils/errors.js'),
@@ -21,7 +22,7 @@ const schema = '"'+(config.schema || 'evolutility')+'"',
 function chartField(req, res) {
     logger.logReq('GET CHARTS', req);
 
-    const m = dico.getModel(req.params.entity),
+    const m = moma.getModel(req.params.entity),
         fid = req.params.field,
         {sql, sqlParams = [], errorMessage} = SQLchartField(m, fid)
 

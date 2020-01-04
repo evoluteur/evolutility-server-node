@@ -3,7 +3,7 @@
  * Methods to create postgres schema and tables from models.
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2019 Olivier Giulieri
+ * (c) 2020 Olivier Giulieri
  */
 
 const pg = require('pg'),
@@ -11,10 +11,11 @@ const pg = require('pg'),
     fs = require('fs'),
     parseConnection = require('pg-connection-string').parse,
     { version, homepage } = require('../../package.json'),
-    { prepModels, fieldTypes} = require('../utils/dico');
+    { prepModels } = require('../utils/model-manager'),
+    { fieldTypes} = require('../utils/dico');
 
 const ft = fieldTypes;
-const models = require('../../models/all_models.js');
+const { models } = require('../utils/model-manager');
 const data = require('../../models/data/all_data.js');
 prepModels()
 

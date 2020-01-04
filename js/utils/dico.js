@@ -3,14 +3,10 @@
  * Helper functions for metadata
  *
  * https://github.com/evoluteur/evolutility
- * (c) 2019 Olivier Giulieri
+ * (c) 2020 Olivier Giulieri
  */
 
-const models = require('../../models/all_models'),
-	config = require('../../config.js'),
-	modelIds = Object.keys(models),
-	chalk = require('chalk'),
-	schema = '"'+(config.schema || 'evolutility')+'"';
+const config = require('../../config.js');
 
 // - Field Types
 const ft = {
@@ -97,102 +93,13 @@ const fieldIsNumeric = f => fieldIsNumber(f) || fieldIsDateOrTime(f)
 const fieldChartable = f => f.type===ft.lov || f.type===ft.bool || fieldIsNumber(f)
 const fieldInCharts = f => fieldChartable(f) && !f.noCharts
 
-function prepModel(m){
-	if(m){
-		if(!m._prepared){
-			// - Model
-			m.schemaTable = schema+'."'+(m.table || m.id)+'"';
-			if(!m.pKey){
-				m.pKey = 'id';
-			}
-			// - Fields
-			m.fieldsH = {}
-			m.fields.forEach(function(f, idx){
-				if(f.type==='lov'){
-					f.t2 = 't_'+idx
-				}
-				if(f.id!==m.table+'_id'){ // TODO: should not need the if
-					m.fieldsH[f.id] = f; 
-				}
-			})
-			// - Search
-			if(m.searchFields){
-				if(!Array.isArray(m.searchFields)){
-					m.searchFields = [m.searchFields]
-				}
-			}else{
-				m.searchFields = m.fields.filter(f => f.inSearch).map(f => f.id)
-				if(m.searchFields.length<1){
-					m.searchFields = m.fields.filter(f => f.inMany && fieldIsText(f)).map(f => f.id)
-				}
-			}
-			m._prepared = true;
-		}
-		return m;
-	}
-	console.error('Error: undefined model.')
-	return null;
-}
-
-function prepModelCollecs(m, models){
-	if(m){
-		if(m.collections){
-			// - make collection map
-			m.collecsH = {}
-			m.collections.forEach(c => {
-				if(c.object){
-					const collecModel = models[c.object]
-					if(collecModel){
-						// - if table is not specified get it from collec object
-						if(!c.table){
-							c.table = collecModel.table
-						}
-						// - lookup fields by id
-						const fsh = collecModel.fieldsH
-						c.fields.forEach((f, idx) => {
-							if(typeof(f) === 'string'){
-								c.fields[idx] = JSON.parse(JSON.stringify(fsh[f]||{}))
-							}
-							if(f.type==='lov'){
-								f.t2 = 't_'+idx
-							}
-						})
-					}else{
-						console.log('Model "'+c.object+'" not found in model "'+m.id+'".')
-					}
-				}
-				m.collecsH[c.id] = c
-			})
-		}
-		return m;
-	}
-	return null;
-}
-
-const prepModels = () => {
-	const ms = Object.keys(models)
-	console.log(chalk.cyan(ms.length+' models:', ms.sort().join(', ')+'.'))
-	// need 2 passes for field map to be populated first, then collections
-	ms.forEach(m => { models[m] = prepModel(models[m])})
-	ms.forEach(m => { models[m] = prepModelCollecs(models[m], models)})
-	return models
-}
-
 module.exports = {
 
 	fieldTypes: ft,
 
-	modelIds: modelIds,
-
-	getModel: mId => prepModel(models[mId]),
-
-	prepModel: prepModel,
-	prepModels: prepModels,
-
 	fieldInMany: f =>  f.inList || f.inMany,
 
 	fieldIsText: fieldIsText,
-
 	fieldIsNumber: fieldIsNumber,
 	fieldIsNumeric: fieldIsNumeric,
 	fieldIsDateOrTime: fieldIsDateOrTime,

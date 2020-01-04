@@ -3,10 +3,10 @@
  * Lists of values
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2019 Olivier Giulieri
+ * (c) 2020 Olivier Giulieri
 */
 
-const dico = require('./utils/dico'),
+const moma = require('./utils/model-manager'),
     query = require('./utils/query'),
     errors = require('./utils/errors.js'),
     logger = require('./utils/logger'),
@@ -22,7 +22,7 @@ const searchParam = search => search ? '%'+search.replace(/%/g, '\%')+'%' : '%'
 function lovOne(req, res) {
     logger.logReq('LOV ONE', req);
     const mid = req.params.entity,
-        m = dico.getModel(mid),
+        m = moma.getModel(mid),
         fid = req.params.field,
         search = req.query.search
     let f = m.fieldsH[fid];
