@@ -47,7 +47,7 @@ module.exports = {
 
 	// - Designer
 	// - Enables storing models in the database (in tables "evol_%")
-	apiDesigner: false,
+	apiDesigner: true,
 	// - Query DB schema for list of tables and columns
 	schemaQueries: false,
 
