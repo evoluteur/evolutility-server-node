@@ -33,6 +33,12 @@ const fields = [
 		"column": "f_textmultiline"
 	},
 	{
+		"id": "json",
+		"type": "json",
+		"label": "JSON",
+		"column": "f_json"
+	},
+	{
 		"id": "lov",
 		"type": "lov",
 		"label": "List of Values",
