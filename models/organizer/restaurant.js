@@ -132,11 +132,11 @@ module.exports = {
 			"column": "yelp"
 		},
 		{
-			"id": "notes",
+			"id": "favorite",
 			"type": "textmultiline",
-			"label": "Notes",
+			"label": "Favorite dish",
 			"maxLength": 2000,
-			"column": "notes",
+			"column": "favorite",
 			"inSearch": true
 		},
 		{
@@ -146,11 +146,11 @@ module.exports = {
 			"column": "hours"
 		},
 		{
-			"id": "favorite",
+			"id": "notes",
 			"type": "textmultiline",
-			"label": "Favorite dish",
+			"label": "Notes",
 			"maxLength": 2000,
-			"column": "favorite",
+			"column": "notes",
 			"inSearch": true
 		},
 		{

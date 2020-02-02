@@ -2,7 +2,7 @@
  * evolutility-server-node :: utils/sql-select.js
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2019 Olivier Giulieri
+ * (c) 2020 Olivier Giulieri
  */
 
 const dico = require('./dico')
@@ -12,9 +12,9 @@ const ft = dico.fieldTypes
 var columnName = {
 	'update': (f, idx) => '"'+f.column+'"=$'+idx,
 
-	'insert': (f) => f.column,
+	'insert': f => f.column,
 
-	'order': (f) => {
+	'order': f => {
 		// - generate sql ORDER BY clause (for 1 field)
 		if(f){
 			if(f.type===ft.lov && f.lovTable){
@@ -30,6 +30,7 @@ var columnName = {
 				return col;
 			}
 		}
+		return '';
 	}
 }
 
