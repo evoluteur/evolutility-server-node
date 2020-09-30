@@ -5,6 +5,8 @@ Model-driven REST or GraphQL backend for CRUD and more, using Node.js, Express, 
 
 Evolutility-Server-Node provides a set of generic [REST](#API) or [GraphQL](#GraphQL) endpoints for CRUD (Create, Read, Update, Delete) and simple charts. 
  
+![screenshot](https://raw.githubusercontent.com/evoluteur/evolutility-server-node/master/screenshot.gif)
+
 For a matching model-driven Web UI, use [Evolutility-UI-React](http://github.com/evoluteur/evolutility-ui-react) or [Evolutility-UI-jQuery](http://evoluteur.github.io/evolutility-ui-jquery/).
 
 
