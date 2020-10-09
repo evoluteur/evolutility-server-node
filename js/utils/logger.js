@@ -3,7 +3,7 @@
  * Simple formatted console logger (not logging to file).
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2019 Olivier Giulieri
+ * (c) 2020 Olivier Giulieri
  */
 
 const config = require('../../config.js'),

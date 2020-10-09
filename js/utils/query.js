@@ -2,7 +2,7 @@
  * evolutility-server-node :: utils/query.js
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2019 Olivier Giulieri
+ * (c) 2020 Olivier Giulieri
  */
 
 const pgp = require('pg-promise')(),
