@@ -7,7 +7,7 @@
 https://github.com/evoluteur/evolutility-models
 */
 
-module.exports = {
+const models = {
   // --- Organizer
   todo: require('./organizer/todo'),
   contact: require('./organizer/contact'),
@@ -28,3 +28,4 @@ module.exports = {
   group: require('./designer/group'),
   collection: require('./designer/collection'),
 };
+module.exports = models;
