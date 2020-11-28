@@ -36,6 +36,8 @@ npm install evolutility-server-node
 ```
 
 Dependencies: [Node.js](https://nodejs.org/en/), [Express](http://expressjs.com/), [PostgreSQL](http://www.postgresql.org/), and [PG-Promise](https://github.com/vitaly-t/pg-promise).
+
+Evolutility-Server-Node works with **Node.js v12.12.0** (not yet compatible w/ later versions).
  
 <a name="Setup"></a>
 ## Setup
