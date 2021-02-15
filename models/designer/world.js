@@ -46,7 +46,7 @@ module.exports = {
 	],
 	"collections": [
 		{
-			"id": "collec-objects",
+			"id": "collec_objects",
 			"table": "evol_object",
 			"column": "world_id",
 			"object": "object",

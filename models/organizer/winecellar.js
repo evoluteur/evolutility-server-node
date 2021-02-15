@@ -82,7 +82,7 @@ module.exports = {
 			"lovTable": "wine_bsize"
 		},
 		{
-			"id": "grape",
+			"id": "wgrape",
 			"type": "lov",
 			"label": "Grape",
 			"list": [
@@ -405,7 +405,7 @@ module.exports = {
 			"lovTable": "wine_grape"
 		},
 		{
-			"id": "type",
+			"id": "wtype",
 			"type": "lov",
 			"label": "Type",
 			"list": [
@@ -448,7 +448,7 @@ module.exports = {
 			"inSearch": true
 		},
 		{
-			"id": "country",
+			"id": "wcountry",
 			"type": "lov",
 			"label": "Country",
 			"list": [
@@ -593,6 +593,7 @@ module.exports = {
 			"id": "purchased",
 			"type": "integer",
 			"label": "Bottles Purchased",
+			"min": 0,
 			"maxLength": 10,
 			"column": "purchased"
 		},
@@ -712,7 +713,7 @@ module.exports = {
 	],
 	"collections": [
 		{
-			"id": "wine_tasting",
+			"id": "wine_tastings",
 			"table": "wine_tasting",
 			"column": "wine_id",
 			"object": "winetasting",

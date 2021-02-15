@@ -102,6 +102,7 @@ module.exports = {
 			"type": "integer",
 			"label": "Albums",
 			"noCharts": true,
+			"min": 0,
 			"inMany": true,
 			"column": "serie_nb"
 		},
@@ -110,6 +111,7 @@ module.exports = {
 			"type": "integer",
 			"label": "Owned",
 			"noCharts": true,
+			"min": 0,
 			"inMany": true,
 			"column": "have_nb"
 		},
@@ -184,5 +186,6 @@ module.exports = {
 			"inSearch": true
 		}
 	],
-	"collections": []
+	"collections": [],
+	"noStats": true
 }
