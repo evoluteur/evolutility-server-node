@@ -2,7 +2,7 @@
  * evolutility-server-node :: utils/sql-select.js
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2020 Olivier Giulieri
+ * (c) 2021 Olivier Giulieri
  */
 
 const dico = require('./dico')

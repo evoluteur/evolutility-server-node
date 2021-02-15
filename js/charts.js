@@ -3,7 +3,7 @@
  * Charts and grph data
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2020 Olivier Giulieri
+ * (c) 2021 Olivier Giulieri
  */
 
 const dico = require('./utils/dico'),

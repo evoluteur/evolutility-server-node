@@ -3,7 +3,7 @@
  * Making a GraphQL Schema from evolutility models
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2020 Olivier Giulieri
+ * (c) 2021 Olivier Giulieri
 */
 
 const graphql = require('graphql'),

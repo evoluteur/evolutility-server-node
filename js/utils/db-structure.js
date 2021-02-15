@@ -3,7 +3,7 @@
  * Helper functions for getting the list of tables and columns
  *
  * https://github.com/evoluteur/evolutility
- * (c) 2020 Olivier Giulieri
+ * (c) 2021 Olivier Giulieri
  */
 
  const query = require('./query'),

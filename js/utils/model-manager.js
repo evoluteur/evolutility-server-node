@@ -3,7 +3,7 @@
  * Helper functions for metadata
  *
  * https://github.com/evoluteur/evolutility
- * (c) 2020 Olivier Giulieri
+ * (c) 2021 Olivier Giulieri
  */
 
 const models = require('../../models/all_models'),
