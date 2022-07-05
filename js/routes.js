@@ -2,23 +2,23 @@
  * evolutility-server-node :: routes.js
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2021 Olivier Giulieri
+ * (c) 2022 Olivier Giulieri
  */
 
-const express = require('express'),
-	router = express.Router(),
-	logger = require('./utils/logger'),
-	upload = require('./utils/upload'),
-	config = require('../config'),
-	apiPath = config.apiPath,
-	crud = require('./crud'),
-	list = require('./list'),
-	lov = require('./lov'),
-	stats = require('./stats'),
-	charts = require('./charts'),
-	info = require('./info'),
-	designer = require('./designer'),
-	dbStructure = require('./utils/db-structure');
+const express = require("express"),
+  router = express.Router(),
+  logger = require("./utils/logger"),
+  upload = require("./utils/upload"),
+  config = require("../config"),
+  apiPath = config.apiPath,
+  crud = require("./crud"),
+  list = require("./list"),
+  lov = require("./lov"),
+  stats = require("./stats"),
+  charts = require("./charts"),
+  info = require("./info"),
+  designer = require("./designer"),
+  dbStructure = require("./utils/db-structure");
 
 logger.startupMessage();
 
@@ -29,55 +29,54 @@ router.get('/', function(req, res, next) {
 }); */
 
 // ======  APIs DISCOVERY ====================================
-if(config.apiInfo){
-	router.get(apiPath+'/', info.apis);
+if (config.apiInfo) {
+  router.get(apiPath + "/", info.apis);
 }
 
 // ======  Version ====================================
-router.get(apiPath+'version', info.version);
+router.get(apiPath + "version", info.version);
 
 // ====== DB: query for list of tables and columns ====================================
-if(config.schemaQueries){
-	// - all tables (except evol*)
-	router.get(apiPath+'db/tables', dbStructure.getTables);
-	// - columns of specific table
-	router.get(apiPath+'db/:table/columns', dbStructure.getColumns);
+if (config.schemaQueries) {
+  // - all tables (except evol*)
+  router.get(apiPath + "db/tables", dbStructure.getTables);
+  // - columns of specific table
+  router.get(apiPath + "db/:table/columns", dbStructure.getColumns);
 }
 
 // ======  Models in DB ====================================
-if(config.apiDesigner){
-	// - Models
-	//router.post(apiPath+'meta/model', designer.importModel);
-	router.get(apiPath+'meta/models', designer.getModels);
-	router.get(apiPath+'meta/model/:id', designer.getModel);
+if (config.apiDesigner) {
+  // - Models
+  //router.post(apiPath+'meta/model', designer.importModel);
+  router.get(apiPath + "meta/models", designer.getModels);
+  router.get(apiPath + "meta/model/:id", designer.getModel);
 }
 
 // ======  GET STATS ====================================
-router.get(apiPath+':entity/stats', stats.numbers);
+router.get(apiPath + ":entity/stats", stats.numbers);
 
 // ======  LIST ====================================
 // -  GET MANY -
-router.get(apiPath+':entity', list.getMany);
+router.get(apiPath + ":entity", list.getMany);
 
 // ======  CRUD ====================================
 // -  GET ONE   -
-router.get(apiPath+':entity/:id', crud.getOne);
+router.get(apiPath + ":entity/:id", crud.getOne);
 // -  INSERT ONE -
-router.post(apiPath+':entity', crud.insertOne);
+router.post(apiPath + ":entity", crud.insertOne);
 // -  UPDATE ONE  -
-router.patch(apiPath+':entity/:id', crud.updateOne);
-router.put(apiPath+':entity/:id', crud.updateOne);
-router.post(apiPath+':entity/upload/:id', upload.uploadOne);
+router.patch(apiPath + ":entity/:id", crud.updateOne);
+router.put(apiPath + ":entity/:id", crud.updateOne);
+router.post(apiPath + ":entity/upload/:id", upload.uploadOne);
 // -  DELETE ONE -
-router.delete(apiPath+':entity/:id', crud.deleteX);
+router.delete(apiPath + ":entity/:id", crud.deleteX);
 // -  SUB-COLLECTIONS  -
-router.get(apiPath+':entity/collec/:collec', crud.getCollec);
+router.get(apiPath + ":entity/collec/:collec", crud.getCollec);
 
 // ======  LOV ====================================
-router.get(apiPath+':entity/lov/:field', lov.lovOne);
+router.get(apiPath + ":entity/lov/:field", lov.lovOne);
 
 // ======  GET CHARTS ====================================
-router.get(apiPath+':entity/chart/:field', charts.chartField);
-
+router.get(apiPath + ":entity/chart/:field", charts.chartField);
 
 module.exports = router;
