@@ -31,7 +31,7 @@
     "bluebird": "^3.7.2",
     "shortid": "~2.2.16",
     "supervisor": "~0.12.0",
-    "underscore": "~1.12.0"
+    "underscore": "~1.13.4"
   },
   "keywords": [
     "CRUD",
@@ -51,7 +51,6 @@
     "API",
     "postgres",
     "javascript",
-    "DRY",
     "evolutility"
   ]
 }
