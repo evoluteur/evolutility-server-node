@@ -6,7 +6,6 @@
  */
 
 const pgp = require("pg-promise")(),
-  Promise = require("bluebird"),
   csv = require("csv-express"),
   config = require("../../config.js"),
   parseConnection = require("pg-connection-string").parse,

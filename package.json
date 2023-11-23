@@ -28,7 +28,6 @@
     "pg": "^8.5.1",
     "pg-connection-string": "~2.4.0",
     "pg-promise": "^10.9.1",
-    "bluebird": "^3.7.2",
     "shortid": "~2.2.16",
     "supervisor": "~0.12.0",
     "underscore": "~1.13.4"

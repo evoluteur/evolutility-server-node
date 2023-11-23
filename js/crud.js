@@ -8,7 +8,6 @@
 
 const moma = require("./utils/model-manager"),
   dico = require("./utils/dico"),
-  Promise = require("bluebird"),
   sqls = require("./utils/sql-select"),
   query = require("./utils/query"),
   errors = require("./utils/errors.js"),

@@ -7,7 +7,6 @@
  */
 
 const query = require("./utils/query"),
-  Promise = require("bluebird"),
   db = query.db,
   logger = require("./utils/logger"),
   errors = require("./utils/errors"),
