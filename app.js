@@ -11,16 +11,14 @@
         |___/\___|_|    \_/ \___|_| 
 
 * https://github.com/evoluteur/evolutility-server-node
-* (c) 2022 Olivier Giulieri
+* (c) 2023 Olivier Giulieri
 */
 
 const express = require("express"),
   path = require("path"),
   helmet = require("helmet"),
   bodyParser = require("body-parser"),
-  routes = require("./js/routes"),
-  expressGraphQL = require("express-graphql"),
-  { graphQL } = require("./config");
+  routes = require("./js/routes");
 
 const app = express();
 
@@ -41,17 +39,6 @@ app.use(function (req, res, next) {
   //res.header("Access-Control-Request-Headers", "X-Requested-With,Access-Control-Request-Method,Access-Control-Request-Headers, accept, Content-Type");
   next();
 });
-
-// - GraphQL server
-if (graphQL) {
-  app.use(
-    "/graphql",
-    expressGraphQL({
-      schema: require("./js/graphql-schema"),
-      graphiql: true,
-    })
-  );
-}
 
 // - REST server
 app.use("/", routes);

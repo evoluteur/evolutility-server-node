@@ -66,11 +66,6 @@ module.exports = {
         "\n" +
         "\n - REST API:            " +
         restPath +
-        (config.graphQL
-          ? "\n - GraphQL UI:          http://localhost:" +
-            config.apiPort +
-            "/graphql"
-          : "") +
         "\n - Postgres connection: " +
         pubConnection +
         "\n - Postgres schema:     " +

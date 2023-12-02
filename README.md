@@ -1,10 +1,10 @@
-# Evolutility-Server-Node &middot; [![GitHub license](https://img.shields.io/github/license/evoluteur/evolutility-server-node)](https://github.com/evoluteur/evolutility-server-node/blob/master/LICENSE.md) [![npm version](https://img.shields.io/npm/v/evolutility-server-node)](https://www.npmjs.com/package/evolutility-server-node) 
+# Evolutility-Server-Node &middot; [![GitHub license](https://img.shields.io/github/license/evoluteur/evolutility-server-node)](https://github.com/evoluteur/evolutility-server-node/blob/master/LICENSE.md) [![npm version](https://img.shields.io/npm/v/evolutility-server-node)](https://www.npmjs.com/package/evolutility-server-node)
 
 
-Model-driven REST or GraphQL backend for CRUD and more, using Node.js, Express, and PostgreSQL.
+Model-driven REST API for CRUD and more, using Node.js, Express, and PostgreSQL.
 
-Evolutility-Server-Node provides a set of generic [REST](#API) or [GraphQL](#GraphQL) endpoints for CRUD (Create, Read, Update, Delete) and simple charts. 
- 
+Evolutility-Server-Node provides a set of generic [REST](#API) endpoints for CRUD (Create, Read, Update, Delete) and simple charts.
+
 ![screenshot](https://raw.githubusercontent.com/evoluteur/evolutility-server-node/master/screenshot.gif)
 
 For a matching model-driven Web UI, use [Evolutility-UI-React](http://github.com/evoluteur/evolutility-ui-react) or [Evolutility-UI-jQuery](http://evoluteur.github.io/evolutility-ui-jquery/).
@@ -16,8 +16,7 @@ For a matching model-driven Web UI, use [Evolutility-UI-React](http://github.com
 3. [Configuration](#Configuration)
 4. [Models](#Models): [Object](#Object) - [Field](#Field) - [Collection](#Collection) - [Sample model](#SampleModel)
 5. [REST API](#API): [Get](#API_Get) - [Update](#API_Update) - [Charts](#API_Charts) - [More](#API_Extras)
-6. [GraphQL](#GraphQL): [Object by Id](#GraphQL_by_id) - [List](#GraphQL_list) - [Charts data](#GraphQL_charts_data)
-7. [License](#License)
+6. [License](#License)
 
 <a name="Installation"></a>
 ## Installation
@@ -38,7 +37,7 @@ npm install evolutility-server-node
 Dependencies: [Node.js](https://nodejs.org/en/), [Express](http://expressjs.com/), [PostgreSQL](http://www.postgresql.org/), and [PG-Promise](https://github.com/vitaly-t/pg-promise).
 
 Evolutility-Server-Node works with **Node.js v12.12.0** (not yet compatible w/ later versions).
- 
+
 <a name="Setup"></a>
 ## Setup
 
@@ -56,7 +55,6 @@ After installing Evolutility-Server-Node, follow these steps:
 | apiPort    | Port for the REST API. | 2000 |
 | connectionString  | Database connection string. | "postgres://evol:love@localhost:5432/Evolutility" |
 | schema     | Database schema.        | "evolutility" |
-| graphQL    | Enable GraphQL queries. | true |
 | uploadPath | Path to uploaded files. | "../evolutility-ui-react/public/pix/" |
 | apiInfo    | Enable API discovery (on root and per model). | true |
 | pageSize   | Page size in pagination.  | 50 |
@@ -87,7 +85,6 @@ npm start
 URLs on localhost:
 
 - REST: [http://localhost:2000/api/v1/](http://localhost:2000/api/v1/)
-- GraphQL: [http://localhost:2000/graphql](http://localhost:2000/graphql)
 
 
 <a name="Configuration"></a>
@@ -114,7 +111,6 @@ Configuration options are set in the file [config.js](https://github.com/evolute
 | createdDateColumn | Column containing created date (default `c_date`). |
 | updatedDateColumn | Column containing last update date (default `u_date`). |
 | schemaQueries | Enables endpoints to query for lists of tables and columns in the database schema. |
-| GraphQL       | Set to true to enable GraphQL UI (Work In Progress). |
 
 <a name="Models"></a>
 ## Models
@@ -168,7 +164,7 @@ Models contain the name of the driving table and the list of fields/columns pres
 <a name="Collection"></a>
 ### Collection
 
-Multiple Master-Details can be specified with collections. 
+Multiple Master-Details can be specified with collections.
 
 | Property     | Meaning                               |
 |--------------|---------------------------------------|
@@ -195,41 +191,41 @@ module.exports = {
     searchFields: ["title", "duedate", "description"],
     fields: [
         {
-            id: "title", 
-            column: "title", 
-            type: "text", 
-            required: true, 
+            id: "title",
+            column: "title",
+            type: "text",
+            required: true,
             inMany: true
         },
         {
-            id: "duedate", 
-            column: "duedate", 
-            type: "date", 
+            id: "duedate",
+            column: "duedate",
+            type: "date",
             inMany: true
         },
         {
-            id: "category", 
-            column: "category_id", 
-            type: "lov", 
+            id: "category",
+            column: "category_id",
+            type: "lov",
             lovTable: "task_category",
             inMany: true
         },
         {
-            id: "priority", 
-            column: "priority_id", 
-            type: "lov", 
-            lovTable: "task_priority", 
-            required: true, 
+            id: "priority",
+            column: "priority_id",
+            type: "lov",
+            lovTable: "task_priority",
+            required: true,
             inMany: true
         {
-            id: "complete", 
-            column: "complete", 
-            type: "boolean", 
+            id: "complete",
+            column: "complete",
+            type: "boolean",
             inMany: true
         },
         {
-            id: "description", 
-            column: "description", 
+            id: "description",
+            column: "description",
             type: "textmultiline"
         }
     ]
@@ -237,23 +233,23 @@ module.exports = {
 
 ```
 
-More sample models: 
+More sample models:
  [Address book](https://github.com/evoluteur/evolutility-server-node/blob/master/models/organizer/contact.js),
  [Restaurants list](https://github.com/evoluteur/evolutility-server-node/blob/master/models/organizer/restaurant.js),
  [Wine cellar](https://github.com/evoluteur/evolutility-server-node/blob/master/models/organizer/winecellar.js),
- [Graphic novels inventory](https://github.com/evoluteur/evolutility-server-node/blob/master/models/organizer/comics.js). 
- 
+ [Graphic novels inventory](https://github.com/evoluteur/evolutility-server-node/blob/master/models/organizer/comics.js).
+
 
 <a name="API"></a>
 ## REST API
 Evolutility-Server-Node provides a generic RESTful API for CRUD (Create, Read, Update, Delete) and more. It is inspired from [PostgREST](http://postgrest.com).
 
 - [Get](#API_Get)
-- [Update](#API_Update) 
+- [Update](#API_Update)
 - [Charts](#API_Charts)
 - [More](#API_Extras)
 
-When running Evolutility-Server-Node locally, the base url is 
+When running Evolutility-Server-Node locally, the base url is
 [http://localhost:2000/api/v1/](http://localhost:2000/api/v1/).
 
 <a name="API_Get"></a>
@@ -288,7 +284,7 @@ GET /todo
 
 <a name="Filtering"></a>
 #### Filtering
-You can filter result rows by adding conditions on fields, each condition is a query string parameter. 
+You can filter result rows by adding conditions on fields, each condition is a query string parameter.
 
 ```
 GET /{model.id}/{field.id}={operator}.{value}
@@ -405,7 +401,7 @@ Notes: The request returns the updated record. It is not standard but it saves t
 
 
 #### Deletion
-Simply use the DELETE verb with the id of the record to remove. 
+Simply use the DELETE verb with the id of the record to remove.
 
 ```
 DELETE /{model.id}/{id}
@@ -550,100 +546,6 @@ This endpoint gets the API version (as specified in the project's package.json f
 ```
 GET /version
 ```
-
-<a name="GraphQL"></a>
-## GraphQL
-
-Evolutility-Server-Node provides a GraphQL interface using the same models as the REST API. 
-
-- [Object by Id](#GraphQL_by_id)
-- [List](#GraphQL_list)
-- [Charts data](#GraphQL_charts_data)
-
-By default GraphiQL runs at 
-[http://localhost:2000/graphql](http://localhost:2000/graphql). It can be enabled or disabled in config.js.
-
-<a name="GraphQL_by_id"></a>
-### Object by Id
-
-For getting a single record by Id.
-
-```
-{ 
-    contact (id: 1 ){
-        firstname
-        lastname
-        category_txt
-        email
-  }
-}
-
-```
-[View in GraphiQL](http://localhost:2000/graphql?query=%23%20contact%20by%20Id%0A%7B%20%0A%20%20%20%20contact%20(id%3A%201%20)%7B%0A%20%20%20%20firstname%0A%20%20%20%20lastname%0A%20%20%20%20category_txt%0A%20%20%20%20email%0A%20%20%7D%0A%7D)
-
-<a name="GraphQL_list"></a>
-### List of objects
-
-All objects are exposed for queries with search and filters. Filter use the same [syntax for conditions](#Filtering) as the REST API (for example: { firstname: "sw.A" } for "Firstname starts with "A").
-
-Fields of type "lov" (List of values) are represented as 2 fields for Id and value.
-
-```
-{ 
-    # List - priority tasks not completed
-    todos ( complete: "false", priority: "lt.3" ){
-	    title
-	    description
-	    priority
-	    priority_txt
-	    category
-	    category_txt
-	    complete
-  }
-    # List - contacts w/ firstname starts w/ "A" and search for "ab"
-  	contacts (search: "ab", firstname: "sw.A") { 
-	    id
-	    firstname
-	    lastname
-	    category_txt
-	    email
-  }
-}
-
-```
-
-[View in GraphiQL](http://localhost:2000/graphql?query=%7B%20%0A%20%20%23%20List%20-%20priority%20tasks%20not%20completed%0A%09urgent_tasks%3A%20todos%20(%20complete%3A%20%22false%22%2C%20priority%3A%22lt.3%22%20)%7B%0A%09%20%20%20%20title%0A%09%20%20%20%20description%0A%09%20%20%20%20priority%0A%09%20%20%20%20priority_txt%0A%09%20%20%20%20category%0A%09%20%20%20%20category_txt%0A%09%20%20%20%20complete%0A%20%20%7D%0A%20%20%23%20List%20-%20contacts%20w%2F%20firstname%20starts%20w%2F%20%22A%22%20and%20search%20for%20%22ab%22%0A%20%20%09ab_a_contacts%3Acontacts%20(search%3A%20%22ab%22%2C%20firstname%3A%20%22sw.A%22)%20%7B%20%0A%09%20%20%20%20id%0A%09%20%20%20%20firstname%0A%09%20%20%20%20lastname%0A%09%20%20%20%20category_txt%0A%09%20%20%20%20email%0A%20%20%7D%0A%7D).
-
-<a name="GraphQL_charts_data"></a>
-### Charts data
-
-For all objects records can be aggregated and counted by field (for fields of numeric or "lov" types).
-
-```
-{ 
-  # Charts - contacts by categories
-  contacts_by_category: contact_charts(fieldId:"category"){
-    label 
-    value
-  }
-  # Charts - tasks by priorities
-  task_by_priority: todo_charts(fieldId:"priority") {
-    label 
-    value
-  }
-  # Charts - restaurants by cuisine
-  restaurants_by_cuisine: restaurant_charts(fieldId:"cuisine") {
-    label 
-    value
-  }
-}
-
-```
-
-
-[View in GraphiQL](http://localhost:2000/graphql?query=%7B%20%0A%20%20%23%20Charts%20-%20contacts%20by%20categories%0A%20%20contacts_by_category%3A%20contact_charts(fieldId%3A%22category%22)%7B%0A%20%20%20%20label%20%0A%20%20%20%20value%0A%20%20%7D%0A%20%20%23%20Charts%20-%20tasks%20by%20priorities%0A%20%20tasks_by_priority%3A%20todo_charts(fieldId%3A%22priority%22)%20%7B%0A%20%20%20%20label%20%0A%20%20%20%20value%0A%20%20%7D%0A%20%20%23%20Charts%20-%20restaurants%20by%20cuisine%0A%20%20restaurants_by_cuisine%3A%20restaurant_charts(fieldId%3A%22cuisine%22)%20%7B%0A%20%20%20%20label%20%0A%20%20%20%20value%0A%20%20%7D%0A%7D%20)
-
-
 
 <a name="License"></a>
 ## License
