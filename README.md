@@ -184,7 +184,7 @@ Example of collection in [Wine cellar](https://github.com/evoluteur/evolutility-
 Below is the model for a To-Do app.
 
 ```javascript
-module.exports = {
+export default {
     id: "todo",
     table: "task",
     titleField: "title",
@@ -550,6 +550,6 @@ GET /version
 <a name="License"></a>
 ## License
 
-Copyright (c) 2022 [Olivier Giulieri](https://evoluteur.github.io/).
+Copyright (c) 2023 [Olivier Giulieri](https://evoluteur.github.io/).
 
-Evolutility-Server-Node is released under the [MIT license](http://github.com/evoluteur/evolutility-server-node/blob/master/LICENSE.md).
+Evolutility-Server-Node is released under the [AGPLv3 license](http://github.com/evoluteur/evolutility-server-node/blob/master/LICENSE.md).
