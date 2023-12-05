@@ -62,9 +62,9 @@ After installing Evolutility-Server-Node, follow these steps:
 | csvSize    | Maximum number of items in CSV exports.    | 1000 |
 | csvHeader  | Use fields id or labels in CSV header.     | id/label |
 | locale     | Date format (no translation yet). | en/fr |
-| wTimestamp | Add timestamp columns u_date and c_date to track record creation and update times. | true |
+| wTimestamp | Add timestamp columns "created_at" and "updated_at" to track record creation and update times. | true |
 | logToConsole | Log to console. | true |
-| logToFile    | Log to file (log file is named "evol<date>.log" as in "evol-2019-11-21.log").    | true |
+| logToFile    | Log to file (log file is named "evol<timestamp>.log").    | true |
 
 4. In the command line type the following:
 
@@ -108,8 +108,8 @@ Configuration options are set in the file [config.js](https://github.com/evolute
 | wComments     | Allow for user comments (not implemented yet). |
 | wRating       | Allow for user ratings (not implemented yet). |
 | wTimestamp    | Timestamp columns w/ date of record creation and last update. |
-| createdDateColumn | Column containing created date (default `c_date`). |
-| updatedDateColumn | Column containing last update date (default `u_date`). |
+| createdDateColumn | Column containing created date (default "created_at"). |
+| updatedDateColumn | Column containing last update date (default "updated_at"). |
 | schemaQueries | Enables endpoints to query for lists of tables and columns in the database schema. |
 
 <a name="Models"></a>
