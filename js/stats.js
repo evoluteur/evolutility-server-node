@@ -134,5 +134,5 @@ function numbers(req, res) {
 // --------------------------------------------------------------------------------------
 
 export default {
-  numbers: numbers,
+  numbers,
 };

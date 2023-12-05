@@ -45,6 +45,6 @@ function getColumns(req, res) {
 // -----------------------------------------------------------------------
 
 export default {
-  getTables: getTables,
-  getColumns: getColumns,
+  getTables,
+  getColumns,
 };

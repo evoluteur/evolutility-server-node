@@ -121,12 +121,12 @@ prepModels();
 export const getModel = (mId) => models[mId];
 
 export default {
-  modelIds: modelIds,
+  modelIds,
 
-  getModel: (mId) => prepModel(models[mId]),
+  getModel,
 
-  prepModel: prepModel,
-  prepModels: prepModels,
+  prepModel,
+  prepModels,
 
-  models: models,
+  models,
 };

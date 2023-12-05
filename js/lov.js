@@ -69,6 +69,6 @@ const SQLlovOne = (f, search) => {
 
 export default {
   // - LOVs (for dropdowns)
-  lovOne: lovOne,
-  SQLlovOne: SQLlovOne,
+  lovOne,
+  SQLlovOne,
 };

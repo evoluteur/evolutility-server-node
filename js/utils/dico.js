@@ -108,13 +108,13 @@ export default {
 
   fieldInMany: (f) => f.inList || f.inMany,
 
-  fieldIsText: fieldIsText,
-  fieldIsNumber: fieldIsNumber,
-  fieldIsNumeric: fieldIsNumeric,
-  fieldIsDateOrTime: fieldIsDateOrTime,
+  fieldIsText,
+  fieldIsNumber,
+  fieldIsNumeric,
+  fieldIsDateOrTime,
 
-  fieldInCharts: fieldInCharts,
-  fieldChartable: fieldChartable,
+  fieldInCharts,
+  fieldChartable,
 
-  systemFields: systemFields,
+  systemFields,
 };

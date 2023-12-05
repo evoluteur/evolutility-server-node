@@ -9,7 +9,7 @@ import { fieldIsNumber, fieldTypes as ft } from "./dico.js";
 
 // - SQL for a single field/column in update/create/order
 var columnName = {
-  update: (f, idx) => '"' + f.column + '"=$' + idx,
+  update: (f, idx) => `"${f.column}"=$${idx}`,
 
   insert: (f) => f.column,
 
@@ -17,9 +17,9 @@ var columnName = {
     // - generate sql ORDER BY clause (for 1 field)
     if (f) {
       if (f.type === ft.lov && f.lovTable) {
-        return '"' + f.id + '_txt"';
+        return `"${f.id}_txt"`;
       } else {
-        var col = 't1."' + f.column + '"';
+        const col = 't1."' + f.column + '"';
         if (f.type === ft.bool) {
           return "CASE WHEN " + col + "=TRUE THEN TRUE ELSE FALSE END";
         } else if (f.type === ft.text) {
@@ -217,5 +217,5 @@ export default {
     return sql;
   },
 
-  sqlQuery: sqlQuery,
+  sqlQuery,
 };

@@ -255,7 +255,7 @@ function SQLgetMany(m, req, isCSV, wCount) {
     //group: '',
     order: sqlOrder,
     limit: qPageSize,
-    offset: offset,
+    offset,
     params: sqlParams,
   };
 }
@@ -287,6 +287,6 @@ export function getMany(req, res) {
 }
 
 export default {
-  getMany: getMany,
-  SQLgetMany: SQLgetMany,
+  getMany,
+  SQLgetMany,
 };

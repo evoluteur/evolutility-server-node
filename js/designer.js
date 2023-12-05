@@ -394,6 +394,6 @@ function getModels(req, res, callback) {
 }
 
 export default {
-  getModel: getModel,
-  getModels: getModels,
+  getModel,
+  getModels,
 };

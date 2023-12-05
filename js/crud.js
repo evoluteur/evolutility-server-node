@@ -43,8 +43,8 @@ function SQLgetOne(id, m, res) {
   }
   sql += " LIMIT 1;";
   return {
-    sql: sql,
-    sqlParams: sqlParams,
+    sql,
+    sqlParams,
   };
 }
 
@@ -259,11 +259,11 @@ const SQLCollecOne = (collec) =>
 
 export default {
   // - CRUD
-  getOne: getOne,
-  SQLgetOne: SQLgetOne,
-  insertOne: insertOne,
-  updateOne: updateOne,
-  deleteX: deleteX,
+  getOne,
+  SQLgetOne,
+  insertOne,
+  updateOne,
+  deleteX,
   // - Sub-collections
   getCollec: collecOne,
 };

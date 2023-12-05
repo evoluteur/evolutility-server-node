@@ -103,7 +103,7 @@ export function runQuery(
 // --------------------------------------------------------------------------------------
 
 export default {
-  db: db,
-  runQuery: runQuery,
-  promiseQuery: promiseQuery,
+  db,
+  runQuery,
+  promiseQuery,
 };

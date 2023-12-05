@@ -42,8 +42,8 @@ const entityAPIs = (model, protocol, baseUrl, fullDescription) => {
     id: model.id,
     title: model.title || model.label,
     list: pathToModel,
-    lovs: lovs,
-    charts: charts,
+    lovs,
+    charts,
     stats: pathToModel + "/stats",
     csv: pathToModel + "?format=csv",
   };
@@ -112,6 +112,6 @@ function version(req, res) {
 // --------------------------------------------------------------------------------------
 
 export default {
-  version: version,
-  apis: apis,
+  version,
+  apis,
 };

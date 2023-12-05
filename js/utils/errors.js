@@ -10,5 +10,5 @@ function badRequest(res, msg, errorCode = 400) {
 }
 
 export default {
-  badRequest: badRequest,
+  badRequest,
 };

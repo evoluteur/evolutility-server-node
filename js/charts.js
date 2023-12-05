@@ -1,6 +1,6 @@
 /*!
  * evolutility-server-node :: charts.js
- * Charts and grph data
+ * Charts and graph data
  *
  * https://github.com/evoluteur/evolutility-server-node
  * (c) 2023 Olivier Giulieri
@@ -59,10 +59,7 @@ function SQLchartField(m, fid) {
             sqlCount +
             sqlFrom +
             " LEFT JOIN " +
-            schema +
-            '."' +
-            f.lovTable +
-            '" AS t2' +
+            `${schema}."${f.lovTable}" AS t2` +
             " ON t1." +
             col +
             "=t2.id GROUP BY t2.id, t2." +
@@ -122,14 +119,14 @@ function SQLchartField(m, fid) {
         errorMessage: withError,
       }
     : {
-        sql: sql,
-        sqlParams: sqlParams,
+        sql,
+        sqlParams,
       };
 }
 
 // --------------------------------------------------------------------------------------
 
 export default {
-  chartField: chartField,
-  SQLchartField: SQLchartField,
+  chartField,
+  SQLchartField,
 };
