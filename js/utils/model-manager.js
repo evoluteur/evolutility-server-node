@@ -57,7 +57,7 @@ export function prepModel(m) {
   return null;
 }
 
-export function prepModelCollecs(m, models) {
+function prepModelCollecs(m, models) {
   if (m) {
     m.collecsH = {};
     if (m.collections) {
@@ -100,7 +100,7 @@ export function prepModelCollecs(m, models) {
   return null;
 }
 
-export const prepModels = () => {
+const prepModels = () => {
   modelIds = Object.keys(models);
   console.log(
     chalk.cyan(modelIds.length + " models:", modelIds.sort().join(", ") + ".")
@@ -121,12 +121,8 @@ prepModels();
 export const getModel = (mId) => models[mId];
 
 export default {
-  modelIds,
-
-  getModel,
-
-  prepModel,
-  prepModels,
-
   models,
+  modelIds,
+  getModel,
+  prepModel,
 };

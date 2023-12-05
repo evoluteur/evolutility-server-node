@@ -12,11 +12,8 @@ import ParseConnection from "pg-connection-string";
 import config from "../../config.js";
 import pkg from "../../package.json" assert { type: "json" };
 import { fieldTypes as ft } from "../utils/dico.js";
-import { prepModels } from "../utils/model-manager.js";
 import { models } from "../utils/model-manager.js";
 import data from "../../models/data/all_data.js";
-
-prepModels();
 
 const parseConnection = ParseConnection.parse;
 
