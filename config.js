@@ -10,7 +10,7 @@ const config = {
   // - DB connection
   connectionString:
     process.env.DATABASE_URL ||
-    "postgres://evol:love@localhost:5432/Evolutility",
+    "postgres://evol:love@localhost:5434/evolutility",
   schema: "evolutility",
 
   // - API discovery

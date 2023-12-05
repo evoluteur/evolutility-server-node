@@ -53,7 +53,7 @@ After installing Evolutility-Server-Node, follow these steps:
 |------------|--------------------|--------------------|
 | apiPath    | Path to REST API (can use "proxy" from package.json). | "/api/v1/" |
 | apiPort    | Port for the REST API. | 2000 |
-| connectionString  | Database connection string. | "postgres://evol:love@localhost:5432/Evolutility" |
+| connectionString  | Database connection string. | "postgres://evol:love@localhost:5434/evolutility" |
 | schema     | Database schema.        | "evolutility" |
 | uploadPath | Path to uploaded files. | "../evolutility-ui-react/public/pix/" |
 | apiInfo    | Enable API discovery (on root and per model). | true |
