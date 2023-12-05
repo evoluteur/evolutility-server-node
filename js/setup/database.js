@@ -69,6 +69,9 @@ const lovTable = (f, tableName) =>
 const lovTableWithSchema = (f, tableName) =>
   schema + '."' + lovTable(f, tableName) + '"';
 
+const nowColumn = (name) =>
+  name + " timestamp" + noTZ + " DEFAULT timezone('utc', now())";
+
 function sqlInsert(tableNameSchema, m, data) {
   const { pKey, fieldsH } = m;
   let sqlData = "";
@@ -217,7 +220,7 @@ function sqlSchemaWithData() {
       "    AS $$\n" +
       "  BEGIN\n    NEW." +
       config.updatedDateColumn +
-      " = now();\n    RETURN NEW;\n  END;\n$$;\n\n";
+      " = timezone('utc', now());\n    RETURN NEW;\n  END;\n$$;\n\n";
   }
   for (let mid in models) {
     const sqls = sqlModel(mid);
@@ -325,18 +328,8 @@ function sqlModel(mid) {
 
   // - "timestamp" columns to track creation and last modification.
   if (config.wTimestamp) {
-    fs.push(
-      config.createdDateColumn +
-        " timestamp" +
-        noTZ +
-        " DEFAULT timezone('utc'::text, now())"
-    );
-    fs.push(
-      config.updatedDateColumn +
-        " timestamp" +
-        noTZ +
-        " DEFAULT timezone('utc'::text, now())"
-    );
+    fs.push(nowColumn(createdDateCol));
+    fs.push(nowColumn(updatedDateCol));
   }
   // - "who-is" columns to track user who created and last modified the record.
   if (config.wWhoIs) {
