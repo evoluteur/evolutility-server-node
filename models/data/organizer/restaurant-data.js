@@ -1,6 +1,6 @@
 // source yelp.com on 9/22/2018
 
-module.exports = [
+export default [
   {
     id: 1,
     name: "Atelier Crenn",

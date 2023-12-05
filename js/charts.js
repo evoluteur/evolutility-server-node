@@ -3,16 +3,19 @@
  * Charts and grph data
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2022 Olivier Giulieri
+ * (c) 2023 Olivier Giulieri
  */
 
-const dico = require("./utils/dico"),
-  moma = require("./utils/model-manager"),
-  ft = dico.fieldTypes,
-  query = require("./utils/query"),
-  errors = require("./utils/errors.js"),
-  logger = require("./utils/logger"),
-  config = require("../config.js");
+import {
+  fieldTypes as ft,
+  fieldInCharts,
+  fieldIsNumber,
+} from "./utils/dico.js";
+import { getModel } from "./utils/model-manager.js";
+import { runQuery } from "./utils/query.js";
+import errors from "./utils/errors.js";
+import logger from "./utils/logger.js";
+import config from "../config.js";
 
 const schema = '"' + (config.schema || "evolutility") + '"',
   defaultPageSize = config.pageSize || 50;
@@ -22,7 +25,7 @@ const schema = '"' + (config.schema || "evolutility") + '"',
 function chartField(req, res) {
   logger.logReq("GET CHARTS", req);
 
-  const m = moma.getModel(req.params.entity),
+  const m = getModel(req.params.entity),
     fid = req.params.field,
     { sql, sqlParams = [], errorMessage } = SQLchartField(m, fid);
 
@@ -30,7 +33,7 @@ function chartField(req, res) {
     //TODO: proper error handling
     errors.badRequest(res, errorMessage);
   } else {
-    query.runQuery(res, sql, sqlParams, false);
+    runQuery(res, sql, sqlParams, false);
   }
 }
 
@@ -43,7 +46,7 @@ function SQLchartField(m, fid) {
   if (m && fid) {
     let f = m.fieldsH[fid];
     if (f) {
-      if (dico.fieldInCharts(f)) {
+      if (fieldInCharts(f)) {
         const col = '"' + f.column + '"',
           sqlFrom = " FROM " + m.schemaTable + " AS t1";
 
@@ -62,8 +65,7 @@ function SQLchartField(m, fid) {
             '" AS t2' +
             " ON t1." +
             col +
-            "=t2.id" +
-            " GROUP BY t2.id, t2." +
+            "=t2.id GROUP BY t2.id, t2." +
             clov;
         } else if (f.type === ft.bool) {
           const cId = "CASE " + col + " WHEN true THEN 1 ELSE 0 END",
@@ -80,7 +82,7 @@ function SQLchartField(m, fid) {
             cId +
             "," +
             cLabel;
-        } else if (dico.fieldIsNumber(f)) {
+        } else if (fieldIsNumber(f)) {
           const numbersColType = f.type === ft.int ? "::integer" : "";
           sql =
             "SELECT " +
@@ -127,7 +129,7 @@ function SQLchartField(m, fid) {
 
 // --------------------------------------------------------------------------------------
 
-module.exports = {
+export default {
   chartField: chartField,
   SQLchartField: SQLchartField,
 };

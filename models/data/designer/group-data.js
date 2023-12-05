@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   {
     object: 1,
     gid: "title",

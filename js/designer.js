@@ -3,14 +3,15 @@
  * Tools to build models ( = build apps)
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2022 Olivier Giulieri
+ * (c) 2023 Olivier Giulieri
  */
 
-const query = require("./utils/query"),
-  db = query.db,
-  logger = require("./utils/logger"),
-  errors = require("./utils/errors"),
-  config = require("../config.js");
+import query from "./utils/query.js";
+import logger from "./utils/logger.js";
+import errors from "./utils/errors.js";
+import config from "../config.js";
+
+const db = query.db;
 
 const schema = '"' + (config.schema || "evolutility") + '"';
 const camelProp = {
@@ -392,7 +393,7 @@ function getModels(req, res, callback) {
     });
 }
 
-module.exports = {
+export default {
   getModel: getModel,
   getModels: getModels,
 };

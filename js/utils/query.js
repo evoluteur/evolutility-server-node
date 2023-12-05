@@ -2,24 +2,26 @@
  * evolutility-server-node :: utils/query.js
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2022 Olivier Giulieri
+ * (c) 2023 Olivier Giulieri
  */
 
-const pgp = require("pg-promise")(),
-  csv = require("csv-express"),
-  config = require("../../config.js"),
-  parseConnection = require("pg-connection-string").parse,
-  errors = require("./errors.js"),
-  logger = require("./logger");
+import pgPromise from "pg-promise";
+import csv from "csv-express";
+import pgConnection from "pg-connection-string";
+import config from "../../config.js";
+import errors from "./errors.js";
+import logger from "./logger.js";
 
-const dbConfig = parseConnection(config.connectionString);
+const pgp = pgPromise();
+
+const dbConfig = pgConnection.parse(config.connectionString);
 dbConfig.max = 10; // max number of clients in the pool
 dbConfig.idleTimeoutMillis = 30000; // max client idle time before being closed
 
-const db = {};
+export const db = {};
 db.conn = pgp(config.connectionString);
 
-function promiseQuery(sql, values, singleRecord) {
+export function promiseQuery(sql, values, singleRecord) {
   logger.logSQL(sql);
   return new Promise((resolve, reject) =>
     db.conn[singleRecord ? "one" : "many"](sql, values)
@@ -37,7 +39,15 @@ function promiseQuery(sql, values, singleRecord) {
 }
 
 // - run a query and return the result in request
-function runQuery(res, sql, values, singleRecord, format, header, fnPrep) {
+export function runQuery(
+  res,
+  sql,
+  values,
+  singleRecord,
+  format,
+  header,
+  fnPrep
+) {
   logger.logSQL(sql);
   // SQL Query > Select Data
   db.conn[singleRecord ? "one" : "many"](sql, values)
@@ -46,11 +56,10 @@ function runQuery(res, sql, values, singleRecord, format, header, fnPrep) {
       const nbRecords = results ? results.length : 0;
       if (format === "csv") {
         if (nbRecords) {
+          const keys = Object.keys(results[0]);
           if (header) {
             var headers = {};
-            for (key in results[0]) {
-              headers[key] = header[key] || key;
-            }
+            keys.forEach((key) => (headers[key] = header[key] || key));
             results.unshift(headers);
           }
           logger.logCount(results.length || 0);
@@ -93,7 +102,7 @@ function runQuery(res, sql, values, singleRecord, format, header, fnPrep) {
 
 // --------------------------------------------------------------------------------------
 
-module.exports = {
+export default {
   db: db,
   runQuery: runQuery,
   promiseQuery: promiseQuery,

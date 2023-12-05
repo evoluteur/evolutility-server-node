@@ -2,7 +2,7 @@
   Evolutility-Server-Node configuration file
 */
 
-module.exports = {
+const config = {
   // - Path to REST API
   apiPath: "/api/v1/",
   apiPort: process.env.PORT || 2000,
@@ -49,3 +49,5 @@ module.exports = {
   // - Query DB schema for list of tables and columns
   schemaQueries: false,
 };
+
+export default config;

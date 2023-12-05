@@ -2,7 +2,7 @@
     Sample data from https://www.briandunning.com/sample-data/
 */
 
-module.exports = [
+export default [
   {
     firstname: "James",
     lastname: "Butt",
@@ -6501,7 +6501,7 @@ module.exports = [
   },
 ].map((c) => {
   // random (biased) categories
-  newCategory = 1 + Math.floor(Math.random() * 35);
+  let newCategory = 1 + Math.floor(Math.random() * 35);
   if (newCategory === 8) {
     newCategory = 9;
   } else if (newCategory > 9) {

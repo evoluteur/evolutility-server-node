@@ -2,16 +2,17 @@
  * evolutility-server-node :: info.js
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2022 Olivier Giulieri
+ * (c) 2023 Olivier Giulieri
  */
 
-const path = require("path"),
-  { fieldInCharts, fieldTypes } = require("./utils/dico"),
-  ft = fieldTypes,
-  logger = require("./utils/logger"),
-  pkg = require("../package.json"),
-  { models } = require("./utils/model-manager"),
-  config = require("../config.js");
+import path from "path";
+import { fieldInCharts, fieldTypes } from "./utils/dico.js";
+import logger from "./utils/logger.js";
+import pkg from "../package.json" assert { type: "json" };
+import { models } from "./utils/model-manager.js";
+import config from "../config.js";
+
+const ft = fieldTypes;
 
 function getFieldsAPIs(model, protocol, baseUrl) {
   const apis = {
@@ -110,7 +111,7 @@ function version(req, res) {
 
 // --------------------------------------------------------------------------------------
 
-module.exports = {
+export default {
   version: version,
   apis: apis,
 };

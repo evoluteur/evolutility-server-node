@@ -3,25 +3,25 @@
  * Methods to create postgres schema and tables from models.
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2022 Olivier Giulieri
+ * (c) 2023 Olivier Giulieri
  */
 
-const pg = require("pg"),
-  path = require("path"),
-  fs = require("fs"),
-  parseConnection = require("pg-connection-string").parse,
-  { version, homepage } = require("../../package.json"),
-  { prepModels } = require("../utils/model-manager"),
-  { fieldTypes } = require("../utils/dico");
+import pg from "pg";
+import fs from "fs";
+import ParseConnection from "pg-connection-string";
+import config from "../../config.js";
+import pkg from "../../package.json" assert { type: "json" };
+import { fieldTypes as ft } from "../utils/dico.js";
+import { prepModels } from "../utils/model-manager.js";
+import { models } from "../utils/model-manager.js";
+import data from "../../models/data/all_data.js";
 
-const ft = fieldTypes;
-const { models } = require("../utils/model-manager");
-const data = require("../../models/data/all_data.js");
 prepModels();
 
-// - options; mostly from in config.js
-const config = require(path.join(__dirname, "../", "../", "config")),
-  schema = '"' + config.schema + '"',
+const parseConnection = ParseConnection.parse;
+
+const { version, homepage } = pkg;
+const schema = '"' + config.schema + '"',
   //dbuser = 'evol',
   dbuser = "postgres", // DB user
   sqlFile = true; // log SQL to file

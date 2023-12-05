@@ -3,14 +3,14 @@
  * Lists of values
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2022 Olivier Giulieri
+ * (c) 2023 Olivier Giulieri
  */
 
-const moma = require("./utils/model-manager"),
-  query = require("./utils/query"),
-  errors = require("./utils/errors.js"),
-  logger = require("./utils/logger"),
-  config = require("../config.js");
+import { getModel } from "./utils/model-manager.js";
+import { runQuery } from "./utils/query.js";
+import errors from "./utils/errors.js";
+import logger from "./utils/logger.js";
+import config from "../config.js";
 
 const schema = '"' + (config.schema || "evolutility") + '"',
   lovSize = config.lovSize || 100;
@@ -23,7 +23,7 @@ const searchParam = (search) =>
 function lovOne(req, res) {
   logger.logReq("LOV ONE", req);
   const mid = req.params.entity,
-    m = moma.getModel(mid),
+    m = getModel(mid),
     fid = req.params.field,
     search = req.query.search;
   let f = m.fieldsH[fid];
@@ -44,7 +44,7 @@ function lovOne(req, res) {
       if (search) {
         params = [searchParam(search)];
       }
-      query.runQuery(res, sql, params, false);
+      runQuery(res, sql, params, false);
     } else {
       res.json(logger.errorMsg('Invalid field "' + fid + '".', "lovOne"));
     }
@@ -59,7 +59,7 @@ const SQLlovOne = (f, search) => {
   if (f.lovIcon) {
     sql += ", icon";
   }
-  sql += " FROM " + schema + '."' + f.lovTable + '"';
+  sql += ` FROM ${schema}."${f.lovTable}"`;
   if (search) {
     sql += ' WHERE "' + col + '" ILIKE $1';
   }
@@ -67,7 +67,7 @@ const SQLlovOne = (f, search) => {
   return sql;
 };
 
-module.exports = {
+export default {
   // - LOVs (for dropdowns)
   lovOne: lovOne,
   SQLlovOne: SQLlovOne,

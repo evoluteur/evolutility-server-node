@@ -3,7 +3,7 @@
   https://github.com/evoluteur/evolutility-server-node
 */
 
-module.exports = {
+export default {
   id: "world",
   title: "Worlds",
   world: "designer",

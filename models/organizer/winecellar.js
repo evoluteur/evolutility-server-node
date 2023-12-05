@@ -3,7 +3,7 @@
   https://github.com/evoluteur/evolutility-server-node
 */
 
-module.exports = {
+export default {
   id: "winecellar",
   title: "Wine cellar",
   world: "organizer",
@@ -27,8 +27,8 @@ module.exports = {
       type: "integer",
       label: "Vintage",
       required: true,
-      max: 2020,
-      min: 1900,
+      max: 2050,
+      min: 1950,
       maxLength: 4,
       inMany: true,
       column: "vintage",

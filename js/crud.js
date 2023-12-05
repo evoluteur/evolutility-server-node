@@ -3,16 +3,16 @@
  * CRUD (Create, Read, Update, Delete) end-points
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2022 Olivier Giulieri
+ * (c) 2023 Olivier Giulieri
  */
 
-const moma = require("./utils/model-manager"),
-  dico = require("./utils/dico"),
-  sqls = require("./utils/sql-select"),
-  query = require("./utils/query"),
-  errors = require("./utils/errors.js"),
-  logger = require("./utils/logger"),
-  config = require("../config.js");
+import { getModel } from "./utils/model-manager.js";
+import { systemFields } from "./utils/dico.js";
+import sqls from "./utils/sql-select.js";
+import query from "./utils/query.js";
+import errors from "./utils/errors.js";
+import logger from "./utils/logger.js";
+import config from "../config.js";
 
 const schema = '"' + (config.schema || "evolutility") + '"',
   defaultPageSize = config.pageSize || 50;
@@ -29,7 +29,7 @@ function SQLgetOne(id, m, res) {
     " as id, " +
     sqls.select(m.fields, m.collections, true);
 
-  dico.systemFields.forEach(function (f) {
+  systemFields.forEach(function (f) {
     sql += ", t1." + f.column;
   });
   sql +=
@@ -54,7 +54,7 @@ function getOne(req, res) {
   logger.logReq("GET ONE", req);
   const id = req.params.id,
     mid = req.params.entity,
-    m = moma.getModel(mid);
+    m = getModel(mid);
 
   if (m) {
     let { sql, sqlParams } = SQLgetOne(id, m, res);
@@ -100,7 +100,7 @@ function getOne(req, res) {
 // - insert a single record
 function insertOne(req, res) {
   logger.logReq("INSERT ONE", req);
-  const m = moma.getModel(req.params.entity);
+  const m = getModel(req.params.entity);
   if (!m) {
     return errors.badRequest(res);
   } else {
@@ -119,8 +119,7 @@ function insertOne(req, res) {
         q.names.join('","') +
         '") values(' +
         ps.join(",") +
-        ")" +
-        " RETURNING " +
+        ") RETURNING " +
         selectId +
         ", " +
         sqls.select(m.fields, false, null, "C") +
@@ -150,7 +149,7 @@ function returnInvalid(res, invalids) {
 // - update a single record
 function updateOne(req, res) {
   logger.logReq("UPDATE ONE", req);
-  const m = moma.getModel(req.params.entity),
+  const m = getModel(req.params.entity),
     id = req.params.id,
     q = sqls.namedValues(m, req, "update");
 
@@ -185,7 +184,7 @@ function updateOne(req, res) {
 // - delete a single record
 function deleteX(req, res) {
   logger.logReq("DELETE ONE", req);
-  const m = moma.getModel(req.params.entity),
+  const m = getModel(req.params.entity),
     id = req.params.id;
   let sql = "DELETE FROM " + m.schemaTable + " WHERE " + m.pKey,
     params = null;
@@ -202,8 +201,7 @@ function deleteX(req, res) {
         sql +=
           " IN(" +
           ids.map((i, idx) => "$" + (idx + 1)).join(",") +
-          ")" +
-          " RETURNING " +
+          ") RETURNING " +
           m.pKey +
           "::integer AS id";
         params = ids;
@@ -232,7 +230,7 @@ const collecOrderBy = (collec) =>
 function collecOne(req, res) {
   logger.logReq("GET ONE-COLLEC", req);
   const mid = req.params.entity;
-  (m = moma.getModel(mid)),
+  (m = getModel(mid)),
     (collecId = req.params.collec),
     (collec = m.collecsH[collecId]);
 
@@ -247,16 +245,11 @@ function collecOne(req, res) {
 const SQLCollecOne = (collec) =>
   "SELECT t1.id, " +
   sqls.select(collec.fields, null, "t1") +
-  " FROM " +
-  schema +
-  '."' +
-  collec.table +
-  '" AS t1' +
+  ` FROM ${schema}."${collec.table}" AS t1` +
   sqls.sqlFromLOVs(collec.fields, schema) +
   ' WHERE t1."' +
   collec.column +
-  '"=$1' +
-  " ORDER BY t1." +
+  '"=$1 ORDER BY t1.' +
   collecOrderBy(collec) +
   " LIMIT " +
   defaultPageSize +
@@ -264,7 +257,7 @@ const SQLCollecOne = (collec) =>
 
 // --------------------------------------------------------------------------------------
 
-module.exports = {
+export default {
   // - CRUD
   getOne: getOne,
   SQLgetOne: SQLgetOne,

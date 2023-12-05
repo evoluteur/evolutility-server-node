@@ -5,7 +5,7 @@ Model-driven REST API for CRUD and more, using Node.js, Express, and PostgreSQL.
 
 Evolutility-Server-Node provides a set of generic [REST](#API) endpoints for CRUD (Create, Read, Update, Delete) and simple charts.
 
-![screenshot](https://raw.githubusercontent.com/evoluteur/evolutility-server-node/master/screenshot.gif)
+![screenshot](https://raw.githubusercontent.com/evoluteur/evolutility-server-node/master/screenshot.png)
 
 For a matching model-driven Web UI, use [Evolutility-UI-React](http://github.com/evoluteur/evolutility-ui-react) or [Evolutility-UI-jQuery](http://evoluteur.github.io/evolutility-ui-jquery/).
 
@@ -127,8 +127,8 @@ Models contain the name of the driving table and the list of fields/columns pres
 <a name="Object"></a>
 ### Object
 
-| Property     | Description                             |
-|--------------|-----------------------------------------|
+| Property     | Description                     |
+|--------------|---------------------------------|
 | id           | Unique key to identify the entity (used as API parameter). |
 | table        | Driving database table name (there are secondary tables for fields of type "lov"). |
 | pKey         | Name of the Primary key column (single column of type serial). Default to "id". In the data the key is always called "id". |
@@ -140,8 +140,8 @@ Models contain the name of the driving table and the list of fields/columns pres
 <a name="Field"></a>
 ### Field
 
-| Property     | Description                           |
-|--------------|---------------------------------------|
+| Property     | Description              |
+|--------------|--------------------------|
 | id           | Unique key for the field (can be the same as column but doesn't have to be). |
 | column       | Database column name for the field.    |
 | lovTable     | Table to join to for field value (only for fields of type "lov"). |
@@ -166,8 +166,8 @@ Models contain the name of the driving table and the list of fields/columns pres
 
 Multiple Master-Details can be specified with collections.
 
-| Property     | Meaning                               |
-|--------------|---------------------------------------|
+| Property     | Meaning                  |
+|--------------|--------------------------|
 | id           | Unique key for the collection.        |
 | table        | DB Table to query (master table, other tables will be included in the query for "lov" fields). |
 | column       | Column in the detail table to match against id of object. |
@@ -216,7 +216,8 @@ export default {
             type: "lov",
             lovTable: "task_priority",
             required: true,
-            inMany: true
+            inMany: true,
+        },
         {
             id: "complete",
             column: "complete",

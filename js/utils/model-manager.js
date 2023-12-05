@@ -3,17 +3,21 @@
  * Helper functions for metadata
  *
  * https://github.com/evoluteur/evolutility
- * (c) 2022 Olivier Giulieri
+ * (c) 2023 Olivier Giulieri
  */
 
-const models = require("../../models/all_models"),
-  config = require("../../config.js"),
-  chalk = require("chalk"),
-  dico = require("./dico"),
-  schema = '"' + (config.schema || "evolutility") + '"';
+import chalk from "chalk";
+import ms from "../../models/all_models.js";
+import config from "../../config.js";
+import dico from "./dico.js";
+
+export const models = ms;
+
+const schema = '"' + (config.schema || "evolutility") + '"';
+
 let modelIds = Object.keys(models);
 
-function prepModel(m) {
+export function prepModel(m) {
   if (m) {
     if (!m._prepared) {
       // - Model
@@ -53,7 +57,7 @@ function prepModel(m) {
   return null;
 }
 
-function prepModelCollecs(m, models) {
+export function prepModelCollecs(m, models) {
   if (m) {
     m.collecsH = {};
     if (m.collections) {
@@ -96,7 +100,7 @@ function prepModelCollecs(m, models) {
   return null;
 }
 
-const prepModels = () => {
+export const prepModels = () => {
   modelIds = Object.keys(models);
   console.log(
     chalk.cyan(modelIds.length + " models:", modelIds.sort().join(", ") + ".")
@@ -113,7 +117,10 @@ const prepModels = () => {
 
 prepModels();
 
-module.exports = {
+// export const getModel = (mId) => prepModel(models[mId]);
+export const getModel = (mId) => models[mId];
+
+export default {
   modelIds: modelIds,
 
   getModel: (mId) => prepModel(models[mId]),

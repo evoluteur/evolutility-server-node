@@ -3,19 +3,19 @@
  * Some data on the object like the min, max, average, and total for numeric fields.
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2022 Olivier Giulieri
+ * (c) 2023 Olivier Giulieri
  */
 
-const moma = require("./utils/model-manager"),
-  dico = require("./utils/dico"),
-  query = require("./utils/query"),
-  errors = require("./utils/errors.js"),
-  logger = require("./utils/logger"),
-  config = require("../config.js"),
-  ft = dico.fieldTypes;
+import { getModel } from "./utils/model-manager.js";
+import dico, { fieldTypes as ft } from "./utils/dico.js";
+import { runQuery } from "./utils/query.js";
+import errors from "./utils/errors.js";
+import logger from "./utils/logger.js";
+import config from "../config.js";
 
 function sqlAggregate(fn, f) {
-  let num = (tcast = "");
+  let num = "";
+  let tcast = "";
 
   if (f.type === ft.money) {
     tcast = "::numeric::float8";
@@ -34,21 +34,7 @@ function sqlAggregate(fn, f) {
         break;
     }
   }
-  return (
-    ", " +
-    fn +
-    '("' +
-    f.column +
-    '"' +
-    num +
-    ")" +
-    tcast +
-    ' AS "' +
-    f.id +
-    "_" +
-    fn +
-    '"'
-  );
+  return ", " + fn + `("${f.column}"${num})${tcast} AS "${f.id}_${fn}"`;
 }
 
 const fnPrep = (fields) => (data) => {
@@ -90,7 +76,7 @@ function numbers(req, res) {
   logger.logReq("GET STATS", req);
 
   const mid = req.params.entity,
-    m = moma.getModel(mid);
+    m = getModel(mid);
 
   if (m) {
     if (!m.noStats) {
@@ -136,7 +122,7 @@ function numbers(req, res) {
         sql += ", sum(nb_comments::integer)::integer AS nb_comments";
       }
       sql += sqlFROM;
-      query.runQuery(res, sql, [], true, null, null, fnPrep(m.fields));
+      runQuery(res, sql, [], true, null, null, fnPrep(m.fields));
     } else {
       errors.badRequest(res, 'noStats set on model "' + mid + '".');
     }
@@ -147,6 +133,6 @@ function numbers(req, res) {
 
 // --------------------------------------------------------------------------------------
 
-module.exports = {
+export default {
   numbers: numbers,
 };

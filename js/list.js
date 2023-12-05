@@ -3,17 +3,16 @@
  * Get list of items w/ filtering, and search...
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2022 Olivier Giulieri
+ * (c) 2023 Olivier Giulieri
  */
 
-const dico = require("./utils/dico"),
-  moma = require("./utils/model-manager"),
-  ft = dico.fieldTypes,
-  sqls = require("./utils/sql-select"),
-  query = require("./utils/query"),
-  errors = require("./utils/errors.js"),
-  logger = require("./utils/logger"),
-  config = require("../config.js");
+import dico, { fieldTypes as ft } from "./utils/dico.js";
+import { getModel } from "./utils/model-manager.js";
+import sqls from "./utils/sql-select.js";
+import { runQuery } from "./utils/query.js";
+import errors from "./utils/errors.js";
+import logger from "./utils/logger.js";
+import config from "../config.js";
 
 const schema = '"' + (config.schema || "evolutility") + '"',
   defaultPageSize = config.pageSize || 50;
@@ -127,12 +126,7 @@ function SQLgetMany(m, req, isCSV, wCount) {
                   );
                 } else {
                   sqlWs.push(
-                    't1."' +
-                      f.column +
-                      '"' +
-                      sqlOperators[cond] +
-                      "$" +
-                      sqlParams.length
+                    `t1."${f.column}"${sqlOperators[cond]}$${sqlParams.length}`
                   );
                 }
               }
@@ -168,8 +162,8 @@ function SQLgetMany(m, req, isCSV, wCount) {
                 if (cond === "nct") {
                   // not contains
                   //TODO replace % in cs[1]
-                  sqlParams.push("%" + cs[1] + "%");
-                  sqlWs.push(" NOT " + w + "$" + sqlParams.length);
+                  sqlParams.push(`%${cs[1]}%`);
+                  sqlWs.push(` NOT ${w}$${sqlParams.length}`);
                 } else {
                   if (cond === "sw") {
                     // - start with
@@ -179,7 +173,7 @@ function SQLgetMany(m, req, isCSV, wCount) {
                     sqlParams.push("%" + cs[1]);
                   } else if (cond === "ct") {
                     // - contains
-                    sqlParams.push("%" + cs[1] + "%");
+                    sqlParams.push(`%${cs[1]}%`);
                   } else {
                     sqlParams.push(cs[1]);
                   }
@@ -268,10 +262,10 @@ function SQLgetMany(m, req, isCSV, wCount) {
 
 // - returns a set of records (filtered and sorted)
 // - sample url: http://localhost:3000/api/v1/todo?category=eq.3&order=title.asc&pageSize=50
-function getMany(req, res) {
+export function getMany(req, res) {
   logger.logReq("GET MANY", req);
   const mid = req.params.entity,
-    m = moma.getModel(mid);
+    m = getModel(mid);
 
   if (m) {
     const format = req.query.format || null,
@@ -279,7 +273,7 @@ function getMany(req, res) {
       sq = SQLgetMany(m, req, isCSV, !isCSV),
       sql = sqls.sqlQuery(sq);
 
-    query.runQuery(
+    runQuery(
       res,
       sql,
       sq.params,
@@ -292,7 +286,7 @@ function getMany(req, res) {
   }
 }
 
-module.exports = {
+export default {
   getMany: getMany,
   SQLgetMany: SQLgetMany,
 };

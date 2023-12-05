@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   {
     title: "Do Androids Dream Of Electric Sheep?",
     genre: 11,

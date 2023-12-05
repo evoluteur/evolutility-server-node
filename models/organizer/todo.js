@@ -3,7 +3,7 @@
   https://github.com/evoluteur/evolutility-server-node
 */
 
-module.exports = {
+export default {
   id: "todo",
   title: "To-Do List",
   world: "organizer",
@@ -111,5 +111,4 @@ module.exports = {
     },
   ],
   collections: [],
-  noStats: true,
 };

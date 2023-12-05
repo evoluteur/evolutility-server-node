@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   {
     wine: 1,
     drink_date: "2018-05-08",

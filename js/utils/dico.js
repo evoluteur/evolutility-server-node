@@ -3,13 +3,13 @@
  * Helper functions for metadata
  *
  * https://github.com/evoluteur/evolutility
- * (c) 2022 Olivier Giulieri
+ * (c) 2023 Olivier Giulieri
  */
 
-const config = require("../../config.js");
+import config from "../../config.js";
 
 // - Field Types
-const ft = {
+export const fieldTypes = {
   text: "text",
   textml: "textmultiline",
   bool: "boolean",
@@ -17,12 +17,12 @@ const ft = {
   dec: "decimal",
   money: "money",
   date: "date",
-  datetime: "datetime",
+  // datetime: "datetime",
   time: "time",
   lov: "lov",
   list: "list", // multiple values for one field (behave like tags - return an array of strings)
   html: "html",
-  formula: "formula", // soon to be a field attribute rather than a field type
+  // formula: "formula", // soon to be a field attribute rather than a field type
   email: "email",
   image: "image",
   //geoloc: 'geolocation',
@@ -35,8 +35,10 @@ const ft = {
   //widget: 'widget'
 };
 
+const ft = fieldTypes;
+
 // - fields for comments, ratings...
-let systemFields = []; // system fields to track records creation date, comments...
+export let systemFields = []; // system fields to track records creation date, comments...
 let f;
 
 if (config.wTimestamp) {
@@ -89,19 +91,19 @@ if (config.wRating) {
   systemFields.push(f);
 }
 
-const fieldIsNumber = (f) =>
+export const fieldIsNumber = (f) =>
   f.type === ft.int || f.type === ft.dec || f.type === ft.money;
-const fieldIsText = (f) =>
+export const fieldIsText = (f) =>
   [ft.text, ft.textml, ft.url, ft.html, ft.email].indexOf(f.type) > -1;
-const fieldIsDateOrTime = (f) =>
+export const fieldIsDateOrTime = (f) =>
   f.type === ft.date || f.type === ft.datetime || f.type === ft.time;
-const fieldIsNumeric = (f) => fieldIsNumber(f) || fieldIsDateOrTime(f);
+export const fieldIsNumeric = (f) => fieldIsNumber(f) || fieldIsDateOrTime(f);
 
-const fieldChartable = (f) =>
+export const fieldChartable = (f) =>
   f.type === ft.lov || f.type === ft.bool || fieldIsNumber(f);
-const fieldInCharts = (f) => fieldChartable(f) && !f.noCharts;
+export const fieldInCharts = (f) => fieldChartable(f) && !f.noCharts;
 
-module.exports = {
+export default {
   fieldTypes: ft,
 
   fieldInMany: (f) => f.inList || f.inMany,

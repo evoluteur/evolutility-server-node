@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   {
     name: "Jap Man Sat Nam",
     length: "11:08",

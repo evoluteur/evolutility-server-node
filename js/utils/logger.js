@@ -3,15 +3,17 @@
  * Simple formatted console logger (not logging to file).
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2022 Olivier Giulieri
+ * (c) 2023 Olivier Giulieri
  */
 
-const config = require("../../config.js"),
-  pkg = require("../../package.json"),
-  chalk = require("chalk"),
-  _ = require("underscore"),
-  fileLog = config.logToFile,
-  consoleLog = config.logToConsole;
+import config from "../../config.js";
+import pkg from "../../package.json" assert { type: "json" };
+import chalk from "chalk";
+import _ from "underscore";
+
+const fileLog = config.logToFile;
+const consoleLog = config.logToConsole;
+
 let log = {};
 if (fileLog) {
   const SimpleNodeLogger = require("simple-node-logger"),
@@ -52,7 +54,7 @@ function maskedConnection() {
 }
 const pubConnection = maskedConnection();
 
-module.exports = {
+export default {
   ascii_art: asciiArt,
 
   startupMessage() {
@@ -86,13 +88,7 @@ module.exports = {
   },
 
   logHeader(ql, action, entity, id) {
-    const msg =
-      ql +
-      " > " +
-      action +
-      " : " +
-      (entity ? entity : "") +
-      (id ? " " + id : "");
+    const msg = `${ql} > ${action} : ` + (entity || "") + (id ? " " + id : "");
     if (fileLog) {
       log.info(msg);
     }

@@ -8,17 +8,22 @@
          ___  ___ _ ____   _____ _ __    __/ |
   ____  / __|/ _ \ '__\ \ / / _ \ '__|  |___/
  |____| \__ \  __/ |   \ V /  __/ |
-        |___/\___|_|    \_/ \___|_| 
+        |___/\___|_|    \_/ \___|_|
 
 * https://github.com/evoluteur/evolutility-server-node
 * (c) 2023 Olivier Giulieri
 */
 
-const express = require("express"),
-  path = require("path"),
-  helmet = require("helmet"),
-  bodyParser = require("body-parser"),
-  routes = require("./js/routes");
+import express from "express";
+import path from "path";
+import helmet from "helmet";
+import bodyParser from "body-parser";
+import routes from "./js/routes.js";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
 
@@ -76,4 +81,4 @@ app.use(function (err, req, res, next) {
   });
 });
 
-module.exports = app;
+export default app;

@@ -9,6 +9,7 @@
     "type": "git",
     "url": "git://github.com/evoluteur/evolutility-server-node.git"
   },
+  "type": "module",
   "bugs": "https://github.com/evoluteur/evolutility-server-node/issues",
   "scripts": {
     "start": "supervisor ./bin/www",
@@ -23,6 +24,7 @@
     "simple-node-logger": "~21.8.12",
     "formidable": "~3.5.1",
     "helmet": "~7.1.0",
+    "url": "^0.11.3",
     "pg": "^8.11.3",
     "pg-connection-string": "~2.6.2",
     "pg-promise": "^11.5.4",

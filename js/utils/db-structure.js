@@ -3,13 +3,13 @@
  * Helper functions for getting the list of tables and columns
  *
  * https://github.com/evoluteur/evolutility
- * (c) 2022 Olivier Giulieri
+ * (c) 2023 Olivier Giulieri
  */
 
-const query = require("./query"),
-  errors = require("./errors.js"),
-  logger = require("./logger"),
-  config = require("../../config.js");
+import { runQuery } from "./query.js";
+import errors from "./errors.js";
+import logger from "./logger.js";
+import config from "../../config.js";
 
 // - Get list of schema tables
 function getTables(req, res) {
@@ -19,7 +19,7 @@ function getTables(req, res) {
     ", CASE WHEN is_insertable_into='YES' THEN false ELSE true END as \"readOnly\"" +
     " FROM information_schema.tables" +
     " WHERE table_schema=$1 AND table_name NOT LIKE 'evol%' ORDER BY table_name";
-  query.runQuery(res, sql, [config.schema]);
+  runQuery(res, sql, [config.schema]);
 }
 
 // - Get list of columns for the specified table
@@ -33,7 +33,7 @@ function getColumns(req, res) {
         " FROM information_schema.columns AS t1" +
         " WHERE table_name=$1 AND table_schema=$2 ",
       params = [table, config.schema];
-    query.runQuery(res, sql, params);
+    runQuery(res, sql, params);
     //TODO: add comments and constraints
     //sql = 'SELECT * FROM information_schema.constraint_column_usage '+
     //' WHERE table_name=$1 AND table_schema=$2';
@@ -44,7 +44,7 @@ function getColumns(req, res) {
 
 // -----------------------------------------------------------------------
 
-module.exports = {
+export default {
   getTables: getTables,
   getColumns: getColumns,
 };

@@ -155,7 +155,7 @@ const fields = [
   },
 ];
 
-module.exports = {
+export default {
   id: "test",
   world: "tests",
   table: "z_test",

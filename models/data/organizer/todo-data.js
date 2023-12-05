@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   {
     title: "Release Evolutility",
     priority: 3,

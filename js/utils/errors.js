@@ -1,4 +1,4 @@
-const logger = require("./logger");
+import logger from "./logger.js";
 
 function badRequest(res, msg, errorCode = 400) {
   const errorMsg = msg || "Bad request";
@@ -9,6 +9,6 @@ function badRequest(res, msg, errorCode = 400) {
   return res.json({ error: errorMsg });
 }
 
-module.exports = {
+export default {
   badRequest: badRequest,
 };

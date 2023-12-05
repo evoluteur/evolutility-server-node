@@ -2,23 +2,24 @@
  * evolutility-server-node :: routes.js
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2022 Olivier Giulieri
+ * (c) 2023 Olivier Giulieri
  */
 
-const express = require("express"),
-  router = express.Router(),
-  logger = require("./utils/logger"),
-  upload = require("./utils/upload"),
-  config = require("../config"),
-  apiPath = config.apiPath,
-  crud = require("./crud"),
-  list = require("./list"),
-  lov = require("./lov"),
-  stats = require("./stats"),
-  charts = require("./charts"),
-  info = require("./info"),
-  designer = require("./designer"),
-  dbStructure = require("./utils/db-structure");
+import express from "express";
+import logger from "./utils/logger.js";
+import upload from "./utils/upload.js";
+import config from "../config.js";
+import crud from "./crud.js";
+import list from "./list.js";
+import lov from "./lov.js";
+import stats from "./stats.js";
+import charts from "./charts.js";
+import info from "./info.js";
+import designer from "./designer.js";
+import dbStructure from "./utils/db-structure.js";
+
+const apiPath = config.apiPath;
+const router = express.Router();
 
 logger.startupMessage();
 
@@ -79,4 +80,4 @@ router.get(apiPath + ":entity/lov/:field", lov.lovOne);
 // ======  GET CHARTS ====================================
 router.get(apiPath + ":entity/chart/:field", charts.chartField);
 
-module.exports = router;
+export default router;

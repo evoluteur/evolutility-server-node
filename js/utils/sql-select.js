@@ -2,11 +2,10 @@
  * evolutility-server-node :: utils/sql-select.js
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2022 Olivier Giulieri
+ * (c) 2023 Olivier Giulieri
  */
 
-const dico = require("./dico");
-const ft = dico.fieldTypes;
+import { fieldIsNumber, fieldTypes as ft } from "./dico.js";
 
 // - SQL for a single field/column in update/create/order
 var columnName = {
@@ -53,7 +52,7 @@ function sqlQuery(q) {
   return sql;
 }
 
-module.exports = {
+export default {
   columnName: columnName,
 
   // - returns the SELECT clause for SQL queries
@@ -119,7 +118,7 @@ module.exports = {
       if (f.column != "id" && f.type != "formula" && !f.readOnly) {
         var fv = req.body[f.id];
         if (fv !== null && fv !== undefined) {
-          const isNum = dico.fieldIsNumber(f);
+          const isNum = fieldIsNumber(f);
           if (fv === "" && isNum) {
             fv = null;
           }
@@ -140,7 +139,7 @@ module.exports = {
               ns.push(fnName(f, vs.length));
               break;
             default:
-              if (dico.fieldIsNumber(f)) {
+              if (fieldIsNumber(f)) {
                 if (f.min && fv < f.min) {
                   addInvalid(f.id, fv, "min = " + f.min);
                 }
@@ -212,11 +211,7 @@ module.exports = {
           f.lovTable +
           '" AS ' +
           f.t2 +
-          ' ON t1."' +
-          f.column +
-          '"=' +
-          f.t2 +
-          ".id";
+          ` ON t1."${f.column}"=${f.t2}.id`;
       }
     });
     return sql;

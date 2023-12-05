@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   {
     object: 5,
     cid: "wine_tasting",
