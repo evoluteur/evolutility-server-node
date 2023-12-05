@@ -26,7 +26,7 @@ module.exports = [
     serie_nb: 6,
     language: 1,
     notes: "",
-    pix: "comics/saga1.jpeg",
+    pix: "comics/saga1.jpg",
     url_amazon:
       "https://smile.amazon.com/Saga-Book-One-Brian-Vaughan/dp/1632150786",
     url_bdfugue: "https://www.bdfugue.com/saga-tome-1",
@@ -57,7 +57,7 @@ module.exports = [
     serie_nb: 8,
     language: 2,
     notes: "",
-    pix: "comics/metabaron1.jpeg",
+    pix: "comics/metabaron1.jpg",
   },
   {
     title: "Garulfo",
@@ -70,7 +70,7 @@ module.exports = [
     complete: true,
     finished: true,
     notes: "",
-    pix: "comics/garulfo1.jpeg",
+    pix: "comics/garulfo1.jpg",
   },
   {
     title: "Lanfeust de Troy",
@@ -83,7 +83,7 @@ module.exports = [
     serie_nb: 8,
     language: 2,
     notes: "",
-    pix: "comics/lanfeust1.jpeg",
+    pix: "comics/lanfeust1.jpg",
   },
   {
     title: "Salammbo",
@@ -96,7 +96,7 @@ module.exports = [
     serie_nb: 3,
     language: 2,
     notes: "",
-    pix: "comics/salammbo1.jpeg",
+    pix: "comics/salammbo1.jpg",
   },
   {
     title: "Carmen McCallum",
@@ -109,7 +109,7 @@ module.exports = [
     serie_nb: 12,
     language: 2,
     notes: "",
-    pix: "comics/carmenmc1.jpeg",
+    pix: "comics/carmenmc1.jpg",
     url_amazon: "",
     url_bdfugue: "https://www.bdfugue.com/carmen-mc-callum-t-1-jukurpa",
   },
@@ -124,7 +124,7 @@ module.exports = [
     serie_nb: 5,
     language: 2,
     notes: "",
-    pix: "comics/codemc1.jpeg",
+    pix: "comics/codemc1.jpg",
   },
   {
     title: "La Nef des Fous",
@@ -137,7 +137,7 @@ module.exports = [
     serie_nb: 7,
     language: 2,
     notes: "",
-    pix: "comics/neffous1.jpeg",
+    pix: "comics/neffous1.jpg",
     url_bdfugue: "https://www.bdfugue.com/la-nef-des-fous-t-1-eauxfolles",
   },
   {
@@ -151,7 +151,7 @@ module.exports = [
     serie_nb: 4,
     language: 2,
     notes: "",
-    pix: "comics/quete1.jpeg",
+    pix: "comics/quete1.jpg",
     url_amazon: "",
     url_bdfugue: "",
   },
@@ -166,7 +166,7 @@ module.exports = [
     serie_nb: 6,
     language: 2,
     notes: "",
-    pix: "comics/lama1.jpeg",
+    pix: "comics/lama1.jpg",
   },
   {
     title: "Le Surfer d'Argent",
@@ -179,7 +179,7 @@ module.exports = [
     serie_nb: 1,
     language: 2,
     notes: "",
-    pix: "comics/surfer.jpeg",
+    pix: "comics/surfer.jpg",
   },
   {
     title: "L'Incal",
@@ -192,7 +192,7 @@ module.exports = [
     serie_nb: 6,
     language: 2,
     notes: "",
-    pix: "comics/incal1.jpeg",
+    pix: "comics/incal1.jpg",
     url_amazon: "https://smile.amazon.com/Incal-Vol-Black-ebook/dp/B00SVE70MI/",
     url_bdfugue: "https://www.bdfugue.com/l-incal-t-1-l-incal-noir-29999",
   },
@@ -207,7 +207,7 @@ module.exports = [
     serie_nb: 3,
     language: 2,
     notes: "",
-    pix: "comics/skydoll1.jpeg",
+    pix: "comics/skydoll1.jpg",
   },
   {
     title: "Ronin",
@@ -220,7 +220,7 @@ module.exports = [
     serie_nb: 1,
     language: 1,
     notes: "",
-    pix: "comics/ronin.jpeg",
+    pix: "comics/ronin.jpg",
     url_amazon:
       "https://smile.amazon.com/Ronin-Deluxe-Frank-Miller-ebook/dp/B00MV1NZ94",
   },
@@ -235,7 +235,7 @@ module.exports = [
     serie_nb: 6,
     language: 2,
     notes: "",
-    pix: "comics/fleaudieux1.jpeg",
+    pix: "comics/fleaudieux1.jpg",
     url_bdfugue:
       "https://www.bdfugue.com/le-fleau-des-dieux-t-1-morituri-te-saluant-82834",
   },
@@ -250,7 +250,7 @@ module.exports = [
     serie_nb: 1,
     language: 1,
     notes: "",
-    pix: "comics/imperfect-future.jpeg",
+    pix: "comics/imperfect-future.jpg",
   },
   {
     title: "Ghost in the Shell",
@@ -263,6 +263,6 @@ module.exports = [
     serie_nb: 2,
     language: 1,
     notes: "",
-    pix: "comics/ghost-in-the-shell.jpeg",
+    pix: "comics/ghost-in-the-shell.jpg",
   },
 ];
