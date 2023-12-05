@@ -49,11 +49,14 @@ const ft_postgreSQL = {
   json: "json",
 };
 
+const createdDateCol = config.createdDateColumn || "created_at";
+const updatedDateCol = config.updatedDateColumn || "update_at";
+
 const sysColumns = {
-  c_date: true,
-  u_date: true,
-  c_uid: true,
-  u_uid: true,
+  [createdDateCol]: true,
+  [updatedDateCol]: true,
+  created_by: true,
+  updated_by: true,
   nb_comments: true,
   nb_ratings: true,
   avg_ratings: true,
@@ -337,8 +340,8 @@ function sqlModel(mid) {
   }
   // - "who-is" columns to track user who created and last modified the record.
   if (config.wWhoIs) {
-    fs.push(" c_uid integer");
-    fs.push(" u_uid integer");
+    fs.push(" created_by integer");
+    fs.push(" updated_by integer");
   }
 
   // - tracking number of comments.

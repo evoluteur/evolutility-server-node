@@ -28,9 +28,9 @@ const config = {
   uploadPath: "../evolutility-ui-react/public/pix/",
 
   // - Optional fields
-  // - Timestamp columns created_at and updated_at w/ date of record creation and last update
+  // - Timestamp columns "created_at" and "updated_at" w/ date of record creation and last update
   wTimestamp: true,
-  // - "WhoIs" columns u_uid and c_uid w/ userid of creator and last modifier
+  // - "WhoIs" columns "created_by" and "updated_by" w/ userid of creator and last modifier
   wWhoIs: false,
   // - Comments & Ratings (community feature)
   wComments: false,

@@ -60,12 +60,12 @@ if (config.wWhoIs) {
     {
       // - record creator (user.id)
       type: "integer",
-      column: "c_uid",
+      column: "created_by",
     },
     {
       // - record last editor (user.id)
       type: "integer",
-      column: "u_uid",
+      column: "updated_by",
     }
   );
 }
