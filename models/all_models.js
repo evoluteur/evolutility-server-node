@@ -9,23 +9,23 @@ https://github.com/evoluteur/evolutility-models
 
 const models = {
   // --- Organizer
-  todo: require('./organizer/todo'),
-  contact: require('./organizer/contact'),
-  comics: require('./organizer/comics'),
-  restaurant: require('./organizer/restaurant'),
-  winecellar: require('./organizer/winecellar'),
-  winetasting: require('./organizer/winetasting'),
+  todo: require("./organizer/todo"),
+  contact: require("./organizer/contact"),
+  comics: require("./organizer/comics"),
+  restaurant: require("./organizer/restaurant"),
+  winecellar: require("./organizer/winecellar"),
+  winetasting: require("./organizer/winetasting"),
   // --- Music
-  album: require('./music/album'),
-  artist: require('./music/artist'),
-  track: require('./music/track'),
+  album: require("./music/album"),
+  artist: require("./music/artist"),
+  track: require("./music/track"),
   // --- Tests
-  test: require('./tests/test'),
+  test: require("./tests/test"),
   // -- Designer
-  world: require('./designer/world'),
-  object: require('./designer/object'),
-  field: require('./designer/field'),
-  group: require('./designer/group'),
-  collection: require('./designer/collection'),
+  world: require("./designer/world"),
+  object: require("./designer/object"),
+  field: require("./designer/field"),
+  group: require("./designer/group"),
+  collection: require("./designer/collection"),
 };
 module.exports = models;

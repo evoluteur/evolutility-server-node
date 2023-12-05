@@ -8,22 +8,22 @@ https://github.com/evoluteur/evolutility-models
 */
 
 module.exports = {
-	todo: require('./organizer/todo-data'),
-	contact: require('./organizer/contact-data'),
-	comics: require('./organizer/comics-data'),
-	winecellar: require('./organizer/winecellar-data'),
-	winetasting: require('./organizer/winetasting-data'),
-	restaurant: require('./organizer/restaurant-data'),
-	
-	album: require('./music/album-data'),
-	artist: require('./music/artist-data'),
-	track: require('./music/track-data'),
+  todo: require("./organizer/todo-data"),
+  contact: require("./organizer/contact-data"),
+  comics: require("./organizer/comics-data"),
+  winecellar: require("./organizer/winecellar-data"),
+  winetasting: require("./organizer/winetasting-data"),
+  restaurant: require("./organizer/restaurant-data"),
 
-	test: require('./tests/test-data'),
+  album: require("./music/album-data"),
+  artist: require("./music/artist-data"),
+  track: require("./music/track-data"),
 
-	world: require('./designer/world-data'),
-	object: require('./designer/object-data'),
-	field: require('./designer/field-data'),
-	group: require('./designer/group-data'),
-	collection: require('./designer/collection-data'),
+  test: require("./tests/test-data"),
+
+  world: require("./designer/world-data"),
+  object: require("./designer/object-data"),
+  field: require("./designer/field-data"),
+  group: require("./designer/group-data"),
+  collection: require("./designer/collection-data"),
 };
