@@ -413,7 +413,7 @@ function logToFile(sql, isData) {
   }
 }
 
-function createSchema(runSQL = true, logFile = true) {
+async function createSchema(runSQL = true, logFile = true) {
   let { sql, sqlData } = sqlSchemaWithData();
 
   if (runSQL) {
@@ -422,28 +422,19 @@ function createSchema(runSQL = true, logFile = true) {
     dbConfig.idleTimeoutMillis = 30000; // max client idle time before being closed
     const pool = new pg.Pool(dbConfig);
 
+    // - Create schema and tables
     if (logFile) {
       logToFile(sql, false);
     }
-    pool.connect(function (err, client, done) {
-      // - Create schema and tables
-      client.query(sql, function (err, data) {
-        if (err) {
-          done();
-          throw err;
-        }
-        // - Populate tables
-        if (logFile) {
-          logToFile(sqlData, true);
-        }
-        client.query(sqlData, function (err, data) {
-          done();
-          if (err) {
-            throw err;
-          }
-        });
-      });
-    });
+    const client = await pool.connect();
+    await client.query(sql);
+    // - Populate tables
+    if (logFile) {
+      logToFile(sqlData, true);
+    }
+    await client.query(sqlData);
+    // - close connection
+    client.release(true);
   }
 }
 
