@@ -8,7 +8,7 @@
 
 import { getModel } from "./utils/model-manager.js";
 import { runQuery } from "./utils/query.js";
-import errors from "./utils/errors.js";
+import { badRequest } from "./utils/errors.js";
 import logger from "./utils/logger.js";
 import config from "../config.js";
 
@@ -20,7 +20,7 @@ const searchParam = (search) =>
 
 // - returns list of possible values for a field (usually for dropdown)
 // - sample url: http://localhost:2000/api/v1/todo/lov/category
-function lovOne(req, res) {
+export function lovOne(req, res) {
   logger.logReq("LOV ONE", req);
   const mid = req.params.entity,
     m = getModel(mid),
@@ -49,7 +49,7 @@ function lovOne(req, res) {
       res.json(logger.errorMsg('Invalid field "' + fid + '".', "lovOne"));
     }
   } else {
-    errors.badRequest(res);
+    badRequest(res);
   }
 }
 

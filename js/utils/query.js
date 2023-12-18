@@ -9,17 +9,17 @@ import pgPromise from "pg-promise";
 import csv from "csv-express";
 import pgConnection from "pg-connection-string";
 import config from "../../config.js";
-import errors from "./errors.js";
+import { badRequest } from "./errors.js";
 import logger from "./logger.js";
 
 const pgp = pgPromise();
 
 const dbConfig = pgConnection.parse(config.connectionString);
 dbConfig.max = 10; // max number of clients in the pool
-dbConfig.idleTimeoutMillis = 30000; // max client idle time before being closed
+dbConfig.connectionTimeoutMillis = 60000;
+dbConfig.idleTimeoutMillis = 10000; // max client idle time before being closed
+export const db = { conn: pgp(config.connectionString) };
 
-export const db = {};
-db.conn = pgp(config.connectionString);
 
 export function promiseQuery(sql, values, singleRecord) {
   logger.logSQL(sql);
@@ -96,7 +96,7 @@ export function runQuery(
           return res.json(singleRecord ? null : []);
         }
       }
-      return errors.badRequest(res, "Database error - " + err.message, 500);
+      return badRequest(res, "Database error - " + err.message, 500);
     });
 }
 

@@ -10,7 +10,7 @@ import dico, { fieldTypes as ft } from "./utils/dico.js";
 import { getModel } from "./utils/model-manager.js";
 import sqls from "./utils/sql-select.js";
 import { runQuery } from "./utils/query.js";
-import errors from "./utils/errors.js";
+import { badRequest } from "./utils/errors.js";
 import logger from "./utils/logger.js";
 import config from "../config.js";
 
@@ -282,7 +282,7 @@ export function getMany(req, res) {
       isCSV ? csvHeader(m.fields) : null
     );
   } else {
-    errors.badRequest(res, 'Invalid model: "' + mid + '".');
+    badRequest(res, 'Invalid model: "' + mid + '".');
   }
 }
 

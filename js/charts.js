@@ -22,7 +22,7 @@ const schema = '"' + (config.schema || "evolutility") + '"',
 
 // - returns data for a single charts
 // - sample REST url: http://localhost:2000/api/v1/todo/chart/category
-function chartField(req, res) {
+export function chartField(req, res) {
   logger.logReq("GET CHARTS", req);
 
   const m = getModel(req.params.entity),

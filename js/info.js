@@ -6,28 +6,27 @@
  */
 
 import path from "path";
-import { fieldInCharts, fieldTypes } from "./utils/dico.js";
+import { fieldInCharts, fieldTypes as ft } from "./utils/dico.js";
 import logger from "./utils/logger.js";
 import pkg from "../package.json" assert { type: "json" };
 import { models } from "./utils/model-manager.js";
 import config from "../config.js";
 
-const ft = fieldTypes;
-
 function getFieldsAPIs(model, protocol, baseUrl) {
-  const apis = {
-    charts: [],
-    lovs: [],
-  };
+  const charts = [];
+  const lovs = [];
   model.fields.forEach(function (f) {
     if (fieldInCharts(f)) {
-      apis.charts.push(protocol + path.join(baseUrl, model.id, "chart", f.id));
+      charts.push(protocol + path.join(baseUrl, model.id, "chart", f.id));
     }
     if (f.type === ft.lov) {
-      apis.lovs.push(protocol + path.join(baseUrl, model.id, "lov", f.id));
+      lovs.push(protocol + path.join(baseUrl, model.id, "lov", f.id));
     }
   });
-  return apis;
+  return {
+    charts,
+    lovs,
+  };
 }
 
 function baseURL(req) {
@@ -42,11 +41,13 @@ const entityAPIs = (model, protocol, baseUrl, fullDescription) => {
     id: model.id,
     title: model.title || model.label,
     list: pathToModel,
-    lovs,
     charts,
-    stats: pathToModel + "/stats",
     csv: pathToModel + "?format=csv",
+    lovs,
   };
+  if (!model.noStats) {
+    mi.stats = pathToModel + "/stats";
+  }
   if (fullDescription) {
     mi.crud = {
       create: {

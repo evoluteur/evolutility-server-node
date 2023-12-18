@@ -52,11 +52,10 @@ function maskedConnection() {
   }
   return "N/A";
 }
+
 const pubConnection = maskedConnection();
 
 export default {
-  ascii_art: asciiArt,
-
   startupMessage() {
     if (consoleLog) {
       console.log(asciiArt);
@@ -150,11 +149,9 @@ export default {
     return green(msg);
   },
 
-  green: green,
+  green,
 
-  logSuccess(msg) {
-    green(msg);
-  },
+  logSuccess: green,
 
   logError(err, moreInfo) {
     if (consoleLog) {

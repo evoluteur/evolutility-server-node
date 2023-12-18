@@ -7,14 +7,14 @@
  */
 
 import { runQuery } from "./query.js";
-import errors from "./errors.js";
+import { badRequest } from "./errors.js";
 import logger from "./logger.js";
 import config from "../../config.js";
 
 // - Get list of schema tables
 function getTables(req, res) {
   logger.logHeader("REST", "DB", "tables");
-  var sql =
+  const sql =
     "SELECT table_name as table, table_type as type" +
     ", CASE WHEN is_insertable_into='YES' THEN false ELSE true END as \"readOnly\"" +
     " FROM information_schema.tables" +
@@ -24,10 +24,10 @@ function getTables(req, res) {
 
 // - Get list of columns for the specified table
 function getColumns(req, res) {
-  var table = req.params.table;
+  const table = req.params.table;
   logger.logHeader("REST", "DB", table + " columns");
   if (table) {
-    var sql =
+    const sql =
         "SELECT column_name as column, data_type as type" +
         ", CASE WHEN is_nullable='YES' THEN false ELSE true END as \"required\"" +
         " FROM information_schema.columns AS t1" +
@@ -38,7 +38,7 @@ function getColumns(req, res) {
     //sql = 'SELECT * FROM information_schema.constraint_column_usage '+
     //' WHERE table_name=$1 AND table_schema=$2';
   } else {
-    errors.badRequest(res, "No table specified.");
+    badRequest(res, "No table specified.");
   }
 }
 

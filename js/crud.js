@@ -9,8 +9,8 @@
 import { getModel } from "./utils/model-manager.js";
 import { systemFields } from "./utils/dico.js";
 import sqls from "./utils/sql-select.js";
-import query from "./utils/query.js";
-import errors from "./utils/errors.js";
+import { runQuery, promiseQuery } from "./utils/query.js";
+import { badRequest } from "./utils/errors.js";
 import logger from "./utils/logger.js";
 import config from "../config.js";
 
@@ -39,7 +39,7 @@ function SQLgetOne(id, m, res) {
     sql += " WHERE t1." + m.pKey + "=$1";
   } else {
     const invalidID = 'Invalid id: "' + id + '".';
-    return res ? errors.badRequest(res, invalidID) : "ERROR: " + invalidID;
+    return res ? badRequest(res, invalidID) : "ERROR: " + invalidID;
   }
   sql += " LIMIT 1;";
   return {
@@ -63,9 +63,9 @@ function getOne(req, res) {
     }
     if (m.collections && !req.query.shallow) {
       const qCollecs = m.collections.map((collec) =>
-        query.promiseQuery(SQLCollecOne(collec), [id], false)
+        promiseQuery(SQLCollecOne(collec), [id], false)
       );
-      qCollecs.unshift(query.promiseQuery(sql, sqlParams, true));
+      qCollecs.unshift(promiseQuery(sql, sqlParams, true));
       Promise.all(qCollecs)
         .then((data) => {
           if (data && data.length) {
@@ -86,10 +86,10 @@ function getOne(req, res) {
           res.json(err);
         });
     } else {
-      query.runQuery(res, sql, sqlParams, true);
+      runQuery(res, sql, sqlParams, true);
     }
   } else {
-    errors.badRequest(res, 'Invalid model: "' + mid + '".');
+    badRequest(res, 'Invalid model: "' + mid + '".');
   }
 }
 
@@ -102,7 +102,7 @@ function insertOne(req, res) {
   logger.logReq("INSERT ONE", req);
   const m = getModel(req.params.entity);
   if (!m) {
-    return errors.badRequest(res);
+    return badRequest(res);
   } else {
     const pKey = m.pKey || "id",
       q = sqls.namedValues(m, req, "insert");
@@ -125,9 +125,9 @@ function insertOne(req, res) {
         sqls.select(m.fields, false, null, "C") +
         ";";
 
-      query.runQuery(res, sql, q.values, true);
+      runQuery(res, sql, q.values, true);
     } else {
-      errors.badRequest(res);
+      badRequest(res);
     }
   }
 }
@@ -171,9 +171,9 @@ function updateOne(req, res) {
       " as id, " +
       sqls.select(m.fields, false, null, "U") +
       ";";
-    query.runQuery(res, sql, q.values, true);
+    runQuery(res, sql, q.values, true);
   } else {
-    errors.badRequest(res);
+    badRequest(res);
   }
 }
 
@@ -206,13 +206,13 @@ function deleteX(req, res) {
           "::integer AS id";
         params = ids;
       } else {
-        errors.badRequest(res);
+        badRequest(res);
         return;
       }
     }
-    query.runQuery(res, sql, params, ids.length === 1);
+    runQuery(res, sql, params, ids.length === 1);
   } else {
-    errors.badRequest(res);
+    badRequest(res);
   }
 }
 
@@ -236,9 +236,9 @@ function collecOne(req, res) {
 
   if (m && collec) {
     const sqlParams = [parseInt(req.query.id, 10)];
-    query.runQuery(res, SQLCollecOne(collec), sqlParams, false);
+    runQuery(res, SQLCollecOne(collec), sqlParams, false);
   } else {
-    errors.badRequest(res);
+    badRequest(res);
   }
 }
 

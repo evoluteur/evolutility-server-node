@@ -1,6 +1,6 @@
 import logger from "./logger.js";
 
-function badRequest(res, msg, errorCode = 400) {
+export function badRequest(res, msg, errorCode = 400) {
   const errorMsg = msg || "Bad request";
 
   logger.logError(msg);

@@ -6,12 +6,10 @@
  * (c) 2023 Olivier Giulieri
  */
 
-import query from "./utils/query.js";
+import { db, promiseQuery } from "./utils/query.js";
 import logger from "./utils/logger.js";
-import errors from "./utils/errors.js";
+import { badRequest } from "./utils/errors.js";
 import config from "../config.js";
-
-const db = query.db;
 
 const schema = '"' + (config.schema || "evolutility") + '"';
 const camelProp = {
@@ -243,9 +241,9 @@ function getModel(req, res) {
             qModel = dataM;
             const sqls = sqlModelCollecs(modelType, true, sqlWhere);
             return Promise.all([
-              query.promiseQuery(sqls.fields, sqlParams, false),
-              query.promiseQuery(sqls.groups, sqlParams, false),
-              query.promiseQuery(sqls.collections, sqlParams, false),
+              promiseQuery(sqls.fields, sqlParams, false),
+              promiseQuery(sqls.groups, sqlParams, false),
+              promiseQuery(sqls.collections, sqlParams, false),
             ]);
           } else {
             return null;
@@ -267,12 +265,12 @@ function getModel(req, res) {
         }
         return res.json(qModel);
       } else {
-        return errors.badRequest(res, "Invalid model ID.");
+        return badRequest(res, "Invalid model ID.");
       }
     })
     .catch((error) => {
       console.log(error);
-      return errors.badRequest(res, 'Error querying for model "' + id + '".');
+      return badRequest(res, 'Error querying for model "' + id + '".');
     });
 }
 
@@ -322,15 +320,15 @@ function getModels(req, res, callback) {
             const sqlGetFields = SQLmodelFields(modelType, true, sqlWhere);
             logger.logSQL(sqlGetFields);
             return Promise.all([
-              query.promiseQuery(sqlGetFields, null, false),
-              query.promiseQuery(
+              promiseQuery(sqlGetFields, null, false),
+              promiseQuery(
                 'SELECT gid as "id", object_id, label, width, css, header, footer, fields FROM evolutility.evol_object_group WHERE ' +
                   sqlWhere +
                   sqlOrderBy,
                 null,
                 false
               ),
-              query.promiseQuery(
+              promiseQuery(
                 'SELECT cid as "id", object_id, label, dbcolumn as "column", fields FROM evolutility.evol_object_collec WHERE ' +
                   sqlWhere +
                   sqlOrderBy,
@@ -384,12 +382,12 @@ function getModels(req, res, callback) {
         });
         return res.json(qModel);
       } else {
-        return errors.badRequest(res, "Invalid model ID.");
+        return badRequest(res, "Invalid model ID.");
       }
     })
     .catch((error) => {
       console.log(error);
-      return errors.badRequest(res, "Invalid model ID.");
+      return badRequest(res, "Invalid model ID.");
     });
 }
 

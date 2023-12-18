@@ -7,11 +7,11 @@
 
 import express from "express";
 import logger from "./utils/logger.js";
-import upload from "./utils/upload.js";
+import { uploadOne } from "./utils/upload.js";
 import config from "../config.js";
 import crud from "./crud.js";
 import list from "./list.js";
-import lov from "./lov.js";
+import { lovOne } from "./lov.js";
 import stats from "./stats.js";
 import charts from "./charts.js";
 import info from "./info.js";
@@ -68,14 +68,14 @@ router.post(apiPath + ":entity", crud.insertOne);
 // -  UPDATE ONE  -
 router.patch(apiPath + ":entity/:id", crud.updateOne);
 router.put(apiPath + ":entity/:id", crud.updateOne);
-router.post(apiPath + ":entity/upload/:id", upload.uploadOne);
+router.post(apiPath + ":entity/upload/:id", uploadOne);
 // -  DELETE ONE -
 router.delete(apiPath + ":entity/:id", crud.deleteX);
 // -  SUB-COLLECTIONS  -
 router.get(apiPath + ":entity/collec/:collec", crud.getCollec);
 
 // ======  LOV ====================================
-router.get(apiPath + ":entity/lov/:field", lov.lovOne);
+router.get(apiPath + ":entity/lov/:field", lovOne);
 
 // ======  GET CHARTS ====================================
 router.get(apiPath + ":entity/chart/:field", charts.chartField);
