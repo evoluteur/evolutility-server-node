@@ -40,15 +40,15 @@ const entityAPIs = (model, protocol, baseUrl, fullDescription) => {
   let mi = {
     id: model.id,
     title: model.title || model.label,
-    list: pathToModel,
-    charts,
-    csv: pathToModel + "?format=csv",
-    lovs,
   };
-  if (!model.noStats) {
-    mi.stats = pathToModel + "/stats";
-  }
   if (fullDescription) {
+    mi.list = pathToModel;
+    mi.charts = charts;
+    mi.csv = pathToModel + "?format=csv";
+    mi.lovs = lovs;
+    if (!model.noStats) {
+      mi.stats = pathToModel + "/stats";
+    }
     mi.crud = {
       create: {
         method: "POST",
