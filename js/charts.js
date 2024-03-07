@@ -3,7 +3,7 @@
  * Charts and graph data
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2023 Olivier Giulieri
+ * (c) 2024 Olivier Giulieri
  */
 
 import {
@@ -22,7 +22,7 @@ const schema = '"' + (config.schema || "evolutility") + '"',
 
 // - returns data for a single charts
 // - sample REST url: http://localhost:2000/api/v1/todo/chart/category
-export function chartField(req, res) {
+export function getChart(req, res) {
   logger.logReq("GET CHARTS", req);
 
   const m = getModel(req.params.entity),
@@ -47,7 +47,7 @@ function SQLchartField(m, fid) {
     let f = m.fieldsH[fid];
     if (f) {
       if (fieldInCharts(f)) {
-        const col = '"' + f.column + '"',
+        const col = `"${f.column}"`,
           sqlFrom = " FROM " + m.schemaTable + " AS t1";
 
         if (f.type === ft.lov && f.lovTable) {
@@ -93,17 +93,10 @@ function SQLchartField(m, fid) {
             " GROUP BY " +
             col;
         } else {
-          // TODO: bukets
-          sql =
-            "SELECT " +
-            col +
-            "::text AS label, " +
-            sqlCount +
-            sqlFrom +
-            " GROUP BY " +
-            col;
+          // TODO: buckets
+          sql = `SELECT ${col}::text AS label, ${sqlCount}${sqlFrom} GROUP BY ${col}`;
         }
-        sql += " ORDER BY label ASC" + " LIMIT " + defaultPageSize + ";";
+        sql += " ORDER BY label ASC LIMIT " + defaultPageSize + ";";
       } else {
         withError = 'Field "' + fid + '" not allowed in Charts.';
       }
@@ -127,6 +120,6 @@ function SQLchartField(m, fid) {
 // --------------------------------------------------------------------------------------
 
 export default {
-  chartField,
+  getChart,
   SQLchartField,
 };

@@ -3,7 +3,7 @@
  * Get list of items w/ filtering, and search...
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2023 Olivier Giulieri
+ * (c) 2024 Olivier Giulieri
  */
 
 import dico, { fieldTypes as ft } from "./utils/dico.js";
@@ -234,7 +234,7 @@ function SQLgetMany(m, req, isCSV, wCount) {
     sqlOrder = "2 ASC";
   }
 
-  // ---- LIMITING & PAGINATION
+  // ---- SIZE & PAGINATION
   let offset = 0,
     qPage = req.query.page || 0,
     qPageSize;

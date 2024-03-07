@@ -3,7 +3,7 @@
  * Some data on the object like the min, max, average, and total for numeric fields.
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2023 Olivier Giulieri
+ * (c) 2024 Olivier Giulieri
  */
 
 import { getModel } from "./utils/model-manager.js";
@@ -72,7 +72,7 @@ const fnPrep = (fields) => (data) => {
 };
 
 // - returns a summary on a single table
-function numbers(req, res) {
+export function getStats(req, res) {
   logger.logReq("GET STATS", req);
 
   const mid = req.params.entity,
@@ -99,23 +99,15 @@ function numbers(req, res) {
       });
       if (config.wTimestamp) {
         // - last update
+        sql += `, max(${config.updatedDateColumn}) AS u_date_max`;
+        // - number of insert & updates this week
         sql +=
-          ", max(" +
-          config.updatedDateColumn +
-          ") AS u_date_max" +
-          // - number of insert & updates this week
-          ", (SELECT count(" +
-          m.pKey +
-          ")::integer " +
-          sqlFROM +
+          `, (SELECT count(${m.pKey})::integer ${sqlFROM}` +
           " WHERE " +
           config.updatedDateColumn +
-          " > NOW() - interval '7 days')" +
-          " AS u_date_week_count" +
+          " > NOW() - interval '7 days') AS u_date_week_count" +
           // - first insert
-          ", min(" +
-          config.createdDateColumn +
-          ") AS c_date_min";
+          `, min(${config.createdDateColumn}) AS c_date_min`;
       }
       if (config.wComments) {
         // - number of comments
@@ -134,5 +126,5 @@ function numbers(req, res) {
 // --------------------------------------------------------------------------------------
 
 export default {
-  numbers,
+  getStats,
 };

@@ -2,7 +2,7 @@
  * evolutility-server-node :: routes.js
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2023 Olivier Giulieri
+ * (c) 2024 Olivier Giulieri
  */
 
 import express from "express";
@@ -31,7 +31,7 @@ router.get('/', function(req, res, next) {
 
 // ======  APIs DISCOVERY ====================================
 if (config.apiInfo) {
-  router.get(apiPath + "/", info.apis);
+  router.get(apiPath + "/", info.getAPIs);
 }
 
 // ======  Version ====================================
@@ -54,7 +54,7 @@ if (config.apiDesigner) {
 }
 
 // ======  GET STATS ====================================
-router.get(apiPath + ":entity/stats", stats.numbers);
+router.get(apiPath + ":entity/stats", stats.getStats);
 
 // ======  LIST ====================================
 // -  GET MANY -
@@ -72,12 +72,15 @@ router.post(apiPath + ":entity/upload/:id", uploadOne);
 // -  DELETE ONE -
 router.delete(apiPath + ":entity/:id", crud.deleteX);
 // -  SUB-COLLECTIONS  -
-router.get(apiPath + ":entity/collec/:collec", crud.getCollec);
+router.get(apiPath + ":entity/collec/:collec", crud.getCollectionsOne);
 
 // ======  LOV ====================================
 router.get(apiPath + ":entity/lov/:field", lovOne);
+//TODO:
+// lovUpdate
+// lovAdd
 
 // ======  GET CHARTS ====================================
-router.get(apiPath + ":entity/chart/:field", charts.chartField);
+router.get(apiPath + ":entity/chart/:field", charts.getChart);
 
 export default router;

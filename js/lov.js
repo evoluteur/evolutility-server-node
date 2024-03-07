@@ -3,7 +3,7 @@
  * Lists of values
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2023 Olivier Giulieri
+ * (c) 2024 Olivier Giulieri
  */
 
 import { getModel } from "./utils/model-manager.js";

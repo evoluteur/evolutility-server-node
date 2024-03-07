@@ -3,7 +3,7 @@
  * Tools to build models ( = build apps)
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2023 Olivier Giulieri
+ * (c) 2024 Olivier Giulieri
  */
 
 import { db, promiseQuery } from "./utils/query.js";
@@ -223,7 +223,7 @@ function SQLmodelFields(modelType = "ui", forAllModels, whereClause) {
   return sql;
 }
 
-function getModel(req, res) {
+export function getModel(req, res) {
   logger.logReq("GET one MODEL", req);
   const id = req.params.id || 0,
     sqlParams = [id];
@@ -288,7 +288,7 @@ const worlds = {
   2: "music",
 };
 
-function getModels(req, res, callback) {
+export function getModels(req, res) {
   logger.logReq("GET all MODEL", req);
   //var //pkColumn = Number.isInteger(parseInt(id, 10)) ? 'id' : 'entity',
   var maxModels = 20,

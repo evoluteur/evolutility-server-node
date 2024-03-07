@@ -551,6 +551,6 @@ GET /version
 <a name="License"></a>
 ## License
 
-Copyright (c) 2023 [Olivier Giulieri](https://evoluteur.github.io/).
+Copyright (c) 2024 [Olivier Giulieri](https://evoluteur.github.io/).
 
 Evolutility-Server-Node is released under the [AGPLv3 license](http://github.com/evoluteur/evolutility-server-node/blob/master/LICENSE.md).

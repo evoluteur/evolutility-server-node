@@ -2,7 +2,7 @@
  * evolutility-server-node :: info.js
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2023 Olivier Giulieri
+ * (c) 2024 Olivier Giulieri
  */
 
 import path from "path";
@@ -74,7 +74,7 @@ const entityAPIs = (model, protocol, baseUrl, fullDescription) => {
 };
 
 // - returns list endpoints URLs for all active models
-function apis(req, res) {
+export function getAPIs(req, res) {
   logger.logReq("GET APIs", req);
   const baseUrl = baseURL(req);
   const protocol = req.protocol + "://";
@@ -114,5 +114,5 @@ function version(req, res) {
 
 export default {
   version,
-  apis,
+  getAPIs,
 };

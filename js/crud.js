@@ -3,7 +3,7 @@
  * CRUD (Create, Read, Update, Delete) end-points
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2023 Olivier Giulieri
+ * (c) 2024 Olivier Giulieri
  */
 
 import { getModel } from "./utils/model-manager.js";
@@ -50,7 +50,7 @@ function SQLgetOne(id, m, res) {
 
 // - get one record by ID
 // - sample url: http://localhost:3000/api/v1/todo/16
-function getOne(req, res) {
+export function getOne(req, res) {
   logger.logReq("GET ONE", req);
   const id = req.params.id,
     mid = req.params.entity,
@@ -98,7 +98,7 @@ function getOne(req, res) {
 // --------------------------------------------------------------------------------------
 
 // - insert a single record
-function insertOne(req, res) {
+export function insertOne(req, res) {
   logger.logReq("INSERT ONE", req);
   const m = getModel(req.params.entity);
   if (!m) {
@@ -147,7 +147,7 @@ function returnInvalid(res, invalids) {
 // --------------------------------------------------------------------------------------
 
 // - update a single record
-function updateOne(req, res) {
+export function updateOne(req, res) {
   logger.logReq("UPDATE ONE", req);
   const m = getModel(req.params.entity),
     id = req.params.id,
@@ -158,10 +158,7 @@ function updateOne(req, res) {
   } else if (m && id && q.names.length) {
     q.values.push(id);
     const sql =
-      "UPDATE " +
-      m.schemaTable +
-      " AS t1 SET " +
-      q.names.join(",") +
+      `UPDATE ${m.schemaTable} AS t1 SET ${q.names.join(",")}` +
       " WHERE " +
       m.pKey +
       "=$" +
@@ -182,7 +179,7 @@ function updateOne(req, res) {
 // --------------------------------------------------------------------------------------
 
 // - delete a single record
-function deleteX(req, res) {
+export function deleteX(req, res) {
   logger.logReq("DELETE ONE", req);
   const m = getModel(req.params.entity),
     id = req.params.id;
@@ -227,7 +224,7 @@ const collecOrderBy = (collec) =>
 
 // - returns sub-collection (nested in UI but relational in DB)
 // - sample url: http://localhost:3000/api/v1/winecellar/collec/wine_tasting?id=1
-function collecOne(req, res) {
+export function getCollectionsOne(req, res) {
   logger.logReq("GET ONE-COLLEC", req);
   const mid = req.params.entity;
   (m = getModel(mid)),
@@ -265,5 +262,5 @@ export default {
   updateOne,
   deleteX,
   // - Sub-collections
-  getCollec: collecOne,
+  getCollectionsOne,
 };
