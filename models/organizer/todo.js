@@ -110,5 +110,4 @@ export default {
       inSearch: true,
     },
   ],
-  collections: [],
 };

@@ -191,6 +191,4 @@ export default {
       column: "zip",
     },
   ],
-  collections: [],
-  noStats: true,
 };

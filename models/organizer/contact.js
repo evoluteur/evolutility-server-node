@@ -184,6 +184,4 @@ export default {
       column: "notes",
     },
   ],
-  collections: [],
-  noStats: true,
 };

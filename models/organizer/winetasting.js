@@ -68,6 +68,4 @@ export default {
       inSearch: true,
     },
   ],
-  collections: [],
-  noStats: true,
 };
