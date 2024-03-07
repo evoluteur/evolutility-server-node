@@ -104,7 +104,7 @@ function SQLchartField(m, fid) {
       withError = 'Field not found: "' + fid + '".';
     }
   } else {
-    withError = 'Invalid model: "' + mid + '".';
+    withError = 'Model "' + mid + '" or field "' + fid + '" not found.';
   }
   return withError
     ? {

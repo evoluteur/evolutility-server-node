@@ -286,6 +286,7 @@ const worlds = {
   0: "test",
   1: "organizer",
   2: "music",
+  3: "designer",
 };
 
 export function getModels(req, res) {
@@ -382,7 +383,7 @@ export function getModels(req, res) {
         });
         return res.json(qModel);
       } else {
-        return badRequest(res, "Invalid model ID.");
+        return badRequest(res);
       }
     })
     .catch((error) => {

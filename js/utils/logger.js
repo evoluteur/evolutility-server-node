@@ -55,7 +55,7 @@ function maskedConnection() {
 
 const pubConnection = maskedConnection();
 
-export default {
+const evoLogger = {
   startupMessage() {
     if (consoleLog) {
       console.log(asciiArt);
@@ -188,3 +188,5 @@ export default {
     }
   },
 };
+
+export default evoLogger;

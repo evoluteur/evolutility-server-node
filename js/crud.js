@@ -89,7 +89,7 @@ export function getOne(req, res) {
       runQuery(res, sql, sqlParams, true);
     }
   } else {
-    badRequest(res, 'Invalid model: "' + mid + '".');
+    badRequest(res, 'Model not found: "' + mid + '".', 404);
   }
 }
 
@@ -102,7 +102,7 @@ export function insertOne(req, res) {
   logger.logReq("INSERT ONE", req);
   const m = getModel(req.params.entity);
   if (!m) {
-    return badRequest(res);
+    return badRequest(res, "Model not found.", 404);
   } else {
     const pKey = m.pKey || "id",
       q = sqls.namedValues(m, req, "insert");

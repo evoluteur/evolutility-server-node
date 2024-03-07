@@ -282,7 +282,7 @@ export function getMany(req, res) {
       isCSV ? csvHeader(m.fields) : null
     );
   } else {
-    badRequest(res, 'Invalid model: "' + mid + '".');
+    badRequest(res, 'Model not found: "' + mid + '".', 404);
   }
 }
 

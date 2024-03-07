@@ -10,11 +10,11 @@ import logger from "./utils/logger.js";
 import { uploadOne } from "./utils/upload.js";
 import config from "../config.js";
 import crud from "./crud.js";
-import list from "./list.js";
+import { getMany } from "./list.js";
 import { lovOne } from "./lov.js";
-import stats from "./stats.js";
-import charts from "./charts.js";
-import info from "./info.js";
+import { getStats } from "./stats.js";
+import { getChart } from "./charts.js";
+import { getAPIs, getVersion } from "./info.js";
 import designer from "./designer.js";
 import dbStructure from "./utils/db-structure.js";
 
@@ -31,11 +31,11 @@ router.get('/', function(req, res, next) {
 
 // ======  APIs DISCOVERY ====================================
 if (config.apiInfo) {
-  router.get(apiPath + "/", info.getAPIs);
+  router.get(apiPath + "/", getAPIs);
 }
 
 // ======  Version ====================================
-router.get(apiPath + "version", info.version);
+router.get(apiPath + "version", getVersion);
 
 // ====== DB: query for list of tables and columns ====================================
 if (config.schemaQueries) {
@@ -54,11 +54,11 @@ if (config.apiDesigner) {
 }
 
 // ======  GET STATS ====================================
-router.get(apiPath + ":entity/stats", stats.getStats);
+router.get(apiPath + ":entity/stats", getStats);
 
 // ======  LIST ====================================
 // -  GET MANY -
-router.get(apiPath + ":entity", list.getMany);
+router.get(apiPath + ":entity", getMany);
 
 // ======  CRUD ====================================
 // -  GET ONE   -
@@ -81,6 +81,6 @@ router.get(apiPath + ":entity/lov/:field", lovOne);
 // lovAdd
 
 // ======  GET CHARTS ====================================
-router.get(apiPath + ":entity/chart/:field", charts.getChart);
+router.get(apiPath + ":entity/chart/:field", getChart);
 
 export default router;

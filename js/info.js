@@ -102,7 +102,7 @@ export function getAPIs(req, res) {
 }
 
 // - returns version number (from package.json)
-function version(req, res) {
+export function getVersion(req, res) {
   logger.logReq("GET VERSION", req);
   return res.json({
     name: pkg.name,
@@ -113,6 +113,6 @@ function version(req, res) {
 // --------------------------------------------------------------------------------------
 
 export default {
-  version,
+  getVersion,
   getAPIs,
 };

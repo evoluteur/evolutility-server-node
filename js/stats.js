@@ -142,10 +142,10 @@ export function getStats(req, res) {
       sql += sqlFROM;
       runQuery(res, sql, [], true, null, null, fnPrep(m.fields));
     } else {
-      errors.badRequest(res, 'noStats set on model "' + mid + '".', 401);
+      errors.badRequest(res, 'noStats=true on model "' + mid + '".', 401);
     }
   } else {
-    errors.badRequest(res, 'Invalid model: "' + mid + '".', 404);
+    errors.badRequest(res, 'Model not found: "' + mid + '".', 404);
   }
 }
 
