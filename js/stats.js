@@ -53,21 +53,27 @@ const fnPrep = (fields) => (data) => {
   if (config.wComments) {
     pStats.nb_comments = data.nb_comments;
   }
+  const nullsCounts = {};
   fields.forEach((f) => {
-    if (dico.fieldIsNumeric(f) && !f.noStats) {
-      let item = {
-        min: data[f.id + "_min"],
-        max: data[f.id + "_max"],
-      };
-      if (data[f.id + "_avg"]) {
-        item.avg = data[f.id + "_avg"];
+    if (!f.noStats) {
+      if (dico.fieldIsNumeric(f)) {
+        let item = {
+          min: data[f.id + "_min"],
+          max: data[f.id + "_max"],
+        };
+        ["avg", "sum", "stddev", "variance"].forEach((k) => {
+          const fn = f.id + "_" + k;
+          if (data[fn] !== undefined) {
+            item[k] = data[fn];
+          }
+        });
+        pStats[f.id] = item;
       }
-      if (data[f.id + "_sum"]) {
-        item.sum = data[f.id + "_sum"];
-      }
-      pStats[f.id] = item;
+      const fn = f.id + "_nulls";
+      nullsCounts[f.id] = data[fn];
     }
   });
+  pStats.nulls = nullsCounts;
   return pStats;
 };
 
@@ -77,24 +83,43 @@ export function getStats(req, res) {
 
   const mid = req.params.entity,
     m = getModel(mid);
+  let sqlNulls = [];
+
+  const sqlFROM = " FROM " + m.schemaTable;
+  const sqlNull = (f) =>
+    `(SELECT COUNT(*)::integer AS "${f.id}_nulls" ${sqlFROM} WHERE "${f.column}" IS NULL)`;
+  const sqlNullorEmpty = (f) =>
+    `(SELECT COUNT(*)::integer AS "${f.id}_nulls" ${sqlFROM} WHERE "${f.column}" IS NULL OR "${f.column}"='')`;
 
   if (m) {
     if (!m.noStats) {
       let sql = "SELECT count(*)::integer AS count";
-      const sqlFROM = " FROM " + m.schemaTable;
 
       m.fields.forEach(function (f) {
-        if (dico.fieldIsNumeric(f) && !f.noStats) {
-          if (!dico.fieldIsDateOrTime(f)) {
-            sql += sqlAggregate("avg", f);
+        if (!f.noStats) {
+          if (dico.fieldIsNumeric(f)) {
+            if (!dico.fieldIsDateOrTime(f)) {
+              sql +=
+                sqlAggregate("avg", f) +
+                sqlAggregate("stddev", f) +
+                sqlAggregate("variance", f);
+            }
+            if (f.type === ft.money || f.type === ft.int) {
+              // TODO: should we? (it may be too big a number)
+              sql += sqlAggregate("sum", f);
+            }
+            sql += sqlAggregate("min", f);
+            sql += sqlAggregate("max", f);
+            //}else if(f.type===ft.lov){
+            //    sql += ',(select id, count("'+f.column+'")::integer FROM '+m.schemaTable+' GROUP BY id LIMIT 3)'
+            sqlNulls.push(sqlNull(f));
+          } else {
+            if (f.type === "lov" || f.type === "boolean") {
+              sqlNulls.push(sqlNull(f));
+            } else {
+              sqlNulls.push(sqlNullorEmpty(f));
+            }
           }
-          if (f.type === ft.money || f.type === ft.int) {
-            sql += sqlAggregate("sum", f);
-          }
-          sql += sqlAggregate("min", f);
-          sql += sqlAggregate("max", f);
-          //}else if(f.type===ft.lov){
-          //    sql += ',(select id, count("'+f.column+'")::integer FROM '+m.schemaTable+' GROUP BY id LIMIT 3)'
         }
       });
       if (config.wTimestamp) {
@@ -113,13 +138,14 @@ export function getStats(req, res) {
         // - number of comments
         sql += ", sum(nb_comments::integer)::integer AS nb_comments";
       }
+      sql += ", " + sqlNulls.join(", ");
       sql += sqlFROM;
       runQuery(res, sql, [], true, null, null, fnPrep(m.fields));
     } else {
-      errors.badRequest(res, 'noStats set on model "' + mid + '".');
+      errors.badRequest(res, 'noStats set on model "' + mid + '".', 401);
     }
   } else {
-    errors.badRequest(res, 'Invalid model: "' + mid + '".');
+    errors.badRequest(res, 'Invalid model: "' + mid + '".', 404);
   }
 }
 

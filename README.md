@@ -456,7 +456,7 @@ GET /todo/chart/category
 
 #### Stats
 
-Returns the total count, and the min, max, average, and total for numeric fields in the model.
+Returns the total count, and the min, max, average, variance, standard deviation and total for numeric fields in the model.
 
 ```
 GET /{model.id}/stats

@@ -39,7 +39,7 @@ function SQLgetOne(id, m, res) {
     sql += " WHERE t1." + m.pKey + "=$1";
   } else {
     const invalidID = 'Invalid id: "' + id + '".';
-    return res ? badRequest(res, invalidID) : "ERROR: " + invalidID;
+    return res ? badRequest(res, invalidID, 404) : "ERROR: " + invalidID;
   }
   sql += " LIMIT 1;";
   return {
