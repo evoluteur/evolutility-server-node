@@ -3,7 +3,7 @@
 
 Model-driven REST API for CRUD and more, using Node.js, Express, and PostgreSQL.
 
-Evolutility-Server-Node provides a set of generic [REST](#API) endpoints for CRUD (Create, Read, Update, Delete) and simple charts.
+Evolutility-Server-Node provides a set of generic [REST APIs](#API) for CRUD (Create, Read, Update, Delete) and simple charts. on objects of different structures.
 
 ![screenshot](https://raw.githubusercontent.com/evoluteur/evolutility-server-node/master/screenshot.png)
 
@@ -240,6 +240,7 @@ More sample models:
  [Wine cellar](https://github.com/evoluteur/evolutility-server-node/blob/master/models/organizer/winecellar.js),
  [Graphic novels inventory](https://github.com/evoluteur/evolutility-server-node/blob/master/models/organizer/comics.js).
 
+More information about Evolutility models and some useful scripts are available at [evolutility-models](https://github.com/evoluteur/evolutility-models).
 
 <a name="API"></a>
 ## REST API
@@ -304,10 +305,10 @@ For each field a sub-set of the operators below will be supported by the API (de
 | Operator     | Meaning                 | Example                      |
 |--------------|-------------------------|------------------------------|
 | eq           | equals                  | /todo?category=eq.1          |
-| gt           | greater than            | /todo?duedate=gt.2019-01-15  |
-| lt           | less than               | /todo?duedate=lt.2019-01-15  |
-| gte          | less than or equal      | /todo?duedate=gte.2019-01-15 |
-| lte          | less than or equal      | /todo?duedate=lte.2019-01-15 |
+| gt           | greater than            | /todo?duedate=gt.2024-01-15  |
+| lt           | less than               | /todo?duedate=lt.2024-01-15  |
+| gte          | less than or equal      | /todo?duedate=gte.2024-01-15 |
+| lte          | less than or equal      | /todo?duedate=lte.2024-01-15 |
 | ct           | contains                | /todo?title=ct.e             |
 | sw           | start with              | /todo?title=sw.a             |
 | fw           | finishes with           | /todo?title=fw.z             |
