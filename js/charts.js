@@ -75,10 +75,7 @@ function SQLchartField(m, fid) {
             "::text AS label, " +
             sqlCount +
             sqlFrom +
-            " GROUP BY " +
-            cId +
-            "," +
-            cLabel;
+            ` GROUP BY ${cId}, ${cLabel}`;
         } else if (fieldIsNumber(f)) {
           const numbersColType = f.type === ft.int ? "::integer" : "";
           sql =
@@ -116,8 +113,6 @@ function SQLchartField(m, fid) {
         sqlParams,
       };
 }
-
-// --------------------------------------------------------------------------------------
 
 export default {
   getChart,

@@ -23,44 +23,16 @@ const router = express.Router();
 
 logger.startupMessage();
 
-/*
-// ======  file server ====================================
-router.get('/', function(req, res, next) {
-  res.sendFile(path.join(__dirname, '../', '../', 'index.html'));
-}); */
-
-// ======  APIs DISCOVERY ====================================
-if (config.apiInfo) {
-  router.get(apiPath + "/", getAPIs);
-}
-
-// ======  Version ====================================
-router.get(apiPath + "version", getVersion);
-
-// ====== DB: query for list of tables and columns ====================================
-if (config.schemaQueries) {
-  // - all tables (except evol*)
-  router.get(apiPath + "db/tables", dbStructure.getTables);
-  // - columns of specific table
-  router.get(apiPath + "db/:table/columns", dbStructure.getColumns);
-}
-
-// ======  Models in DB ====================================
-if (config.apiDesigner) {
-  // - Models
-  //router.post(apiPath+'meta/model', designer.importModel);
-  router.get(apiPath + "meta/models", designer.getModels);
-  router.get(apiPath + "meta/model/:id", designer.getModel);
-}
-
-// ======  GET STATS ====================================
+// #region ===== GET STATS ====================================
 router.get(apiPath + ":entity/stats", getStats);
+// #endregion
 
-// ======  LIST ====================================
+// #region ===== LIST ====================================
 // -  GET MANY -
 router.get(apiPath + ":entity", getMany);
+// #endregion
 
-// ======  CRUD ====================================
+// #region ===== CRUD ====================================
 // -  GET ONE   -
 router.get(apiPath + ":entity/:id", crud.getOne);
 // -  INSERT ONE -
@@ -73,14 +45,51 @@ router.post(apiPath + ":entity/upload/:id", uploadOne);
 router.delete(apiPath + ":entity/:id", crud.deleteX);
 // -  SUB-COLLECTIONS  -
 router.get(apiPath + ":entity/collec/:collec", crud.getCollectionsOne);
+// #endregion
 
-// ======  LOV ====================================
+// #region ===== LOV ====================================
 router.get(apiPath + ":entity/lov/:field", lovOne);
 //TODO:
 // lovUpdate
 // lovAdd
+// #endregion
 
-// ======  GET CHARTS ====================================
+// #region ===== GET CHARTS ====================================
 router.get(apiPath + ":entity/chart/:field", getChart);
+
+/*// #endregion
+
+// #region ===== file server ====================================
+router.get('/', function(req, res, next) {
+  res.sendFile(path.join(__dirname, '../', '../', 'index.html'));
+}); */
+// #endregion
+
+// #region ===== APIs DISCOVERY ====================================
+if (config.apiInfo) {
+  router.get(apiPath + "/", getAPIs);
+}
+// #endregion
+
+// #region ===== Version ====================================
+router.get(apiPath + "version", getVersion);
+// #endregion
+
+// #region =====DB: query for list of tables and columns ====================================
+if (config.schemaQueries) {
+  // - all tables (except evol*)
+  router.get(apiPath + "db/tables", dbStructure.getTables);
+  // - columns of specific table
+  router.get(apiPath + "db/:table/columns", dbStructure.getColumns);
+}
+// #endregion
+
+// #region ===== Models in DB ====================================
+if (config.apiDesigner) {
+  // - Models
+  //router.post(apiPath+'meta/model', designer.importModel);
+  router.get(apiPath + "meta/models", designer.getModels);
+  router.get(apiPath + "meta/model/:id", designer.getModel);
+}
 
 export default router;

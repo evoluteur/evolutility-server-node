@@ -110,8 +110,6 @@ export function getVersion(req, res) {
   });
 }
 
-// --------------------------------------------------------------------------------------
-
 export default {
   getVersion,
   getAPIs,
