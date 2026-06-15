@@ -17,21 +17,21 @@
     "makedb": "node js/setup/database.js"
   },
   "dependencies": {
-    "chalk": "~5.3.0",
-    "body-parser": "~1.20.2",
+    "chalk": "~5.6.2",
+    "body-parser": "~1.20.5",
     "csv-express": "~1.2.2",
-    "debug": "~4.3.4",
-    "express": "~4.18.3",
+    "debug": "~4.4.3",
+    "express": "~4.19.2",
     "simple-node-logger": "~21.8.12",
-    "formidable": "~3.5.1",
+    "formidable": "~3.5.4",
     "helmet": "~7.1.0",
-    "url": "^0.11.3",
-    "pg": "^8.11.3",
-    "pg-connection-string": "~2.6.2",
-    "pg-promise": "^11.5.4",
-    "shortid": "~2.2.16",
+    "url": "^0.11.4",
+    "pg": "^8.21.0",
+    "pg-connection-string": "~2.13.0",
+    "pg-promise": "^11.15.0",
+    "shortid": "~2.2.17",
     "supervisor": "~0.12.0",
-    "underscore": "~1.13.6"
+    "underscore": "~1.13.8"
   },
   "keywords": [
     "CRUD",
