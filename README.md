@@ -305,10 +305,10 @@ For each field a sub-set of the operators below will be supported by the API (de
 | Operator     | Meaning                 | Example                      |
 |--------------|-------------------------|------------------------------|
 | eq           | equals                  | /todo?category=eq.1          |
-| gt           | greater than            | /todo?duedate=gt.2024-01-15  |
-| lt           | less than               | /todo?duedate=lt.2024-01-15  |
-| gte          | less than or equal      | /todo?duedate=gte.2024-01-15 |
-| lte          | less than or equal      | /todo?duedate=lte.2024-01-15 |
+| gt           | greater than            | /todo?duedate=gt.2026-01-15  |
+| lt           | less than               | /todo?duedate=lt.2026-01-15  |
+| gte          | less than or equal      | /todo?duedate=gte.2026-01-15 |
+| lte          | less than or equal      | /todo?duedate=lte.2026-01-15 |
 | ct           | contains                | /todo?title=ct.e             |
 | sw           | start with              | /todo?title=sw.a             |
 | fw           | finishes with           | /todo?title=fw.z             |
@@ -552,6 +552,6 @@ GET /version
 <a name="License"></a>
 ## License
 
-Copyright (c) 2024 [Olivier Giulieri](https://evoluteur.github.io/).
+Copyright (c) 2026 [Olivier Giulieri](https://evoluteur.github.io/).
 
 Evolutility-Server-Node is released under the [AGPLv3 license](http://github.com/evoluteur/evolutility-server-node/blob/master/LICENSE.md).

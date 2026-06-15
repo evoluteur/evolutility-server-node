@@ -2,7 +2,7 @@
  * evolutility-server-node :: utils/upload.js
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2023 Olivier Giulieri
+ * (c) 2026 Olivier Giulieri
  */
 
 import path from "path";
@@ -45,7 +45,7 @@ export function uploadOne(req, res) {
         idx = ffname.lastIndexOf("/");
         fname = ffname.slice(idx + 1);
         logger.logSuccess(
-          'New file name: "' + originalName + '" -> "' + fname + '".'
+          'New file name: "' + originalName + '" -> "' + fname + '".',
         );
       }
       fs.rename(file.path, ffname, function (err) {

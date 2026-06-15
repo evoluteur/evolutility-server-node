@@ -3,7 +3,7 @@
  * Tools to build models ( = build apps)
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2024 Olivier Giulieri
+ * (c) 2026 Olivier Giulieri
  */
 
 import { db, promiseQuery } from "./utils/query.js";
@@ -251,7 +251,7 @@ export function getModel(req, res) {
         })
         .catch((err) => {
           return null;
-        })
+        }),
     )
     .then((data) => {
       if (data) {
@@ -327,14 +327,14 @@ export function getModels(req, res) {
                   sqlWhere +
                   sqlOrderBy,
                 null,
-                false
+                false,
               ),
               promiseQuery(
                 'SELECT cid as "id", object_id, label, dbcolumn as "column", fields FROM evolutility.evol_object_collec WHERE ' +
                   sqlWhere +
                   sqlOrderBy,
                 null,
-                false
+                false,
               ),
             ]);
           } else {

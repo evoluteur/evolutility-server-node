@@ -1,10 +1,11 @@
 {
   "name": "evolutility-server-node",
   "version": "1.2.1",
-  "description": "Model-driven REST APIs for CRUD and more on Postgres.",
+  "description": "Build CRUD API endpoints with models rather than code.",
   "license": "AGPL-3.0",
   "homepage": "https://github.com/evoluteur/evolutility-server-node",
   "author": "Olivier Giulieri (https://evoluteur.github.io/)",
+  "copyright": "(c) 2026 Olivier Giulieri",
   "repository": {
     "type": "git",
     "url": "git://github.com/evoluteur/evolutility-server-node.git"

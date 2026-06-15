@@ -1,9 +1,13 @@
+/* eslint-disable import/extensions */
+/* eslint-disable import/no-named-as-default-member */
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-underscore-dangle */
 /*!
  * evolutility :: utils/model-manager.js
  * Helper functions for metadata
  *
  * https://github.com/evoluteur/evolutility
- * (c) 2023 Olivier Giulieri
+ * (c) 2026 Olivier Giulieri
  */
 
 import chalk from "chalk";
@@ -13,7 +17,7 @@ import dico from "./dico.js";
 
 export const models = ms;
 
-const schema = '"' + (config.schema || "evolutility") + '"';
+const schema = `"${config.schema || "evolutility"}"`;
 
 let modelIds = Object.keys(models);
 
@@ -21,17 +25,17 @@ export function prepModel(m) {
   if (m) {
     if (!m._prepared) {
       // - Model
-      m.schemaTable = schema + '."' + (m.table || m.id) + '"';
+      m.schemaTable = `${schema}."${m.table || m.id}"`;
       if (!m.pKey) {
         m.pKey = "id";
       }
       // - Fields
       m.fieldsH = {};
-      m.fields.forEach(function (f, idx) {
+      m.fields.forEach((f, idx) => {
         if (f.type === "lov") {
-          f.t2 = "t_" + idx;
+          f.t2 = `t_${idx}`;
         }
-        if (f.id !== m.table + "_id") {
+        if (f.id !== `${m.table}_id`) {
           // TODO: should not need the if
           m.fieldsH[f.id] = f;
         }
@@ -57,6 +61,7 @@ export function prepModel(m) {
   return null;
 }
 
+// eslint-disable-next-line no-shadow
 function prepModelCollecs(m, models) {
   if (m) {
     m.collecsH = {};
@@ -73,7 +78,8 @@ function prepModelCollecs(m, models) {
             // - if fields is not specified get it from collec object (fields in list but not the object)
             if (!c.fields) {
               c.fields = collecModel.fields.filter(
-                (f) => f.inMany && !f.object === c.object
+                // eslint-disable-next-line prettier/prettier
+                (f) => f.inMany && !f.object === c.object,
               );
             }
             // - lookup fields by id
@@ -83,13 +89,11 @@ function prepModelCollecs(m, models) {
                 c.fields[idx] = JSON.parse(JSON.stringify(fsh[f] || {}));
               }
               if (f.type === "lov") {
-                f.t2 = "t_" + idx;
+                f.t2 = `t_${idx}`;
               }
             });
           } else {
-            console.log(
-              'Model "' + c.object + '" not found in model "' + m.id + '".'
-            );
+            console.log(`Model "${c.object}" not found in model "${m.id}".`);
           }
         }
         m.collecsH[c.id] = c;
@@ -103,7 +107,12 @@ function prepModelCollecs(m, models) {
 const prepModels = () => {
   modelIds = Object.keys(models);
   console.log(
-    chalk.cyan(modelIds.length + " models:", modelIds.sort().join(", ") + ".")
+    // eslint-disable-next-line prettier/prettier
+    "\nEvolutility-Server-Node\n" +
+      chalk.cyan(
+        `${modelIds.length} models:`,
+        `${modelIds.sort().join(", ")}.`,
+      ),
   );
   // need 2 passes for field map to be populated first, then collections
   modelIds.forEach((m) => {

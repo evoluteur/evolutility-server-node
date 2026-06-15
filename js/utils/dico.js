@@ -3,7 +3,7 @@
  * Helper functions for metadata
  *
  * https://github.com/evoluteur/evolutility
- * (c) 2023 Olivier Giulieri
+ * (c) 2026 Olivier Giulieri
  */
 
 import config from "../../config.js";
@@ -52,7 +52,7 @@ if (config.wTimestamp) {
       // - record last update date
       type: "datetime",
       column: config.updatedDateColumn,
-    }
+    },
   );
 }
 if (config.wWhoIs) {
@@ -66,7 +66,7 @@ if (config.wWhoIs) {
       // - record last editor (user.id)
       type: "integer",
       column: "updated_by",
-    }
+    },
   );
 }
 if (config.wComments) {

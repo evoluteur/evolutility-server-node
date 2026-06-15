@@ -3,7 +3,7 @@
  * Charts and graph data
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2024 Olivier Giulieri
+ * (c) 2026 Olivier Giulieri
  */
 
 import {

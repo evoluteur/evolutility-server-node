@@ -3,7 +3,7 @@
  * Methods to create postgres schema and tables from models.
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2023 Olivier Giulieri
+ * (c) 2026 Olivier Giulieri
  */
 
 import pg from "pg";
@@ -306,7 +306,7 @@ function sqlModel(mid) {
           sqlIdx += sqlIndex(
             tableName + "_" + f.column.toLowerCase(),
             tableNameSchema,
-            fcolumn
+            fcolumn,
           );
         } else if (f.required) {
           sql0 += " not null";
@@ -316,7 +316,7 @@ function sqlModel(mid) {
           sqlComments += sqlComment(
             "COLUMN",
             tableNameSchema + "." + fcolumn,
-            f.label
+            f.label,
           );
         }
       }
@@ -405,7 +405,7 @@ function logToFile(sql, isData) {
 -- ${homepage}
 -- ${d}\n\n`;
 
-    fs.writeFile(fileName, header + sql, function (err) {
+    fs.writeFileSync(fileName, header + sql, (err) => {
       if (err) {
         throw err;
       }
@@ -413,7 +413,7 @@ function logToFile(sql, isData) {
   }
 }
 
-async function createSchema(runSQL = true, logFile = true) {
+const createSchema = async (runSQL = true, logFile = true) => {
   let { sql, sqlData } = sqlSchemaWithData();
 
   if (runSQL) {
@@ -436,6 +436,6 @@ async function createSchema(runSQL = true, logFile = true) {
     // - close connection
     client.release(true);
   }
-}
+};
 
 createSchema(true, true);

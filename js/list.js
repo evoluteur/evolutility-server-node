@@ -3,7 +3,7 @@
  * Get list of items w/ filtering, and search...
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2024 Olivier Giulieri
+ * (c) 2026 Olivier Giulieri
  */
 
 import dico, { fieldTypes as ft } from "./utils/dico.js";
@@ -94,7 +94,7 @@ function SQLgetMany(m, req, isCSV, wCount) {
       if (
         f &&
         ["select", "filter", "search", "order", "page", "pageSize"].indexOf(
-          f.column
+          f.column,
         ) < 0
       ) {
         const cs = req.query[n].split(".");
@@ -122,11 +122,11 @@ function SQLgetMany(m, req, isCSV, wCount) {
                       sqlOperators[cond] +
                       "LOWER($" +
                       sqlParams.length +
-                      ")"
+                      ")",
                   );
                 } else {
                   sqlWs.push(
-                    `t1."${f.column}"${sqlOperators[cond]}$${sqlParams.length}`
+                    `t1."${f.column}"${sqlOperators[cond]}$${sqlParams.length}`,
                   );
                 }
               }
@@ -144,7 +144,7 @@ function SQLgetMany(m, req, isCSV, wCount) {
                         return "$" + sqlParams.length;
                       })
                       .join(",") +
-                    ")"
+                    ")",
                 );
               } else if (cond === "0") {
                 // - false
@@ -262,7 +262,7 @@ function SQLgetMany(m, req, isCSV, wCount) {
 
 // - returns a set of records (filtered and sorted)
 // - sample url: http://localhost:3000/api/v1/todo?category=eq.3&order=title.asc&pageSize=50
-export function getMany(req, res) {
+export const getMany = async (req, res) => {
   logger.logReq("GET MANY", req);
   const mid = req.params.entity,
     m = getModel(mid);
@@ -279,12 +279,12 @@ export function getMany(req, res) {
       sq.params,
       false,
       format,
-      isCSV ? csvHeader(m.fields) : null
+      isCSV ? csvHeader(m.fields) : null,
     );
   } else {
     badRequest(res, 'Model not found: "' + mid + '".', 404);
   }
-}
+};
 
 export default {
   getMany,

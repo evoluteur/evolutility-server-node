@@ -2,7 +2,7 @@
  * evolutility-server-node :: routes.js
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2024 Olivier Giulieri
+ * (c) 2026 Olivier Giulieri
  */
 
 import express from "express";

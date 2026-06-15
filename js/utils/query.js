@@ -2,7 +2,7 @@
  * evolutility-server-node :: utils/query.js
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2023 Olivier Giulieri
+ * (c) 2026 Olivier Giulieri
  */
 
 import pgPromise from "pg-promise";
@@ -20,7 +20,6 @@ dbConfig.connectionTimeoutMillis = 60000;
 dbConfig.idleTimeoutMillis = 10000; // max client idle time before being closed
 export const db = { conn: pgp(config.connectionString) };
 
-
 export function promiseQuery(sql, values, singleRecord) {
   logger.logSQL(sql);
   return new Promise((resolve, reject) =>
@@ -34,7 +33,7 @@ export function promiseQuery(sql, values, singleRecord) {
         } else {
           reject(err);
         }
-      })
+      }),
   );
 }
 
@@ -46,7 +45,7 @@ export function runQuery(
   singleRecord,
   format,
   header,
-  fnPrep
+  fnPrep,
 ) {
   logger.logSQL(sql);
   // SQL Query > Select Data

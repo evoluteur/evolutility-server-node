@@ -3,7 +3,7 @@
  * Lists of values
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2024 Olivier Giulieri
+ * (c) 2026 Olivier Giulieri
  */
 
 import { getModel } from "./utils/model-manager.js";
@@ -18,9 +18,23 @@ const schema = '"' + (config.schema || "evolutility") + '"',
 const searchParam = (search) =>
   search ? "%" + search.replace(/%/g, "%") + "%" : "%";
 
+const SQLlovOne = (f, search) => {
+  const col = f.lovColumn || "name";
+  let sql = 'SELECT id, "' + col + '" as text';
+  if (f.lovIcon) {
+    sql += ", icon";
+  }
+  sql += ` FROM ${schema}."${f.lovTable}"`;
+  if (search) {
+    sql += ' WHERE "' + col + '" ILIKE $1';
+  }
+  sql += ' ORDER BY UPPER("' + col + '") ASC LIMIT ' + lovSize + ";";
+  return sql;
+};
+
 // - returns list of possible values for a field (usually for dropdown)
 // - sample url: http://localhost:2000/api/v1/todo/lov/category
-export function lovOne(req, res) {
+export const lovOne = async (req, res) => {
   logger.logReq("LOV ONE", req);
   const mid = req.params.entity,
     m = getModel(mid),
@@ -51,20 +65,6 @@ export function lovOne(req, res) {
   } else {
     badRequest(res);
   }
-}
-
-const SQLlovOne = (f, search) => {
-  const col = f.lovColumn || "name";
-  let sql = 'SELECT id, "' + col + '" as text';
-  if (f.lovIcon) {
-    sql += ", icon";
-  }
-  sql += ` FROM ${schema}."${f.lovTable}"`;
-  if (search) {
-    sql += ' WHERE "' + col + '" ILIKE $1';
-  }
-  sql += ' ORDER BY UPPER("' + col + '") ASC LIMIT ' + lovSize + ";";
-  return sql;
 };
 
 export default {

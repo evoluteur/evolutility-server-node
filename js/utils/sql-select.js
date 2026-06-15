@@ -2,7 +2,7 @@
  * evolutility-server-node :: utils/sql-select.js
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2023 Olivier Giulieri
+ * (c) 2026 Olivier Giulieri
  */
 
 import { fieldIsNumber, fieldTypes as ft } from "./dico.js";
@@ -66,7 +66,7 @@ function select(fields, collecs, table, action) {
             (f.lovColumn ? f.lovColumn : "name") +
             ' AS "' +
             f.id +
-            '_txt"'
+            '_txt"',
         );
         if (f.lovIcon) {
           sqlfs.push(f.t2 + '.icon AS "' + f.id + '_icon"');

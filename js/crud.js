@@ -3,7 +3,7 @@
  * CRUD (Create, Read, Update, Delete) end-points
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2024 Olivier Giulieri
+ * (c) 2026 Olivier Giulieri
  */
 
 import { getModel } from "./utils/model-manager.js";
@@ -47,7 +47,7 @@ function SQLgetOne(id, m, res) {
 
 // - get one record by ID
 // - sample url: http://localhost:3000/api/v1/todo/16
-export function getOne(req, res) {
+export const getOne = async (req, res) => {
   logger.logReq("GET ONE", req);
   const id = req.params.id,
     mid = req.params.entity,
@@ -60,7 +60,7 @@ export function getOne(req, res) {
     }
     if (m.collections && !req.query.shallow) {
       const qCollecs = m.collections.map((collec) =>
-        promiseQuery(SQLCollecOne(collec), [id], false)
+        promiseQuery(SQLCollecOne(collec), [id], false),
       );
       qCollecs.unshift(promiseQuery(sql, sqlParams, true));
       Promise.all(qCollecs)
@@ -88,13 +88,13 @@ export function getOne(req, res) {
   } else {
     badRequest(res, 'Model not found: "' + mid + '".', 404);
   }
-}
+};
 // #endregion
 
 // #region --------  INSERT ONE  ----------------------------------------------------
 
 // - insert a single record
-export function insertOne(req, res) {
+export const insertOne = async (req, res) => {
   logger.logReq("INSERT ONE", req);
   const m = getModel(req.params.entity);
   if (!m) {
@@ -126,7 +126,7 @@ export function insertOne(req, res) {
       badRequest(res);
     }
   }
-}
+};
 
 function returnInvalid(res, invalids) {
   logger.logObject("invalids", invalids);
@@ -142,7 +142,7 @@ function returnInvalid(res, invalids) {
 // #region --------  UPDATE ONE  ---------------------------------------------------
 
 // - update a single record
-export function updateOne(req, res) {
+export const updateOne = async (req, res) => {
   logger.logReq("UPDATE ONE", req);
   const m = getModel(req.params.entity),
     id = req.params.id,
@@ -167,7 +167,7 @@ export function updateOne(req, res) {
   } else {
     badRequest(res);
   }
-}
+};
 // #endregion
 
 // #region --------  DELETE ONE / MANY  ----------------------------------------------
@@ -220,9 +220,9 @@ const collecOrderBy = (collec) =>
 export function getCollectionsOne(req, res) {
   logger.logReq("GET ONE-COLLEC", req);
   const mid = req.params.entity;
-  (m = getModel(mid)),
+  ((m = getModel(mid)),
     (collecId = req.params.collec),
-    (collec = m.collecsH[collecId]);
+    (collec = m.collecsH[collecId]));
 
   if (m && collec) {
     const sqlParams = [parseInt(req.query.id, 10)];

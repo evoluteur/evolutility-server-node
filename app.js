@@ -11,7 +11,7 @@
         |___/\___|_|    \_/ \___|_|
 
 * https://github.com/evoluteur/evolutility-server-node
-* (c) 2023 Olivier Giulieri
+* (c) 2026 Olivier Giulieri
 */
 
 import express from "express";
@@ -39,7 +39,7 @@ app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
   res.header(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
+    "Origin, X-Requested-With, Content-Type, Accept",
   );
   //res.header("Access-Control-Request-Headers", "X-Requested-With,Access-Control-Request-Method,Access-Control-Request-Headers, accept, Content-Type");
   next();
