@@ -106,14 +106,14 @@ function prepModelCollecs(m, models) {
 
 const prepModels = () => {
   modelIds = Object.keys(models);
-  console.log(
-    // eslint-disable-next-line prettier/prettier
-    "\nEvolutility-Server-Node\n" +
-      chalk.cyan(
-        `${modelIds.length} models:`,
-        `${modelIds.sort().join(", ")}.`,
-      ),
-  );
+  // console.log(
+  //   // eslint-disable-next-line prettier/prettier
+  //   "\nEvolutility-Server-Node\n" +
+  //     chalk.cyan(
+  //       `${modelIds.length} models:`,
+  //       `${modelIds.sort().join(", ")}.`,
+  //     ),
+  // );
   // need 2 passes for field map to be populated first, then collections
   modelIds.forEach((m) => {
     models[m] = prepModel(models[m]);

@@ -87,7 +87,7 @@ const evoLogger = {
   },
 
   logHeader(ql, action, entity, id) {
-    const msg = `${ql} > ${action} : ` + (entity || "") + (id ? " " + id : "");
+    const msg = `${ql} > ${action} : ${entity || ""}${id ? ` ${id}` : ""}`;
     if (fileLog) {
       log.info(msg);
     }
@@ -103,13 +103,13 @@ const evoLogger = {
     );
     if (consoleLog) {
       if (!_.isEmpty(req.params)) {
-        console.log("params = " + JSON.stringify(req.params, null, 2));
+        console.log(`params = ${JSON.stringify(req.params, null, 2)}`);
       }
       if (!_.isEmpty(req.query)) {
-        console.log("query = " + JSON.stringify(req.query, null, 2));
+        console.log(`query = ${JSON.stringify(req.query, null, 2)}`);
       }
       if (!_.isEmpty(req.body)) {
-        console.log("body = " + JSON.stringify(req.body, null, 2));
+        console.log(`body = ${JSON.stringify(req.body, null, 2)}`);
       }
     }
     if (fileLog) {
@@ -123,9 +123,9 @@ const evoLogger = {
 
   logObject(title, obj) {
     if (fileLog) {
-      log.info(title + " = ", obj);
+      log.info(`${title} = `, obj);
     } else if (consoleLog) {
-      console.log(title + " = " + JSON.stringify(obj, null, 2));
+      console.log(`${title} = ${JSON.stringify(obj, null, 2)}`);
     }
   },
 
@@ -133,7 +133,7 @@ const evoLogger = {
     if (fileLog) {
       log.info("sql = ", sql);
     } else if (consoleLog) {
-      console.log("sql = \n" + sql + "\n");
+      console.log(`sql = \n${sql}\n`);
       if (values) {
         this.logObject("values = \n", values);
       }
@@ -141,8 +141,7 @@ const evoLogger = {
   },
 
   logCount: (nbRecords, prep) => {
-    const msg =
-      "Sending " + nbRecords + (prep ? " prepared" : "") + " records.";
+    const msg = `Sending ${nbRecords}${prep ? " prepared" : ""} records.`;
     if (fileLog) {
       log.info(msg);
     }
