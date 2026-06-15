@@ -10,7 +10,7 @@ import pg from "pg";
 import fs from "fs";
 import ParseConnection from "pg-connection-string";
 import config from "../../config.js";
-import pkg from "../../package.json" assert { type: "json" };
+import pkg from "../../package.json" with { type: "json" };
 import { fieldTypes as ft } from "../utils/dico.js";
 import { models } from "../utils/model-manager.js";
 import data from "../../models/data/all_data.js";

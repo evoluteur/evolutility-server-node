@@ -8,7 +8,7 @@
 import path from "path";
 import { fieldInCharts, fieldTypes as ft } from "./utils/dico.js";
 import logger from "./utils/logger.js";
-import pkg from "../package.json" assert { type: "json" };
+import pkg from "../package.json" with { type: "json" };
 import { models } from "./utils/model-manager.js";
 import config from "../config.js";
 

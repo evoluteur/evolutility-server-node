@@ -3,13 +3,13 @@
  * Simple formatted console logger (not logging to file).
  *
  * https://github.com/evoluteur/evolutility-server-node
- * (c) 2023 Olivier Giulieri
+ * (c) 2026 Olivier Giulieri
  */
 
 import config from "../../config.js";
-import pkg from "../../package.json" assert { type: "json" };
 import chalk from "chalk";
 import _ from "underscore";
+import pkg from "../../package.json" with { type: "json" };
 
 const fileLog = config.logToFile;
 const consoleLog = config.logToConsole;
