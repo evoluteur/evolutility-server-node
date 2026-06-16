@@ -18,8 +18,10 @@ const schema = '"' + (config.schema || "evolutility") + '"',
   defaultPageSize = config.pageSize || 50;
 
 // #region --------  GET ONE  -------------------------------------------------------
-function SQLgetOne(id, m, res) {
-  let sqlParams = [];
+function SQLgetOne(id, m) {
+  if (!parseInt(id)) {
+    return null;
+  }
   let sql =
     "SELECT t1." +
     m.pKey +
@@ -30,19 +32,15 @@ function SQLgetOne(id, m, res) {
     sql += ", t1." + f.column;
   });
   sql +=
-    " FROM " + m.schemaTable + " AS t1" + sqls.sqlFromLOVs(m.fields, schema);
-  if (parseInt(id)) {
-    sqlParams.push(id);
-    sql += " WHERE t1." + m.pKey + "=$1";
-  } else {
-    const invalidID = 'Invalid id: "' + id + '".';
-    return res ? badRequest(res, invalidID, 404) : "ERROR: " + invalidID;
-  }
-  sql += " LIMIT 1;";
-  return {
-    sql,
-    sqlParams,
-  };
+    " FROM " +
+    m.schemaTable +
+    " AS t1" +
+    sqls.sqlFromLOVs(m.fields, schema) +
+    " WHERE t1." +
+    m.pKey +
+    "=$1 LIMIT 1;";
+
+  return { sql, sqlParams: [id] };
 }
 
 // - get one record by ID
@@ -54,10 +52,11 @@ export const getOne = async (req, res) => {
     m = getModel(mid);
 
   if (m) {
-    let { sql, sqlParams } = SQLgetOne(id, m, res);
-    if (!(sqlParams && sqlParams.length)) {
-      sqlParams = null;
+    const query = SQLgetOne(id, m);
+    if (!query) {
+      return badRequest(res, `Invalid id: "${id}".`, 400);
     }
+    const { sql, sqlParams } = query;
     if (m.collections && !req.query.shallow) {
       const qCollecs = m.collections.map((collec) =>
         promiseQuery(SQLCollecOne(collec), [id], false),
@@ -79,8 +78,8 @@ export const getOne = async (req, res) => {
           }
         })
         .catch((err) => {
-          console.log(err);
-          res.json(err);
+          logger.logError(err);
+          badRequest(res, "Database error - " + err.message, 500);
         });
     } else {
       runQuery(res, sql, sqlParams, true);
@@ -220,9 +219,9 @@ const collecOrderBy = (collec) =>
 export function getCollectionsOne(req, res) {
   logger.logReq("GET ONE-COLLEC", req);
   const mid = req.params.entity;
-  ((m = getModel(mid)),
-    (collecId = req.params.collec),
-    (collec = m.collecsH[collecId]));
+  const m = getModel(mid),
+    collecId = req.params.collec,
+    collec = m && m.collecsH[collecId];
 
   if (m && collec) {
     const sqlParams = [parseInt(req.query.id, 10)];

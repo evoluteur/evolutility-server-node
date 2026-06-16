@@ -13,25 +13,22 @@
   "type": "module",
   "bugs": "https://github.com/evoluteur/evolutility-server-node/issues",
   "scripts": {
-    "start": "supervisor ./bin/www",
+    "start": "node --watch ./bin/www",
     "makedb": "node js/setup/database.js"
   },
   "dependencies": {
     "chalk": "~5.6.2",
-    "body-parser": "~1.20.5",
     "csv-express": "~1.2.2",
     "debug": "~4.4.3",
     "express": "~4.19.2",
-    "simple-node-logger": "~21.8.12",
     "formidable": "~3.5.4",
     "helmet": "~7.1.0",
-    "url": "^0.11.4",
     "pg": "^8.21.0",
     "pg-connection-string": "~2.13.0",
     "pg-promise": "^11.15.0",
     "shortid": "~2.2.17",
-    "supervisor": "~0.12.0",
-    "underscore": "~1.13.8"
+    "simple-node-logger": "~21.8.12",
+    "url": "^0.11.4"
   },
   "keywords": [
     "CRUD",

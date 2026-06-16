@@ -1,3 +1,5 @@
+/* eslint-disable import/extensions */
+/* eslint-disable prettier/prettier */
 /*!
  * evolutility-server-node :: utils/logger.js
  * Simple formatted console logger (not logging to file).
@@ -6,21 +8,22 @@
  * (c) 2026 Olivier Giulieri
  */
 
-import config from "../../config.js";
 import chalk from "chalk";
-import _ from "underscore";
+import SimpleNodeLogger from "simple-node-logger";
+import config from "../../config.js";
 import pkg from "../../package.json" with { type: "json" };
 
-const fileLog = config.logToFile;
-const consoleLog = config.logToConsole;
+const { logToFile: fileLog, logToConsole: consoleLog } = config;
+// const fileLog = config.logToFile;
+// const consoleLog = config.logToConsole;
 
 let log = {};
 if (fileLog) {
-  const SimpleNodeLogger = require("simple-node-logger"),
-    opts = {
-      logFilePath: "evol-" + new Date().toISOString().substring(0, 10) + ".log",
-      timestampFormat: "YYYY-MM-DD HH:mm:ss.SSS",
-    };
+  // const SimpleNodeLogger = require("simple-node-logger");
+  const opts = {
+    logFilePath: `evol-${new Date().toISOString().substring(0, 10)}.log`,
+    timestampFormat: "YYYY-MM-DD HH:mm:ss.SSS",
+  };
   log = SimpleNodeLogger.createSimpleLogger(opts);
 }
 
@@ -47,7 +50,7 @@ function maskedConnection() {
   const conn = config.connectionString || "";
   const s = conn.split(":");
   if (s.length > 1) {
-    s[2] = "(SECRET)" + s[2].substring(s[2].indexOf("@"));
+    s[2] = `(SECRET)${s[2].substring(s[2].indexOf("@"))}`;
     return s.join(":");
   }
   return "N/A";
@@ -60,28 +63,14 @@ const evoLogger = {
     if (consoleLog) {
       console.log(asciiArt);
     }
-    const restPath = "http://localhost:" + config.apiPort + config.apiPath;
+    const restPath = `http://localhost:${config.apiPort || 2000}${config.apiPath}`;
     console.log(
-      "\nEvolutility server listening on port " +
-        config.apiPort +
-        "\n" +
-        "\n - REST API:            " +
-        restPath +
-        "\n - Postgres connection: " +
-        pubConnection +
-        "\n - Postgres schema:     " +
-        config.schema +
-        "\n - Documentation:       " +
-        pkg.homepage
+      `\nListening on port ${config.apiPort}\n` +
+        `\n - REST API:            ${restPath}\n - Postgres connection: ${pubConnection}\n - Postgres schema:     ${config.schema}\n - Documentation:       ${pkg.homepage}`,
     );
     if (fileLog) {
       log.info(
-        "STARTING Evolutility-Server-Node schema=" +
-          config.schema +
-          " db=" +
-          pubConnection +
-          "url=" +
-          restPath
+        `STARTING Evolutility-Server-Node schema=${config.schema} db=${pubConnection}url=${restPath}`,
       );
     }
   },
@@ -99,16 +88,16 @@ const evoLogger = {
       reqType,
       title,
       req.params && req.params.entity,
-      req.params && req.params.id
+      req.params && req.params.id,
     );
     if (consoleLog) {
-      if (!_.isEmpty(req.params)) {
+      if (req.params && Object.keys(req.params).length) {
         console.log(`params = ${JSON.stringify(req.params, null, 2)}`);
       }
-      if (!_.isEmpty(req.query)) {
+      if (req.query && Object.keys(req.query).length) {
         console.log(`query = ${JSON.stringify(req.query, null, 2)}`);
       }
-      if (!_.isEmpty(req.body)) {
+      if (req.body && Object.keys(req.body).length) {
         console.log(`body = ${JSON.stringify(req.body, null, 2)}`);
       }
     }
@@ -174,11 +163,10 @@ const evoLogger = {
         error: err,
         method: method,
       };
-    } else {
-      return {
-        error: "Error",
-      };
     }
+    return {
+      error: "Error",
+    };
   },
 
   logToFile(mType, msg) {
