@@ -89,6 +89,7 @@ function SQLgetMany(m, req, isCSV, wCount) {
   // ---- FILTERING
   let sqlWs = [];
   for (let n in req.query) {
+    // eslint-disable-next-line no-prototype-builtins
     if (req.query.hasOwnProperty(n)) {
       const f = n === pKey ? { column: pKey } : m.fieldsH[n];
       if (

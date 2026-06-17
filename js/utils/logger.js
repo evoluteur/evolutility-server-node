@@ -1,5 +1,3 @@
-/* eslint-disable import/extensions */
-/* eslint-disable prettier/prettier */
 /*!
  * evolutility-server-node :: utils/logger.js
  * Simple formatted console logger (not logging to file).

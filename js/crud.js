@@ -19,7 +19,7 @@ const schema = '"' + (config.schema || "evolutility") + '"',
 
 // #region --------  GET ONE  -------------------------------------------------------
 function SQLgetOne(id, m) {
-  if (!parseInt(id)) {
+  if (!parseInt(id, 10)) {
     return null;
   }
   let sql =
@@ -62,25 +62,24 @@ export const getOne = async (req, res) => {
         promiseQuery(SQLCollecOne(collec), [id], false),
       );
       qCollecs.unshift(promiseQuery(sql, sqlParams, true));
-      Promise.all(qCollecs)
-        .then((data) => {
-          if (data && data.length) {
-            const d = data[0];
-            if (data.length > 1) {
-              d.collections = {};
-              m.collections.forEach((collec, idx) => {
-                d.collections[collec.id] = data[idx + 1];
-              });
-            }
-            res.json(d);
-          } else {
-            res.json(data);
+      try {
+        const data = await Promise.all(qCollecs);
+        if (data && data.length) {
+          const d = data[0];
+          if (data.length > 1) {
+            d.collections = {};
+            m.collections.forEach((collec, idx) => {
+              d.collections[collec.id] = data[idx + 1];
+            });
           }
-        })
-        .catch((err) => {
-          logger.logError(err);
-          badRequest(res, "Database error - " + err.message, 500);
-        });
+          res.json(d);
+        } else {
+          res.json(data);
+        }
+      } catch (err) {
+        logger.logError(err);
+        badRequest(res, "Database error - " + err.message, 500);
+      }
     } else {
       runQuery(res, sql, sqlParams, true);
     }
@@ -93,43 +92,42 @@ export const getOne = async (req, res) => {
 // #region --------  INSERT ONE  ----------------------------------------------------
 
 // - insert a single record
-export const insertOne = async (req, res) => {
+export const insertOne = (req, res) => {
   logger.logReq("INSERT ONE", req);
   const m = getModel(req.params.entity);
   if (!m) {
     return badRequest(res, "Model not found.", 404);
+  }
+  const pKey = m.pKey || "id",
+    q = sqls.namedValues(m, req, "insert");
+
+  if (q.invalids) {
+    returnInvalid(res, q.invalids);
+  } else if (q.names.length) {
+    const ps = q.names.map((n, idx) => "$" + (idx + 1));
+    const selectId = pKey === "id" ? pKey : '"' + pKey + '" as id';
+    const sql =
+      "INSERT INTO " +
+      m.schemaTable +
+      ' ("' +
+      q.names.join('","') +
+      '") values(' +
+      ps.join(",") +
+      ") RETURNING " +
+      selectId +
+      ", " +
+      sqls.select(m.fields, false, null, "C") +
+      ";";
+
+    runQuery(res, sql, q.values, true);
   } else {
-    const pKey = m.pKey || "id",
-      q = sqls.namedValues(m, req, "insert");
-
-    if (q.invalids) {
-      returnInvalid(res, q.invalids);
-    } else if (m && q.names.length) {
-      const ps = q.names.map((n, idx) => "$" + (idx + 1));
-      const selectId = pKey === "id" ? pKey : '"' + pKey + '" as id';
-      const sql =
-        "INSERT INTO " +
-        m.schemaTable +
-        ' ("' +
-        q.names.join('","') +
-        '") values(' +
-        ps.join(",") +
-        ") RETURNING " +
-        selectId +
-        ", " +
-        sqls.select(m.fields, false, null, "C") +
-        ";";
-
-      runQuery(res, sql, q.values, true);
-    } else {
-      badRequest(res);
-    }
+    badRequest(res);
   }
 };
 
 function returnInvalid(res, invalids) {
   logger.logObject("invalids", invalids);
-  res.status("500");
+  res.status(500);
   res.statusMessage = "Invalid record";
   return res.json({
     error: "Invalid record",
@@ -141,15 +139,20 @@ function returnInvalid(res, invalids) {
 // #region --------  UPDATE ONE  ---------------------------------------------------
 
 // - update a single record
-export const updateOne = async (req, res) => {
+export const updateOne = (req, res) => {
   logger.logReq("UPDATE ONE", req);
   const m = getModel(req.params.entity),
-    id = req.params.id,
-    q = sqls.namedValues(m, req, "update");
+    id = req.params.id;
+
+  if (!m) {
+    return badRequest(res, "Model not found.", 404);
+  }
+
+  const q = sqls.namedValues(m, req, "update");
 
   if (q.invalids) {
     returnInvalid(res, q.invalids);
-  } else if (m && id && q.names.length) {
+  } else if (id && q.names.length) {
     q.values.push(id);
     const sql =
       `UPDATE ${m.schemaTable} AS t1 SET ${q.names.join(",")}` +
@@ -176,34 +179,28 @@ export function deleteX(req, res) {
   logger.logReq("DELETE ONE", req);
   const m = getModel(req.params.entity),
     id = req.params.id;
+
+  if (!m) {
+    return badRequest(res);
+  }
+
+  const ids = id.split(",");
   let sql = "DELETE FROM " + m.schemaTable + " WHERE " + m.pKey;
   let params;
 
-  if (m) {
-    const ids = id.split(",");
-    if (ids.length === 1) {
-      // SQL Query > Delete Data
-      sql += "=$1 RETURNING " + m.pKey + "::integer AS id;";
-      params = [id];
-    } else {
-      if (ids.length) {
-        console.log(ids);
-        sql +=
-          " IN(" +
-          ids.map((i, idx) => "$" + (idx + 1)).join(",") +
-          ") RETURNING " +
-          m.pKey +
-          "::integer AS id";
-        params = ids;
-      } else {
-        badRequest(res);
-        return;
-      }
-    }
-    runQuery(res, sql, params, ids.length === 1);
+  if (ids.length === 1) {
+    sql += "=$1 RETURNING " + m.pKey + "::integer AS id;";
+    params = [id];
   } else {
-    badRequest(res);
+    sql +=
+      " IN(" +
+      ids.map((i, idx) => "$" + (idx + 1)).join(",") +
+      ") RETURNING " +
+      m.pKey +
+      "::integer AS id";
+    params = ids;
   }
+  runQuery(res, sql, params, ids.length === 1);
 }
 // #endregion
 
@@ -224,8 +221,11 @@ export function getCollectionsOne(req, res) {
     collec = m && m.collecsH[collecId];
 
   if (m && collec) {
-    const sqlParams = [parseInt(req.query.id, 10)];
-    runQuery(res, SQLCollecOne(collec), sqlParams, false);
+    const parentId = parseInt(req.query.id, 10);
+    if (!parentId) {
+      return badRequest(res, "Invalid id.", 400);
+    }
+    runQuery(res, SQLCollecOne(collec), [parentId], false);
   } else {
     badRequest(res);
   }

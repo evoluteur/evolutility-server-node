@@ -185,7 +185,7 @@ const sqlModelCollecs = (modelType = "ui", forAllModels, sqlWhere) => {
   const extraCols = forAllModels ? "object_id, " : "";
 
   return {
-    fields: SQLmodelFields((modelType = "ui"), forAllModels, sqlWhere),
+    fields: SQLmodelFields(modelType, forAllModels, sqlWhere),
     groups:
       'SELECT gid as "id", ' +
       extraCols +
@@ -205,6 +205,7 @@ const sqlModelCollecs = (modelType = "ui", forAllModels, sqlWhere) => {
   };
 };
 
+// eslint-disable-next-line no-unused-vars
 function SQLmodelFields(modelType = "ui", forAllModels, whereClause) {
   // - Fields
   const cols = fieldCols.ui.map(camelPropSQL).join(","),
@@ -249,7 +250,7 @@ export function getModel(req, res) {
             return null;
           }
         })
-        .catch((err) => {
+        .catch(() => {
           return null;
         }),
     )

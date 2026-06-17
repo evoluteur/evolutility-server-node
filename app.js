@@ -48,7 +48,7 @@ app.use(function (req, res, next) {
 app.use("/", routes);
 
 // error handler
-app.use(function (err, req, res) {
+app.use(function (err, req, res, next) {
   console.error(err.stack);
   res.status(err.status || 500).json({
     error:
