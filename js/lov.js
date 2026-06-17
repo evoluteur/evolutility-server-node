@@ -34,41 +34,36 @@ const SQLlovOne = (f, search) => {
 
 // - returns list of possible values for a field (usually for dropdown)
 // - sample url: http://localhost:2000/api/v1/todo/lov/category
-export const lovOne = async (req, res) => {
+export const lovOne = (req, res) => {
   logger.logReq("LOV ONE", req);
   const mid = req.params.entity,
     m = getModel(mid),
     fid = req.params.field,
     search = req.query.search;
-  let f = m.fieldsH[fid];
 
-  if (m) {
-    if (!f && fid === mid) {
-      // -- if field id = entity id, then use the entity itself as the lov
-      f = {
-        id: "entity",
-        lovColumn: m.fields[0].column,
-        lovTable: m.table,
-      };
-    }
-    if (f) {
-      // const col = f.lovColumn || "name";
-      let params = null;
-      let sql = SQLlovOne(f, search);
-      if (search) {
-        params = [searchParam(search)];
-      }
-      runQuery(res, sql, params, false);
-    } else {
-      res.json(logger.errorMsg('Invalid field "' + fid + '".', "lovOne"));
-    }
-  } else {
-    badRequest(res);
+  if (!m) {
+    return badRequest(res, `Model not found: "${mid}".`, 404);
   }
+
+  let f = m.fieldsH[fid];
+  if (!f && fid === mid) {
+    // if field id = entity id, use the entity itself as the lov
+    f = {
+      id: "entity",
+      lovColumn: m.fields[0].column,
+      lovTable: m.table,
+    };
+  }
+  if (!f) {
+    return badRequest(res, `Invalid field "${fid}".`, 400);
+  }
+
+  const sql = SQLlovOne(f, search);
+  const params = search ? [searchParam(search)] : [];
+  runQuery(res, sql, params, false);
 };
 
 export default {
-  // - LOVs (for dropdowns)
   lovOne,
   SQLlovOne,
 };

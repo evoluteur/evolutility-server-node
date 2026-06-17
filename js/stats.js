@@ -9,7 +9,7 @@
 import { getModel } from "./utils/model-manager.js";
 import dico, { fieldTypes as ft } from "./utils/dico.js";
 import { runQuery } from "./utils/query.js";
-import errors from "./utils/errors.js";
+import { badRequest } from "./utils/errors.js";
 import logger from "./utils/logger.js";
 import config from "../config.js";
 
@@ -83,7 +83,13 @@ export function getStats(req, res) {
 
   const mid = req.params.entity,
     m = getModel(mid);
-  let sqlNulls = [];
+
+  if (!m) {
+    return badRequest(res, `Model not found: "${mid}".`, 404);
+  }
+  if (m.noStats) {
+    return badRequest(res, `noStats=true on model "${mid}".`, 400);
+  }
 
   const sqlFROM = " FROM " + m.schemaTable;
   const sqlNull = (f) =>
@@ -91,62 +97,52 @@ export function getStats(req, res) {
   const sqlNullorEmpty = (f) =>
     `(SELECT COUNT(*)::integer AS "${f.id}_nulls" ${sqlFROM} WHERE "${f.column}" IS NULL OR "${f.column}"='')`;
 
-  if (m) {
-    if (!m.noStats) {
-      let sql = "SELECT count(*)::integer AS count";
+  let sql = "SELECT count(*)::integer AS count";
+  const sqlNulls = [];
 
-      m.fields.forEach(function (f) {
-        if (!f.noStats) {
-          if (dico.fieldIsNumeric(f)) {
-            if (!dico.fieldIsDateOrTime(f)) {
-              sql +=
-                sqlAggregate("avg", f) +
-                sqlAggregate("stddev", f) +
-                sqlAggregate("variance", f);
-            }
-            if (f.type === ft.money || f.type === ft.int) {
-              // TODO: should we? (it may be too big a number)
-              sql += sqlAggregate("sum", f);
-            }
-            sql += sqlAggregate("min", f);
-            sql += sqlAggregate("max", f);
-            //}else if(f.type===ft.lov){
-            //    sql += ',(select id, count("'+f.column+'")::integer FROM '+m.schemaTable+' GROUP BY id LIMIT 3)'
-            sqlNulls.push(sqlNull(f));
-          } else {
-            if (f.type === "lov" || f.type === "boolean") {
-              sqlNulls.push(sqlNull(f));
-            } else {
-              sqlNulls.push(sqlNullorEmpty(f));
-            }
-          }
+  m.fields.forEach((f) => {
+    if (!f.noStats) {
+      if (dico.fieldIsNumeric(f)) {
+        if (!dico.fieldIsDateOrTime(f)) {
+          sql +=
+            sqlAggregate("avg", f) +
+            sqlAggregate("stddev", f) +
+            sqlAggregate("variance", f);
         }
-      });
-      if (config.wTimestamp) {
-        // - last update
-        sql += `, max(${config.updatedDateColumn}) AS u_date_max`;
-        // - number of insert & updates this week
-        sql +=
-          `, (SELECT count(${m.pKey})::integer ${sqlFROM}` +
-          " WHERE " +
-          config.updatedDateColumn +
-          " > NOW() - interval '7 days') AS u_date_week_count" +
-          // - first insert
-          `, min(${config.createdDateColumn}) AS c_date_min`;
+        if (f.type === ft.money || f.type === ft.int) {
+          sql += sqlAggregate("sum", f);
+        }
+        sql += sqlAggregate("min", f);
+        sql += sqlAggregate("max", f);
+        sqlNulls.push(sqlNull(f));
+      } else {
+        if (f.type === ft.lov || f.type === ft.bool) {
+          sqlNulls.push(sqlNull(f));
+        } else {
+          sqlNulls.push(sqlNullorEmpty(f));
+        }
       }
-      if (config.wComments) {
-        // - number of comments
-        sql += ", sum(nb_comments::integer)::integer AS nb_comments";
-      }
-      sql += ", " + sqlNulls.join(", ");
-      sql += sqlFROM;
-      runQuery(res, sql, [], true, null, null, fnPrep(m.fields));
-    } else {
-      errors.badRequest(res, 'noStats=true on model "' + mid + '".', 401);
     }
-  } else {
-    errors.badRequest(res, 'Model not found: "' + mid + '".', 404);
+  });
+
+  if (config.wTimestamp) {
+    // - last update
+    sql += `, max(${config.updatedDateColumn}) AS u_date_max`;
+    // - number of insert & updates this week
+    sql +=
+      `, (SELECT count(${m.pKey})::integer ${sqlFROM}` +
+      " WHERE " +
+      config.updatedDateColumn +
+      " > NOW() - interval '7 days') AS u_date_week_count" +
+      // - first insert
+      `, min(${config.createdDateColumn}) AS c_date_min`;
   }
+  if (config.wComments) {
+    sql += ", sum(nb_comments::integer)::integer AS nb_comments";
+  }
+  sql += ", " + sqlNulls.join(", ");
+  sql += sqlFROM;
+  runQuery(res, sql, [], true, null, null, fnPrep(m.fields));
 }
 
 // --------------------------------------------------------------------------------------

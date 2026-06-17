@@ -52,7 +52,7 @@ const entityAPIs = (model, protocol, baseUrl, fullDescription) => {
       delete: { method: "DELETE", url: pathToModel + "/{id}" },
     };
   } else {
-    mi.apis = `${protocol}${baseUrl}?id=${model.id}`;
+    mi.apis = `${protocol}${baseUrl}/?id=${model.id}`;
   }
   return mi;
 };
