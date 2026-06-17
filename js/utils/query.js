@@ -6,6 +6,7 @@
  */
 
 import pgPromise from "pg-promise";
+// eslint-disable-next-line no-unused-vars
 import csv from "csv-express";
 import pgConnection from "pg-connection-string";
 import config from "../../config.js";

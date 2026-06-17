@@ -6,6 +6,8 @@
  */
 
 import { fieldIsNumber, fieldTypes as ft } from "./dico.js";
+import config from "../../config.js";
+const defaultPageSize = config.pageSize || 50;
 
 // - SQL for a single field/column in update/create/order
 const columnName = {
@@ -58,15 +60,13 @@ function select(fields, collecs, table, action) {
     tQuote = table ? 't1."' : '"';
 
   if (fields) {
-    fields.forEach(function (f, idx) {
+    fields.forEach(function (f) {
       if (f.type === ft.lov && action !== "C" && action !== "U") {
         sqlfs.push(
           f.t2 +
             "." +
             (f.lovColumn ? f.lovColumn : "name") +
-            ' AS "' +
-            f.id +
-            '_txt"',
+            ` AS "${f.id}_txt"`,
         );
         if (f.lovIcon) {
           sqlfs.push(f.t2 + '.icon AS "' + f.id + '_icon"');
@@ -81,7 +81,7 @@ function select(fields, collecs, table, action) {
 					sql += '::float8'*/
       }
       if (f.column && f.id != f.column) {
-        sql += ' AS "' + f.id + '"';
+        sql += ` AS "${f.id}"`;
       }
       sqlfs.push(sql);
     });
@@ -128,8 +128,7 @@ function namedValues(m, req, action) {
             break;
           case ft.date:
           case ft.time:
-          case ft.datetime:
-          // TODO: date validation
+          case ft.datetime: // TODO: date validation
           case ft.lov:
             vs.push(!fv ? null : fv);
             ns.push(fnName(f, vs.length));
@@ -198,15 +197,10 @@ function sqlOrderFields(m, fullOrder) {
 function sqlFromLOVs(fields, schema) {
   let sql = "";
 
-  fields.forEach(function (f, idx) {
+  fields.forEach(function (f) {
     if (f.type === "lov" && f.lovTable) {
       sql +=
-        " LEFT JOIN " +
-        schema +
-        '."' +
-        f.lovTable +
-        '" AS ' +
-        f.t2 +
+        ` LEFT JOIN ${schema}."${f.lovTable}" AS ${f.t2}` +
         ` ON t1."${f.column}"=${f.t2}.id`;
     }
   });

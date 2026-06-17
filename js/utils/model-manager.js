@@ -1,7 +1,3 @@
-/* eslint-disable import/extensions */
-/* eslint-disable import/no-named-as-default-member */
-/* eslint-disable no-param-reassign */
-/* eslint-disable no-underscore-dangle */
 /*!
  * evolutility :: utils/model-manager.js
  * Helper functions for metadata
@@ -10,7 +6,6 @@
  * (c) 2026 Olivier Giulieri
  */
 
-import chalk from "chalk";
 import ms from "../../models/all_models.js";
 import config from "../../config.js";
 import dico from "./dico.js";
@@ -61,7 +56,6 @@ export function prepModel(m) {
   return null;
 }
 
-// eslint-disable-next-line no-shadow
 function prepModelCollecs(m, models) {
   if (m) {
     m.collecsH = {};
@@ -78,7 +72,6 @@ function prepModelCollecs(m, models) {
             // - if fields is not specified get it from collec object (fields in list but not the object)
             if (!c.fields) {
               c.fields = collecModel.fields.filter(
-                // eslint-disable-next-line prettier/prettier
                 (f) => f.inMany && !f.object === c.object,
               );
             }

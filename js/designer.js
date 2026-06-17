@@ -304,11 +304,9 @@ export function getModels(req, res) {
 
   // - Object
   let cols = objCols[modelType].map(camelPropSQL).join(",");
-  cols = objCols.ui.map(camelPropSQL).join(",");
   sql = "SELECT entity as id, id as oid, " + cols + sqlFWOL;
   logger.logSQL(sql);
   const sqlWhere = "object_id IN (SELECT id " + sqlFWOL + ")";
-  cols = fieldCols.ui.map(camelPropSQL).join(",");
 
   let qModel = [];
   db.conn
@@ -369,7 +367,7 @@ export function getModels(req, res) {
           if (m) {
             m.groups.push(cleanGroup(g, idx));
           } else {
-            console.log("group - no model " + f.object_id + ".");
+            console.log("group - no model " + g.object_id + ".");
           }
         });
         dataCollecs[2].forEach((c) => {
@@ -378,7 +376,7 @@ export function getModels(req, res) {
             delete c.object_id;
             m.collections.push(c);
           } else {
-            console.log("collec - no model " + f.object_id + ".");
+            console.log("collec - no model " + c.object_id + ".");
           }
         });
         return res.json(qModel);

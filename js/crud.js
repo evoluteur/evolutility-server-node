@@ -176,8 +176,8 @@ export function deleteX(req, res) {
   logger.logReq("DELETE ONE", req);
   const m = getModel(req.params.entity),
     id = req.params.id;
-  let sql = "DELETE FROM " + m.schemaTable + " WHERE " + m.pKey,
-    params = null;
+  let sql = "DELETE FROM " + m.schemaTable + " WHERE " + m.pKey;
+  let params;
 
   if (m) {
     const ids = id.split(",");

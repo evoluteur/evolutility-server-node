@@ -52,7 +52,7 @@ export const lovOne = async (req, res) => {
       };
     }
     if (f) {
-      const col = f.lovColumn || "name";
+      // const col = f.lovColumn || "name";
       let params = null;
       let sql = SQLlovOne(f, search);
       if (search) {
