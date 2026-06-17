@@ -1,6 +1,5 @@
 # Evolutility-Server-Node &middot; [![GitHub license](https://img.shields.io/github/license/evoluteur/evolutility-server-node)](https://github.com/evoluteur/evolutility-server-node/blob/master/LICENSE.md) [![npm version](https://img.shields.io/npm/v/evolutility-server-node)](https://www.npmjs.com/package/evolutility-server-node)
 
-
 Model-driven REST API for CRUD and more, using Node.js, Express, and PostgreSQL.
 
 Evolutility-Server-Node provides a set of generic [REST APIs](#API) for CRUD (Create, Read, Update, Delete) and simple charts. on objects of different structures.
@@ -9,8 +8,8 @@ Evolutility-Server-Node provides a set of generic [REST APIs](#API) for CRUD (Cr
 
 For a matching model-driven Web UI, use [Evolutility-UI-React](http://github.com/evoluteur/evolutility-ui-react) or [Evolutility-UI-jQuery](http://evoluteur.github.io/evolutility-ui-jquery/).
 
+## Table of Contents
 
-### Table of Contents
 1. [Installation](#Installation)
 2. [Setup](#Setup)
 3. [Configuration](#Configuration)
@@ -27,6 +26,7 @@ For a matching model-driven Web UI, use [Evolutility-UI-React](http://github.com
 # To get the latest stable version, use git from the command line.
 git clone https://github.com/evoluteur/evolutility-server-node
 ```
+
 or use the [npm package](https://www.npmjs.com/package/evolutility-server-node):
 
 ```bash
@@ -82,31 +82,30 @@ URLs on localhost:
 
 - REST: [http://localhost:2000/api/v1/](http://localhost:2000/api/v1/)
 
-
 <a name="Configuration"></a>
 ## Configuration
 
 Configuration options are set in the file [config.js](https://github.com/evoluteur/evolutility-server-node/blob/master/config.js).
 
-
-| Option        | Description                             |
-|---------------|-----------------------------------------|
-| apiPath       | Path for REST API (i.e.: "/api/v1/"). |
-| apiPort       | Port for REST API (i.e.: 2000). |
-| connectionString | DB connection string (i.e.: "postgres://evol:love@localhost:5432/evol"). |
-| schema        | DB schema name (i.e.: "evolutility").|
-| pageSize      | Number of rows per page in pagination (default = 50).|
-| lovSize       | Maximum number of values allowed for form dropdowns (default = 100). |
-| csvSize       | Maximum number of rows in CSV export (default = 1000).|
-| csvHeader     | CSV list of labels for CSV export| | uploadPath | path for pictures and documents uploads (i.e.: "../evolutility-ui-react/public/pix/").|
-| logToConsole    | Log SQL and errors to console.|
-| logToFile       | Log SQL and errors to a file. Log files are named like "evol-2019-09-15.log". |
-| wComments     | Allow for user comments (not implemented yet). |
-| wRating       | Allow for user ratings (not implemented yet). |
-| wTimestamp    | Timestamp columns w/ date of record creation and last update. |
+| Option            | Description                             |
+|-------------------|-----------------------------------------|
+| apiPath           | Path for REST API (i.e.: "/api/v1/").   |
+| apiPort           | Port for REST API (i.e.: 2000).         |
+| connectionString  | DB connection string (i.e.: "postgres://evol:love@localhost:5432/evol"). |
+| schema            | DB schema name (i.e.: "evolutility").|
+| pageSize          | Number of rows per page in pagination (default = 50).|
+| lovSize           | Maximum number of values allowed for form dropdowns (default = 100). |
+| csvSize           | Maximum number of rows in CSV export (default = 1000).|
+| csvHeader         | CSV list of labels for CSV export|
+| uploadPath        | path for pictures and documents uploads (i.e.: "../evolutility-ui-react/public/pix/").|
+| logToConsole      | Log SQL and errors to console.|
+| logToFile         | Log SQL and errors to a file. Log files are named like "evol-2019-09-15.log". |
+| wComments         | Allow for user comments (not implemented yet). |
+| wRating           | Allow for user ratings (not implemented yet). |
+| wTimestamp        | Timestamp columns w/ date of record creation and last update. |
 | createdDateColumn | Column containing created date (default "created_at"). |
 | updatedDateColumn | Column containing last update date (default "updated_at"). |
-| schemaQueries | Enables endpoints to query for lists of tables and columns in the database schema. |
+| schemaQueries     | Enables endpoints to query for lists of tables and columns in the database schema. |
 
 <a name="Models"></a>
 ## Models
@@ -118,7 +117,6 @@ Models contain the name of the driving table and the list of fields/columns pres
 - [Field](#Field)
 - [Collection](#Collection)
 - [Sample model](#SampleModel)
-
 
 <a name="Object"></a>
 ### Object
@@ -156,7 +154,6 @@ Models contain the name of the driving table and the list of fields/columns pres
 | noStats      | Exclude field from Stats.       |
 | deleteTrigger | Deleting records in the lovTable will trigger a cascade delete (this property is only used while creating the database). |
 
-
 <a name="Collection"></a>
 ### Collection
 
@@ -172,7 +169,6 @@ Multiple Master-Details can be specified with collections.
 | fields       | Array of fields (objects or ids). Fields in collections can be field objects or just ids of field in the collection's object.    |
 
 Example of collection in [Wine cellar](https://github.com/evoluteur/evolutility-server-node/blob/master/models/organizer/winecellar.js).
-
 
 <a name="SampleModel"></a>
 ### Sample model
@@ -240,6 +236,7 @@ More information about Evolutility models and some useful scripts are available 
 
 <a name="API"></a>
 ## REST API
+
 Evolutility-Server-Node provides a generic RESTful API for CRUD (Create, Read, Update, Delete) and more. It is inspired from [PostgREST](http://postgrest.com).
 
 - [Get](#API_Get)
@@ -254,6 +251,7 @@ When running Evolutility-Server-Node locally, the base url is
 ### Requesting Information
 
 #### Get One
+
 Gets a specific record by ID.
 
 ```
@@ -271,6 +269,7 @@ GET /todo/12?shallow=1
 ```
 
 #### Get Many
+
 Gets a list of records.
 
 ```
@@ -279,9 +278,9 @@ GET /{model.id}
 GET /todo
 ```
 
-
 <a name="Filtering"></a>
 #### Filtering
+
 You can filter result rows by adding conditions on fields, each condition is a query string parameter.
 
 ```
@@ -313,7 +312,6 @@ For each field a sub-set of the operators below will be supported by the API (de
 | 1            | is true                 | /todo?complete=1             |
 | null         | is null                 | /todo?category=null          |
 | nn           | is not null             | /todo?category==nn           |
-
 
 #### Searching
 
@@ -359,6 +357,7 @@ GET /{model.id}?format=csv
 
 GET /todo?format=csv
 ```
+
 Notes: In the returned data every object has an extra property "\_full_count" which indicate the total number of records in the query (before limit).
 
 <a name="API_Update"></a>
@@ -397,8 +396,8 @@ PUT /todo/5
 
 Notes: The request returns the updated record. It is not standard but it saves the UI a subsequent call.
 
-
 #### Deletion
+
 Simply use the DELETE verb with the id of the record to remove.
 
 ```
@@ -483,7 +482,6 @@ POST /comics/upload/5
 ```
 
 With query parameters: file and "field.id".
-
 
 #### Nested collections
 
