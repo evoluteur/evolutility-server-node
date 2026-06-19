@@ -6,8 +6,6 @@
  */
 
 import pgPromise from "pg-promise";
-// eslint-disable-next-line no-unused-vars
-import csv from "csv-express";
 import pgConnection from "pg-connection-string";
 import config from "../../config.js";
 import { badRequest } from "./errors.js";
@@ -20,6 +18,21 @@ dbConfig.max = 10; // max number of clients in the pool
 dbConfig.connectionTimeoutMillis = 60000;
 dbConfig.idleTimeoutMillis = 10000; // max client idle time before being closed
 export const db = { conn: pgp(config.connectionString) };
+
+function sendCSV(res, rows) {
+  res.setHeader("Content-Type", "text/csv; charset=utf-8");
+  res.setHeader("Content-Disposition", "attachment; filename=export.csv");
+  if (!rows || !rows.length) return res.end("");
+  const keys = Object.keys(rows[0]);
+  const escape = (v) => {
+    const s = v == null ? "" : String(v);
+    return s.includes(",") || s.includes('"') || s.includes("\n")
+      ? `"${s.replace(/"/g, '""')}"`
+      : s;
+  };
+  const lines = rows.map((row) => keys.map((k) => escape(row[k])).join(","));
+  res.end(lines.join("\r\n"));
+}
 
 export function promiseQuery(sql, values, singleRecord) {
   logger.logSQL(sql);
@@ -56,16 +69,16 @@ export function runQuery(
       const nbRecords = results ? results.length : 0;
       if (format === "csv") {
         if (nbRecords) {
-          const keys = Object.keys(results[0]);
           if (header) {
-            var headers = {};
-            keys.forEach((key) => (headers[key] = header[key] || key));
-            results.unshift(headers);
+            const keys = Object.keys(results[0]);
+            const headerRow = {};
+            keys.forEach((key) => (headerRow[key] = header[key] || key));
+            results.unshift(headerRow);
           }
           logger.logCount(results.length || 0);
-          return res.csv(results);
+          return sendCSV(res, results);
         }
-        return res.csv(null);
+        return sendCSV(res, null);
       } else if (singleRecord) {
         logger.logCount(1);
         if (fnPrep) {
@@ -90,8 +103,7 @@ export function runQuery(
       logger.logError(err);
       if (err.code === 0) {
         if (format === "csv") {
-          // - sending something to avoid empty page in browser
-          return res.csv(singleRecord ? { id: null } : [{ id: null }]);
+          return sendCSV(res, [{ id: null }]);
         } else {
           return res.json(singleRecord ? null : []);
         }
