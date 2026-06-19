@@ -21,6 +21,7 @@
     "csv-express": "~1.2.2",
     "debug": "~4.4.3",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.5.2",
     "formidable": "~3.5.4",
     "helmet": "~7.1.0",
     "pg": "^8.21.0",

@@ -17,8 +17,9 @@ For a matching model-driven Web UI, use [Evolutility-UI-React](http://github.com
 3. [Configuration](#Configuration)
 4. [Models](#Models): [Object](#Object) - [Field](#Field) - [Collection](#Collection) - [Sample model](#SampleModel)
 5. [REST API](#API): [Get](#API_Get) - [Update](#API_Update) - [Charts](#API_Charts) - [More](#API_Extras)
-6. [API Documentation](#APIDocs)
-7. [License](#License)
+6. [Rate Limiting](#RateLimit)
+7. [API Documentation](#APIDocs)
+8. [License](#License)
 
 <a name="Installation"></a>
 ## Installation
@@ -93,6 +94,8 @@ Configuration options are set in the file [config.js](https://github.com/evolute
 | createdDateColumn | Column containing created date (default "created_at"). |
 | updatedDateColumn | Column containing last update date (default "updated_at"). |
 | schemaQueries     | Enables endpoints to query for lists of tables and columns in the database schema. |
+| rateLimit         | Maximum number of API requests per IP per 15-minute window. Set to `0` to disable. Default: `500`. |
+| trustProxy        | Set to `true` when running behind a reverse proxy (nginx, Heroku, etc.) so the real client IP is used for rate limiting instead of the proxy's IP. Default: `false`. |
 
 <a name="Models"></a>
 ## Models
@@ -529,6 +532,27 @@ Returns the API version from package.json.
 ```
 GET /version
 ```
+
+<a name="RateLimit"></a>
+## Rate Limiting
+
+All API endpoints are rate-limited per IP address to protect the server and database from abuse. The default is 500 requests per 15-minute window, configurable via `rateLimit` in config.js. Set it to `0` to disable rate limiting entirely.
+
+When the limit is exceeded the API returns `429 Too Many Requests` with a `RateLimit` header indicating when the window resets.
+
+#### Reverse proxy setup
+
+If the server runs behind a reverse proxy (nginx, Apache, a load balancer, Heroku, Render, Railway, etc.), Express sees the proxy's IP address instead of the real client IP. Without correction, the rate limiter would count all users as one and block everyone simultaneously.
+
+To fix this, set `trustProxy: true` in config.js. This tells Express to read the real client IP from the `X-Forwarded-For` header that the proxy injects:
+
+```js
+// config.js
+rateLimit: 500,
+trustProxy: true,   // enable when behind nginx, Heroku, etc.
+```
+
+Only enable `trustProxy` if you actually control the proxy and trust it to set `X-Forwarded-For` correctly — enabling it on a directly internet-facing server would allow clients to spoof their IP and bypass the limiter.
 
 <a name="APIDocs"></a>
 ## API Documentation

@@ -17,8 +17,10 @@
 import express from "express";
 import path from "path";
 import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 import routes from "./js/routes.js";
 import logger from "./js/utils/logger.js";
+import config from "./config.js";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 
@@ -26,6 +28,21 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
+
+if (config.trustProxy) {
+  app.set("trust proxy", 1);
+}
+
+if (config.rateLimit) {
+  app.use(
+    rateLimit({
+      windowMs: 15 * 60 * 1000,
+      limit: config.rateLimit,
+      standardHeaders: "draft-8",
+      legacyHeaders: false,
+    })
+  );
+}
 
 app.use(
   helmet({

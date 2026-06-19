@@ -48,6 +48,12 @@ const config = {
   apiDesigner: true,
   // - Query DB schema for list of tables and columns
   schemaQueries: false,
+
+  // - Rate limiting
+  // - Maximum number of requests per IP per 15-minute window (set to 0 to disable)
+  // - If behind a reverse proxy, also set trustProxy: true
+  rateLimit: 500,
+  trustProxy: false,
 };
 
 export default config;
