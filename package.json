@@ -26,7 +26,6 @@
     "pg": "^8.21.0",
     "pg-connection-string": "~2.13.0",
     "pg-promise": "^11.15.0",
-    "shortid": "~2.2.17",
     "simple-node-logger": "~21.8.12",
     "url": "^0.11.4"
   },

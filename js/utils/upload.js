@@ -7,7 +7,6 @@
 
 import path from "path";
 import formidable from "formidable";
-import shortid from "shortid";
 import fs from "fs";
 import { getModel } from "./model-manager.js";
 import logger from "./logger.js";
@@ -35,7 +34,7 @@ export function uploadOne(req, res) {
       if (fs.existsSync(ffname)) {
         // - if duplicate name do not overwrite file but postfix name
         let idx = ffname.lastIndexOf(".");
-        const xtra = "_" + shortid.generate(),
+        const xtra = "_" + crypto.randomUUID().slice(0, 8),
           originalName = fname;
 
         dup = true;
