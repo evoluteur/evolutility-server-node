@@ -1,50 +1,50 @@
+/* eslint-disable no-useless-escape */
 /*!
  * evolutility-server-node :: utils/logger.js
- * Simple formatted console logger (not logging to file).
  *
  * https://github.com/evoluteur/evolutility-server-node
  * (c) 2026 Olivier Giulieri
  */
 
-import chalk from "chalk";
-import SimpleNodeLogger from "simple-node-logger";
+import pino from "pino";
 import config from "../../config.js";
 import pkg from "../../package.json" with { type: "json" };
 
 const { logToFile: fileLog, logToConsole: consoleLog } = config;
-// const fileLog = config.logToFile;
-// const consoleLog = config.logToConsole;
 
-let log = {};
+// #region ---- pino setup ----------------------------------------------------------------
+
+const targets = [];
+
+if (consoleLog) {
+  targets.push({
+    target: "pino-pretty",
+    options: {
+      colorize: true,
+      translateTime: "SYS:HH:MM:ss",
+      ignore: "pid,hostname",
+    },
+  });
+}
+
 if (fileLog) {
-  // const SimpleNodeLogger = require("simple-node-logger");
-  const opts = {
-    logFilePath: `evol-${new Date().toISOString().substring(0, 10)}.log`,
-    timestampFormat: "YYYY-MM-DD HH:mm:ss.SSS",
-  };
-  log = SimpleNodeLogger.createSimpleLogger(opts);
+  targets.push({
+    target: "pino/file",
+    options: {
+      destination: `evol-${new Date().toISOString().substring(0, 10)}.log`,
+      append: true,
+    },
+  });
 }
 
-const asciiArt =
-  `  ______          _           _ _ _
- |  ____|        | |      /| (_) (_)/|
- | |____   _____ | |_   _| |_ _| |_| |_ _   _
- |  __\\ \\ / / _ \\| | | | | __| | | | __| | | |
- | |___\\ V / (_) | | |_| | |_| | | | |_| |_| |
- |______\\_/ \\___/|_|\\__,_|\\__|_|_|_|\\__|\\__, |
-         ___  ___ _ ____   _____ _ __    __/ |
-  ____  / __|/ _ \\ \'__\\ \\ / / _ \\ \'__|  |___/
- |____| \\__ \\  __/ |   \\ V /  __/ |
-        |___/\\___|_|    \\_/ \\___|_|    v` + pkg.version;
+const log = targets.length
+  ? pino({ level: "debug" }, pino.transport({ targets }))
+  : pino({ level: "silent" });
 
-function green(msg) {
-  if (consoleLog) {
-    console.error(chalk.green(msg));
-  }
-}
+// #endregion
+// #region  ---- helpers -------------------------------------------------------------------
 
 function maskedConnection() {
-  // TODO: is there other patterns?
   const conn = config.connectionString || "";
   const s = conn.split(":");
   if (s.length > 1) {
@@ -56,122 +56,80 @@ function maskedConnection() {
 
 const pubConnection = maskedConnection();
 
+const asciiArt = `  ______          _           _ _ _
+ |  ____|        | |      /| (_) (_)/|
+ | |____   _____ | |_   _| |_ _| |_| |_ _   _
+ |  __\\ \\ / / _ \\| | | | | __| | | | __| | | |
+ | |___\\ V / (_) | | |_| | |_| | | | |_| |_| |
+ |______\\_/ \\___/|_|\\__,_|\\__|_|_|_|\\__|\\__, |
+         ___  ___ _ ____   _____ _ __    __/ |
+  ____  / __|/ _ \\ '__\\ \\ / / _ \\ \'__|  |___/
+ |____| \\__ \\  __/ |   \\ V /  __/ |
+        |___/\\___|_|    \\_/ \\___|_|    v${pkg.version}
+`;
+
+// #endregion
+// #region  ---- public API -------------------------------------------------------------------
+
 const evoLogger = {
   startupMessage() {
-    if (consoleLog) {
-      console.log(asciiArt);
-    }
-    const restPath = `http://localhost:${config.apiPort || 2000}${config.apiPath}`;
-    console.log(
-      `\nListening on port ${config.apiPort}\n` +
-        `\n - REST API:            ${restPath}\n - Postgres connection: ${pubConnection}\n - Postgres schema:     ${config.schema}\n - Documentation:       ${pkg.homepage}`,
+    console.log(asciiArt);
+    const rootPath = `http://localhost:${config.apiPort || 2000}`;
+    const restPath = `${rootPath}${config.apiPath}`;
+    const swaggerUI = `${rootPath}/api-docs.html`;
+    log.info(
+      { restPath, swaggerUI, db: pubConnection, dbSchema: config.schema },
+      `evolutility-server-node started`,
     );
-    if (fileLog) {
-      log.info(
-        `STARTING Evolutility-Server-Node schema=${config.schema} db=${pubConnection}url=${restPath}`,
-      );
-    }
-  },
-
-  logHeader(ql, action, entity, id) {
-    const msg = `${ql} > ${action} : ${entity || ""}${id ? ` ${id}` : ""}`;
-    if (fileLog) {
-      log.info(msg);
-    }
-    console.log(chalk.cyan(msg));
   },
 
   logReq(title, req, reqType = "REST") {
-    this.logHeader(
-      reqType,
-      title,
-      req.params && req.params.entity,
-      req.params && req.params.id,
-    );
-    if (consoleLog) {
-      if (req.params && Object.keys(req.params).length) {
-        console.log(`params = ${JSON.stringify(req.params, null, 2)}`);
-      }
-      if (req.query && Object.keys(req.query).length) {
-        console.log(`query = ${JSON.stringify(req.query, null, 2)}`);
-      }
-      if (req.body && Object.keys(req.body).length) {
-        console.log(`body = ${JSON.stringify(req.body, null, 2)}`);
-      }
-    }
-    if (fileLog) {
-      log.info({
-        params: req.params,
-        query: req.query,
-        body: req.body,
-      });
-    }
+    const data = {};
+    if (req.params && Object.keys(req.params).length) data.params = req.params;
+    if (req.query && Object.keys(req.query).length) data.query = req.query;
+    if (req.body && Object.keys(req.body).length) data.body = req.body;
+    log.info(data, `${reqType} > ${title}`);
   },
 
   logObject(title, obj) {
-    if (fileLog) {
-      log.info(`${title} = `, obj);
-    } else if (consoleLog) {
-      console.log(`${title} = ${JSON.stringify(obj, null, 2)}`);
-    }
+    log.info({ [title]: obj });
   },
 
   logSQL(sql, values) {
-    if (fileLog) {
-      log.info("sql = ", sql);
-    } else if (consoleLog) {
-      console.log(`sql = \n${sql}\n`);
-      if (values) {
-        this.logObject("values = \n", values);
-      }
-    }
+    const data = { sql };
+    if (values) data.values = values;
+    log.debug(data, "SQL");
   },
 
-  logCount: (nbRecords, prep) => {
-    const msg = `Sending ${nbRecords}${prep ? " prepared" : ""} records.`;
-    if (fileLog) {
-      log.info(msg);
-    }
-    return green(msg);
+  logCount(nbRecords, prep) {
+    log.info(`Sending ${nbRecords}${prep ? " prepared" : ""} records.`);
   },
 
-  green,
+  logSuccess(msg) {
+    log.info(msg);
+  },
 
-  logSuccess: green,
-
-  logError(err, moreInfo) {
-    if (consoleLog) {
-      console.error(chalk.red(err));
-      if (moreInfo) {
-        console.error(chalk.red(moreInfo));
-      }
-    }
-    if (fileLog) {
-      log.error(err, moreInfo);
+  logError(err) {
+    if (err instanceof Error) {
+      log.error({ err }, err.message);
+    } else {
+      log.error(String(err));
     }
   },
 
   errorMsg(err, method) {
-    if (fileLog) {
-      log.error(err);
-    }
-    if (consoleLog) {
-      this.logError(err);
-      return {
-        error: err,
-        method: method,
-      };
-    }
+    this.logError(err);
     return {
-      error: "Error",
+      error: err instanceof Error ? err.message : String(err),
+      method,
     };
   },
 
   logToFile(mType, msg) {
-    if (fileLog) {
-      log[mType](msg);
-    }
+    log[mType]?.(msg);
   },
 };
+
+// #endregion
 
 export default evoLogger;
