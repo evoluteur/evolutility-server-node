@@ -18,6 +18,7 @@ import express from "express";
 import path from "path";
 import helmet from "helmet";
 import routes from "./js/routes.js";
+import logger from "./js/utils/logger.js";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 
@@ -49,7 +50,7 @@ app.use("/", routes);
 
 // error handler
 app.use(function (err, req, res, next) {
-  console.error(err.stack);
+  logger.logError(err);
   res.status(err.status || 500).json({
     error:
       app.get("env") === "development" ? err.message : "Internal server error",

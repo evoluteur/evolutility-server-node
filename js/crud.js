@@ -62,23 +62,18 @@ export const getOne = async (req, res) => {
         promiseQuery(SQLCollecOne(collec), [id], false),
       );
       qCollecs.unshift(promiseQuery(sql, sqlParams, true));
-      try {
-        const data = await Promise.all(qCollecs);
-        if (data && data.length) {
-          const d = data[0];
-          if (data.length > 1) {
-            d.collections = {};
-            m.collections.forEach((collec, idx) => {
-              d.collections[collec.id] = data[idx + 1];
-            });
-          }
-          res.json(d);
-        } else {
-          res.json(data);
+      const data = await Promise.all(qCollecs);
+      if (data && data.length) {
+        const d = data[0];
+        if (data.length > 1) {
+          d.collections = {};
+          m.collections.forEach((collec, idx) => {
+            d.collections[collec.id] = data[idx + 1];
+          });
         }
-      } catch (err) {
-        logger.logError(err);
-        badRequest(res, "Database error - " + err.message, 500);
+        res.json(d);
+      } else {
+        res.json(data);
       }
     } else {
       runQuery(res, sql, sqlParams, true);
@@ -128,7 +123,6 @@ export const insertOne = (req, res) => {
 function returnInvalid(res, invalids) {
   logger.logObject("invalids", invalids);
   res.status(500);
-  res.statusMessage = "Invalid record";
   return res.json({
     error: "Invalid record",
     invalids: invalids,
