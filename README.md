@@ -1,10 +1,12 @@
 # Evolutility-Server-Node &middot; [![GitHub license](https://img.shields.io/github/license/evoluteur/evolutility-server-node)](https://github.com/evoluteur/evolutility-server-node/blob/master/LICENSE.md) [![npm version](https://img.shields.io/npm/v/evolutility-server-node)](https://www.npmjs.com/package/evolutility-server-node)
 
-Model-driven REST API for CRUD and more, using Node.js, Express, and PostgreSQL.
+**Framework for building CRUD APIs endpoints with models rather than code**
 
-Evolutility-Server-Node provides a set of generic [REST APIs](#API) for CRUD (Create, Read, Update, Delete) and simple charts. on objects of different structures.
+Evolutility-Server-Node provides a set of generic model-driven [REST APIs](#API) for CRUD (Create, Read, Update, Delete) and simple charts. on objects of different structures.
 
 ![screenshot](https://raw.githubusercontent.com/evoluteur/evolutility-server-node/master/screenshot.png)
+
+Stack: Node.js, Express, and PostgreSQL
 
 For a matching model-driven Web UI, use [Evolutility-UI-React](http://github.com/evoluteur/evolutility-ui-react) or [Evolutility-UI-jQuery](http://evoluteur.github.io/evolutility-ui-jquery/).
 
@@ -15,7 +17,8 @@ For a matching model-driven Web UI, use [Evolutility-UI-React](http://github.com
 3. [Configuration](#Configuration)
 4. [Models](#Models): [Object](#Object) - [Field](#Field) - [Collection](#Collection) - [Sample model](#SampleModel)
 5. [REST API](#API): [Get](#API_Get) - [Update](#API_Update) - [Charts](#API_Charts) - [More](#API_Extras)
-6. [License](#License)
+6. [API Documentation](#APIDocs)
+7. [License](#License)
 
 <a name="Installation"></a>
 ## Installation
@@ -542,6 +545,31 @@ This endpoint gets the API version (as specified in the project's package.json f
 ```
 GET /version
 ```
+
+<a name="APIDocs"></a>
+## API Documentation
+
+Evolutility-Server-Node automatically generates an [OpenAPI 3.1](https://swagger.io/specification/) specification from the loaded models — no manual authoring required. Every field type, required constraint, and endpoint is derived directly from the model definitions.
+
+#### OpenAPI spec
+
+Returns the full OpenAPI 3.1 spec as JSON, reflecting all currently active models.
+
+```
+GET /api/v1/openapi.json
+```
+
+#### Swagger UI
+
+An interactive API explorer is served as a static page at:
+
+```
+http://localhost:2000/api-docs.html
+```
+
+It loads [Swagger UI](https://swagger.io/tools/swagger-ui/) and points it at `/api/v1/openapi.json`. Every model gets its own tag grouping CRUD, stats, charts, list-of-values, and sub-collection endpoints. The spec and the UI stay in sync with the models automatically — adding or modifying a model is immediately reflected.
+
+The spec can also be imported directly into [Postman](https://www.postman.com/), [Insomnia](https://insomnia.rest/), or any OpenAPI-compatible client or code generator.
 
 <a name="License"></a>
 ## License

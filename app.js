@@ -27,7 +27,19 @@ const __dirname = dirname(__filename);
 
 const app = express();
 
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc:  ["'self'", "https://unpkg.com"],
+        styleSrc:   ["'self'", "https://unpkg.com"],
+        imgSrc:     ["'self'", "data:", "https://unpkg.com"],
+        connectSrc: ["'self'", "https://unpkg.com"],
+      },
+    },
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "./client", "public")));

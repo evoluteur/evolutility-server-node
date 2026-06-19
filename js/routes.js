@@ -15,6 +15,7 @@ import { lovOne } from "./lov.js";
 import { getStats } from "./stats.js";
 import { getChart } from "./charts.js";
 import { getAPIs, getVersion } from "./info.js";
+import { getOpenAPISpec } from "./openapi.js";
 import designer from "./designer.js";
 import dbStructure from "./utils/db-structure.js";
 
@@ -22,6 +23,10 @@ const apiPath = config.apiPath;
 const router = express.Router();
 
 logger.startupMessage();
+
+// #region ===== OpenAPI spec ====================================
+router.get(apiPath + "openapi.json", getOpenAPISpec);
+// #endregion
 
 // #region ===== GET STATS ====================================
 router.get(apiPath + ":entity/stats", getStats);
