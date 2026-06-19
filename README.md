@@ -1,12 +1,12 @@
 # Evolutility-Server-Node &middot; [![GitHub license](https://img.shields.io/github/license/evoluteur/evolutility-server-node)](https://github.com/evoluteur/evolutility-server-node/blob/master/LICENSE.md) [![npm version](https://img.shields.io/npm/v/evolutility-server-node)](https://www.npmjs.com/package/evolutility-server-node)
 
-**Framework for building CRUD APIs endpoints with models rather than code**
+**Framework for building CRUD API endpoints with models rather than code**
 
-Evolutility-Server-Node provides a set of generic model-driven [REST APIs](#API) for CRUD (Create, Read, Update, Delete) and simple charts. on objects of different structures.
+Evolutility-Server-Node provides a set of generic model-driven [REST APIs](#API) for CRUD (Create, Read, Update, Delete) and simple charts on objects of different structures.
 
 ![screenshot](https://raw.githubusercontent.com/evoluteur/evolutility-server-node/master/screenshot.png)
 
-Stack: Node.js, Express, and PostgreSQL
+Stack: Node.js, Express, and PostgreSQL.
 
 For a matching model-driven Web UI, use [Evolutility-UI-React](http://github.com/evoluteur/evolutility-ui-react) or [Evolutility-UI-jQuery](http://evoluteur.github.io/evolutility-ui-jquery/).
 
@@ -46,24 +46,7 @@ After installing Evolutility-Server-Node, follow these steps:
 
 2. In the file [config.js](https://github.com/evoluteur/evolutility-server-node/blob/master/config.js) set the PostgreSQL connection string and the schema name to access your new database.
 
-3. Maybe, also change other config options in the same file.
-
-| Option     | Description        | Example            |
-|------------|--------------------|--------------------|
-| apiPath    | Path to REST API (can use "proxy" from package.json). | "/api/v1/" |
-| apiPort    | Port for the REST API. | 2000 |
-| connectionString  | Database connection string. | "postgres://evol:love@localhost:5434/evolutility" |
-| schema     | Database schema.        | "evolutility" |
-| uploadPath | Path to uploaded files. | "../evolutility-ui-react/public/pix/" |
-| apiInfo    | Enable API discovery (on root and per model). | true |
-| pageSize   | Page size in pagination.  | 50 |
-| lovSize    | Maximum number of items in list of values. | 100  |
-| csvSize    | Maximum number of items in CSV exports.    | 1000 |
-| csvHeader  | Use fields id or labels in CSV header.     | id/label |
-| locale     | Date format (no translation yet). | en/fr |
-| wTimestamp | Add timestamp columns "created_at" and "updated_at" to track record creation and update times. | true |
-| logToConsole | Log to console. | true |
-| logToFile    | Log to file (log file is named "evol<timestamp>.log").    | true |
+3. Review other [configuration options](#Configuration) as needed.
 
 4. In the command line type the following:
 
@@ -79,11 +62,12 @@ npm start
 
 ```
 
-**Note**: The database creation and population scripts are logged in the files "evol-db-schema-{datetime}.sql" and  "evol-db-data-{datetime}.sql".
+**Note**: The database creation and population scripts are logged in the files "evol-db-schema-{datetime}.sql" and "evol-db-data-{datetime}.sql".
 
 URLs on localhost:
 
-- REST: [http://localhost:2000/api/v1/](http://localhost:2000/api/v1/)
+- REST API: [http://localhost:2000/api/v1/](http://localhost:2000/api/v1/)
+- API Docs: [http://localhost:2000/api-docs.html](http://localhost:2000/api-docs.html)
 
 <a name="Configuration"></a>
 ## Configuration
@@ -99,8 +83,8 @@ Configuration options are set in the file [config.js](https://github.com/evolute
 | pageSize          | Number of rows per page in pagination (default = 50).|
 | lovSize           | Maximum number of values allowed for form dropdowns (default = 100). |
 | csvSize           | Maximum number of rows in CSV export (default = 1000).|
-| csvHeader         | CSV list of labels for CSV export|
-| uploadPath        | path for pictures and documents uploads (i.e.: "../evolutility-ui-react/public/pix/").|
+| csvHeader         | Use field ids or labels as CSV column headers. |
+| uploadPath        | Path for pictures and document uploads (i.e.: "../evolutility-ui-react/public/pix/"). |
 | logToConsole      | Log SQL and errors to console.|
 | logToFile         | Log SQL and errors to a file. Log files are named like "evol-2019-09-15.log". |
 | wComments         | Allow for user comments (not implemented yet). |
@@ -131,8 +115,8 @@ Models contain the name of the driving table and the list of fields/columns pres
 | pKey         | Name of the Primary key column (single column of type serial). Default to "id". In the data the key is always called "id". |
 | fields       | Array of fields.                        |
 | titleField   | Field id for the column value used as record title. |
-| noCharts     | No Charts or Dashboard views.   |
-| noStats      | No Stats on the object.         |
+| noCharts     | Disable charts and dashboard views. |
+| noStats      | Disable stats for the object.       |
 
 <a name="Field"></a>
 ### Field
@@ -143,13 +127,13 @@ Models contain the name of the driving table and the list of fields/columns pres
 | column       | Database column name for the field.    |
 | lovTable     | Table to join to for field value (only for fields of type "lov"). |
 | lovColumn    | Column name (in the lovTable) for field value (only for fields of type "lov"). |
-| lovIcon      | Set to True to include icon with LOV items (only for fields of type "lov").    |
+| lovIcon      | Set to `true` to include an icon with LOV items (only for fields of type "lov"). |
 | object       | Model id for the object to link to (only for fields of type "lov").    |
 | type         | Field type is not a database column type but more a UI field type. Possible field types: <ul><li>boolean</li><li>date</li><li>datetime</li><li>decimal</li><li>document</li><li>email</li><li>image</li><li>integer</li><li>lov (list of values)</li><li>list (multiselect)</li><li>money</li><li>text</li><li>textmultiline</li><li>time</li><li>url</li></ul> |
 | required     | Determines if the field is required for saving.      |
 | readOnly     | Display field as readOnly (not editable).            |
 | inMany       | Determines if the field is present (by default) in lists of records. |
-| inSearch     | Determine if the field is used in text searches.                     |
+| inSearch     | Determines if the field is used in text searches.                    |
 | max, min     | Maximum/Minimum value allowed (only applies to numeric fields).      |
 | maxLength, minLength | Maximum/Minimum length allowed (only applies to text fields).|
 | unique       | Values must be unique (not implemented yet).   |
@@ -168,7 +152,7 @@ Multiple Master-Details can be specified with collections.
 | table        | DB Table to query (master table, other tables will be included in the query for "lov" fields). |
 | column       | Column in the detail table to match against id of object. |
 | object       | Model id for the object to display (optional).            |
-| orderBy      | Column(s) to sort by, e.g. { orderBy: "name" }.                 |
+| orderBy      | Column(s) to sort by, e.g. `"name"` or `"drink_date"`.          |
 | fields       | Array of fields (objects or ids). Fields in collections can be field objects or just ids of field in the collection's object.    |
 
 Example of collection in [Wine cellar](https://github.com/evoluteur/evolutility-server-node/blob/master/models/organizer/winecellar.js).
@@ -235,7 +219,7 @@ More sample models:
  [Wine cellar](https://github.com/evoluteur/evolutility-server-node/blob/master/models/organizer/winecellar.js),
  [Graphic novels inventory](https://github.com/evoluteur/evolutility-server-node/blob/master/models/organizer/comics.js).
 
-More information about Evolutility models and some useful scripts are available at [evolutility-models](https://github.com/evoluteur/evolutility-models).
+More information about Evolutility models and some useful scripts are available in a separate repository at [evolutility-models](https://github.com/evoluteur/evolutility-models).
 
 <a name="API"></a>
 ## REST API
@@ -263,7 +247,7 @@ GET /{model.id}/{id}
 GET /todo/12
 ```
 
-By default this endpoint returns nested collections with the record. For optimization, collections can be ommited by using the parameter "shallow".
+By default this endpoint returns nested collections with the record. For optimization, collections can be omitted by using the parameter "shallow".
 
 ```
 GET /{model.id}/{id}?shallow=1
@@ -284,37 +268,38 @@ GET /todo
 <a name="Filtering"></a>
 #### Filtering
 
-You can filter result rows by adding conditions on fields, each condition is a query string parameter.
+You can filter result rows by adding conditions on fields; each condition is a query string parameter.
 
 ```
-GET /{model.id}/{field.id}={operator}.{value}
+GET /{model.id}?{field.id}={operator}.{value}
 
 GET /todo?title=sw.a
 GET /todo?priority=in.1,2,3
 ```
+
 Adding multiple parameters conjoins the conditions:
 
 ```
-todo?complete=0&duedate=lt.2018-12-24
+GET /todo?complete=0&duedate=lt.2018-12-24
 ```
 
-For each field a sub-set of the operators below will be supported by the API (depending field types).
+For each field a sub-set of the operators below will be supported by the API (depending on field types).
 
 | Operator     | Meaning                 | Example                      |
 |--------------|-------------------------|------------------------------|
 | eq           | equals                  | /todo?category=eq.1          |
 | gt           | greater than            | /todo?duedate=gt.2026-01-15  |
 | lt           | less than               | /todo?duedate=lt.2026-01-15  |
-| gte          | less than or equal      | /todo?duedate=gte.2026-01-15 |
+| gte          | greater than or equal   | /todo?duedate=gte.2026-01-15 |
 | lte          | less than or equal      | /todo?duedate=lte.2026-01-15 |
 | ct           | contains                | /todo?title=ct.e             |
-| sw           | start with              | /todo?title=sw.a             |
-| fw           | finishes with           | /todo?title=fw.z             |
+| sw           | starts with             | /todo?title=sw.a             |
+| fw           | ends with               | /todo?title=fw.z             |
 | in           | one of a list of values | /todo?priority=in.1,2,3      |
 | 0            | is false or null        | /todo?complete=0             |
 | 1            | is true                 | /todo?complete=1             |
 | null         | is null                 | /todo?category=null          |
-| nn           | is not null             | /todo?category==nn           |
+| nn           | is not null             | /todo?category=nn            |
 
 #### Searching
 
@@ -335,14 +320,14 @@ GET /{model.id}?order={field.id}.{asc/desc}
 
 GET /todo?order=priority.desc,title.asc
 ```
-If no direction is specified it defaults to ascending order:
+If no direction is specified, it defaults to ascending order:
 ```
 GET /todo?order=duedate
 ```
 
 #### Limiting and Pagination
 
-The reserved words "page" and "pageSize" limits the response rows.
+The reserved words "page" and "pageSize" limit the response rows.
 
 ```
 GET /{model.id}?page={pageindex}&pageSize={pagesize}
@@ -352,8 +337,7 @@ GET /todo?page=0&pageSize=50
 
 #### Formatting
 
-By default all APIs return data in JSON format. This API call allows to request data in CSV format (export to Excel).
-This feature is using [csv-express](https://github.com/jczaplew/csv-express).
+By default all APIs return data in JSON format. Add `format=csv` to export data as CSV (Excel-compatible).
 
 ```
 GET /{model.id}?format=csv
@@ -361,7 +345,7 @@ GET /{model.id}?format=csv
 GET /todo?format=csv
 ```
 
-Notes: In the returned data every object has an extra property "\_full_count" which indicate the total number of records in the query (before limit).
+Note: Each returned object includes a `_full_count` property indicating the total number of matching records (before pagination).
 
 <a name="API_Update"></a>
 ### Updating Data
@@ -377,7 +361,7 @@ POST /todo
 { title: 'Finish testing', priority: 2}
 ```
 
-Even though it is a "POST", the request also returns the newly created record. It is not standard but it saves the UI a subsequent call.
+Even though it is a POST, the request also returns the newly created record, saving a round-trip.
 
 #### Update
 
@@ -397,7 +381,7 @@ PUT /todo/5
 { title: 'Finish testing', priority: 2}
 ```
 
-Notes: The request returns the updated record. It is not standard but it saves the UI a subsequent call.
+Note: The request returns the updated record, saving a round-trip.
 
 #### Deletion
 
@@ -418,19 +402,19 @@ DELETE /todo/5,7,12
 ```
 
 <a name="API_Extras"></a>
-### Extras endpoints
+### Extra endpoints
 
-In addition to CRUD, Evolutility-Server-Node provides a few endpoints for Charts, Lists of values, file upload, and API discovery.
+In addition to CRUD, Evolutility-Server-Node provides endpoints for charts, lists of values, file upload, and API discovery.
 
 #### Discovery
 
-Returns the list of all active objects with urls to their REST end-points.
+Returns the list of all active objects with URLs to their REST endpoints.
 
 ```
 GET /
 ```
 
-It is also possible to get a more detailed list of REST end-points for a specific model.
+It is also possible to get a more detailed list of REST endpoints for a specific model.
 
 ```
 GET /?id={model.id}
@@ -440,15 +424,15 @@ GET /?id=contact
 
 ```
 
-Note: These end-point must be enabled in the configuration with { apiInfo: true }.
+Note: These endpoints must be enabled in the configuration with `{ apiInfo: true }`.
 
 <a name="API_Charts"></a>
 #### Charts
 
-For charts data, it is possible to get aggregated data for field of types lov, boolean, integer, decimal, and money. Use the attribute "noCharts" to exclude a field from Charts.
+Returns aggregated data for fields of type `lov`, `boolean`, `integer`, `decimal`, and `money`. Use `noCharts: true` on a field to exclude it from charts.
 
 ```
-GET /{model.id}/chart/{field id}
+GET /{model.id}/chart/{field.id}
 
 GET /todo/chart/category
 ```
@@ -476,7 +460,7 @@ GET /todo/lov/category?search=pro
 
 #### File upload
 
-This endpoint lets you upload a file. The current (naive) implementation simply saves the file on the file server in a folder named like the model id (inside the folder specified by the option "uploadPath" in config.js).
+Uploads a file to the server filesystem, in a subfolder named after the model id inside the directory specified by `uploadPath` in config.js.
 
 ```
 POST /{model.id}/upload/{id}
@@ -488,7 +472,7 @@ With query parameters: file and "field.id".
 
 #### Nested collections
 
-If the model has collections defined, they can be queried with this end-point.
+If the model has collections defined, they can be queried with this endpoint.
 
 ```
 GET /{model.id}/collec/{collection.id}?id={id}
@@ -496,7 +480,7 @@ GET /{model.id}/collec/{collection.id}?id={id}
 GET /winecellar/collec/wine_tasting?id=1
 ```
 
-<a name="Models"></a>
+<a name="API_Models"></a>
 #### Models
 
 When storing models in evol_object and evol_field tables, they can be queried through REST.
@@ -515,11 +499,11 @@ GET /meta/model/{modelid}
 GET /meta/model/1
 ```
 
-Note: Schema and Models end-points must be enabled in the configuration with { apiDesigner: true }.
+Note: These endpoints must be enabled in the configuration with `{ apiDesigner: true }`.
 
 #### Schema tables and columns
 
-These endpoints query for the database structure (rather than the data), and returns lists of tables and columns.
+These endpoints query the database structure (rather than the data) and return lists of tables and columns.
 
 List of schema tables (props: table, type, readOnly).
 
@@ -536,11 +520,11 @@ GET /db/contact/columns
 GET /db/task/columns
 ```
 
-Note: These end-point must be enabled in the configuration with { schemaQueries: true }.
+Note: These endpoints must be enabled in the configuration with `{ schemaQueries: true }`.
 
 #### API version
 
-This endpoint gets the API version (as specified in the project's package.json file).
+Returns the API version from package.json.
 
 ```
 GET /version
