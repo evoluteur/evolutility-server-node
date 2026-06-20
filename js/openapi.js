@@ -64,8 +64,16 @@ function modelToSchema(m) {
   }
 
   if (config.wTimestamp) {
-    properties[config.createdDateColumn] = { type: "string", format: "date-time", readOnly: true };
-    properties[config.updatedDateColumn] = { type: "string", format: "date-time", readOnly: true };
+    properties[config.createdDateColumn] = {
+      type: "string",
+      format: "date-time",
+      readOnly: true,
+    };
+    properties[config.updatedDateColumn] = {
+      type: "string",
+      format: "date-time",
+      readOnly: true,
+    };
   }
 
   const schema = { type: "object", properties };
@@ -84,22 +92,64 @@ const idParam = {
 };
 
 const listQueryParams = [
-  { name: "page",     in: "query", schema: { type: "integer", minimum: 0, default: 0 }, description: "Page number (0-based)" },
-  { name: "pageSize", in: "query", schema: { type: "integer" }, description: "Records per page" },
-  { name: "order",    in: "query", schema: { type: "string" },  description: 'Sort field and direction, e.g. "title.asc"' },
-  { name: "search",   in: "query", schema: { type: "string" },  description: "Full-text search across searchable fields" },
-  { name: "format",   in: "query", schema: { type: "string", enum: ["json", "csv"] }, description: "Response format" },
+  {
+    name: "page",
+    in: "query",
+    schema: { type: "integer", minimum: 0, default: 0 },
+    description: "Page number (0-based)",
+  },
+  {
+    name: "pageSize",
+    in: "query",
+    schema: { type: "integer" },
+    description: "Records per page",
+  },
+  {
+    name: "order",
+    in: "query",
+    schema: { type: "string" },
+    description: 'Sort field and direction, e.g. "title.asc"',
+  },
+  {
+    name: "search",
+    in: "query",
+    schema: { type: "string" },
+    description: "Full-text search across searchable fields",
+  },
+  {
+    name: "format",
+    in: "query",
+    schema: { type: "string", enum: ["json", "csv"] },
+    description: "Response format",
+  },
 ];
 
-const jsonRef = (modelId) => ({ "application/json": { schema: { $ref: `#/components/schemas/${modelId}` } } });
-const jsonArr  = (modelId) => ({ "application/json": { schema: { type: "array", items: { $ref: `#/components/schemas/${modelId}` } } } });
-const errRef   = () => ({ "application/json": { schema: { $ref: "#/components/schemas/Error" } } });
+const jsonRef = (modelId) => ({
+  "application/json": { schema: { $ref: `#/components/schemas/${modelId}` } },
+});
+const jsonArr = (modelId) => ({
+  "application/json": {
+    schema: {
+      type: "array",
+      items: { $ref: `#/components/schemas/${modelId}` },
+    },
+  },
+});
+const errRef = () => ({
+  "application/json": { schema: { $ref: "#/components/schemas/Error" } },
+});
 
 const listResponse = (modelId) => ({
   description: "List of records",
   headers: {
-    _count:      { schema: { type: "integer" }, description: "Records in this page" },
-    _full_count: { schema: { type: "integer" }, description: "Total matching records" },
+    _count: {
+      schema: { type: "integer" },
+      description: "Records in this page",
+    },
+    _full_count: {
+      schema: { type: "integer" },
+      description: "Total matching records",
+    },
   },
   content: jsonArr(modelId),
 });
@@ -108,14 +158,15 @@ const listResponse = (modelId) => ({
 
 function modelToPaths(m, apiBase) {
   const base = `${apiBase}${m.id}`;
-  const tag  = m.title || m.id;
-  const ref  = `#/components/schemas/${m.id}`;
+  const tag = m.title || m.id;
+  const { name = tag, namePlural = tag } = m;
+  // const ref = `#/components/schemas/${m.id}`;
   const paths = {};
 
   // GET list / POST create
   paths[`/${base}`] = {
     get: {
-      summary: `List ${tag}`,
+      summary: `List ${namePlural}`,
       operationId: `list_${m.id}`,
       tags: [tag],
       parameters: listQueryParams,
@@ -125,13 +176,13 @@ function modelToPaths(m, apiBase) {
       },
     },
     post: {
-      summary: `Create ${tag}`,
+      summary: `Create ${name}`,
       operationId: `create_${m.id}`,
       tags: [tag],
       requestBody: { required: true, content: jsonRef(m.id) },
       responses: {
         200: { description: "Created record", content: jsonRef(m.id) },
-        400: { description: "Bad request",    content: errRef() },
+        400: { description: "Bad request", content: errRef() },
         404: { description: "Model not found", content: errRef() },
       },
     },
@@ -140,51 +191,63 @@ function modelToPaths(m, apiBase) {
   // GET one / PATCH / PUT / DELETE
   paths[`/${base}/{id}`] = {
     get: {
-      summary: `Get ${tag}`,
+      summary: `Get ${name}`,
       operationId: `get_${m.id}`,
       tags: [tag],
       parameters: [
         idParam,
-        { name: "shallow", in: "query", schema: { type: "boolean" }, description: "Omit sub-collections" },
+        {
+          name: "shallow",
+          in: "query",
+          schema: { type: "boolean" },
+          description: "Omit sub-collections",
+        },
       ],
       responses: {
-        200: { description: "Record",      content: jsonRef(m.id) },
-        404: { description: "Not found",   content: errRef() },
+        200: { description: "Record", content: jsonRef(m.id) },
+        404: { description: "Not found", content: errRef() },
       },
     },
     patch: {
-      summary: `Update ${tag}`,
+      summary: `Update ${name}`,
       operationId: `update_${m.id}`,
       tags: [tag],
       parameters: [idParam],
       requestBody: { required: true, content: jsonRef(m.id) },
       responses: {
         200: { description: "Updated record", content: jsonRef(m.id) },
-        400: { description: "Bad request",    content: errRef() },
-        404: { description: "Not found",      content: errRef() },
+        400: { description: "Bad request", content: errRef() },
+        404: { description: "Not found", content: errRef() },
       },
     },
     put: {
-      summary: `Replace ${tag}`,
+      summary: `Replace ${name}`,
       operationId: `replace_${m.id}`,
       tags: [tag],
       parameters: [idParam],
       requestBody: { required: true, content: jsonRef(m.id) },
       responses: {
         200: { description: "Updated record", content: jsonRef(m.id) },
-        400: { description: "Bad request",    content: errRef() },
-        404: { description: "Not found",      content: errRef() },
+        400: { description: "Bad request", content: errRef() },
+        404: { description: "Not found", content: errRef() },
       },
     },
     delete: {
-      summary: `Delete ${tag}`,
+      summary: `Delete ${name}`,
       operationId: `delete_${m.id}`,
       tags: [tag],
       parameters: [idParam],
       responses: {
         200: {
           description: "Deleted record ID",
-          content: { "application/json": { schema: { type: "object", properties: { id: { type: "integer" } } } } },
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: { id: { type: "integer" } },
+              },
+            },
+          },
         },
         404: { description: "Not found", content: errRef() },
       },
@@ -195,11 +258,14 @@ function modelToPaths(m, apiBase) {
   if (!m.noStats) {
     paths[`/${base}/stats`] = {
       get: {
-        summary: `Stats for ${tag}`,
+        summary: `Stats for ${namePlural}`,
         operationId: `stats_${m.id}`,
         tags: [tag],
         responses: {
-          200: { description: "Field-level statistics (min, max, avg, count per value)" },
+          200: {
+            description:
+              "Field-level statistics (min, max, avg, count per value)",
+          },
           404: { description: "Model not found", content: errRef() },
         },
       },
@@ -211,11 +277,17 @@ function modelToPaths(m, apiBase) {
   if (chartFields.length) {
     paths[`/${base}/chart/{field}`] = {
       get: {
-        summary: `Chart data for ${tag}`,
+        summary: `Chart data for ${namePlural}`,
         operationId: `chart_${m.id}`,
         tags: [tag],
         parameters: [
-          { name: "field", in: "path", required: true, schema: { type: "string", enum: chartFields.map((f) => f.id) }, description: "Field to chart" },
+          {
+            name: "field",
+            in: "path",
+            required: true,
+            schema: { type: "string", enum: chartFields.map((f) => f.id) },
+            description: "Field to chart",
+          },
         ],
         responses: {
           200: { description: "Array of { label, value } counts" },
@@ -229,12 +301,22 @@ function modelToPaths(m, apiBase) {
   if (lovFields.length) {
     paths[`/${base}/lov/{field}`] = {
       get: {
-        summary: `List-of-values for ${tag}`,
+        summary: `List-of-values for ${namePlural}`,
         operationId: `lov_${m.id}`,
         tags: [tag],
         parameters: [
-          { name: "field",  in: "path",  required: true, schema: { type: "string", enum: lovFields.map((f) => f.id) } },
-          { name: "search", in: "query", schema: { type: "string" }, description: "Filter by text" },
+          {
+            name: "field",
+            in: "path",
+            required: true,
+            schema: { type: "string", enum: lovFields.map((f) => f.id) },
+          },
+          {
+            name: "search",
+            in: "query",
+            schema: { type: "string" },
+            description: "Filter by text",
+          },
         ],
         responses: {
           200: {
@@ -243,7 +325,13 @@ function modelToPaths(m, apiBase) {
               "application/json": {
                 schema: {
                   type: "array",
-                  items: { type: "object", properties: { id: { type: "integer" }, text: { type: "string" } } },
+                  items: {
+                    type: "object",
+                    properties: {
+                      id: { type: "integer" },
+                      text: { type: "string" },
+                    },
+                  },
                 },
               },
             },
@@ -257,12 +345,23 @@ function modelToPaths(m, apiBase) {
   if (m.collections?.length) {
     paths[`/${base}/collec/{collec}`] = {
       get: {
-        summary: `Sub-collection for ${tag}`,
+        summary: `Sub-collection for ${namePlural}`,
         operationId: `collec_${m.id}`,
         tags: [tag],
         parameters: [
-          { name: "collec", in: "path",  required: true, schema: { type: "string", enum: m.collections.map((c) => c.id) } },
-          { name: "id",     in: "query", required: true, schema: { type: "integer" }, description: "Parent record ID" },
+          {
+            name: "collec",
+            in: "path",
+            required: true,
+            schema: { type: "string", enum: m.collections.map((c) => c.id) },
+          },
+          {
+            name: "id",
+            in: "query",
+            required: true,
+            schema: { type: "integer" },
+            description: "Parent record ID",
+          },
         ],
         responses: {
           200: { description: "Sub-collection records" },
@@ -301,7 +400,12 @@ export function generateSpec(req) {
       version: pkg.version,
       description: pkg.description,
     },
-    servers: [{ url: `${req.protocol}://${req.headers.host}`, description: "Current server" }],
+    servers: [
+      {
+        url: `${req.protocol}://${req.headers.host}`,
+        description: "Current server",
+      },
+    ],
     tags: activeModels.map((m) => ({
       name: m.title || m.id,
       ...(m.world && { description: `World: ${m.world}` }),
