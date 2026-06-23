@@ -1,14 +1,14 @@
 # Evolutility-Server-Node &middot; [![GitHub license](https://img.shields.io/github/license/evoluteur/evolutility-server-node)](https://github.com/evoluteur/evolutility-server-node/blob/master/LICENSE.md) [![npm version](https://img.shields.io/npm/v/evolutility-server-node)](https://www.npmjs.com/package/evolutility-server-node)
 
-**Framework for building CRUD API endpoints with models rather than code**
+**Framework for building REST endpoints for CRUD with models rather than code**
 
-Evolutility-Server-Node provides a set of generic model-driven [REST APIs](#API) for CRUD (Create, Read, Update, Delete) and simple charts on objects of different structures.
+Evolutility-Server-Node provides a set of generic model-driven [REST endpoints](#API) for CRUD (Create, Read, Update, Delete) and simple charts on objects of different structures.
 
 ![screenshot](https://raw.githubusercontent.com/evoluteur/evolutility-server-node/master/screenshot.png)
 
 Stack: Node.js, Express, and PostgreSQL.
 
-For a matching model-driven Web UI, use [Evolutility-UI-React](http://github.com/evoluteur/evolutility-ui-react) or [Evolutility-UI-jQuery](http://evoluteur.github.io/evolutility-ui-jquery/).
+For a matching model-driven Web UI, use [Evolutility-UI-React](http://github.com/evoluteur/evolutility-ui-react).
 
 ## Table of Contents
 
@@ -17,8 +17,8 @@ For a matching model-driven Web UI, use [Evolutility-UI-React](http://github.com
 3. [Configuration](#Configuration)
 4. [Models](#Models): [Object](#Object) - [Field](#Field) - [Collection](#Collection) - [Sample model](#SampleModel)
 5. [REST API](#API): [Get](#API_Get) - [Update](#API_Update) - [Charts](#API_Charts) - [More](#API_Extras)
-6. [Rate Limiting](#RateLimit)
-7. [API Documentation](#APIDocs)
+6. [API Documentation](#APIDocs)
+7. [Rate Limiting](#RateLimit)
 8. [License](#License)
 
 <a name="Installation"></a>
@@ -533,6 +533,29 @@ Returns the API version from package.json.
 GET /version
 ```
 
+<a name="APIDocs"></a>
+## API Documentation
+
+Evolutility-Server-Node automatically generates an [OpenAPI 3.1](https://swagger.io/specification/) specification from the loaded models — no manual authoring required. Every field type, required constraint, and endpoint is derived directly from the model definitions.
+
+#### OpenAPI spec
+
+Returns the full OpenAPI 3.1 spec as JSON, reflecting all currently active models.
+
+```
+GET /api/v1/openapi.json
+```
+
+#### Swagger UI
+
+An interactive API explorer is served as a static page at: [http://localhost:2000/api/v1/](http://localhost:2000/api-docs.html)
+
+It loads [Swagger UI](https://swagger.io/tools/swagger-ui/) and points it at `/api/v1/openapi.json`. Every model gets its own tag grouping CRUD, stats, charts, list-of-values, and sub-collection endpoints. The spec and the UI stay in sync with the models automatically — adding or modifying a model is immediately reflected.
+
+![screenshot](./screenshot-swagger.png)
+
+The spec can also be imported directly into [Postman](https://www.postman.com/), [Insomnia](https://insomnia.rest/), or any OpenAPI-compatible client or code generator.
+
 <a name="RateLimit"></a>
 ## Rate Limiting
 
@@ -554,34 +577,11 @@ trustProxy: true,   // enable when behind nginx, Heroku, etc.
 
 Only enable `trustProxy` if you actually control the proxy and trust it to set `X-Forwarded-For` correctly — enabling it on a directly internet-facing server would allow clients to spoof their IP and bypass the limiter.
 
-<a name="APIDocs"></a>
-## API Documentation
-
-Evolutility-Server-Node automatically generates an [OpenAPI 3.1](https://swagger.io/specification/) specification from the loaded models — no manual authoring required. Every field type, required constraint, and endpoint is derived directly from the model definitions.
-
-#### OpenAPI spec
-
-Returns the full OpenAPI 3.1 spec as JSON, reflecting all currently active models.
-
-```
-GET /api/v1/openapi.json
-```
-
-#### Swagger UI
-
-An interactive API explorer is served as a static page at:
-
-```
-http://localhost:2000/api-docs.html
-```
-
-It loads [Swagger UI](https://swagger.io/tools/swagger-ui/) and points it at `/api/v1/openapi.json`. Every model gets its own tag grouping CRUD, stats, charts, list-of-values, and sub-collection endpoints. The spec and the UI stay in sync with the models automatically — adding or modifying a model is immediately reflected.
-
-The spec can also be imported directly into [Postman](https://www.postman.com/), [Insomnia](https://insomnia.rest/), or any OpenAPI-compatible client or code generator.
 
 <a name="License"></a>
 ## License
 
-Copyright (c) 2026 [Olivier Giulieri](https://evoluteur.github.io/).
 
 Evolutility-Server-Node is released under the [AGPLv3 license](http://github.com/evoluteur/evolutility-server-node/blob/master/LICENSE.md).
+
+Copyright (c) 2026 [Olivier Giulieri](https://evoluteur.github.io/).
