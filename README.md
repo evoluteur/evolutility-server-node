@@ -250,7 +250,7 @@ GET /{model.id}/{id}
 GET /todo/12
 ```
 
-By default this endpoint returns nested collections with the record. For optimization, collections can be omitted by using the parameter "shallow".
+By default this endpoint returns nested collections with the record. To reduce response size, collections can be omitted by using the parameter "shallow".
 
 ```
 GET /{model.id}/{id}?shallow=1
@@ -548,11 +548,13 @@ GET /api/v1/openapi.json
 
 #### Swagger UI
 
-An interactive API explorer is served as a static page at: [http://localhost:2000/api/v1/](http://localhost:2000/api-docs.html)
+An interactive API explorer is served as a static page at: [http://localhost:2000/api-docs.html](http://localhost:2000/api-docs.html)
 
 It loads [Swagger UI](https://swagger.io/tools/swagger-ui/) and points it at `/api/v1/openapi.json`. Every model gets its own tag grouping CRUD, stats, charts, list-of-values, and sub-collection endpoints. The spec and the UI stay in sync with the models automatically — adding or modifying a model is immediately reflected.
 
 ![screenshot](./screenshot-swagger.png)
+
+![screenshot](./screenshot-swagger-try.png)
 
 The spec can also be imported directly into [Postman](https://www.postman.com/), [Insomnia](https://insomnia.rest/), or any OpenAPI-compatible client or code generator.
 
