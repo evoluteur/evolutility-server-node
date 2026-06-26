@@ -1,6 +1,7 @@
-import logger from "./logger.js";
+import type { Response } from "express";
+import logger from "./logger.ts";
 
-export function badRequest(res, msg, errorCode = 400) {
+export function badRequest(res: Response, msg?: string, errorCode = 400) {
   const errorMsg = msg || "Bad request";
 
   logger.logError(msg);

@@ -6,7 +6,7 @@ Evolutility-Server-Node provides a set of generic model-driven [REST endpoints](
 
 ![screenshot](https://raw.githubusercontent.com/evoluteur/evolutility-server-node/master/screenshot.png)
 
-Stack: Node.js, Express, and PostgreSQL.
+Stack: TypeScript with Node.js, Express, and PostgreSQL.
 
 For a matching model-driven Web UI, use [Evolutility-UI-React](http://github.com/evoluteur/evolutility-ui-react).
 

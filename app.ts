@@ -14,13 +14,17 @@
 * (c) 2026 Olivier Giulieri
 */
 
-import express from "express";
+import express, {
+  type Request,
+  type Response,
+  type NextFunction,
+} from "express";
 import path from "path";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
-import routes from "./js/routes.js";
-import logger from "./js/utils/logger.js";
-import config from "./config.js";
+import routes from "./scripts/routes.ts";
+import logger from "./scripts/utils/logger.ts";
+import config from "./config.ts";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 
@@ -40,7 +44,7 @@ if (config.rateLimit) {
       limit: config.rateLimit,
       standardHeaders: "draft-8",
       legacyHeaders: false,
-    })
+    }),
   );
 }
 
@@ -49,13 +53,13 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc:  ["'self'", "https://unpkg.com"],
-        styleSrc:   ["'self'", "https://unpkg.com"],
-        imgSrc:     ["'self'", "data:", "https://unpkg.com"],
+        scriptSrc: ["'self'", "https://unpkg.com"],
+        styleSrc: ["'self'", "https://unpkg.com"],
+        imgSrc: ["'self'", "data:", "https://unpkg.com"],
         connectSrc: ["'self'", "https://unpkg.com"],
       },
     },
-  })
+  }),
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -63,14 +67,13 @@ app.use(express.static(path.join(__dirname, "./client", "public")));
 
 // - prevent denial of cross origin requests
 // TODO: REMOVE IF UNNECESSARY
-app.use(function (req, res, next) {
+app.use(function (req: Request, res: Response, next: NextFunction) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept",
   );
-  //res.header("Access-Control-Request-Headers", "X-Requested-With,Access-Control-Request-Method,Access-Control-Request-Headers, accept, Content-Type");
   next();
 });
 
@@ -78,11 +81,20 @@ app.use(function (req, res, next) {
 app.use("/", routes);
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use(function (
+  err: unknown,
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   logger.logError(err);
-  res.status(err.status || 500).json({
+  res.status((err as { status?: number }).status || 500).json({
     error:
-      app.get("env") === "development" ? err.message : "Internal server error",
+      app.get("env") === "development"
+        ? err instanceof Error
+          ? err.message
+          : String(err)
+        : "Internal server error",
   });
 });
 

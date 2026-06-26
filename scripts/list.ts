@@ -1,18 +1,20 @@
 /*!
- * evolutility-server-node :: list.js
+ * evolutility-server-node :: list.ts
  * Get list of items w/ filtering, and search...
  *
  * https://github.com/evoluteur/evolutility-server-node
  * (c) 2026 Olivier Giulieri
  */
 
-import dico, { fieldTypes as ft } from "./utils/dico.js";
-import { getModel } from "./utils/model-manager.js";
-import sqls from "./utils/sql-select.js";
-import { runQuery } from "./utils/query.js";
-import { badRequest } from "./utils/errors.js";
-import logger from "./utils/logger.js";
-import config from "../config.js";
+import type { Request, Response } from "express";
+import dico, { fieldTypes as ft } from "./utils/dico.ts";
+import { getModel } from "./utils/model-manager.ts";
+import sqls from "./utils/sql-select.ts";
+import { runQuery } from "./utils/query.ts";
+import { badRequest } from "./utils/errors.ts";
+import logger from "./utils/logger.ts";
+import config from "../config.ts";
+import type { Field, Model } from "../models/types.ts";
 
 const schema = '"' + (config.schema || "evolutility") + '"',
   defaultPageSize = config.pageSize || 50;
@@ -20,10 +22,10 @@ const schema = '"' + (config.schema || "evolutility") + '"',
 // - build the header row for CSV export
 const csvHeaderColumn = config.csvHeader || "label";
 
-const fieldId = (f) => (csvHeaderColumn === "label" ? f.label || f.id : f.id);
-const searchParam = (search) =>
+const fieldId = (f: Field) => (csvHeaderColumn === "label" ? f.label || f.id : f.id);
+const searchParam = (search: string) =>
   search ? "%" + search.replace(/%/g, "%") + "%" : "%";
-const sqlOperators = {
+const sqlOperators: Record<string, string> = {
   eq: "=",
   ne: "<>",
   gt: ">",
@@ -40,8 +42,8 @@ const sqlOperators = {
   nn: " IS ",
 };
 
-function csvHeader(fields) {
-  let h = { id: "ID" };
+function csvHeader(fields: Field[]) {
+  const h: Record<string, string> = { id: "ID" };
 
   fields.forEach((f) => {
     if (f.type === ft.lov) {
@@ -59,10 +61,13 @@ function csvHeader(fields) {
 // --------------------------------------------------------------------------------------
 
 // - returns SQL for query returning a set of records
-function SQLgetMany(m, req, isCSV, wCount) {
-  const pKey = m.pKey;
-  let sqlParams = [];
-  let fs;
+function SQLgetMany(m: Model, req: Request, isCSV: boolean, wCount: boolean) {
+  const pKey = m.pKey!;
+  let sqlParams: unknown[] = [];
+  let fs: Field[];
+
+  // Use typed query params for easier access
+  const query = req.query as Record<string, string | undefined>;
 
   if (isCSV) {
     // - get all fields for CSV download
@@ -87,17 +92,18 @@ function SQLgetMany(m, req, isCSV, wCount) {
   const sqlFrom = m.schemaTable + " AS t1" + sqls.sqlFromLOVs(fs, schema);
 
   // ---- FILTERING
-  let sqlWs = [];
-  for (let n in req.query) {
-    if (req.query[n] && req.query[n] !== "") {
-      const f = n === pKey ? { column: pKey } : m.fieldsH[n];
+  const sqlWs: string[] = [];
+  for (const n in query) {
+    const qVal = query[n];
+    if (qVal && qVal !== "") {
+      const f = n === pKey ? ({ column: pKey } as Field) : m.fieldsH![n as string];
       if (
         f &&
         ["select", "filter", "search", "order", "page", "pageSize"].indexOf(
-          f.column,
+          f.column!,
         ) < 0
       ) {
-        const cs = req.query[n].split(".");
+        const cs = qVal.split(".");
         if (cs.length) {
           const cond = cs[0];
           if (sqlOperators[cond]) {
@@ -161,7 +167,6 @@ function SQLgetMany(m, req, isCSV, wCount) {
               } else {
                 if (cond === "nct") {
                   // not contains
-                  //TODO replace % in cs[1]
                   sqlParams.push(`%${cs[1]}%`);
                   sqlWs.push(` NOT ${w}$${sqlParams.length}`);
                 } else {
@@ -190,20 +195,19 @@ function SQLgetMany(m, req, isCSV, wCount) {
   }
 
   // ---- SEARCHING
-  if (req.query.search) {
+  if (query.search) {
     // TODO: use FTS
     if (!m.searchFields) {
       console.error("No searchFields are specified in model.");
     } else {
-      var sqlWsSearch = [];
+      const sqlWsSearch: string[] = [];
       const sqlP = '"' + sqlOperators.ct + "$" + (sqlParams.length + 1);
       m.searchFields.forEach(function (fid) {
-        sqlWsSearch.push('t1."' + m.fieldsH[fid].column + sqlP);
+        sqlWsSearch.push('t1."' + m.fieldsH![fid].column + sqlP);
       });
       if (sqlWsSearch.length) {
-        sqlParams.push(searchParam(req.query.search));
+        sqlParams.push(searchParam(query.search));
         sqlWs.push("(" + sqlWsSearch.join(" OR ") + ")");
-        //logger.logObject('search fields', m.searchFields);
       }
     }
   }
@@ -220,12 +224,12 @@ function SQLgetMany(m, req, isCSV, wCount) {
 
   // ---- ORDERING
   let sqlOrder = "";
-  const qOrder = req.query ? req.query.order : null;
+  const qOrder = query.order || null;
   if (qOrder) {
     if (qOrder.indexOf(",") > -1) {
-      var qOs = qOrder.split(",");
+      const qOs = qOrder.split(",");
       if (qOs) {
-        sqlOrder += qOs.map(qOs, (qo) => sqls.sqlOrderFields(m, qo)).join(",");
+        sqlOrder += qOs.map((qo) => sqls.sqlOrderFields(m, qo)).join(",");
       }
     } else {
       sqlOrder += sqls.sqlOrderFields(m, qOrder);
@@ -236,13 +240,13 @@ function SQLgetMany(m, req, isCSV, wCount) {
 
   // ---- SIZE & PAGINATION
   let offset = 0,
-    qPage = req.query.page || 0,
-    qPageSize;
+    qPage = parseInt(query.page || "0", 10) || 0,
+    qPageSize: number;
 
-  if (req.query.format === "csv") {
+  if (query.format === "csv") {
     qPageSize = config.csvSize || 1000;
   } else {
-    qPageSize = parseInt(req.query.pageSize || defaultPageSize, 10);
+    qPageSize = parseInt(query.pageSize || String(defaultPageSize), 10);
     if (qPage) {
       offset = qPage * qPageSize;
     }
@@ -262,13 +266,13 @@ function SQLgetMany(m, req, isCSV, wCount) {
 
 // - returns a set of records (filtered and sorted)
 // - sample url: http://localhost:3000/api/v1/todo?category=eq.3&order=title.asc&pageSize=50
-export const getMany = async (req, res) => {
+export const getMany = async (req: Request, res: Response) => {
   logger.logReq("GET MANY", req);
-  const mid = req.params.entity,
+  const mid = req.params.entity as string,
     m = getModel(mid);
 
   if (m) {
-    const format = req.query.format || null,
+    const format = (req.query.format as string) || null,
       isCSV = format === "csv",
       sq = SQLgetMany(m, req, isCSV, !isCSV),
       sql = sqls.sqlQuery(sq);

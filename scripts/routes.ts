@@ -1,23 +1,23 @@
 /*!
- * evolutility-server-node :: routes.js
+ * evolutility-server-node :: routes.ts
  *
  * https://github.com/evoluteur/evolutility-server-node
  * (c) 2026 Olivier Giulieri
  */
 
 import express from "express";
-import logger from "./utils/logger.js";
-import { uploadOne } from "./utils/upload.js";
-import config from "../config.js";
-import crud from "./crud.js";
-import { getMany } from "./list.js";
-import { lovOne } from "./lov.js";
-import { getStats } from "./stats.js";
-import { getChart } from "./charts.js";
-import { getAPIs, getVersion } from "./info.js";
-import { getOpenAPISpec } from "./openapi.js";
-import designer from "./designer.js";
-import dbStructure from "./utils/db-structure.js";
+import logger from "./utils/logger.ts";
+import { uploadOne } from "./utils/upload.ts";
+import config from "../config.ts";
+import crud from "./crud.ts";
+import { getMany } from "./list.ts";
+import { lovOne } from "./lov.ts";
+import { getStats } from "./stats.ts";
+import { getChart } from "./charts.ts";
+import { getAPIs, getVersion } from "./info.ts";
+import { getOpenAPISpec } from "./openapi.ts";
+import designer from "./designer.ts";
+import dbStructure from "./utils/db-structure.ts";
 
 const apiPath = config.apiPath;
 const router = express.Router();
@@ -61,13 +61,6 @@ router.get(apiPath + ":entity/lov/:field", lovOne);
 
 // #region ===== GET CHARTS ====================================
 router.get(apiPath + ":entity/chart/:field", getChart);
-
-/*// #endregion
-
-// #region ===== file server ====================================
-router.get('/', function(req, res, next) {
-  res.sendFile(path.join(__dirname, '../', '../', 'index.html'));
-}); */
 // #endregion
 
 // #region ===== APIs DISCOVERY ====================================

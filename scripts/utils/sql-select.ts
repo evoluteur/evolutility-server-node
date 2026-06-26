@@ -1,21 +1,24 @@
 /*!
- * evolutility-server-node :: utils/sql-select.js
+ * evolutility-server-node :: utils/sql-select.ts
  *
  * https://github.com/evoluteur/evolutility-server-node
  * (c) 2026 Olivier Giulieri
  */
 
-import { fieldIsNumber, fieldTypes as ft } from "./dico.js";
-import config from "../../config.js";
+import { fieldIsNumber, fieldTypes as ft } from "./dico.ts";
+import config from "../../config.ts";
+import type { Field, Model, Collection } from "../../models/types.ts";
+import type { Request } from "express";
+
 const defaultPageSize = config.pageSize || 50;
 
 // - SQL for a single field/column in update/create/order
 const columnName = {
-  update: (f, idx) => `"${f.column}"=$${idx}`,
+  update: (f: Field, idx: number) => `"${f.column}"=$${idx}`,
 
-  insert: (f) => f.column,
+  insert: (f: Field) => f.column,
 
-  order: (f) => {
+  order: (f: Field) => {
     // - generate sql ORDER BY clause (for 1 field)
     if (f) {
       if (f.type === ft.lov && f.lovTable) {
@@ -36,7 +39,15 @@ const columnName = {
 };
 
 // - concatenate SQL query
-function sqlQuery(q) {
+function sqlQuery(q: {
+  select: string;
+  from: string;
+  where: string[];
+  group?: string;
+  order?: string;
+  limit?: number;
+  offset?: number;
+}) {
   let sql = "SELECT " + q.select + " FROM " + q.from;
   if (q.where.length) {
     sql += " WHERE " + q.where.join(" AND ");
@@ -49,15 +60,15 @@ function sqlQuery(q) {
   }
   sql += " LIMIT " + (q.limit || defaultPageSize);
   if (q.offset) {
-    sql += " OFFSET " + parseInt(q.offset, 10);
+    sql += " OFFSET " + parseInt(String(q.offset), 10);
   }
   return sql;
 }
 
 // - returns the SELECT clause for SQL queries
-function select(fields, collecs, table, action) {
-  var sqlfs = [],
-    tQuote = table ? 't1."' : '"';
+function select(fields: Field[], collecs: Collection[] | false | null | undefined, table: boolean | string | null, action?: string) {
+  const sqlfs: string[] = [];
+  const tQuote = table ? 't1."' : '"';
 
   if (fields) {
     fields.forEach(function (f) {
@@ -75,10 +86,6 @@ function select(fields, collecs, table, action) {
       let sql = tQuote + f.column + '"';
       if (f.type === ft.money) {
         sql += "::numeric::float8";
-        /*}else if(f.type===ft.int){
-					sql += '::integer'
-				}else if(f.type===ft.dec){
-					sql += '::float8'*/
       }
       if (f.column && f.id != f.column) {
         sql += ` AS "${f.id}"`;
@@ -86,23 +93,17 @@ function select(fields, collecs, table, action) {
       sqlfs.push(sql);
     });
   }
-  /*
-		if(collecs){
-			sqlfs=sqlfs.concat(collecs.map(function(c){
-				return tQuote+(c.column||c.id)+'"';
-			}));
-		}*/
   return sqlfs.join(",");
 }
 
 // - returns lists of names, values, invalids (for Insert or Update)
-function namedValues(m, req, action) {
-  var fnName = columnName[action],
-    ns = [],
-    vs = [],
-    invalids = [];
+function namedValues(m: Model, req: Request, action: string) {
+  const fnName = columnName[action as keyof typeof columnName] as (f: Field, idx: number) => string | undefined;
+  const ns: (string | undefined)[] = [];
+  const vs: unknown[] = [];
+  const invalids: { id: string; value: unknown; condition: string }[] = [];
 
-  function addInvalid(fid, value, condition) {
+  function addInvalid(fid: string, value: unknown, condition: string) {
     invalids.push({
       id: fid,
       value: value,
@@ -112,7 +113,7 @@ function namedValues(m, req, action) {
 
   m.fields.forEach(function (f) {
     if (f.column != "id" && f.type != "formula" && !f.readOnly) {
-      var fv = req.body[f.id];
+      let fv: unknown = (req.body as Record<string, unknown>)[f.id];
       if (fv !== null && fv !== undefined) {
         const isNum = fieldIsNumber(f);
         if (fv === "" && isNum) {
@@ -128,25 +129,25 @@ function namedValues(m, req, action) {
             break;
           case ft.date:
           case ft.time:
-          case ft.datetime: // TODO: date validation
+          case "datetime": // TODO: date validation
           case ft.lov:
             vs.push(!fv ? null : fv);
             ns.push(fnName(f, vs.length));
             break;
           default:
             if (fieldIsNumber(f)) {
-              if (f.min && fv < f.min) {
+              if (f.min && (fv as number) < f.min) {
                 addInvalid(f.id, fv, "min = " + f.min);
               }
-              if (f.max && fv > f.max) {
+              if (f.max && (fv as number) > f.max) {
                 addInvalid(f.id, fv, "max = " + f.max);
               }
             }
             if (!isNum) {
-              if (f.maxLength && fv.length > f.maxLength) {
+              if (f.maxLength && (fv as string).length > f.maxLength) {
                 addInvalid(f.id, fv, "maxLength = " + f.maxLength);
               }
-              if (f.minLength && fv.length < f.minLength) {
+              if (f.minLength && (fv as string).length < f.minLength) {
                 addInvalid(f.id, fv, "minLength = " + f.minLength);
               }
             }
@@ -160,10 +161,10 @@ function namedValues(m, req, action) {
   });
   if (m.collections) {
     m.collections.forEach(function (f) {
-      var fv = req.body[f.id];
+      const fv = (req.body as Record<string, unknown>)[f.id];
       if (fv != null) {
         vs.push(JSON.stringify(fv));
-        ns.push(fnName(f, vs.length));
+        ns.push(fnName(f as unknown as Field, vs.length));
       }
     });
   }
@@ -175,14 +176,14 @@ function namedValues(m, req, action) {
 }
 
 // - returns sql (obj) ORDER BY clause for many fields
-function sqlOrderFields(m, fullOrder) {
+function sqlOrderFields(m: Model, fullOrder: string) {
   const qos = fullOrder.split(",");
 
   return qos
     .map(function (qo) {
-      var ows = qo.split("."),
-        f = m.fieldsH[ows[0]],
-        col = f ? columnName.order(f) : "id"; // -- sort by id if invalid param
+      const ows = qo.split(".");
+      const f = m.fieldsH![ows[0]];
+      const col = f ? columnName.order(f) : "id"; // -- sort by id if invalid param
 
       if (ows.length === 1) {
         return col;
@@ -194,7 +195,7 @@ function sqlOrderFields(m, fullOrder) {
 }
 
 // - returns SQL list of joined tables for lov fields
-function sqlFromLOVs(fields, schema) {
+function sqlFromLOVs(fields: Field[], schema: string) {
   let sql = "";
 
   fields.forEach(function (f) {

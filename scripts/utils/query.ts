@@ -1,30 +1,26 @@
 /*!
- * evolutility-server-node :: utils/query.js
+ * evolutility-server-node :: utils/query.ts
  *
  * https://github.com/evoluteur/evolutility-server-node
  * (c) 2026 Olivier Giulieri
  */
 
 import pgPromise from "pg-promise";
-import pgConnection from "pg-connection-string";
-import config from "../../config.js";
-import { badRequest } from "./errors.js";
-import logger from "./logger.js";
+import type { Response } from "express";
+import config from "../../config.ts";
+import { badRequest } from "./errors.ts";
+import logger from "./logger.ts";
 
 const pgp = pgPromise();
 
-const dbConfig = pgConnection.parse(config.connectionString);
-dbConfig.max = 10; // max number of clients in the pool
-dbConfig.connectionTimeoutMillis = 60000;
-dbConfig.idleTimeoutMillis = 10000; // max client idle time before being closed
 export const db = { conn: pgp(config.connectionString) };
 
-function sendCSV(res, rows) {
+function sendCSV(res: Response, rows: Record<string, unknown>[] | null) {
   res.setHeader("Content-Type", "text/csv; charset=utf-8");
   res.setHeader("Content-Disposition", "attachment; filename=export.csv");
   if (!rows || !rows.length) return res.end("");
   const keys = Object.keys(rows[0]);
-  const escape = (v) => {
+  const escape = (v: unknown) => {
     const s = v == null ? "" : String(v);
     return s.includes(",") || s.includes('"') || s.includes("\n")
       ? `"${s.replace(/"/g, '""')}"`
@@ -34,14 +30,14 @@ function sendCSV(res, rows) {
   res.end(lines.join("\r\n"));
 }
 
-export function promiseQuery(sql, values, singleRecord) {
+export function promiseQuery(sql: string, values: unknown[] | null, singleRecord: boolean) {
   logger.logSQL(sql);
   return new Promise((resolve, reject) =>
     db.conn[singleRecord ? "one" : "many"](sql, values)
       .then((data) => {
         resolve(data);
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         if (err.message === "No data returned from the query.") {
           resolve(singleRecord ? null : []);
         } else {
@@ -53,25 +49,25 @@ export function promiseQuery(sql, values, singleRecord) {
 
 // - run a query and return the result in request
 export function runQuery(
-  res,
-  sql,
-  values,
-  singleRecord,
-  format,
-  header,
-  fnPrep,
+  res: Response,
+  sql: string,
+  values: unknown[],
+  singleRecord?: boolean,
+  format?: string | null,
+  header?: Record<string, string> | null,
+  fnPrep?: (data: unknown) => unknown,
 ) {
   logger.logSQL(sql);
   // SQL Query > Select Data
   db.conn[singleRecord ? "one" : "many"](sql, values)
-    .then((data) => {
-      const results = data || [];
+    .then((data: unknown) => {
+      const results = (data || []) as Record<string, unknown>[];
       const nbRecords = results ? results.length : 0;
       if (format === "csv") {
         if (nbRecords) {
           if (header) {
             const keys = Object.keys(results[0]);
-            const headerRow = {};
+            const headerRow: Record<string, unknown> = {};
             keys.forEach((key) => (headerRow[key] = header[key] || key));
             results.unshift(headerRow);
           }
@@ -87,8 +83,8 @@ export function runQuery(
         return res.json(results);
       } else {
         res.setHeader("_count", nbRecords);
-        if (nbRecords && results[0]._full_count) {
-          res.setHeader("_full_count", results[0]._full_count);
+        if (nbRecords && (results[0] as Record<string, unknown>)._full_count) {
+          res.setHeader("_full_count", (results[0] as Record<string, unknown>)._full_count as string);
           // Remove artificual "_full_count" prop (used to return the total number of records) from every record.
           // results.forEach(r => {delete r._full_count})
         }
@@ -99,7 +95,7 @@ export function runQuery(
         return res.json(results);
       }
     })
-    .catch((err) => {
+    .catch((err: { code?: number; message: string }) => {
       logger.logError(err);
       if (err.code === 0) {
         if (format === "csv") {

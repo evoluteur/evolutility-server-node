@@ -1,5 +1,5 @@
 /*!
- * evolutility-server-node :: utils/upload.js
+ * evolutility-server-node :: utils/upload.ts
  *
  * https://github.com/evoluteur/evolutility-server-node
  * (c) 2026 Olivier Giulieri
@@ -8,28 +8,30 @@
 import path from "path";
 import formidable from "formidable";
 import fs from "fs";
-import { getModel } from "./model-manager.js";
-import logger from "./logger.js";
-import config from "../../config.js";
+import type { Request, Response } from "express";
+import { getModel } from "./model-manager.ts";
+import logger from "./logger.ts";
+import config from "../../config.ts";
 
 // - save uploaded file to server (no DB involved)
-export function uploadOne(req, res) {
+export function uploadOne(req: Request, res: Response) {
   logger.logReq("UPLOAD ONE", req);
 
-  const m = getModel(req.params.entity);
-  const id = req.params.id;
-  const form = new formidable.IncomingForm();
-  let fname,
-    ffname,
+  const m = getModel(req.params.entity as string);
+  const id = req.params.id as string;
+  const uploadDir = path.join(config.uploadPath, "/" + m!.id);
+  const form = new formidable.IncomingForm({
+    multiples: false,
+    uploadDir,
+  });
+  let fname: string,
+    ffname: string,
     dup = false;
-
-  form.multiples = false;
-  form.uploadDir = path.join(config.uploadPath, "/" + m.id);
 
   form
     .on("file", function (field, file) {
-      fname = file.name;
-      ffname = form.uploadDir + "/" + fname;
+      fname = file.originalFilename || file.newFilename;
+      ffname = uploadDir + "/" + fname;
 
       if (fs.existsSync(ffname)) {
         // - if duplicate name do not overwrite file but postfix name
@@ -47,7 +49,7 @@ export function uploadOne(req, res) {
           'New file name: "' + originalName + '" -> "' + fname + '".',
         );
       }
-      fs.rename(file.path, ffname, function (err) {
+      fs.rename(file.filepath, ffname, function (err) {
         if (err) throw err;
       });
     })
@@ -57,7 +59,7 @@ export function uploadOne(req, res) {
         duplicate: dup,
         fileName: fname,
         id: id,
-        model: m.id,
+        model: m!.id,
       });
     })
     .on("error", function (err) {

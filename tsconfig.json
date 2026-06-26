@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "strictNullChecks": true
+  },
+  "include": [
+    "config.ts",
+    "app.ts",
+    "bin/**/*.ts",
+    "scripts/**/*.ts",
+    "models/types.ts",
+    "models/all_models.ts",
+    "models/designer/**/*.ts",
+    "models/music/**/*.ts",
+    "models/organizer/**/*.ts",
+    "models/tests/**/*.ts"
+  ],
+  "exclude": ["node_modules", "models/data", "scripts/graphql-schema.js"]
+}

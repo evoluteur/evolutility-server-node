@@ -1,5 +1,5 @@
 /*!
- * evolutility :: utils/model-manager.js
+ * evolutility :: utils/model-manager.ts
  * Helper functions for metadata
  *
  * https://github.com/evoluteur/evolutility
@@ -7,16 +7,17 @@
  */
 
 import * as _ms from "../../models/all_models.ts";
-import config from "../../config.js";
-import dico from "./dico.js";
+import config from "../../config.ts";
+import dico from "./dico.ts";
+import type { Model } from "../../models/types.ts";
 
-export const models = { ..._ms };
+export const models = { ..._ms } as unknown as Record<string, Model>;
 
 const schema = `"${config.schema || "evolutility"}"`;
 
 let modelIds = Object.keys(models);
 
-export function prepModel(m) {
+export function prepModel(m: Model): Model | null {
   if (m) {
     if (!m._prepared) {
       // - Model
@@ -32,7 +33,7 @@ export function prepModel(m) {
         }
         if (f.id !== `${m.table}_id`) {
           // TODO: should not need the if
-          m.fieldsH[f.id] = f;
+          m.fieldsH![f.id] = f;
         }
       });
       // - Search
@@ -56,7 +57,7 @@ export function prepModel(m) {
   return null;
 }
 
-function prepModelCollecs(m, models) {
+function prepModelCollecs(m: Model, models: Record<string, Model>): Model | null {
   if (m) {
     m.collecsH = {};
     if (m.collections) {
@@ -72,16 +73,16 @@ function prepModelCollecs(m, models) {
             // - if fields is not specified get it from collec object (fields in list but not the object)
             if (!c.fields) {
               c.fields = collecModel.fields.filter(
-                (f) => f.inMany && !f.object === c.object,
+                (f) => f.inMany && f.object !== c.object,
               );
             }
             // - lookup fields by id
-            const fsh = collecModel.fieldsH;
+            const fsh = collecModel.fieldsH!;
             c.fields.forEach((f, idx) => {
               if (typeof f === "string") {
-                c.fields[idx] = JSON.parse(JSON.stringify(fsh[f] || {}));
+                c.fields![idx] = JSON.parse(JSON.stringify(fsh[f] || {}));
               }
-              if (f.type === "lov") {
+              if (typeof f !== "string" && f.type === "lov") {
                 f.t2 = `t_${idx}`;
               }
             });
@@ -89,7 +90,7 @@ function prepModelCollecs(m, models) {
             console.log(`Model "${c.object}" not found in model "${m.id}".`);
           }
         }
-        m.collecsH[c.id] = c;
+        m.collecsH![c.id] = c;
       });
     }
     return m;
@@ -99,16 +100,12 @@ function prepModelCollecs(m, models) {
 
 const prepModels = () => {
   modelIds = Object.keys(models);
-  // console.log(
-  //   "\nEvolutility-Server-Node\n" + `${modelIds.length} models:`,
-  //   `${modelIds.sort().join(", ")}.`,
-  // );
   // need 2 passes for field map to be populated first, then collections
   modelIds.forEach((m) => {
-    models[m] = prepModel(models[m]);
+    models[m] = prepModel(models[m])!;
   });
   modelIds.forEach((m) => {
-    models[m] = prepModelCollecs(models[m], models);
+    models[m] = prepModelCollecs(models[m], models)!;
   });
   return models;
 };
@@ -116,7 +113,7 @@ const prepModels = () => {
 prepModels();
 
 // export const getModel = (mId) => prepModel(models[mId]);
-export const getModel = (mId) => models[mId];
+export const getModel = (mId: string): Model | undefined => models[mId];
 
 export default {
   models,

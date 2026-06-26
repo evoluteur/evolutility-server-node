@@ -4,8 +4,8 @@
  * Module dependencies.
  */
 
-import app from "../app.js";
-import config from "../config.js";
+import app from "../app.ts";
+import config from "../config.ts";
 import http from "http";
 import Debug from "debug";
 
@@ -14,14 +14,14 @@ const debug = Debug("evolutility:server");
 /**
  * Get port from environment and store in Express.
  */
-var port = normalizePort(config.apiPort || "2000");
+const port = normalizePort(config.apiPort || "2000");
 app.set("port", port);
 
 /**
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+const server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -35,12 +35,12 @@ server.on("listening", onListening);
  * Normalize a port into a number, string, or false.
  */
 
-function normalizePort(val) {
-  var port = parseInt(val, 10);
+function normalizePort(val: string | number): number | string | false {
+  const port = parseInt(String(val), 10);
 
   if (isNaN(port)) {
     // named pipe
-    return val;
+    return String(val);
   }
 
   if (port >= 0) {
@@ -55,12 +55,12 @@ function normalizePort(val) {
  * Event listener for HTTP server "error" event.
  */
 
-function onError(error) {
+function onError(error: NodeJS.ErrnoException) {
   if (error.syscall !== "listen") {
     throw error;
   }
 
-  var bind = typeof port === "string" ? "Pipe " + port : "Port " + port;
+  const bind = typeof port === "string" ? "Pipe " + port : "Port " + port;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
@@ -82,7 +82,7 @@ function onError(error) {
  */
 
 function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
+  const addr = server.address();
+  const bind = typeof addr === "string" ? "pipe " + addr : "port " + addr?.port;
   debug("Listening on " + bind);
 }

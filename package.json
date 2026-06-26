@@ -13,8 +13,10 @@
   "type": "module",
   "bugs": "https://github.com/evoluteur/evolutility-server-node/issues",
   "scripts": {
-    "start": "node --watch ./bin/www",
-    "makedb": "node js/setup/database.js"
+    "start": "node --watch ./bin/www.ts",
+    "makedb": "node js/setup/database.ts",
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit --watch"
   },
   "dependencies": {
     "debug": "~4.4.3",
@@ -47,5 +49,14 @@
     "postgres",
     "javascript",
     "evolutility"
-  ]
+  ],
+  "devDependencies": {
+    "@types/debug": "^4.1.13",
+    "@types/express": "^5.0.6",
+    "@types/formidable": "^3.5.1",
+    "@types/node": "^26.0.1",
+    "@types/pg": "^8.20.0",
+    "@types/pg-connection-string": "^0.1.1",
+    "typescript": "^6.0.3"
+  }
 }

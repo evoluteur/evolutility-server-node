@@ -1,32 +1,34 @@
 /*!
- * evolutility-server-node :: charts.js
+ * evolutility-server-node :: charts.ts
  * Charts and graph data
  *
  * https://github.com/evoluteur/evolutility-server-node
  * (c) 2026 Olivier Giulieri
  */
 
+import type { Request, Response } from "express";
 import {
   fieldTypes as ft,
   fieldInCharts,
   fieldIsNumber,
-} from "./utils/dico.js";
-import { getModel } from "./utils/model-manager.js";
-import { runQuery } from "./utils/query.js";
-import { badRequest } from "./utils/errors.js";
-import logger from "./utils/logger.js";
-import config from "../config.js";
+} from "./utils/dico.ts";
+import { getModel } from "./utils/model-manager.ts";
+import { runQuery } from "./utils/query.ts";
+import { badRequest } from "./utils/errors.ts";
+import logger from "./utils/logger.ts";
+import config from "../config.ts";
+import type { Model } from "../models/types.ts";
 
 const schema = '"' + (config.schema || "evolutility") + '"',
   defaultPageSize = config.pageSize || 50;
 
 // - returns data for a single chart
 // - sample REST url: http://localhost:2000/api/v1/todo/chart/category
-export function getChart(req, res) {
+export function getChart(req: Request, res: Response) {
   logger.logReq("GET CHARTS", req);
 
-  const m = getModel(req.params.entity),
-    fid = req.params.field;
+  const m = getModel(req.params.entity as string),
+    fid = req.params.field as string;
 
   if (!m) {
     return badRequest(res, `Model not found: "${req.params.entity}".`, 404);
@@ -37,14 +39,14 @@ export function getChart(req, res) {
   if (errorMessage) {
     return badRequest(res, errorMessage, errorCode);
   }
-  runQuery(res, sql, [], false);
+  runQuery(res, sql!, [], false);
 }
 
-function SQLchartField(m, fid) {
+function SQLchartField(m: Model, fid: string): { sql?: string; errorMessage?: string; errorCode?: number } {
   const sqlCount = "count(*)::integer AS value";
-  let sql;
+  let sql: string;
 
-  const f = m.fieldsH[fid];
+  const f = m.fieldsH![fid];
   if (!f) {
     return { errorMessage: `Field not found: "${fid}".`, errorCode: 404 };
   }

@@ -1,18 +1,19 @@
 /*!
- * evolutility :: utils/db-structure.js
+ * evolutility :: utils/db-structure.ts
  * Helper functions for getting the list of tables and columns
  *
  * https://github.com/evoluteur/evolutility
  * (c) 2026 Olivier Giulieri
  */
 
-import { runQuery } from "./query.js";
-import { badRequest } from "./errors.js";
-import logger from "./logger.js";
-import config from "../../config.js";
+import type { Request, Response } from "express";
+import { runQuery } from "./query.ts";
+import { badRequest } from "./errors.ts";
+import logger from "./logger.ts";
+import config from "../../config.ts";
 
 // - Get list of schema tables
-function getTables(req, res) {
+function getTables(req: Request, res: Response) {
   logger.logHeader("REST", "DB", "tables");
   const sql =
     "SELECT table_name as table, table_type as type" +
@@ -23,8 +24,8 @@ function getTables(req, res) {
 }
 
 // - Get list of columns for the specified table
-function getColumns(req, res) {
-  const table = req.params.table;
+function getColumns(req: Request, res: Response) {
+  const table = req.params.table as string;
   logger.logHeader("REST", "DB", table + " columns");
   if (table) {
     const sql =
@@ -35,8 +36,6 @@ function getColumns(req, res) {
       params = [table, config.schema];
     runQuery(res, sql, params);
     //TODO: add comments and constraints
-    //sql = 'SELECT * FROM information_schema.constraint_column_usage '+
-    //' WHERE table_name=$1 AND table_schema=$2';
   } else {
     badRequest(res, "No table specified.");
   }

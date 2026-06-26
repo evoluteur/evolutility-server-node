@@ -630,7 +630,7 @@ export const winecellar = {
       id: "drink_to",
       type: "integer",
       label: "to",
-      max: "2100",
+      max: 2100,
       min: 1900,
       maxLength: 4,
       column: "drink_to",

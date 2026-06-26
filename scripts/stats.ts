@@ -1,19 +1,21 @@
 /*!
- * evolutility-server-node :: stats.js
+ * evolutility-server-node :: stats.ts
  * Some data on the object like the min, max, average, and total for numeric fields.
  *
  * https://github.com/evoluteur/evolutility-server-node
  * (c) 2026 Olivier Giulieri
  */
 
-import { getModel } from "./utils/model-manager.js";
-import dico, { fieldTypes as ft } from "./utils/dico.js";
-import { runQuery } from "./utils/query.js";
-import { badRequest } from "./utils/errors.js";
-import logger from "./utils/logger.js";
-import config from "../config.js";
+import type { Request, Response } from "express";
+import { getModel } from "./utils/model-manager.ts";
+import dico, { fieldTypes as ft } from "./utils/dico.ts";
+import { runQuery } from "./utils/query.ts";
+import { badRequest } from "./utils/errors.ts";
+import logger from "./utils/logger.ts";
+import config from "../config.ts";
+import type { Field } from "../models/types.ts";
 
-function sqlAggregate(fn, f) {
+function sqlAggregate(fn: string, f: Field) {
   let num = "";
   let tcast = "";
 
@@ -37,9 +39,9 @@ function sqlAggregate(fn, f) {
   return ", " + fn + `("${f.column}"${num})${tcast} AS "${f.id}_${fn}"`;
 }
 
-const fnPrep = (fields) => (data) => {
+const fnPrep = (fields: Field[]) => (data: Record<string, unknown>) => {
   // - nesting data per field
-  const pStats = {
+  const pStats: Record<string, unknown> = {
     count: data.count,
   };
   if (config.wTimestamp) {
@@ -53,11 +55,11 @@ const fnPrep = (fields) => (data) => {
   if (config.wComments) {
     pStats.nb_comments = data.nb_comments;
   }
-  const nullsCounts = {};
+  const nullsCounts: Record<string, unknown> = {};
   fields.forEach((f) => {
     if (!f.noStats) {
       if (dico.fieldIsNumeric(f)) {
-        let item = {
+        const item: Record<string, unknown> = {
           min: data[f.id + "_min"],
           max: data[f.id + "_max"],
         };
@@ -78,10 +80,10 @@ const fnPrep = (fields) => (data) => {
 };
 
 // - returns a summary on a single table
-export function getStats(req, res) {
+export function getStats(req: Request, res: Response) {
   logger.logReq("GET STATS", req);
 
-  const mid = req.params.entity,
+  const mid = req.params.entity as string,
     m = getModel(mid);
 
   if (!m) {
@@ -92,13 +94,13 @@ export function getStats(req, res) {
   }
 
   const sqlFROM = " FROM " + m.schemaTable;
-  const sqlNull = (f) =>
+  const sqlNull = (f: Field) =>
     `(SELECT COUNT(*)::integer AS "${f.id}_nulls" ${sqlFROM} WHERE "${f.column}" IS NULL)`;
-  const sqlNullorEmpty = (f) =>
+  const sqlNullorEmpty = (f: Field) =>
     `(SELECT COUNT(*)::integer AS "${f.id}_nulls" ${sqlFROM} WHERE "${f.column}" IS NULL OR "${f.column}"='')`;
 
   let sql = "SELECT count(*)::integer AS count";
-  const sqlNulls = [];
+  const sqlNulls: string[] = [];
 
   m.fields.forEach((f) => {
     if (!f.noStats) {
@@ -142,7 +144,7 @@ export function getStats(req, res) {
   }
   sql += ", " + sqlNulls.join(", ");
   sql += sqlFROM;
-  runQuery(res, sql, [], true, null, null, fnPrep(m.fields));
+  runQuery(res, sql, [], true, null, null, fnPrep(m.fields) as (data: unknown) => unknown);
 }
 
 // --------------------------------------------------------------------------------------

@@ -1,20 +1,21 @@
 /* eslint-disable no-useless-escape */
 /*!
- * evolutility-server-node :: utils/logger.js
+ * evolutility-server-node :: utils/logger.ts
  *
  * https://github.com/evoluteur/evolutility-server-node
  * (c) 2026 Olivier Giulieri
  */
 
 import pino from "pino";
-import config from "../../config.js";
+import config from "../../config.ts";
 import pkg from "../../package.json" with { type: "json" };
+import type { Request } from "express";
 
 const { logToFile: fileLog, logToConsole: consoleLog } = config;
 
 // #region ---- pino setup ----------------------------------------------------------------
 
-const targets = [];
+const targets: pino.TransportTargetOptions[] = [];
 
 if (consoleLog) {
   targets.push({
@@ -83,33 +84,37 @@ const evoLogger = {
     );
   },
 
-  logReq(title, req, reqType = "REST") {
-    const data = {};
+  logReq(title: string, req: Request, reqType = "REST") {
+    const data: Record<string, unknown> = {};
     if (req.params && Object.keys(req.params).length) data.params = req.params;
     if (req.query && Object.keys(req.query).length) data.query = req.query;
     if (req.body && Object.keys(req.body).length) data.body = req.body;
     log.info(data, `${reqType} > ${title}`);
   },
 
-  logObject(title, obj) {
+  logHeader(category: string, subcategory: string, detail: string) {
+    log.info(`${category} > ${subcategory} > ${detail}`);
+  },
+
+  logObject(title: string, obj: unknown) {
     log.info({ [title]: obj });
   },
 
-  logSQL(sql, values) {
-    const data = { sql };
+  logSQL(sql: string, values?: unknown) {
+    const data: Record<string, unknown> = { sql };
     if (values) data.values = values;
     log.debug(data, "SQL");
   },
 
-  logCount(nbRecords, prep) {
+  logCount(nbRecords: number, prep?: boolean) {
     log.info(`Sending ${nbRecords}${prep ? " prepared" : ""} records.`);
   },
 
-  logSuccess(msg) {
+  logSuccess(msg: string) {
     log.info(msg);
   },
 
-  logError(err) {
+  logError(err: unknown) {
     if (err instanceof Error) {
       log.error({ err }, err.message);
     } else {
@@ -117,7 +122,7 @@ const evoLogger = {
     }
   },
 
-  errorMsg(err, method) {
+  errorMsg(err: unknown, method: string) {
     this.logError(err);
     return {
       error: err instanceof Error ? err.message : String(err),
@@ -125,8 +130,8 @@ const evoLogger = {
     };
   },
 
-  logToFile(mType, msg) {
-    log[mType]?.(msg);
+  logToFile(mType: string, msg: string) {
+    (log as unknown as Record<string, (msg: string) => void>)[mType]?.(msg);
   },
 };
 

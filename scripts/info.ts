@@ -1,20 +1,22 @@
 /*!
- * evolutility-server-node :: info.js
+ * evolutility-server-node :: info.ts
  *
  * https://github.com/evoluteur/evolutility-server-node
  * (c) 2026 Olivier Giulieri
  */
 
-import { fieldInCharts, fieldTypes as ft } from "./utils/dico.js";
-import { badRequest } from "./utils/errors.js";
-import logger from "./utils/logger.js";
+import type { Request, Response } from "express";
+import { fieldInCharts, fieldTypes as ft } from "./utils/dico.ts";
+import { badRequest } from "./utils/errors.ts";
+import logger from "./utils/logger.ts";
 import pkg from "../package.json" with { type: "json" };
-import { models } from "./utils/model-manager.js";
-import config from "../config.js";
+import { models } from "./utils/model-manager.ts";
+import config from "../config.ts";
+import type { Model } from "../models/types.ts";
 
-function getFieldsAPIs(model, protocol, baseUrl) {
-  const charts = [];
-  const lovs = [];
+function getFieldsAPIs(model: Model, protocol: string, baseUrl: string) {
+  const charts: string[] = [];
+  const lovs: string[] = [];
   model.fields.forEach((f) => {
     if (fieldInCharts(f)) {
       charts.push(`${protocol}${baseUrl}/${model.id}/chart/${f.id}`);
@@ -26,14 +28,14 @@ function getFieldsAPIs(model, protocol, baseUrl) {
   return { charts, lovs };
 }
 
-function baseURL(req) {
+function baseURL(req: Request) {
   return (req.headers.host + req.url.split("?")[0]).replace(/\/$/, "");
 }
 
-const entityAPIs = (model, protocol, baseUrl, fullDescription) => {
+const entityAPIs = (model: Model, protocol: string, baseUrl: string, fullDescription: boolean) => {
   const pathToModel = `${protocol}${baseUrl}/${model.id}`;
   const { charts, lovs } = getFieldsAPIs(model, protocol, baseUrl);
-  const mi = {
+  const mi: Record<string, unknown> = {
     id: model.id,
     title: model.title || model.label,
   };
@@ -58,7 +60,7 @@ const entityAPIs = (model, protocol, baseUrl, fullDescription) => {
 };
 
 // - returns list of endpoint URLs for all active models
-export function getAPIs(req, res) {
+export function getAPIs(req: Request, res: Response) {
   logger.logReq("GET APIs", req);
 
   if (!config.apiInfo) {
@@ -67,7 +69,7 @@ export function getAPIs(req, res) {
 
   const baseUrl = baseURL(req);
   const protocol = req.protocol + "://";
-  const mid = req.query.id;
+  const mid = req.query.id as string | undefined;
 
   if (mid) {
     const m = models[mid];
@@ -84,7 +86,7 @@ export function getAPIs(req, res) {
 }
 
 // - returns version number (from package.json)
-export function getVersion(req, res) {
+export function getVersion(req: Request, res: Response) {
   logger.logReq("GET VERSION", req);
   return res.json({
     name: pkg.name,

@@ -1,20 +1,22 @@
 /*!
- * evolutility-server-node :: openapi.js
+ * evolutility-server-node :: openapi.ts
  * Generates an OpenAPI 3.1 spec from loaded models.
  *
  * https://github.com/evoluteur/evolutility-server-node
  * (c) 2026 Olivier Giulieri
  */
 
+import type { Request, Response } from "express";
 import pkg from "../package.json" with { type: "json" };
-import { models } from "./utils/model-manager.js";
-import { fieldTypes as ft, fieldInCharts } from "./utils/dico.js";
-import config from "../config.js";
-import logger from "./utils/logger.js";
+import { models } from "./utils/model-manager.ts";
+import { fieldTypes as ft, fieldInCharts } from "./utils/dico.ts";
+import config from "../config.ts";
+import logger from "./utils/logger.ts";
+import type { Field, Model } from "../models/types.ts";
 
 // ---- field type → OpenAPI schema ------------------------------------------------
 
-function fieldToSchema(f) {
+function fieldToSchema(f: Field): Record<string, unknown> {
   switch (f.type) {
     case ft.int:
       return {
@@ -42,7 +44,7 @@ function fieldToSchema(f) {
     case ft.lov:
       return { type: "integer" };
     default: {
-      const s = { type: "string" };
+      const s: Record<string, unknown> = { type: "string" };
       if (f.maxLength) s.maxLength = f.maxLength;
       return s;
     }
@@ -51,9 +53,9 @@ function fieldToSchema(f) {
 
 // ---- model → OpenAPI schema component -------------------------------------------
 
-function modelToSchema(m) {
-  const properties = { id: { type: "integer", readOnly: true } };
-  const required = [];
+function modelToSchema(m: Model) {
+  const properties: Record<string, unknown> = { id: { type: "integer", readOnly: true } };
+  const required: string[] = [];
 
   for (const f of m.fields) {
     if (f.type === ft.hidden) continue;
@@ -76,7 +78,7 @@ function modelToSchema(m) {
     };
   }
 
-  const schema = { type: "object", properties };
+  const schema: Record<string, unknown> = { type: "object", properties };
   if (required.length) schema.required = required;
   return schema;
 }
@@ -124,10 +126,10 @@ const listQueryParams = [
   },
 ];
 
-const jsonRef = (modelId) => ({
+const jsonRef = (modelId: string) => ({
   "application/json": { schema: { $ref: `#/components/schemas/${modelId}` } },
 });
-const jsonArr = (modelId) => ({
+const jsonArr = (modelId: string) => ({
   "application/json": {
     schema: {
       type: "array",
@@ -139,7 +141,7 @@ const errRef = () => ({
   "application/json": { schema: { $ref: "#/components/schemas/Error" } },
 });
 
-const listResponse = (modelId) => ({
+const listResponse = (modelId: string) => ({
   description: "List of records",
   headers: {
     _count: {
@@ -156,12 +158,11 @@ const listResponse = (modelId) => ({
 
 // ---- model → OpenAPI paths ------------------------------------------------------
 
-function modelToPaths(m, apiBase) {
+function modelToPaths(m: Model, apiBase: string) {
   const base = `${apiBase}${m.id}`;
   const tag = m.title || m.id;
   const { name = tag, namePlural = tag } = m;
-  // const ref = `#/components/schemas/${m.id}`;
-  const paths = {};
+  const paths: Record<string, unknown> = {};
 
   // GET list / POST create
   paths[`/${base}`] = {
@@ -376,18 +377,18 @@ function modelToPaths(m, apiBase) {
 
 // ---- spec generator -------------------------------------------------------------
 
-export function generateSpec(req) {
+export function generateSpec(req: Request) {
   const activeModels = Object.values(models).filter((m) => m.active);
   const apiBase = config.apiPath.replace(/^\//, ""); // strip leading slash for path keys
 
-  const schemas = {
+  const schemas: Record<string, unknown> = {
     Error: {
       type: "object",
       properties: { error: { type: "string" } },
     },
   };
 
-  let paths = {};
+  let paths: Record<string, unknown> = {};
   for (const m of activeModels) {
     schemas[m.id] = modelToSchema(m);
     Object.assign(paths, modelToPaths(m, apiBase));
@@ -415,7 +416,7 @@ export function generateSpec(req) {
   };
 }
 
-export function getOpenAPISpec(req, res) {
+export function getOpenAPISpec(req: Request, res: Response) {
   logger.logReq("GET OPENAPI", req);
   res.json(generateSpec(req));
 }

@@ -1,12 +1,13 @@
 /*!
- * evolutility :: utils/dico.js
+ * evolutility :: utils/dico.ts
  * Helper functions for metadata
  *
  * https://github.com/evoluteur/evolutility
  * (c) 2026 Olivier Giulieri
  */
 
-import config from "../../config.js";
+import config from "../../config.ts";
+import type { Field } from "../../models/types.ts";
 
 // - Field Types
 export const fieldTypes = {
@@ -33,13 +34,12 @@ export const fieldTypes = {
   json: "json",
   //rating: 'rating',
   //widget: 'widget'
-};
+} as const;
 
 const ft = fieldTypes;
 
 // - fields for comments, ratings...
-export let systemFields = []; // system fields to track records creation date, comments...
-let f;
+export let systemFields: Partial<Field>[] = []; // system fields to track records creation date, comments...
 
 if (config.wTimestamp) {
   systemFields.push(
@@ -70,43 +70,40 @@ if (config.wWhoIs) {
   );
 }
 if (config.wComments) {
-  f = {
+  systemFields.push({
     // - number of comments about the record
     type: "integer",
     column: "nb_comments",
-  };
-  systemFields.push(f);
+  });
 }
 // - tracking ratings.
 if (config.wRating) {
-  f = {
+  systemFields.push({
     type: "integer",
     column: "nb_ratings",
-  };
-  systemFields.push(f);
-  f = {
+  });
+  systemFields.push({
     type: "integer",
     column: "avg_ratings",
-  };
-  systemFields.push(f);
+  });
 }
 
-export const fieldIsNumber = (f) =>
+export const fieldIsNumber = (f: Field) =>
   f.type === ft.int || f.type === ft.dec || f.type === ft.money;
-export const fieldIsText = (f) =>
-  [ft.text, ft.textml, ft.url, ft.html, ft.email].indexOf(f.type) > -1;
-export const fieldIsDateOrTime = (f) =>
-  f.type === ft.date || f.type === ft.datetime || f.type === ft.time;
-export const fieldIsNumeric = (f) => fieldIsNumber(f) || fieldIsDateOrTime(f);
+export const fieldIsText = (f: Field) =>
+  ([ft.text, ft.textml, ft.url, ft.html, ft.email] as string[]).indexOf(f.type as string) > -1;
+export const fieldIsDateOrTime = (f: Field) =>
+  f.type === ft.date || f.type === "datetime" || f.type === ft.time;
+export const fieldIsNumeric = (f: Field) => fieldIsNumber(f) || fieldIsDateOrTime(f);
 
-export const fieldChartable = (f) =>
+export const fieldChartable = (f: Field) =>
   f.type === ft.lov || f.type === ft.bool || fieldIsNumber(f);
-export const fieldInCharts = (f) => fieldChartable(f) && !f.noCharts;
+export const fieldInCharts = (f: Field) => fieldChartable(f) && !f.noCharts;
 
 export default {
   fieldTypes: ft,
 
-  fieldInMany: (f) => f.inList || f.inMany,
+  fieldInMany: (f: Field) => f.inList || f.inMany,
 
   fieldIsText,
   fieldIsNumber,

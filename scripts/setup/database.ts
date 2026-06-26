@@ -1,5 +1,5 @@
 /*!
- * evolutility-server-node :: utils/database.js
+ * evolutility-server-node :: utils/database.ts
  * Methods to create postgres schema and tables from models.
  *
  * https://github.com/evoluteur/evolutility-server-node
@@ -9,11 +9,12 @@
 import pg from "pg";
 import fs from "fs";
 import ParseConnection from "pg-connection-string";
-import config from "../../config.js";
+import config from "../../config.ts";
 import pkg from "../../package.json" with { type: "json" };
-import { fieldTypes as ft } from "../utils/dico.js";
-import { models } from "../utils/model-manager.js";
+import { fieldTypes as ft } from "../utils/dico.ts";
+import { models } from "../utils/model-manager.ts";
 import data from "../../models/data/all_data.js";
+import type { Field, Model } from "../../models/types.ts";
 
 const parseConnection = ParseConnection.parse;
 
@@ -24,7 +25,7 @@ const schema = '"' + config.schema + '"',
   sqlFile = true; // log SQL to file
 
 const noTZ = " without time zone";
-const ft_postgreSQL = {
+const ft_postgreSQL: Record<string, string> = {
   text: "text",
   textmultiline: "text",
   boolean: "boolean",
@@ -49,7 +50,7 @@ const ft_postgreSQL = {
 const createdDateCol = config.createdDateColumn || "created_at";
 const updatedDateCol = config.updatedDateColumn || "update_at";
 
-const sysColumns = {
+const sysColumns: Record<string, boolean> = {
   [createdDateCol]: true,
   [updatedDateCol]: true,
   created_by: true,
@@ -59,17 +60,17 @@ const sysColumns = {
   avg_ratings: true,
 };
 
-const stringValue = (v) => (v ? "'" + v.replace(/'/g, "''") + "'" : "NULL");
+const stringValue = (v: string | null | undefined) => (v ? "'" + v.replace(/'/g, "''") + "'" : "NULL");
 
-const lovTable = (f, tableName) =>
+const lovTable = (f: Field, tableName: string) =>
   f.lovTable ? f.lovTable : tableName + "_" + f.id;
-const lovTableWithSchema = (f, tableName) =>
+const lovTableWithSchema = (f: Field, tableName: string) =>
   schema + '."' + lovTable(f, tableName) + '"';
 
-const nowColumn = (name) =>
+const nowColumn = (name: string) =>
   name + " timestamp" + noTZ + " DEFAULT timezone('utc', now())";
 
-function sqlInsert(tableNameSchema, m, data) {
+function sqlInsert(tableNameSchema: string, m: Model, data: Record<string, unknown>[]) {
   const { pKey, fieldsH } = m;
   let sqlData = "";
   let maxId = -1;
@@ -77,27 +78,26 @@ function sqlInsert(tableNameSchema, m, data) {
   if (data) {
     let prevCols = "";
     data.forEach(function (row) {
-      var ns = [],
-        vs = [];
-      if (row[pKey]) {
-        ns.push(pKey);
-        vs.push(row[pKey]);
-        if (row[pKey] > maxId) {
-          maxId = row[pKey];
+      const ns: string[] = [];
+      const vs: unknown[] = [];
+      if (row[pKey!]) {
+        ns.push(pKey!);
+        vs.push(row[pKey!]);
+        if ((row[pKey!] as number) > maxId) {
+          maxId = row[pKey!] as number;
         }
       }
-      for (let fid in row) {
-        const f = fieldsH[fid];
+      for (const fid in row) {
+        const f = fieldsH![fid];
         if (f && fid !== pKey) {
-          let v = row[fid];
+          let v: unknown = row[fid];
           if (v !== null) {
             ns.push('"' + (f.column || f.id) + '"');
             if (f.type === ft.lov) {
-              //TODO: parseint?
-              v = v || null; //"['error']";
+              v = v || null;
             } else if (f.type === ft.list) {
               if (Array.isArray(v)) {
-                v = "'{" + v.join(",") + "}'";
+                v = "'{" + (v as unknown[]).join(",") + "}'";
               } else {
                 v = "null";
               }
@@ -148,7 +148,7 @@ function sqlInsert(tableNameSchema, m, data) {
   return sqlData;
 }
 
-function sqlCreatePopulateLOV(f, tableName, lovIncluded) {
+function sqlCreatePopulateLOV(f: Field, tableName: string, lovIncluded: string[]) {
   const t = lovTableWithSchema(f, tableName);
   const icons = f.lovIcon || false;
   let sql = "";
@@ -156,7 +156,6 @@ function sqlCreatePopulateLOV(f, tableName, lovIncluded) {
 
   if (lovIncluded.indexOf(t) < 0) {
     // - create lov table
-    // TODO: icon font
     sql =
       "\nCREATE TABLE IF NOT EXISTS " +
       t +
@@ -171,7 +170,7 @@ function sqlCreatePopulateLOV(f, tableName, lovIncluded) {
     if (f.list) {
       sql += insertSQL;
       sql +=
-        f.list
+        (f.list as { id: number; text: string; icon?: string }[])
           .map((item) => {
             if (item.id && item.id > maxId) {
               maxId = item.id;
@@ -181,14 +180,14 @@ function sqlCreatePopulateLOV(f, tableName, lovIncluded) {
             return txt;
           })
           .join(",\n") + ";\n\n";
-      const t = lovTable(f, tableName);
+      const tName = lovTable(f, tableName);
       if (maxId) {
         maxId++;
         sql +=
           "ALTER SEQUENCE " +
           schema +
           '."' +
-          t +
+          tName +
           '_id_seq" RESTART WITH ' +
           maxId +
           ";\n\n";
@@ -219,7 +218,7 @@ function sqlSchemaWithData() {
       config.updatedDateColumn +
       " = timezone('utc', now());\n    RETURN NEW;\n  END;\n$$;\n\n";
   }
-  for (let mid in models) {
+  for (const mid in models) {
     const sqls = sqlModel(mid);
     sql += sqls[0];
     sqlData += sqls[1];
@@ -230,7 +229,7 @@ function sqlSchemaWithData() {
   };
 }
 
-const sqlComment = (target, targetName, targetId) =>
+const sqlComment = (target: string, targetName: string, targetId?: string) =>
   "COMMENT ON " +
   target +
   " " +
@@ -239,7 +238,7 @@ const sqlComment = (target, targetName, targetId) =>
   (targetId ? targetId.replace(/'/g, "") : "") +
   "';\n";
 
-const sqlIndex = (index, table, column) =>
+const sqlIndex = (index: string, table: string, column: string) =>
   "CREATE INDEX idx_" +
   index +
   " ON " +
@@ -247,36 +246,17 @@ const sqlIndex = (index, table, column) =>
   " USING btree (" +
   column +
   ");\n";
-/*
-function sqlSearch(m){
-    const table = m.table||m.id
-    const schemaTable = schema+'."'+table+'"'
-    const fn = schema + '.search_' + table
-    const searchColumn = f => 't1.'+f.column+' ilike (\'%\' || search || \'%\') '
-    let searchColumns = m.searchFields
 
-return `
-create function ${fn}(search text) returns setof ${schemaTable} as $$
-select t1.*
-from ${schemaTable} as t1
-where t1.headline ilike ('%' || search || '%') or t1.body ilike ('%' || search || '%')
-$$ language sql stable;
-
-comment on function ${fn}(text) is 'Returns ${m.namePlural} containing a given search term.';
-`
-}
-*/
-function sqlModel(mid) {
+function sqlModel(mid: string): [string, string] {
   // -- generates SQL script to create a Postgres DB table for the ui model
   const m = models[mid];
   let { pKey, fields } = m;
   let tableName = m.table || m.id,
     tableNameSchema = schema + '."' + tableName + '"',
-    fieldsAttr = {},
-    //subCollecs = m.collections,
+    fieldsAttr: Record<string, boolean> = {},
     fs = [pKey + " serial primary key"],
-    sql,
-    sql0,
+    sql: string,
+    sql0: string,
     sqlIdx = "",
     sqlData = "",
     sqlComments = "";
@@ -293,7 +273,7 @@ function sqlModel(mid) {
       // skip fields specified in config
       if (!sysColumns[f.column]) {
         const fcolumn = '"' + f.column + '"';
-        sql0 = " " + fcolumn + " " + (ft_postgreSQL[f.type] || "text");
+        sql0 = " " + fcolumn + " " + (ft_postgreSQL[f.type as string] || "text");
         if (f.type === ft.lov) {
           if (f.deleteTrigger) {
             sql0 +=
@@ -304,7 +284,7 @@ function sqlModel(mid) {
               '"(id) ON DELETE CASCADE';
           }
           sqlIdx += sqlIndex(
-            tableName + "_" + f.column.toLowerCase(),
+            tableName + "_" + f.column!.toLowerCase(),
             tableNameSchema,
             fcolumn,
           );
@@ -342,16 +322,9 @@ function sqlModel(mid) {
   // - tracking ratings.
   if (config.wRating) {
     fs.push(" nb_ratings integer DEFAULT 0");
-    fs.push(" avg_ratings integer DEFAULT NULL"); // smallint ?
+    fs.push(" avg_ratings integer DEFAULT NULL");
   }
-  /*
-    // subCollecs - as json columns
-    if(subCollecs){
-        subCollecs.forEach(function(c, idx){
-            fs.push('  "'+(c.column || c.id)+'" json');
-        });
-    }
-*/
+
   sql = "\nCREATE TABLE " + tableNameSchema + "(\n" + fs.join(",\n") + "\n);\n";
   sql += sqlIdx;
 
@@ -374,15 +347,16 @@ function sqlModel(mid) {
   sql += sqlComments;
 
   // -- insert sample data
-  if (data[mid]) {
-    sqlData += sqlInsert(tableNameSchema, m, data[mid]);
+  const dataRecord = (data as Record<string, Record<string, unknown>[]>)[mid];
+  if (dataRecord) {
+    sqlData += sqlInsert(tableNameSchema, m, dataRecord);
   }
 
   // - add lov tables
-  var lovFields = fields.filter(function (f) {
+  const lovFields = fields.filter(function (f) {
     return (f.type === ft.lov || f.type === ft.list) && !f.object;
   });
-  var lovIncluded = [];
+  const lovIncluded: string[] = [];
   if (lovFields) {
     lovFields.forEach((f) => {
       sql += sqlCreatePopulateLOV(f, tableName, lovIncluded);
@@ -392,7 +366,7 @@ function sqlModel(mid) {
   return [sql, sqlData];
 }
 
-function logToFile(sql, isData) {
+function logToFile(sql: string, isData: boolean) {
   console.log(sql);
   if (sqlFile) {
     const d = new Date(),
@@ -405,11 +379,7 @@ function logToFile(sql, isData) {
 -- ${homepage}
 -- ${d}\n\n`;
 
-    fs.writeFileSync(fileName, header + sql, (err) => {
-      if (err) {
-        throw err;
-      }
-    });
+    fs.writeFileSync(fileName, header + sql);
   }
 }
 
@@ -417,7 +387,7 @@ const createSchema = async (runSQL = true, logFile = true) => {
   let { sql, sqlData } = sqlSchemaWithData();
 
   if (runSQL) {
-    const dbConfig = parseConnection(config.connectionString);
+    const dbConfig = parseConnection(config.connectionString) as pg.PoolConfig;
     dbConfig.max = 10; // max number of clients in the pool
     dbConfig.idleTimeoutMillis = 30000; // max client idle time before being closed
     const pool = new pg.Pool(dbConfig);

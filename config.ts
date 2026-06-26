@@ -2,7 +2,32 @@
   Evolutility-Server-Node configuration file
 */
 
-const config = {
+export interface Config {
+  apiPath: string;
+  apiPort: number | string;
+  connectionString: string;
+  schema: string;
+  apiInfo: boolean;
+  pageSize: number;
+  lovSize: number;
+  csvSize: number;
+  csvHeader: string;
+  uploadPath: string;
+  wTimestamp: boolean;
+  wWhoIs: boolean;
+  wComments: boolean;
+  wRating: boolean;
+  createdDateColumn: string;
+  updatedDateColumn: string;
+  logToConsole: boolean;
+  logToFile: boolean;
+  apiDesigner: boolean;
+  schemaQueries: boolean;
+  rateLimit: number;
+  trustProxy: boolean;
+}
+
+const config: Config = {
   // - Path to REST API
   apiPath: "/api/v1/",
   apiPort: process.env.PORT || 2000,
