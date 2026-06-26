@@ -1,12 +1,17 @@
 /*
-  Evolutility DB model for Albums
-  https://github.com/evoluteur/evolutility-server-node
+  Model for Albums (6 fields, 1 collections)
+  Generated at 6/25/2026, 12:12:00 AM
+  Powered by evolutility-models v.0.3.0 - https://github.com/evoluteur/evolutility-models
 */
 
-export default {
+import type { ModelDB } from "../types.ts";
+
+export const album = {
   id: "album",
   title: "Albums",
   world: "music",
+  name: "album",
+  namePlural: "albums",
   pKey: "id",
   table: "music_album",
   active: true,
@@ -74,4 +79,4 @@ export default {
     },
   ],
   noStats: true,
-};
+} satisfies ModelDB;

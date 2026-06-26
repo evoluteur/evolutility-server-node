@@ -1,21 +1,26 @@
 /*
-  Evolutility DB model for Address book
-  https://github.com/evoluteur/evolutility-server-node
+  Model for Address book (17 fields)
+  Generated at 6/25/2026, 12:12:00 AM
+  Powered by evolutility-models v.0.3.0 - https://github.com/evoluteur/evolutility-models
 */
 
-export default {
+import type { ModelDB } from "../types.ts";
+
+export const contact = {
   id: "contact",
   title: "Address book",
   world: "organizer",
+  name: "contact",
+  namePlural: "contacts",
   pKey: "id",
   table: "contact",
   active: true,
-  titleField: "fistname",
+  titleField: "firstname",
   fields: [
     {
       id: "lastname",
       type: "text",
-      label: "Lastname",
+      label: "Last name",
       required: true,
       maxLength: 50,
       inMany: true,
@@ -25,7 +30,7 @@ export default {
     {
       id: "firstname",
       type: "text",
-      label: "Firstname",
+      label: "First name",
       required: true,
       maxLength: 50,
       inMany: true,
@@ -184,4 +189,6 @@ export default {
       column: "notes",
     },
   ],
-};
+  collections: [],
+  noStats: true,
+} satisfies ModelDB;

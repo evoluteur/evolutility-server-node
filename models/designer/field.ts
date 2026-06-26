@@ -1,12 +1,17 @@
 /*
-  Evolutility DB model for Fields
-  https://github.com/evoluteur/evolutility-server-node
+  Model for Fields (34 fields)
+  Generated at 6/25/2026, 12:12:00 AM
+  Powered by evolutility-models v.0.3.0 - https://github.com/evoluteur/evolutility-models
 */
 
-export default {
+import type { ModelDB } from "../types.ts";
+
+export const field = {
   id: "field",
   title: "Fields",
   world: "designer",
+  name: "field",
+  namePlural: "fields",
   pKey: "id",
   table: "evol_field",
   titleField: "label",
@@ -30,72 +35,72 @@ export default {
         {
           id: 1,
           text: "Text",
-          icon: "designer/ft-txt.gif",
+          icon: "designer/ft-txt.png",
         },
         {
           id: 2,
           text: "Text multiline",
-          icon: "designer/ft-txtml.gif",
+          icon: "designer/ft-txtml.png",
         },
         {
           id: 3,
           text: "Boolean",
-          icon: "designer/ft-bool.gif",
+          icon: "designer/ft-bool.png",
         },
         {
           id: 4,
           text: "Decimal",
-          icon: "designer/ft-dec.gif",
+          icon: "designer/ft-dec.png",
         },
         {
           id: 5,
           text: "Money",
-          icon: "designer/ft-money.gif",
+          icon: "designer/ft-money.png",
         },
         {
           id: 6,
           text: "Integer",
-          icon: "designer/ft-int.gif",
+          icon: "designer/ft-int.png",
         },
         {
           id: 7,
           text: "Date",
-          icon: "designer/ft-date.gif",
+          icon: "designer/ft-date.png",
         },
         {
           id: 8,
           text: "Time",
-          icon: "designer/ft-time.gif",
+          icon: "designer/ft-time.png",
         },
         {
           id: 9,
           text: "Date-time",
-          icon: "designer/ft-datetime.gif",
+          icon: "designer/ft-datetime.png",
         },
         {
           id: 10,
           text: "Image",
-          icon: "designer/ft-img.gif",
+          icon: "designer/ft-img.png",
         },
         {
           id: 11,
-          text: "Dropdown (lov)",
-          icon: "designer/ft-lov.gif",
+          text: "Dropdown",
+          icon: "designer/ft-lov.png",
         },
         {
           id: 12,
           text: "email",
-          icon: "designer/ft-email.gif",
+          icon: "designer/ft-email.png",
         },
         {
           id: 13,
           text: "Link",
-          icon: "designer/ft-url.gif",
+          icon: "designer/ft-url.png",
         },
         {
           id: 14,
           text: "Multiselect (list)",
-          icon: "designer/ft-list.gif",
+          icon: "designer/ft-list.png",
         },
         {
           id: 15,
@@ -117,6 +122,15 @@ export default {
       required: true,
       maxLength: 63,
       column: "dbcolumn",
+      inSearch: true,
+    },
+    {
+      id: "cf",
+      type: "boolean",
+      label: "Custom field",
+      required: true,
+      defaultValue: false,
+      column: "iscustom",
       inSearch: true,
     },
     {
@@ -164,6 +178,15 @@ export default {
       column: "lovicon",
     },
     {
+      id: "dependantField",
+      type: "text",
+      label: "Dependant Field ID",
+      maxLength: 50,
+      inMany: true,
+      column: "dep_field_id",
+      inSearch: true,
+    },
+    {
       id: "inMany",
       type: "boolean",
       label: "In List",
@@ -178,11 +201,18 @@ export default {
       column: "insearch",
     },
     {
-      id: "noFilter",
+      id: "pii",
+      type: "boolean",
+      label: "PII",
+      inMany: true,
+      column: "pii",
+    },
+    {
+      id: "noFilters",
       type: "boolean",
       label: "In Filter",
       inMany: true,
-      column: "nofilter",
+      column: "noFilters",
     },
     {
       id: "position",
@@ -294,6 +324,12 @@ export default {
       column: "nostats",
     },
     {
+      id: "hideIfEmpty",
+      type: "boolean",
+      label: "Hide when empty",
+      column: "hideifempty",
+    },
+    {
       id: "help",
       type: "textmultiline",
       label: "Help",
@@ -311,16 +347,17 @@ export default {
     },
     {
       id: "defaultValue",
-      type: "text",
+      type: "json",
       label: "Default Value",
       column: "defaultvalue",
     },
     {
-      id: "deleteTrigger",
+      id: "unique",
       type: "boolean",
-      label: "Delete trigger",
-      column: "deletetrigger",
+      label: "Unique",
+      inMany: true,
+      column: "unique",
     },
   ],
   collections: [],
-};
+} satisfies ModelDB;

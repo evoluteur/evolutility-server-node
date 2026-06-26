@@ -1,12 +1,17 @@
 /*
-  Evolutility DB model for Objects
-  https://github.com/evoluteur/evolutility-server-node
+  Model for Objects (13 fields, 3 collections)
+  Generated at 6/25/2026, 12:12:00 AM
+  Powered by evolutility-models v.0.3.0 - https://github.com/evoluteur/evolutility-models
 */
 
-export default {
+import type { ModelDB } from "../types.ts";
+
+export const object = {
   id: "object",
   title: "Objects",
   world: "designer",
+  name: "object",
+  namePlural: "objects",
   pKey: "id",
   table: "evol_object",
   titleField: "title",
@@ -61,9 +66,9 @@ export default {
       inSearch: true,
     },
     {
-      id: "pKey",
+      id: "pkey",
       type: "text",
-      label: "Primary key column",
+      label: "Model ID",
       column: "pkey",
     },
     {
@@ -89,7 +94,7 @@ export default {
     {
       id: "namePlural",
       type: "text",
-      label: "name (plural)",
+      label: "Object name (plural)",
       required: true,
       maxLength: 50,
       column: "nameplural",
@@ -99,7 +104,7 @@ export default {
       type: "image",
       label: "Icon",
       readOnly: true,
-      maxLength: "50",
+      maxLength: 50,
       inMany: true,
       column: "icon",
     },
@@ -120,7 +125,7 @@ export default {
   ],
   collections: [
     {
-      id: "collec-fields",
+      id: "fields",
       table: "evol_field",
       column: "object_id",
       object: "field",
@@ -136,7 +141,7 @@ export default {
       ],
     },
     {
-      id: "collec-groups",
+      id: "groups",
       table: "evol_object_group",
       column: "object_id",
       object: "group",
@@ -144,7 +149,7 @@ export default {
       fields: ["gid", "label", "type", "fields"],
     },
     {
-      id: "collec-collecs",
+      id: "collections",
       table: "evol_object_collec",
       column: "object_id",
       object: "collection",
@@ -152,4 +157,4 @@ export default {
       fields: ["cid", "label", "column", "object", "fields"],
     },
   ],
-};
+} satisfies ModelDB;

@@ -1,12 +1,17 @@
 /*
-  Evolutility DB model for Artists
-  https://github.com/evoluteur/evolutility-server-node
+  Model for Artists (5 fields, 1 collections)
+  Generated at 6/25/2026, 12:12:00 AM
+  Powered by evolutility-models v.0.3.0 - https://github.com/evoluteur/evolutility-models
 */
 
-export default {
+import type { ModelDB } from "../types.ts";
+
+export const artist = {
   id: "artist",
   title: "Artists",
   world: "music",
+  name: "artist",
+  namePlural: "artists",
   pKey: "id",
   table: "music_artist",
   active: true,
@@ -60,4 +65,4 @@ export default {
   ],
   noCharts: true,
   noStats: true,
-};
+} satisfies ModelDB;

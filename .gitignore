@@ -1,7 +1,5 @@
 
-models-db
-models-all
-models-full
+*-gitignore
 
 evol-db-*.sql
 evol-*.log

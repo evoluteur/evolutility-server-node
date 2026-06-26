@@ -1,12 +1,17 @@
 /*
-  Evolutility DB model for Wine cellar
-  https://github.com/evoluteur/evolutility-server-node
+  Model for Wine cellar (26 fields, 1 collections)
+  Generated at 6/25/2026, 12:12:00 AM
+  Powered by evolutility-models v.0.3.0 - https://github.com/evoluteur/evolutility-models
 */
 
-export default {
+import type { ModelDB } from "../types.ts";
+
+export const winecellar = {
   id: "winecellar",
   title: "Wine cellar",
   world: "organizer",
+  name: "wine",
+  namePlural: "wines",
   pKey: "id",
   table: "wine",
   active: true,
@@ -27,7 +32,7 @@ export default {
       type: "integer",
       label: "Vintage",
       required: true,
-      max: 2050,
+      max: 2022,
       min: 1950,
       maxLength: 4,
       inMany: true,
@@ -46,7 +51,7 @@ export default {
     {
       id: "bsize",
       type: "lov",
-      label: "Bottle Size",
+      label: "Bottle size",
       list: [
         {
           id: 1,
@@ -78,11 +83,11 @@ export default {
         },
       ],
       lovIcon: false,
-      column: "bottle_size",
+      column: "bsize_id",
       lovTable: "wine_bsize",
     },
     {
-      id: "wgrape",
+      id: "grape",
       type: "lov",
       label: "Grape",
       list: [
@@ -401,43 +406,43 @@ export default {
       ],
       lovIcon: false,
       inMany: false,
-      column: "grape",
+      column: "grape_id",
       lovTable: "wine_grape",
     },
     {
-      id: "wtype",
+      id: "type",
       type: "lov",
       label: "Type",
       list: [
         {
           id: 1,
           text: "Red",
-          icon: "wine/winered.gif",
+          icon: "wine/winered.png",
         },
         {
           id: 2,
           text: "White",
-          icon: "wine/winewhite.gif",
+          icon: "wine/winewhite.png",
         },
         {
           id: 3,
           text: "Sweet",
-          icon: "wine/winesweet.gif",
+          icon: "wine/winesweet.png",
         },
         {
           id: 4,
           text: "Sparkling",
-          icon: "wine/winespark.gif",
+          icon: "wine/winespark.png",
         },
         {
           id: 5,
           text: "Rose",
-          icon: "wine/winerose.gif",
+          icon: "wine/winerose.png",
         },
       ],
       lovIcon: true,
       inMany: true,
-      column: "type",
+      column: "type_id",
       lovTable: "wine_type",
     },
     {
@@ -448,7 +453,7 @@ export default {
       inSearch: true,
     },
     {
-      id: "wcountry",
+      id: "country",
       type: "lov",
       label: "Country",
       list: [
@@ -544,7 +549,7 @@ export default {
         },
       ],
       lovIcon: true,
-      column: "country",
+      column: "country_id",
       lovTable: "wine_country",
     },
     {
@@ -573,7 +578,7 @@ export default {
     {
       id: "buying_date",
       type: "date",
-      label: "Buying Date",
+      label: "Buying date",
       column: "buying_date",
     },
     {
@@ -592,7 +597,7 @@ export default {
     {
       id: "purchased",
       type: "integer",
-      label: "Bottles Purchased",
+      label: "Bottles purchased",
       min: 0,
       maxLength: 10,
       column: "purchased",
@@ -658,7 +663,7 @@ export default {
     {
       id: "score",
       type: "lov",
-      label: "My Score",
+      label: "My score",
       list: [
         {
           id: 1,
@@ -682,7 +687,7 @@ export default {
         },
       ],
       lovIcon: false,
-      column: "score",
+      column: "score_id",
       lovTable: "wine_score",
     },
     {
@@ -721,4 +726,4 @@ export default {
       fields: ["drink_date", "robe", "nose", "taste", "notes"],
     },
   ],
-};
+} satisfies ModelDB;

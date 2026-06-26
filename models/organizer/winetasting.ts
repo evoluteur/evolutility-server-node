@@ -1,12 +1,17 @@
 /*
-  Evolutility DB model for Wine tastings
-  https://github.com/evoluteur/evolutility-server-node
+  Model for Wine tastings (6 fields)
+  Generated at 6/25/2026, 12:12:00 AM
+  Powered by evolutility-models v.0.3.0 - https://github.com/evoluteur/evolutility-models
 */
 
-export default {
+import type { ModelDB } from "../types.ts";
+
+export const winetasting = {
   id: "winetasting",
   title: "Wine tastings",
   world: "organizer",
+  name: "wine tasting",
+  namePlural: "wine tastings",
   pKey: "id",
   table: "wine_tasting",
   active: true,
@@ -68,4 +73,6 @@ export default {
       inSearch: true,
     },
   ],
-};
+  collections: [],
+  noStats: true,
+} satisfies ModelDB;

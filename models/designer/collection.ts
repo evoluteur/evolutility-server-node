@@ -1,12 +1,17 @@
 /*
-  Evolutility DB model for Collection
-  https://github.com/evoluteur/evolutility-server-node
+  Model for Collection (11 fields)
+  Generated at 6/25/2026, 12:12:00 AM
+  Powered by evolutility-models v.0.3.0 - https://github.com/evoluteur/evolutility-models
 */
 
-export default {
+import type { ModelDB } from "../types.ts";
+
+export const collection = {
   id: "collection",
   title: "Collection",
   world: "designer",
+  name: "collection",
+  namePlural: "collections",
   pKey: "id",
   table: "evol_object_collec",
   titleField: "label",
@@ -79,6 +84,27 @@ export default {
       column: "fields",
     },
     {
+      id: "help",
+      type: "textmultiline",
+      label: "help",
+      maxLength: 500,
+      column: "help",
+    },
+    {
+      id: "header",
+      type: "textmultiline",
+      label: "Header",
+      maxLength: 500,
+      column: "header",
+    },
+    {
+      id: "footer",
+      type: "textmultiline",
+      label: "Footer",
+      maxLength: 500,
+      column: "footer",
+    },
+    {
       id: "description",
       type: "textmultiline",
       label: "Description",
@@ -88,4 +114,4 @@ export default {
     },
   ],
   collections: [],
-};
+} satisfies ModelDB;

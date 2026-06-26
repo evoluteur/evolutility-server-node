@@ -1,12 +1,17 @@
 /*
-  Evolutility DB model for Restaurants
-  https://github.com/evoluteur/evolutility-server-node
+  Model for Restaurants (13 fields)
+  Generated at 6/25/2026, 12:12:00 AM
+  Powered by evolutility-models v.0.3.0 - https://github.com/evoluteur/evolutility-models
 */
 
-export default {
+import type { ModelDB } from "../types.ts";
+
+export const restaurant = {
   id: "restaurant",
   title: "Restaurants",
   world: "organizer",
+  name: "restaurant",
+  namePlural: "restaurants",
   pKey: "id",
   table: "restaurant",
   active: true,
@@ -191,4 +196,6 @@ export default {
       column: "zip",
     },
   ],
-};
+  collections: [],
+  noStats: true,
+} satisfies ModelDB;

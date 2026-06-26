@@ -1,12 +1,17 @@
 /*
-  Evolutility DB model for Graphic Novels
-  https://github.com/evoluteur/evolutility-server-node
+  Model for Graphic novels (13 fields)
+  Generated at 6/25/2026, 12:12:00 AM
+  Powered by evolutility-models v.0.3.0 - https://github.com/evoluteur/evolutility-models
 */
 
-export default {
+import type { ModelDB } from "../types.ts";
+
+export const comics = {
   id: "comics",
-  title: "Graphic Novels",
+  title: "Graphic novels",
   world: "organizer",
+  name: "serie",
+  namePlural: "series",
   pKey: "id",
   table: "comics",
   active: true,
@@ -186,4 +191,5 @@ export default {
       inSearch: true,
     },
   ],
-};
+  collections: [],
+} satisfies ModelDB;

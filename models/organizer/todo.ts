@@ -1,12 +1,17 @@
 /*
-  Evolutility DB model for To-Do List
-  https://github.com/evoluteur/evolutility-server-node
+  Model for To-Do List (6 fields)
+  Generated at 6/25/2026, 12:12:00 AM
+  Powered by evolutility-models v.0.3.0 - https://github.com/evoluteur/evolutility-models
 */
 
-export default {
+import type { ModelDB } from "../types.ts";
+
+export const todo = {
   id: "todo",
   title: "To-Do List",
   world: "organizer",
+  name: "task",
+  namePlural: "tasks",
   pKey: "id",
   table: "task",
   active: true,
@@ -25,7 +30,7 @@ export default {
     {
       id: "duedate",
       type: "date",
-      label: "Due Date",
+      label: "Due date",
       inMany: true,
       column: "duedate",
     },
@@ -36,7 +41,7 @@ export default {
       list: [
         {
           id: 1,
-          text: "Home",
+          text: "Personal",
         },
         {
           id: 2,
@@ -44,14 +49,22 @@ export default {
         },
         {
           id: 3,
-          text: "Fun",
+          text: "Projects",
         },
         {
           id: 4,
-          text: "Others",
+          text: "Goals",
         },
         {
           id: 5,
+          text: "Fun",
+        },
+        {
+          id: 6,
+          text: "Others",
+        },
+        {
+          id: 7,
           text: "Misc.",
         },
       ],
@@ -110,4 +123,6 @@ export default {
       inSearch: true,
     },
   ],
-};
+  collections: [],
+  noStats: true,
+} satisfies ModelDB;

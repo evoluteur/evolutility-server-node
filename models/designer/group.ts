@@ -1,12 +1,17 @@
 /*
-  Evolutility DB model for Field Groups
-  https://github.com/evoluteur/evolutility-server-node
+  Model for Field Groups (11 fields)
+  Generated at 6/25/2026, 12:12:00 AM
+  Powered by evolutility-models v.0.3.0 - https://github.com/evoluteur/evolutility-models
 */
 
-export default {
+import type { ModelDB } from "../types.ts";
+
+export const group = {
   id: "group",
   title: "Field Groups",
   world: "designer",
+  name: "group",
+  namePlural: "groups",
   pKey: "id",
   table: "evol_object_group",
   active: true,
@@ -115,4 +120,4 @@ export default {
     },
   ],
   collections: [],
-};
+} satisfies ModelDB;

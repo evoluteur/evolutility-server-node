@@ -6,11 +6,11 @@
  * (c) 2026 Olivier Giulieri
  */
 
-import ms from "../../models/all_models.js";
+import * as _ms from "../../models/all_models.ts";
 import config from "../../config.js";
 import dico from "./dico.js";
 
-export const models = ms;
+export const models = { ..._ms };
 
 const schema = `"${config.schema || "evolutility"}"`;
 

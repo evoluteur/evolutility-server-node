@@ -1,12 +1,17 @@
 /*
-  Evolutility DB model for Tracks
-  https://github.com/evoluteur/evolutility-server-node
+  Model for Tracks (5 fields)
+  Generated at 6/25/2026, 12:12:00 AM
+  Powered by evolutility-models v.0.3.0 - https://github.com/evoluteur/evolutility-models
 */
 
-export default {
+import type { ModelDB } from "../types.ts";
+
+export const track = {
   id: "track",
   title: "Tracks",
   world: "music",
+  name: "track",
+  namePlural: "tracks",
   pKey: "id",
   table: "music_track",
   active: true,
@@ -96,4 +101,4 @@ export default {
   ],
   collections: [],
   noStats: true,
-};
+} satisfies ModelDB;
