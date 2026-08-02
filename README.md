@@ -586,4 +586,6 @@ Only enable `trustProxy` if you actually control the proxy and trust it to set `
 
 Evolutility-Server-Node is released under the [AGPLv3 license](http://github.com/evoluteur/evolutility-server-node/blob/master/LICENSE.md).
 
+Encourage this project by becoming a [sponsor](https://github.com/sponsors/evoluteur).
+
 Copyright (c) 2026 [Olivier Giulieri](https://evoluteur.github.io/).
