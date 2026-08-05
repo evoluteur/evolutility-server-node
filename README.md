@@ -115,7 +115,7 @@ Models contain the name of the driving table and the list of fields/columns pres
 |--------------|---------------------------------|
 | id           | Unique key to identify the entity (used as API parameter). |
 | table        | Driving database table name (there are secondary tables for fields of type "lov"). |
-| pKey         | Name of the Primary key column (single column of type serial). Default to "id". In the data the key is always called "id". |
+| pKey         | Name of the Primary key column (single column of type serial). Defaults to "id". In the data the key is always called "id". |
 | fields       | Array of fields.                        |
 | titleField   | Field id for the column value used as record title. |
 | noCharts     | Disable charts and dashboard views. |
@@ -156,7 +156,7 @@ Multiple Master-Details can be specified with collections.
 | column       | Column in the detail table to match against id of object. |
 | object       | Model id for the object to display (optional).            |
 | orderBy      | Column(s) to sort by, e.g. `"name"` or `"drink_date"`.          |
-| fields       | Array of fields (objects or ids). Fields in collections can be field objects or just ids of field in the collection's object.    |
+| fields       | Array of fields (objects or ids). Fields in collections can be field objects or just ids of fields in the collection's object.    |
 
 Example of collection in [Wine cellar](https://github.com/evoluteur/evolutility-server-node/blob/master/models/organizer/winecellar.js).
 
@@ -227,7 +227,7 @@ More information about Evolutility models and some useful scripts are available 
 <a name="API"></a>
 ## REST API
 
-Evolutility-Server-Node provides a generic RESTful API for CRUD (Create, Read, Update, Delete) and more. It is inspired from [PostgREST](http://postgrest.com).
+Evolutility-Server-Node provides a generic RESTful API for CRUD (Create, Read, Update, Delete) and more. It is inspired by [PostgREST](http://postgrest.com).
 
 - [Get](#API_Get)
 - [Update](#API_Update)
