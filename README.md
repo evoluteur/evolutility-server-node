@@ -130,6 +130,7 @@ Models contain the name of the driving table and the list of fields/columns pres
 | column       | Database column name for the field.    |
 | lovTable     | Table to join to for field value (only for fields of type "lov"). |
 | lovColumn    | Column name (in the lovTable) for field value (only for fields of type "lov"). |
+| lovKey       | Primary key column name in the lovTable (default to "id"). |
 | lovIcon      | Set to `true` to include an icon with LOV items (only for fields of type "lov"). |
 | object       | Model id for the object to link to (only for fields of type "lov").    |
 | type         | Field type is not a database column type but more a UI field type. Possible field types: <ul><li>boolean</li><li>date</li><li>datetime</li><li>decimal</li><li>document</li><li>email</li><li>image</li><li>integer</li><li>lov (list of values)</li><li>list (multiselect)</li><li>money</li><li>text</li><li>textmultiline</li><li>time</li><li>url</li></ul> |
