@@ -42,7 +42,10 @@ export function getChart(req: Request, res: Response) {
   runQuery(res, sql!, [], false);
 }
 
-function SQLchartField(m: Model, fid: string): { sql?: string; errorMessage?: string; errorCode?: number } {
+function SQLchartField(
+  m: Model,
+  fid: string,
+): { sql?: string; errorMessage?: string; errorCode?: number } {
   const sqlCount = "count(*)::integer AS value";
   let sql: string;
 
@@ -51,7 +54,10 @@ function SQLchartField(m: Model, fid: string): { sql?: string; errorMessage?: st
     return { errorMessage: `Field not found: "${fid}".`, errorCode: 404 };
   }
   if (!fieldInCharts(f)) {
-    return { errorMessage: `Field "${fid}" not allowed in Charts.`, errorCode: 400 };
+    return {
+      errorMessage: `Field "${fid}" not allowed in Charts.`,
+      errorCode: 400,
+    };
   }
 
   const col = `"${f.column}"`,
@@ -59,43 +65,19 @@ function SQLchartField(m: Model, fid: string): { sql?: string; errorMessage?: st
 
   if (f.type === ft.lov && f.lovTable) {
     const clov = f.lovColumn || "name";
+    const t2PK = `t2.${f.lovKey || "id"}`;
     sql =
-      "SELECT t2.id, t2." +
-      clov +
-      "::text AS label, " +
-      sqlCount +
-      sqlFrom +
-      " LEFT JOIN " +
-      `${schema}."${f.lovTable}" AS t2` +
-      " ON t1." +
-      col +
-      "=t2.id GROUP BY t2.id, t2." +
-      clov;
+      `SELECT ${t2PK}, t2.${clov}::text AS label, ${sqlCount}` +
+      `${sqlFrom} LEFT JOIN ${schema}."${f.lovTable}" AS t2 ON t1.${col}=${t2PK} GROUP BY ${t2PK}, t2.${clov}`;
   } else if (f.type === ft.bool) {
     const cId = "CASE " + col + " WHEN true THEN 1 ELSE 0 END",
       cLabel = "CASE " + col + " WHEN true THEN 'Yes' ELSE 'No' END";
     sql =
-      "SELECT " +
-      cId +
-      "::integer AS id, " +
-      cLabel +
-      "::text AS label, " +
-      sqlCount +
-      sqlFrom +
+      `SELECT ${cId}::integer AS id, ${cLabel}::text AS label, ${sqlCount}${sqlFrom}` +
       ` GROUP BY ${cId}, ${cLabel}`;
   } else if (fieldIsNumber(f)) {
     const numbersColType = f.type === ft.int ? "::integer" : "";
-    sql =
-      "SELECT " +
-      col +
-      numbersColType +
-      " AS id, " +
-      col +
-      "::text AS label, " +
-      sqlCount +
-      sqlFrom +
-      " GROUP BY " +
-      col;
+    sql = `SELECT ${col}${numbersColType} AS id, ${col}::text AS label, ${sqlCount}${sqlFrom} GROUP BY ${col}`;
   } else {
     // TODO: buckets
     sql = `SELECT ${col}::text AS label, ${sqlCount}${sqlFrom} GROUP BY ${col}`;
