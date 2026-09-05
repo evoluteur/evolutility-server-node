@@ -19,21 +19,23 @@ function sqlAggregate(fn: string, f: Field) {
   let num = "";
   let tcast = "";
 
-  if (f.type === ft.money) {
-    tcast = "::numeric::float8";
-    num = "::numeric";
-  } else if (fn === "avg") {
-    // - note: update the code below if we add avg for date fields
-    tcast = "::numeric::float8";
-  } else {
-    // min, max, sum
-    switch (f.type) {
-      case ft.int:
-        tcast = "::" + f.type;
-        break;
-      case ft.dec:
-        tcast = "::numeric::float8";
-        break;
+  if (!f.noStats) {
+    if (f.type === ft.money) {
+      tcast = "::numeric::float8";
+      num = "::numeric";
+    } else if (fn === "avg") {
+      // - note: update the code below if we add avg for date fields
+      tcast = "::numeric::float8";
+    } else {
+      // min, max, sum
+      switch (f.type) {
+        case ft.int:
+          tcast = "::numeric";
+          break;
+        case ft.dec:
+          tcast = "::numeric::float8";
+          break;
+      }
     }
   }
   return ", " + fn + `("${f.column}"${num})${tcast} AS "${f.id}_${fn}"`;
@@ -144,7 +146,15 @@ export function getStats(req: Request, res: Response) {
   }
   sql += ", " + sqlNulls.join(", ");
   sql += sqlFROM;
-  runQuery(res, sql, [], true, null, null, fnPrep(m.fields) as (data: unknown) => unknown);
+  runQuery(
+    res,
+    sql,
+    [],
+    true,
+    null,
+    null,
+    fnPrep(m.fields) as (data: unknown) => unknown,
+  );
 }
 
 // --------------------------------------------------------------------------------------
