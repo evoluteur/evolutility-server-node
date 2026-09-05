@@ -218,10 +218,10 @@ export default {
 ```
 
 More sample models:
- [Address book](https://github.com/evoluteur/evolutility-server-node/blob/master/models/organizer/contact.js),
- [Restaurants list](https://github.com/evoluteur/evolutility-server-node/blob/master/models/organizer/restaurant.js),
- [Wine cellar](https://github.com/evoluteur/evolutility-server-node/blob/master/models/organizer/winecellar.js),
- [Graphic novels inventory](https://github.com/evoluteur/evolutility-server-node/blob/master/models/organizer/comics.js).
+ [Address book](https://github.com/evoluteur/evolutility-server-node/blob/master/models/organizer/contact.ts),
+ [Restaurants list](https://github.com/evoluteur/evolutility-server-node/blob/master/models/organizer/restaurant.ts),
+ [Wine cellar](https://github.com/evoluteur/evolutility-server-node/blob/master/models/organizer/winecellar.ts),
+ [Graphic novels inventory](https://github.com/evoluteur/evolutility-server-node/blob/master/models/organizer/comics.ts).
 
 More information about Evolutility models and some useful scripts are available in a separate repository at [evolutility-models](https://github.com/evoluteur/evolutility-models).
 
@@ -464,7 +464,7 @@ GET /todo/lov/category?search=pro
 
 #### File upload
 
-Uploads a file to the server filesystem, in a subfolder named after the model id inside the directory specified by `uploadPath` in config.js.
+Uploads a file to the server filesystem, in a subfolder named after the model id inside the directory specified by `uploadPath` in config.ts.
 
 ```
 POST /{model.id}/upload/{id}
