@@ -63,6 +63,7 @@ export interface FieldBase {
   max?: number;
   regExp?: string;
   defaultValue?: unknown;
+  lovKey?: string;
   lovIcon?: boolean;
   inMany?: boolean;
   inList?: boolean;
