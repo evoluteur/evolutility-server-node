@@ -41,6 +41,11 @@ function sqlAggregate(fn: string, f: Field) {
   return ", " + fn + `("${f.column}"${num})${tcast} AS "${f.id}_${fn}"`;
 }
 
+// - Postgres returns bigint/numeric aggregate results (e.g. sum() on an int column,
+// - or anything cast to ::numeric) as strings to avoid precision loss, so numeric
+// - stats need to be coerced back to JS numbers before going out as JSON.
+const toNum = (v: unknown) => (v === null || v === undefined ? v : Number(v));
+
 const fnPrep = (fields: Field[]) => (data: Record<string, unknown>) => {
   // - nesting data per field
   const pStats: Record<string, unknown> = {
@@ -61,14 +66,16 @@ const fnPrep = (fields: Field[]) => (data: Record<string, unknown>) => {
   fields.forEach((f) => {
     if (!f.noStats) {
       if (dico.fieldIsNumeric(f)) {
+        // - date/time fields also have min/max but must stay as date strings.
+        const isNum = dico.fieldIsNumber(f);
         const item: Record<string, unknown> = {
-          min: data[f.id + "_min"],
-          max: data[f.id + "_max"],
+          min: isNum ? toNum(data[f.id + "_min"]) : data[f.id + "_min"],
+          max: isNum ? toNum(data[f.id + "_max"]) : data[f.id + "_max"],
         };
         ["avg", "sum", "stddev", "variance"].forEach((k) => {
           const fn = f.id + "_" + k;
           if (data[fn] !== undefined) {
-            item[k] = data[fn];
+            item[k] = isNum ? toNum(data[fn]) : data[fn];
           }
         });
         pStats[f.id] = item;
