@@ -22,15 +22,15 @@ const searchParam = (search: string) =>
 
 const SQLlovOne = (f: Partial<Field>, search?: string) => {
   const col = f.lovColumn || "name";
-  let sql = 'SELECT id, "' + col + '" as text';
+  let sql = `SELECT id, "${col}" as text`;
   if (f.lovIcon) {
     sql += ", icon";
   }
   sql += ` FROM ${schema}."${f.lovTable}"`;
   if (search) {
-    sql += ' WHERE "' + col + '" ILIKE $1';
+    sql += ` WHERE "${col}" ILIKE $1`;
   }
-  sql += ' ORDER BY UPPER("' + col + '") ASC LIMIT ' + lovSize + ";";
+  sql += ` ORDER BY UPPER("${col}") ASC LIMIT ${lovSize};`;
   return sql;
 };
 

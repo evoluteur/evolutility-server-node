@@ -24,23 +24,15 @@ function SQLgetOne(id: string, m: Model) {
   if (!parseInt(id, 10)) {
     return null;
   }
-  let sql =
-    "SELECT t1." +
-    m.pKey +
-    " as id, " +
-    sqls.select(m.fields, m.collections, true);
+  let sql = `SELECT t1.${m.pKey} as id, ${sqls.select(m.fields, m.collections, true)}`;
 
   systemFields.forEach(function (f) {
     sql += ", t1." + f.column;
   });
   sql +=
-    " FROM " +
-    m.schemaTable +
-    " AS t1" +
+    ` FROM ${m.schemaTable} AS t1` +
     sqls.sqlFromLOVs(m.fields, schema) +
-    " WHERE t1." +
-    m.pKey +
-    "=$1 LIMIT 1;";
+    ` WHERE t1.${m.pKey}=$1 LIMIT 1;`;
 
   return { sql, sqlParams: [id] };
 }
@@ -64,13 +56,21 @@ export const getOne = async (req: Request, res: Response) => {
         promiseQuery(SQLCollecOne(collec), [id], false),
       );
       qCollecs.unshift(promiseQuery(sql, sqlParams, true));
-      const data = await Promise.all(qCollecs) as (Record<string, unknown> | null)[];
+      const data = (await Promise.all(qCollecs)) as (Record<
+        string,
+        unknown
+      > | null)[];
       if (data && data.length) {
         const d = data[0];
         if (data.length > 1) {
           (d as Record<string, unknown>).collections = {};
           m.collections.forEach((collec, idx) => {
-            ((d as Record<string, unknown>).collections as Record<string, unknown>)[collec.id] = data[idx + 1];
+            (
+              (d as Record<string, unknown>).collections as Record<
+                string,
+                unknown
+              >
+            )[collec.id] = data[idx + 1];
           });
         }
         res.json(d);
@@ -207,7 +207,9 @@ const collecOrderBy = (collec: Collection) => {
   const firstField = collec.fields![0];
   const col = collec.orderBy
     ? collec.orderBy
-    : typeof firstField === "string" ? firstField : firstField.column;
+    : typeof firstField === "string"
+      ? firstField
+      : firstField.column;
   return col + (collec.order === "desc" ? " DESC" : " ASC");
 };
 

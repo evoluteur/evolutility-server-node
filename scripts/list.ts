@@ -22,7 +22,8 @@ const schema = '"' + (config.schema || "evolutility") + '"',
 // - build the header row for CSV export
 const csvHeaderColumn = config.csvHeader || "label";
 
-const fieldId = (f: Field) => (csvHeaderColumn === "label" ? f.label || f.id : f.id);
+const fieldId = (f: Field) =>
+  csvHeaderColumn === "label" ? f.label || f.id : f.id;
 const searchParam = (search: string) =>
   search ? "%" + search.replace(/%/g, "%") + "%" : "%";
 const sqlOperators: Record<string, string> = {
@@ -96,7 +97,8 @@ function SQLgetMany(m: Model, req: Request, isCSV: boolean, wCount: boolean) {
   for (const n in query) {
     const qVal = query[n];
     if (qVal && qVal !== "") {
-      const f = n === pKey ? ({ column: pKey } as Field) : m.fieldsH![n as string];
+      const f =
+        n === pKey ? ({ column: pKey } as Field) : m.fieldsH![n as string];
       if (
         f &&
         ["select", "filter", "search", "order", "page", "pageSize"].indexOf(
@@ -207,7 +209,7 @@ function SQLgetMany(m: Model, req: Request, isCSV: boolean, wCount: boolean) {
       });
       if (sqlWsSearch.length) {
         sqlParams.push(searchParam(query.search));
-        sqlWs.push("(" + sqlWsSearch.join(" OR ") + ")");
+        sqlWs.push(`(${sqlWsSearch.join(" OR ")})`);
       }
     }
   }
@@ -286,7 +288,7 @@ export const getMany = async (req: Request, res: Response) => {
       isCSV ? csvHeader(m.fields) : null,
     );
   } else {
-    badRequest(res, 'Model not found: "' + mid + '".', 404);
+    badRequest(res, `Model not found: "${mid}"`, 404);
   }
 };
 
