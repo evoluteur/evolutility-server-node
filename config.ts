@@ -13,6 +13,8 @@ export interface Config {
   csvSize: number;
   csvHeader: string;
   uploadPath: string;
+  uploadMaxSize?: number;
+  uploadExtensions?: string[];
   wTimestamp: boolean;
   wWhoIs: boolean;
   wComments: boolean;
@@ -51,6 +53,10 @@ const config: Config = {
 
   // - Directory for uploaded files
   uploadPath: "../evolutility-ui-react/public/pix/",
+  // - Maximum size of uploaded files (in bytes)
+  uploadMaxSize: 2 * 1024 * 1024,
+  // - Allowed file extensions for uploads (default list in scripts/utils/upload.ts)
+  // uploadExtensions: [".png", ".jpg", ".jpeg", ".gif", ".webp", ".pdf"],
 
   // - Optional fields
   // - Timestamp columns "created_at" and "updated_at" w/ date of record creation and last update
