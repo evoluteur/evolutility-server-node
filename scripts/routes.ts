@@ -24,8 +24,39 @@ const router = express.Router();
 
 logger.startupMessage();
 
+// - Routes with fixed paths ("version", "meta/models"...) must be declared
+// - before the generic ":entity" routes, otherwise ":entity" matches them first.
+
 // #region ===== OpenAPI spec ====================================
 router.get(apiPath + "openapi.json", getOpenAPISpec);
+// #endregion
+
+// #region ===== APIs DISCOVERY ====================================
+if (config.apiInfo) {
+  router.get(apiPath, getAPIs);
+}
+// #endregion
+
+// #region ===== Version ====================================
+router.get(apiPath + "version", getVersion);
+// #endregion
+
+// #region =====DB: query for list of tables and columns ====================================
+if (config.schemaQueries) {
+  // - all tables (except evol*)
+  router.get(apiPath + "db/tables", dbStructure.getTables);
+  // - columns of specific table
+  router.get(apiPath + "db/:table/columns", dbStructure.getColumns);
+}
+// #endregion
+
+// #region ===== Models in DB ====================================
+if (config.apiDesigner) {
+  // - Models
+  //router.post(apiPath+'meta/model', designer.importModel);
+  router.get(apiPath + "meta/models", designer.getModels);
+  router.get(apiPath + "meta/model/:id", designer.getModel);
+}
 // #endregion
 
 // #region ===== GET STATS ====================================
@@ -62,32 +93,5 @@ router.get(apiPath + ":entity/lov/:field", lovOne);
 // #region ===== GET CHARTS ====================================
 router.get(apiPath + ":entity/chart/:field", getChart);
 // #endregion
-
-// #region ===== APIs DISCOVERY ====================================
-if (config.apiInfo) {
-  router.get(apiPath + "/", getAPIs);
-}
-// #endregion
-
-// #region ===== Version ====================================
-router.get(apiPath + "version", getVersion);
-// #endregion
-
-// #region =====DB: query for list of tables and columns ====================================
-if (config.schemaQueries) {
-  // - all tables (except evol*)
-  router.get(apiPath + "db/tables", dbStructure.getTables);
-  // - columns of specific table
-  router.get(apiPath + "db/:table/columns", dbStructure.getColumns);
-}
-// #endregion
-
-// #region ===== Models in DB ====================================
-if (config.apiDesigner) {
-  // - Models
-  //router.post(apiPath+'meta/model', designer.importModel);
-  router.get(apiPath + "meta/models", designer.getModels);
-  router.get(apiPath + "meta/model/:id", designer.getModel);
-}
 
 export default router;
