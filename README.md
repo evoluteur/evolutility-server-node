@@ -82,6 +82,7 @@ Configuration options are set in the file [config.js](https://github.com/evolute
 | connectionString  | DB connection string (i.e.: "postgres://evol:love@localhost:5432/evol"). |
 | schema            | DB schema name (i.e.: "evolutility").|
 | pageSize          | Number of rows per page in pagination (default = 50).|
+| maxPageSize       | Largest page size a client can request with "pageSize" (default = 1000).|
 | lovSize           | Maximum number of values allowed for form dropdowns (default = 100). |
 | csvSize           | Maximum number of rows in CSV export (default = 1000).|
 | csvHeader         | Use field ids or labels as CSV column headers. |
@@ -333,7 +334,7 @@ GET /todo?order=duedate
 
 #### Limiting and Pagination
 
-The reserved words "page" and "pageSize" limit the response rows.
+The reserved words "page" and "pageSize" limit the response rows. "pageSize" is capped at maxPageSize in config.ts.
 
 ```
 GET /{model.id}?page={pageindex}&pageSize={pagesize}

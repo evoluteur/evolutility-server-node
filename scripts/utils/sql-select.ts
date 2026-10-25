@@ -11,6 +11,30 @@ import type { Field, Model, Collection } from "../../models/types.ts";
 import type { Request } from "express";
 
 const defaultPageSize = config.pageSize || 50;
+const defaultMaxPageSize = 1000;
+
+// - escape LIKE/ILIKE wildcards so user text is matched literally ("50%" -> "50\\%")
+export const likeEscape = (s: string) => s.replace(/[\\%_]/g, "\\$&");
+
+// - "contains" pattern for ILIKE search (empty search matches everything)
+export const likeContains = (search?: string | null) =>
+  search ? `%${likeEscape(search)}%` : "%";
+
+// - page size from the query string, within 1 and config.maxPageSize
+export function pageSizeParam(value?: string | null) {
+  const max = config.maxPageSize || defaultMaxPageSize;
+  const n = parseInt(value || "", 10);
+  if (!Number.isFinite(n) || n < 1) {
+    return Math.min(defaultPageSize, max);
+  }
+  return Math.min(n, max);
+}
+
+// - page number from the query string (0 based, never negative)
+export function pageParam(value?: string | null) {
+  const n = parseInt(value || "0", 10);
+  return Number.isFinite(n) && n > 0 ? n : 0;
+}
 
 // - SQL for a single field/column in update/create/order
 const columnName = {

@@ -10,6 +10,7 @@ import type { Request, Response } from "express";
 import { getModel } from "./utils/model-manager.ts";
 import { runQuery } from "./utils/query.ts";
 import { badRequest } from "./utils/errors.ts";
+import { likeContains } from "./utils/sql-select.ts";
 import logger from "./utils/logger.ts";
 import config from "../config.ts";
 import type { Field } from "../models/types.ts";
@@ -17,8 +18,6 @@ import type { Field } from "../models/types.ts";
 const schema = '"' + (config.schema || "evolutility") + '"',
   lovSize = config.lovSize || 100;
 
-const searchParam = (search: string) =>
-  search ? "%" + search.replace(/%/g, "%") + "%" : "%";
 
 const SQLlovOne = (f: Partial<Field>, search?: string) => {
   const col = f.lovColumn || "name";
@@ -61,7 +60,7 @@ export const lovOne = (req: Request, res: Response) => {
   }
 
   const sql = SQLlovOne(f, search);
-  const params = search ? [searchParam(search)] : [];
+  const params = search ? [likeContains(search)] : [];
   runQuery(res, sql, params, false);
 };
 

@@ -9,6 +9,7 @@ export interface Config {
   schema: string;
   apiInfo: boolean;
   pageSize: number;
+  maxPageSize?: number;
   lovSize: number;
   csvSize: number;
   csvHeader: string;
@@ -45,6 +46,8 @@ const config: Config = {
 
   // - Pagination and maximum number of rows
   pageSize: 50,
+  // - Largest page size a client can ask for (with ?pageSize=)
+  maxPageSize: 1000,
   lovSize: 100,
 
   // - CSV Export

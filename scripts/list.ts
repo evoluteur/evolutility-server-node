@@ -9,23 +9,25 @@
 import type { Request, Response } from "express";
 import dico, { fieldTypes as ft } from "./utils/dico.ts";
 import { getModel } from "./utils/model-manager.ts";
-import sqls from "./utils/sql-select.ts";
+import sqls, {
+  likeEscape,
+  likeContains,
+  pageParam,
+  pageSizeParam,
+} from "./utils/sql-select.ts";
 import { runQuery } from "./utils/query.ts";
 import { badRequest } from "./utils/errors.ts";
 import logger from "./utils/logger.ts";
 import config from "../config.ts";
 import type { Field, Model } from "../models/types.ts";
 
-const schema = '"' + (config.schema || "evolutility") + '"',
-  defaultPageSize = config.pageSize || 50;
+const schema = '"' + (config.schema || "evolutility") + '"';
 
 // - build the header row for CSV export
 const csvHeaderColumn = config.csvHeader || "label";
 
 const fieldId = (f: Field) =>
   csvHeaderColumn === "label" ? f.label || f.id : f.id;
-const searchParam = (search: string) =>
-  search ? "%" + search.replace(/%/g, "%") + "%" : "%";
 const sqlOperators: Record<string, string> = {
   eq: "=",
   ne: "<>",
@@ -36,6 +38,7 @@ const sqlOperators: Record<string, string> = {
   ct: " ILIKE ",
   sw: " ILIKE ",
   fw: " ILIKE ",
+  nct: " ILIKE ",
   in: " IN ",
   0: "=",
   1: "=",
@@ -105,9 +108,10 @@ function SQLgetMany(m: Model, req: Request, isCSV: boolean, wCount: boolean) {
           f.column!,
         ) < 0
       ) {
-        const cs = qVal.split(".");
-        if (cs.length) {
-          const cond = cs[0];
+        const dot = qVal.indexOf(".");
+        const cond = dot > -1 ? qVal.slice(0, dot) : qVal;
+        const cs = [cond, dot > -1 ? qVal.slice(dot + 1) : ""];
+        if (cond) {
           if (sqlOperators[cond]) {
             if ((cond === "eq" || cond === "ne") && dico.fieldIsText(f)) {
               if (cs[1] === "null") {
@@ -169,18 +173,18 @@ function SQLgetMany(m: Model, req: Request, isCSV: boolean, wCount: boolean) {
               } else {
                 if (cond === "nct") {
                   // not contains
-                  sqlParams.push(`%${cs[1]}%`);
+                  sqlParams.push(likeContains(cs[1]));
                   sqlWs.push(` NOT ${w}$${sqlParams.length}`);
                 } else {
                   if (cond === "sw") {
                     // - start with
-                    sqlParams.push(cs[1] + "%");
+                    sqlParams.push(likeEscape(cs[1]) + "%");
                   } else if (cond === "fw") {
                     // - finishes with
-                    sqlParams.push("%" + cs[1]);
+                    sqlParams.push("%" + likeEscape(cs[1]));
                   } else if (cond === "ct") {
                     // - contains
-                    sqlParams.push(`%${cs[1]}%`);
+                    sqlParams.push(likeContains(cs[1]));
                   } else {
                     sqlParams.push(cs[1]);
                   }
@@ -208,7 +212,7 @@ function SQLgetMany(m: Model, req: Request, isCSV: boolean, wCount: boolean) {
         sqlWsSearch.push('t1."' + m.fieldsH![fid].column + sqlP);
       });
       if (sqlWsSearch.length) {
-        sqlParams.push(searchParam(query.search));
+        sqlParams.push(likeContains(query.search));
         sqlWs.push(`(${sqlWsSearch.join(" OR ")})`);
       }
     }
@@ -242,16 +246,13 @@ function SQLgetMany(m: Model, req: Request, isCSV: boolean, wCount: boolean) {
 
   // ---- SIZE & PAGINATION
   let offset = 0,
-    qPage = parseInt(query.page || "0", 10) || 0,
     qPageSize: number;
 
   if (query.format === "csv") {
     qPageSize = config.csvSize || 1000;
   } else {
-    qPageSize = parseInt(query.pageSize || String(defaultPageSize), 10);
-    if (qPage) {
-      offset = qPage * qPageSize;
-    }
+    qPageSize = pageSizeParam(query.pageSize);
+    offset = pageParam(query.page) * qPageSize;
   }
 
   return {
