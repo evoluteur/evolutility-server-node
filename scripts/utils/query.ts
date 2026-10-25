@@ -15,9 +15,20 @@ const pgp = pgPromise();
 
 export const db = { conn: pgp(config.connectionString) };
 
-function sendCSV(res: Response, rows: Record<string, unknown>[] | null) {
+// - keep only characters safe in a file name (the name comes from a model id)
+export const csvFileName = (name?: string | null) =>
+  (name || "export").replace(/[^a-zA-Z0-9._-]/g, "_") + ".csv";
+
+function sendCSV(
+  res: Response,
+  rows: Record<string, unknown>[] | null,
+  fileName?: string | null,
+) {
   res.setHeader("Content-Type", "text/csv; charset=utf-8");
-  res.setHeader("Content-Disposition", "attachment; filename=export.csv");
+  res.setHeader(
+    "Content-Disposition",
+    `attachment; filename="${csvFileName(fileName)}"`,
+  );
   if (!rows || !rows.length) return res.end("");
   const keys = Object.keys(rows[0]);
   const escape = (v: unknown) => {
@@ -30,7 +41,11 @@ function sendCSV(res: Response, rows: Record<string, unknown>[] | null) {
   res.end(lines.join("\r\n"));
 }
 
-export function promiseQuery(sql: string, values: unknown[] | null, singleRecord: boolean) {
+export function promiseQuery(
+  sql: string,
+  values: unknown[] | null,
+  singleRecord: boolean,
+) {
   logger.logSQL(sql);
   return new Promise((resolve, reject) =>
     db.conn[singleRecord ? "one" : "many"](sql, values)
@@ -56,6 +71,7 @@ export function runQuery(
   format?: string | null,
   header?: Record<string, string> | null,
   fnPrep?: (data: unknown) => unknown,
+  fileName?: string | null,
 ) {
   logger.logSQL(sql);
   // SQL Query > Select Data
@@ -72,9 +88,9 @@ export function runQuery(
             results.unshift(headerRow);
           }
           logger.logCount(results.length || 0);
-          return sendCSV(res, results);
+          return sendCSV(res, results, fileName);
         }
-        return sendCSV(res, null);
+        return sendCSV(res, null, fileName);
       } else if (singleRecord) {
         logger.logCount(1);
         if (fnPrep) {
@@ -84,7 +100,10 @@ export function runQuery(
       } else {
         res.setHeader("_count", nbRecords);
         if (nbRecords && (results[0] as Record<string, unknown>)._full_count) {
-          res.setHeader("_full_count", (results[0] as Record<string, unknown>)._full_count as string);
+          res.setHeader(
+            "_full_count",
+            (results[0] as Record<string, unknown>)._full_count as string,
+          );
           // Remove artificual "_full_count" prop (used to return the total number of records) from every record.
           // results.forEach(r => {delete r._full_count})
         }
@@ -99,7 +118,7 @@ export function runQuery(
       logger.logError(err);
       if (err.code === 0) {
         if (format === "csv") {
-          return sendCSV(res, [{ id: null }]);
+          return sendCSV(res, [{ id: null }], fileName);
         } else {
           return res.json(singleRecord ? null : []);
         }
@@ -112,4 +131,5 @@ export default {
   db,
   runQuery,
   promiseQuery,
+  csvFileName,
 };

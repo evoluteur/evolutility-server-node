@@ -286,6 +286,8 @@ export const getMany = async (req: Request, res: Response) => {
       false,
       format,
       isCSV ? csvHeader(m.fields) : null,
+      undefined,
+      m.id,
     );
   } else {
     badRequest(res, `Model not found: "${mid}"`, 404);
