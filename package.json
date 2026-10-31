@@ -15,6 +15,8 @@
   "scripts": {
     "start": "node --watch ./bin/www.ts",
     "makedb": "node scripts/setup/database.ts",
+    "test": "node --test \"test/**/*.test.ts\"",
+    "test:watch": "node --test \"test/**/*.test.ts\" --watch",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch"
   },
