@@ -238,18 +238,15 @@ export const test = {
 					"column": "name",
 					"label": "Title",
 					"type": "text",
-					"width": 100,
 					"required": true,
 					"inMany": true,
 					"inSearch": true,
-					"help": "Name of the object"
 				},
 				{
 					"id": "text",
 					"column": "f_text",
 					"label": "Text",
 					"type": "text",
-					"width": 50,
 					"inMany": true,
 					"inSearch": true
 				},
@@ -258,8 +255,6 @@ export const test = {
 					"column": "f_textmultiline",
 					"type": "textmultiline",
 					"label": "Text multiline",
-					"height": 3,
-					"width": 50,
 					"inSearch": true
 				},
 				{
@@ -267,7 +262,6 @@ export const test = {
 					"type": "lov",
 					"column": "f_lov",
 					"label": "List of Values",
-					"width": 100,
 					"list": [
 						{
 							"id": 1,
@@ -299,13 +293,10 @@ export const test = {
 					"type": "lov",
 					"column": "parent_id",
 					"label": "Parent",
-					"width": 100,
 					"lovTable": "z_test",
 					"required": false,
 					"inMany": true,
-					"help": "LOV ",
 					"object": "test",
-					"chartType": "Pie"
 				}
 			]
 		}
