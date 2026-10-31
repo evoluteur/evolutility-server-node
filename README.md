@@ -1,4 +1,4 @@
-# Evolutility-Server-Node &middot; [![GitHub license](https://img.shields.io/github/license/evoluteur/evolutility-server-node)](https://github.com/evoluteur/evolutility-server-node/blob/master/LICENSE.md) [![npm version](https://img.shields.io/npm/v/evolutility-server-node)](https://www.npmjs.com/package/evolutility-server-node)
+# Evolutility-Server-Node &middot; [![CI](https://github.com/evoluteur/evolutility-server-node/actions/workflows/ci.yml/badge.svg)](https://github.com/evoluteur/evolutility-server-node/actions/workflows/ci.yml) [![GitHub license](https://img.shields.io/github/license/evoluteur/evolutility-server-node)](https://github.com/evoluteur/evolutility-server-node/blob/main/LICENSE) [![npm version](https://img.shields.io/npm/v/evolutility-server-node)](https://www.npmjs.com/package/evolutility-server-node) [![Sponsor](https://img.shields.io/github/sponsors/evoluteur?label=Sponsor&logo=GitHub)](https://github.com/sponsors/evoluteur)
 
 **Framework for building REST endpoints for CRUD with models rather than code**
 
