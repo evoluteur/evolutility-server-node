@@ -265,7 +265,7 @@ function modelToPaths(m: Model, apiBase: string) {
         responses: {
           200: {
             description:
-              "Field-level statistics (min, max, avg, count per value)",
+              "Field-level statistics: one object per field with nulls, min, max, avg... for numbers, minLength, maxLength for strings",
           },
           404: { description: "Model not found", content: errRef() },
         },

@@ -446,12 +446,21 @@ GET /todo/chart/category
 
 #### Stats
 
-Returns the total count, and the min, max, average, variance, standard deviation and total for numeric fields in the model.
+Returns the total count, and one object per field with the number of nulls (or empty strings), plus the min, max, average, variance, standard deviation and total for numeric fields, or the min and max length for string fields.
 
 ```
 GET /{model.id}/stats
 
 GET /todo/stats
+```
+
+```json
+{
+  "count": 42,
+  "title": { "nulls": 3, "minLength": 4, "maxLength": 52 },
+  "price": { "nulls": 5, "min": 1, "max": 99, "avg": 20.5, "sum": 861, "stddev": 12.3, "variance": 151.3 },
+  "category": { "nulls": 0 }
+}
 ```
 
 #### Lists of Values

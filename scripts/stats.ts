@@ -1,6 +1,7 @@
 /*!
  * evolutility-server-node :: stats.ts
- * Some data on the object like the min, max, average, and total for numeric fields.
+ * Some data on the object like the min, max, average, and total for numeric fields,
+ * and min/max length for string fields.
  *
  * https://github.com/evoluteur/evolutility-server-node
  * (c) 2026 Olivier Giulieri
@@ -62,29 +63,29 @@ const fnPrep = (fields: Field[]) => (data: Record<string, unknown>) => {
   if (config.wComments) {
     pStats.nb_comments = data.nb_comments;
   }
-  const nullsCounts: Record<string, unknown> = {};
   fields.forEach((f) => {
     if (!f.noStats) {
+      // - every field gets its own stats object, starting with the nulls count
+      const item: Record<string, unknown> = {
+        nulls: data[f.id + "_nulls"],
+      };
       if (dico.fieldIsNumeric(f)) {
         // - date/time fields also have min/max but must stay as date strings.
         const isNum = dico.fieldIsNumber(f);
-        const item: Record<string, unknown> = {
-          min: isNum ? toNum(data[f.id + "_min"]) : data[f.id + "_min"],
-          max: isNum ? toNum(data[f.id + "_max"]) : data[f.id + "_max"],
-        };
-        ["avg", "sum", "stddev", "variance"].forEach((k) => {
+        ["min", "max", "avg", "sum", "stddev", "variance"].forEach((k) => {
           const fn = f.id + "_" + k;
           if (data[fn] !== undefined) {
             item[k] = isNum ? toNum(data[fn]) : data[fn];
           }
         });
-        pStats[f.id] = item;
+      } else if (dico.fieldIsText(f)) {
+        // - string fields: min and max length (in characters)
+        item.minLength = toNum(data[f.id + "_minlen"]);
+        item.maxLength = toNum(data[f.id + "_maxlen"]);
       }
-      const fn = f.id + "_nulls";
-      nullsCounts[f.id] = data[fn];
+      pStats[f.id] = item;
     }
   });
-  pStats.nulls = nullsCounts;
   return pStats;
 };
 
@@ -127,6 +128,11 @@ export function getStats(req: Request, res: Response) {
         sql += sqlAggregate("max", f);
         sqlNulls.push(sqlNull(f));
       } else {
+        if (dico.fieldIsText(f)) {
+          sql +=
+            `, min(char_length("${f.column}"))::integer AS "${f.id}_minlen"` +
+            `, max(char_length("${f.column}"))::integer AS "${f.id}_maxlen"`;
+        }
         if (f.type === ft.lov || f.type === ft.bool) {
           sqlNulls.push(sqlNull(f));
         } else {
