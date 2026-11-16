@@ -62,4 +62,42 @@ describe("SQLchartField", () => {
     const { sql } = chartsModule.SQLchartField(m, "boolean");
     assert.match(sql!, /LIMIT \d+/);
   });
+  it("has no WHERE clause and no params without filters", () => {
+    const { sql, params } = chartsModule.SQLchartField(m, "boolean");
+    assert.ok(!sql!.includes("WHERE"));
+    assert.deepEqual(params, []);
+  });
+  it("adds parameterized filters before GROUP BY", () => {
+    const { sql, params } = chartsModule.SQLchartField(m, "boolean", {
+      name: "ct.abc",
+      integer: "gt.5",
+    });
+    assert.match(sql!, /WHERE .+ GROUP BY/);
+    assert.ok(sql!.includes('t1."name"'));
+    assert.ok(sql!.includes('t1."f_integer">$2'));
+    assert.ok(!sql!.includes("abc"), "values must not be in the SQL text");
+    assert.deepEqual(params, ["%abc%", "5"]);
+  });
+  it("adds filters on lov charts after the LEFT JOIN", () => {
+    const { sql, params } = chartsModule.SQLchartField(m, "lov", {
+      boolean: "1",
+    });
+    assert.match(sql!, /LEFT JOIN .+ WHERE .+ GROUP BY t2\.id/);
+    assert.deepEqual(params, []);
+  });
+  it("adds the search across searchFields", () => {
+    const { sql, params } = chartsModule.SQLchartField(m, "boolean", {
+      search: "foo",
+    });
+    assert.match(sql!, /WHERE \(.+ OR .+\) GROUP BY/);
+    assert.deepEqual(params, ["%foo%"]);
+  });
+  it("ignores reserved and unknown query params", () => {
+    const { sql } = chartsModule.SQLchartField(m, "boolean", {
+      order: "name.asc",
+      page: "2",
+      nope: "eq.1",
+    });
+    assert.ok(!sql!.includes("WHERE"));
+  });
 });

@@ -64,37 +64,15 @@ function csvHeader(fields: Field[]) {
 // -----------------    GET MANY   ------------------------------------------------------
 // --------------------------------------------------------------------------------------
 
-// - returns SQL for query returning a set of records
-function SQLgetMany(m: Model, req: Request, isCSV: boolean, wCount: boolean) {
+// - returns the SQL conditions (WHERE clauses) for the filters and search
+//   in the query string (ex: "category=eq.3&search=abc"), values are pushed to sqlParams
+// - used by the list (getMany) and charts (getChart) end-points
+export function sqlFilters(
+  m: Model,
+  query: Record<string, string | undefined>,
+  sqlParams: unknown[],
+): string[] {
   const pKey = m.pKey!;
-  let sqlParams: unknown[] = [];
-  let fs: Field[];
-
-  // Use typed query params for easier access
-  const query = req.query as Record<string, string | undefined>;
-
-  if (isCSV) {
-    // - get all fields for CSV download
-    fs = m.fields;
-  } else {
-    // - only get fields w/ inMany=true
-    fs = m.fields.filter(dico.fieldInMany);
-    // - if no fields are inMany then take the first 5 fields
-    if (fs.length === 0) {
-      fs = m.fields.slice(0, 5);
-    }
-  }
-
-  // ---- SELECTION
-  let sqlSel = "t1." + pKey + " as id, " + sqls.select(fs, false, true);
-  dico.systemFields.forEach((f) => {
-    sqlSel += ", t1." + f.column;
-    if (f.type === ft.int) {
-      sqlSel += "::integer";
-    }
-  });
-  const sqlFrom = m.schemaTable + " AS t1" + sqls.sqlFromLOVs(fs, schema);
-
   // ---- FILTERING
   const sqlWs: string[] = [];
   for (const n in query) {
@@ -217,6 +195,42 @@ function SQLgetMany(m: Model, req: Request, isCSV: boolean, wCount: boolean) {
       }
     }
   }
+  return sqlWs;
+}
+
+// - returns SQL for query returning a set of records
+function SQLgetMany(m: Model, req: Request, isCSV: boolean, wCount: boolean) {
+  const pKey = m.pKey!;
+  let sqlParams: unknown[] = [];
+  let fs: Field[];
+
+  // Use typed query params for easier access
+  const query = req.query as Record<string, string | undefined>;
+
+  if (isCSV) {
+    // - get all fields for CSV download
+    fs = m.fields;
+  } else {
+    // - only get fields w/ inMany=true
+    fs = m.fields.filter(dico.fieldInMany);
+    // - if no fields are inMany then take the first 5 fields
+    if (fs.length === 0) {
+      fs = m.fields.slice(0, 5);
+    }
+  }
+
+  // ---- SELECTION
+  let sqlSel = "t1." + pKey + " as id, " + sqls.select(fs, false, true);
+  dico.systemFields.forEach((f) => {
+    sqlSel += ", t1." + f.column;
+    if (f.type === ft.int) {
+      sqlSel += "::integer";
+    }
+  });
+  const sqlFrom = m.schemaTable + " AS t1" + sqls.sqlFromLOVs(fs, schema);
+
+  // ---- FILTERING & SEARCHING
+  const sqlWs = sqlFilters(m, query, sqlParams);
 
   // ---- RECORD COUNT (added to selection)
   if (wCount) {
@@ -296,6 +310,7 @@ export const getMany = async (req: Request, res: Response) => {
 };
 
 export default {
+  sqlFilters,
   getMany,
   SQLgetMany,
 };

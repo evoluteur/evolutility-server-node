@@ -14,6 +14,7 @@ import {
 } from "./utils/dico.ts";
 import { getModel } from "./utils/model-manager.ts";
 import { runQuery } from "./utils/query.ts";
+import { sqlFilters } from "./list.ts";
 import { badRequest } from "./utils/errors.ts";
 import logger from "./utils/logger.ts";
 import config from "../config.ts";
@@ -24,6 +25,8 @@ const schema = '"' + (config.schema || "evolutility") + '"',
 
 // - returns data for a single chart
 // - sample REST url: http://localhost:2000/api/v1/todo/chart/category
+// - accepts the same filters and search as the list end-point
+//   (ex: /todo/chart/category?complete=0&search=abc)
 export function getChart(req: Request, res: Response) {
   logger.logReq("GET CHARTS", req);
 
@@ -34,18 +37,28 @@ export function getChart(req: Request, res: Response) {
     return badRequest(res, `Model not found: "${req.params.entity}".`, 404);
   }
 
-  const { sql, errorMessage, errorCode } = SQLchartField(m, fid);
+  const { sql, params, errorMessage, errorCode } = SQLchartField(
+    m,
+    fid,
+    req.query as Record<string, string | undefined>,
+  );
 
   if (errorMessage) {
     return badRequest(res, errorMessage, errorCode);
   }
-  runQuery(res, sql!, [], false);
+  runQuery(res, sql!, params || [], false);
 }
 
 function SQLchartField(
   m: Model,
   fid: string,
-): { sql?: string; errorMessage?: string; errorCode?: number } {
+  query: Record<string, string | undefined> = {},
+): {
+  sql?: string;
+  params?: unknown[];
+  errorMessage?: string;
+  errorCode?: number;
+} {
   const sqlCount = "count(*)::integer AS value";
   let sql: string;
 
@@ -60,6 +73,11 @@ function SQLchartField(
     };
   }
 
+  // - filters and search (values are parameterized)
+  const params: unknown[] = [];
+  const sqlWs = sqlFilters(m, query, params);
+  const sqlWhere = sqlWs.length ? " WHERE " + sqlWs.join(" AND ") : "";
+
   const col = `"${f.column}"`,
     sqlFrom = " FROM " + m.schemaTable + " AS t1";
 
@@ -68,23 +86,23 @@ function SQLchartField(
     const t2PK = `t2.${f.lovKey || "id"}`;
     sql =
       `SELECT ${t2PK}, t2.${clov}::text AS label, ${sqlCount}` +
-      `${sqlFrom} LEFT JOIN ${schema}."${f.lovTable}" AS t2 ON t1.${col}=${t2PK} GROUP BY ${t2PK}, t2.${clov}`;
+      `${sqlFrom} LEFT JOIN ${schema}."${f.lovTable}" AS t2 ON t1.${col}=${t2PK}${sqlWhere} GROUP BY ${t2PK}, t2.${clov}`;
   } else if (f.type === ft.bool) {
     const cId = "CASE " + col + " WHEN true THEN 1 ELSE 0 END",
       cLabel = "CASE " + col + " WHEN true THEN 'Yes' ELSE 'No' END";
     sql =
-      `SELECT ${cId}::integer AS id, ${cLabel}::text AS label, ${sqlCount}${sqlFrom}` +
+      `SELECT ${cId}::integer AS id, ${cLabel}::text AS label, ${sqlCount}${sqlFrom}${sqlWhere}` +
       ` GROUP BY ${cId}, ${cLabel}`;
   } else if (fieldIsNumber(f)) {
     const numbersColType = f.type === ft.int ? "::integer" : "";
-    sql = `SELECT ${col}${numbersColType} AS id, ${col}::text AS label, ${sqlCount}${sqlFrom} GROUP BY ${col}`;
+    sql = `SELECT ${col}${numbersColType} AS id, ${col}::text AS label, ${sqlCount}${sqlFrom}${sqlWhere} GROUP BY ${col}`;
   } else {
     // TODO: buckets
-    sql = `SELECT ${col}::text AS label, ${sqlCount}${sqlFrom} GROUP BY ${col}`;
+    sql = `SELECT ${col}::text AS label, ${sqlCount}${sqlFrom}${sqlWhere} GROUP BY ${col}`;
   }
 
   sql += " ORDER BY label ASC LIMIT " + defaultPageSize + ";";
-  return { sql };
+  return { sql, params };
 }
 
 export default {
