@@ -1,6 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import chartsModule from "../../scripts/charts.ts";
+import "../fixtures/models/index.ts";
 import { getModel } from "../../scripts/utils/model-manager.ts";
 
 // The test model has all field types: text, lov, boolean, integer, decimal, money, date, etc.

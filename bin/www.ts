@@ -8,6 +8,8 @@ import app from "../app.ts";
 import config from "../config.ts";
 import http from "http";
 import Debug from "debug";
+import { initModels } from "../scripts/utils/model-store.ts";
+import logger from "../scripts/utils/logger.ts";
 
 const debug = Debug("evolutility:server");
 
@@ -26,6 +28,17 @@ const server = http.createServer(app);
 /**
  * Listen on provided port, on all network interfaces.
  */
+
+// - models are stored in the database (table "evol_model")
+try {
+  const nb = await initModels();
+  logger.logSuccess(`${nb} models loaded from the database.`);
+} catch (err) {
+  logger.logError(
+    "Could not load models from the database. " +
+      (err instanceof Error ? err.message : String(err)),
+  );
+}
 
 server.listen(port);
 server.on("error", onError);

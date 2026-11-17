@@ -50,12 +50,20 @@ if (config.schemaQueries) {
 }
 // #endregion
 
-// #region ===== Models in DB ====================================
+// #region ===== Models (stored as JSON in table "evol_model") ==========
+// - read (used by the UI to get the models)
+router.get(apiPath + "meta/models", designer.getModels);
+router.get(apiPath + "meta/models/:id/history", designer.getHistory);
+router.get(
+  apiPath + "meta/models/:id/history/:version",
+  designer.getHistoryVersion,
+);
+router.get(apiPath + "meta/models/:id", designer.getModel);
+// - edit (Designer)
 if (config.apiDesigner) {
-  // - Models
-  //router.post(apiPath+'meta/model', designer.importModel);
-  router.get(apiPath + "meta/models", designer.getModels);
-  router.get(apiPath + "meta/model/:id", designer.getModel);
+  router.post(apiPath + "meta/models", designer.createModel);
+  router.put(apiPath + "meta/models/:id", designer.updateModel);
+  router.delete(apiPath + "meta/models/:id", designer.deleteModel);
 }
 // #endregion
 

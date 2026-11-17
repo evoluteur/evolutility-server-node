@@ -78,7 +78,9 @@ const config: Config = {
   logToFile: false,
 
   // - Designer
-  // - Enables storing models in the database (in tables "evol_%")
+  // - Models are stored in the database (as JSON, in table "evol_model").
+  // - Enables editing them through the API "meta/models" (POST, PUT, DELETE),
+  // - which can also add tables and columns to the database.
   apiDesigner: true,
   // - Query DB schema for list of tables and columns
   schemaQueries: false,

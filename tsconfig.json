@@ -17,11 +17,7 @@
     "bin/**/*.ts",
     "scripts/**/*.ts",
     "models/types.ts",
-    "models/all_models.ts",
-    "models/designer/**/*.ts",
-    "models/music/**/*.ts",
-    "models/organizer/**/*.ts",
-    "models/tests/**/*.ts"
+    "test/fixtures/**/*.ts"
   ],
-  "exclude": ["node_modules", "models/data", "scripts/graphql-schema.js"]
+  "exclude": ["node_modules", "scripts/graphql-schema.js"]
 }

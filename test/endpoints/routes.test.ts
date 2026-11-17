@@ -2,6 +2,7 @@ import { describe, it, before, after } from "node:test";
 import assert from "node:assert/strict";
 import type { Server } from "http";
 import config from "../../config.ts";
+import "../fixtures/models/index.ts";
 
 // - Checks that fixed routes are not swallowed by the generic ":entity" routes.
 // - No database is needed: we only check which handler answers.
@@ -39,6 +40,10 @@ describe("route order", () => {
 
   it("GET meta/models is served by the designer route", async () => {
     notModelNotFound((await get("meta/models")).text);
+  });
+
+  it("GET meta/models/:id/history is served by the designer route", async () => {
+    notModelNotFound((await get("meta/models/todo/history")).text);
   });
 
   it("GET db/tables is served by the db route", async () => {

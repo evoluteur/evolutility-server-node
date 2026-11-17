@@ -2,6 +2,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import listModule from "../../scripts/list.ts";
 import sqls from "../../scripts/utils/sql-select.ts";
+import "../fixtures/models/index.ts";
 import { getModel } from "../../scripts/utils/model-manager.ts";
 import type { Request } from "express";
 import config from "../../config.ts";

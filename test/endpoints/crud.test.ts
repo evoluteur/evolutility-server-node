@@ -1,6 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import crudModule from "../../scripts/crud.ts";
+import "../fixtures/models/index.ts";
 import { getModel } from "../../scripts/utils/model-manager.ts";
 
 const m = getModel("test")!;

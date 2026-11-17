@@ -4,7 +4,7 @@
   Powered by evolutility-models v.0.3.0 - https://github.com/evoluteur/evolutility-models
 */
 
-import type { ModelDB } from "../types.ts";
+import type { ModelDB } from "../../../models/types.ts";
 
 export const album = {
   id: "album",
@@ -15,7 +15,7 @@ export const album = {
   pKey: "id",
   table: "music_album",
   active: true,
-  titleField: "name",
+  titleField: "title",
   fields: [
     {
       id: "title",

@@ -4,7 +4,7 @@
   Powered by evolutility-models v.0.3.0 - https://github.com/evoluteur/evolutility-models
 */
 
-import type { ModelDB } from "../types.ts";
+import type { ModelDB } from "../../../models/types.ts";
 
 export const artist = {
   id: "artist",

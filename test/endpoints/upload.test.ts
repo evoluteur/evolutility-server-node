@@ -6,6 +6,7 @@ import path from "path";
 import express from "express";
 import type { Server } from "http";
 import config from "../../config.ts";
+import "../fixtures/models/index.ts";
 import {
   uploadOne,
   safeFileName,
