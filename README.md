@@ -76,6 +76,8 @@ npm start
 
 The server loads the models from the database when it starts.
 
+To stop the server, use Ctrl+C (or send it a `SIGTERM`, as process managers and containers do): it stops accepting requests, finishes the ones in progress, closes its connections to the database, and exits. Requests still running after 10 seconds are cut off.
+
 URLs on localhost:
 
 - REST API: [http://localhost:2000/api/v1/](http://localhost:2000/api/v1/)

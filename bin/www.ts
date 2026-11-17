@@ -9,6 +9,8 @@ import config from "../config.ts";
 import http from "http";
 import Debug from "debug";
 import { initModels } from "../scripts/utils/model-store.ts";
+import { closeDb } from "../scripts/utils/query.ts";
+import { makeShutdown, handleShutdown } from "../scripts/utils/shutdown.ts";
 import logger from "../scripts/utils/logger.ts";
 
 const debug = Debug("evolutility:server");
@@ -42,6 +44,9 @@ try {
 
 server.listen(port);
 server.on("error", onError);
+
+// - on stop or crash: finish the requests in progress, close the DB connections
+handleShutdown(makeShutdown({ server, closeDb }));
 server.on("listening", onListening);
 
 /**
@@ -79,10 +84,12 @@ function onError(error: NodeJS.ErrnoException) {
   switch (error.code) {
     case "EACCES":
       console.error(bind + " requires elevated privileges");
+      closeDb();
       process.exit(1);
       break;
     case "EADDRINUSE":
       console.error(bind + " is already in use");
+      closeDb();
       process.exit(1);
       break;
     default:

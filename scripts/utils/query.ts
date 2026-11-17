@@ -15,6 +15,9 @@ const pgp = pgPromise();
 
 export const db = { conn: pgp(config.connectionString) };
 
+// - close all the connections to the database (on shutdown)
+export const closeDb = () => pgp.end();
+
 // - keep only characters safe in a file name (the name comes from a model id)
 export const csvFileName = (name?: string | null) =>
   (name || "export").replace(/[^a-zA-Z0-9._-]/g, "_") + ".csv";
