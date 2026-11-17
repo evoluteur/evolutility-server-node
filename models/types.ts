@@ -63,7 +63,6 @@ export interface FieldBase {
   max?: number;
   regExp?: string;
   defaultValue?: unknown;
-  lovKey?: string;
   lovIcon?: boolean;
   inMany?: boolean;
   inList?: boolean;
@@ -103,6 +102,7 @@ export interface FieldDB extends FieldBase {
   lovTable?: string;
   dbtablelov?: string;
   lovColumn?: string;
+  lovKey?: string;
   dbcolumnreadlov?: string;
   deleteTrigger?: boolean;
   inSearch?: boolean;
