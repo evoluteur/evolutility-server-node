@@ -132,6 +132,7 @@ export interface Field extends FieldBase {
   lovTable?: string;
   dbtablelov?: string;
   lovColumn?: string;
+  lovKey?: string;
   dbcolumnreadlov?: string;
   deleteTrigger?: boolean;
   inSearch?: boolean;
