@@ -18,5 +18,5 @@
     "scripts/**/*.ts",
     "test/fixtures/**/*.ts"
   ],
-  "exclude": ["node_modules", "scripts/graphql-schema.js"]
+  "exclude": ["node_modules"]
 }

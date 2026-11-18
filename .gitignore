@@ -1,7 +1,6 @@
 
 *-gitignore
 
-evol-db-*.sql
 evol-*.log
 
 node_modules
