@@ -233,13 +233,9 @@ function SQLgetMany(m: Model, req: Request, isCSV: boolean, wCount: boolean) {
   const sqlWs = sqlFilters(m, query, sqlParams);
 
   // ---- RECORD COUNT (added to selection)
+  // - number of records matching the filters and search (before pagination)
   if (wCount) {
-    if (sqlWs.length) {
-      sqlSel +=
-        ",(SELECT count(*) FROM " + m.schemaTable + ")::integer AS _full_count";
-    } else {
-      sqlSel += ",count(*) OVER()::integer AS _full_count";
-    }
+    sqlSel += ",count(*) OVER()::integer AS _full_count";
   }
 
   // ---- ORDERING

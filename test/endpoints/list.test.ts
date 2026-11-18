@@ -39,6 +39,12 @@ describe("SQLgetMany", () => {
     const q = listModule.SQLgetMany(m, req(), false, true);
     assert.ok(q.select.includes("_full_count"));
   });
+  it("counts the filtered records, not the whole table", () => {
+    const q = listModule.SQLgetMany(m, req({ search: "hello" }), false, true);
+    assert.ok(q.where.length > 0);
+    assert.ok(q.select.includes("count(*) OVER()::integer AS _full_count"));
+    assert.ok(!q.select.includes("(SELECT count(*)"));
+  });
   it("omits count when wCount is false", () => {
     const q = listModule.SQLgetMany(m, req(), false, false);
     assert.ok(!q.select.includes("_full_count"));
