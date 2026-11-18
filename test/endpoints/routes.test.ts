@@ -42,6 +42,12 @@ describe("route order", () => {
     notModelNotFound((await get("meta/models")).text);
   });
 
+  it("GET meta/schema returns the metamodel schema", async () => {
+    const r = await get("meta/schema");
+    assert.equal(r.status, 200);
+    assert.equal(JSON.parse(r.text).title, "Evolutility model");
+  });
+
   it("GET meta/models/:id/history is served by the designer route", async () => {
     notModelNotFound((await get("meta/models/todo/history")).text);
   });

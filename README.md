@@ -534,6 +534,12 @@ GET /meta/models/{modelid}
 GET /meta/models/todo
 ```
 
+Get the [JSON Schema](https://json-schema.org/) of the metamodel (the properties a model can have, with their descriptions). The Designer of Evolutility-UI-React uses it to check models while they are edited.
+
+```
+GET /meta/schema
+```
+
 Get the saved versions of a model, or one of them.
 
 ```

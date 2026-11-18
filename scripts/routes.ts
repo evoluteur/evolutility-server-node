@@ -52,6 +52,7 @@ if (config.schemaQueries) {
 
 // #region ===== Models (stored as JSON in table "evol_model") ==========
 // - read (used by the UI to get the models)
+router.get(apiPath + "meta/schema", designer.getSchema);
 router.get(apiPath + "meta/models", designer.getModels);
 router.get(apiPath + "meta/models/:id/history", designer.getHistory);
 router.get(

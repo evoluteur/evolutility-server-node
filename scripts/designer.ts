@@ -11,6 +11,7 @@ import type { Request, Response } from "express";
 import logger from "./utils/logger.ts";
 import { badRequest } from "./utils/errors.ts";
 import store, { ModelError } from "./utils/model-store.ts";
+import { modelSchema } from "./utils/model-schema.ts";
 
 const isDryRun = (req: Request) =>
   req.query.dryRun === "true" || req.query.dryRun === "1";
@@ -37,6 +38,12 @@ const saveResponse = (r: Awaited<ReturnType<typeof store.saveModel>>) => ({
   warnings: r.warnings,
   dryRun: r.dryRun,
 });
+
+// - GET meta/schema (JSON Schema of the metamodel, for the Designer)
+export function getSchema(req: Request, res: Response) {
+  logger.logReq("GET MODEL SCHEMA", req);
+  return res.json(modelSchema);
+}
 
 // - GET meta/models
 export async function getModels(req: Request, res: Response) {
@@ -126,6 +133,7 @@ export async function deleteModel(req: Request, res: Response) {
 }
 
 export default {
+  getSchema,
   getModels,
   getModel,
   getHistory,

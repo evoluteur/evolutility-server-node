@@ -29,13 +29,13 @@ export const isIdentifier = (v: unknown) =>
 
 // - "position, t1.id desc" (ORDER BY of collections)
 const orderByPart = "(t1\\.)?[A-Za-z_][A-Za-z0-9_]{0,62}( (asc|desc))?";
-const orderByRegex = new RegExp(
+export const orderByRegex = new RegExp(
   `^${orderByPart}(\\s*,\\s*${orderByPart})*$`,
   "i",
 );
 
 // - collection ids are not used in SQL (only as keys and in urls)
-const collecIdRegex = /^[A-Za-z_][A-Za-z0-9_-]{0,62}$/;
+export const collecIdRegex = /^[A-Za-z_][A-Za-z0-9_-]{0,62}$/;
 
 export const fieldTypeIds = [
   "text",
