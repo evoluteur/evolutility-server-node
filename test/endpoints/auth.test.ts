@@ -69,6 +69,13 @@ describe("roles", () => {
     assert.equal(requiredRole("GET", p + "db/tables"), "admin");
   });
 
+  it("needs admin to manage users", () => {
+    assert.equal(requiredRole("GET", p + "auth/users"), "admin");
+    assert.equal(requiredRole("POST", p + "auth/users"), "admin");
+    assert.equal(requiredRole("PATCH", p + "auth/users/2"), "admin");
+    assert.equal(requiredRole("DELETE", p + "auth/users/2"), "admin");
+  });
+
   it("leaves login and version public", () => {
     assert.equal(requiredRole("POST", p + "auth/login"), null);
     assert.equal(requiredRole("GET", p + "auth/me"), null);
@@ -111,6 +118,7 @@ describe("API w/ login required", () => {
     });
 
   it("refuses reads and writes w/o login (401)", async () => {
+    assert.equal((await call("auth/users")).status, 401);
     assert.equal((await call("todo")).status, 401);
     assert.equal((await call("meta/models")).status, 401);
     assert.equal((await call("todo", "POST", {}, { title: "x" })).status, 401);

@@ -18,6 +18,7 @@ import { getAPIs, getVersion } from "./info.ts";
 import { getOpenAPISpec } from "./openapi.ts";
 import designer from "./designer.ts";
 import authApi from "./auth-api.ts";
+import usersApi from "./users-api.ts";
 import { authenticate, authorize } from "./utils/auth.ts";
 import dbStructure from "./utils/db-structure.ts";
 
@@ -37,6 +38,11 @@ router.use(authorize);
 router.post(apiPath + "auth/login", authApi.loginLimiter, authApi.login);
 router.post(apiPath + "auth/logout", authApi.logout);
 router.get(apiPath + "auth/me", authApi.me);
+// - users (admin role)
+router.get(apiPath + "auth/users", usersApi.list);
+router.post(apiPath + "auth/users", usersApi.create);
+router.patch(apiPath + "auth/users/:id", usersApi.update);
+router.delete(apiPath + "auth/users/:id", usersApi.remove);
 // #endregion
 
 // #region ===== OpenAPI spec ====================================

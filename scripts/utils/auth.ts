@@ -214,6 +214,7 @@ export const hasRole = (role: Role | null | undefined, needed: Role) =>
 export function requiredRole(method: string, path: string): Role | null {
   const apiPath = config.apiPath;
   const p = path.startsWith(apiPath) ? path.slice(apiPath.length) : path;
+  if (p === "auth/users" || p.startsWith("auth/users/")) return "admin";
   if (p.startsWith("auth/") || p === "version") return null; // - public
   const read = method === "GET" || method === "HEAD";
   if (p.startsWith("db/")) return "admin";

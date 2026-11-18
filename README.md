@@ -678,6 +678,15 @@ POST /auth/logout
 GET /auth/me
 ```
 
+Manage users (admin role). A password is generated (and returned once) when none is given. Admins can't delete or deactivate themselves, or remove their own admin role. A new password, or deactivating a user, ends the user's sessions.
+
+```
+GET    /auth/users
+POST   /auth/users       { "email", "name", "role", "password" (optional) }
+PATCH  /auth/users/{id}  { "name", "role", "active", "password", "resetPassword": true }
+DELETE /auth/users/{id}
+```
+
 Requests without the role needed are refused with a 401 error (not logged in) or 403 (logged in, but role too low). After 10 failed logins in 15 minutes, logins from that IP address are refused for a while.
 
 To disable login (all requests are allowed), set `{ auth: { enabled: false } }` in the configuration.
