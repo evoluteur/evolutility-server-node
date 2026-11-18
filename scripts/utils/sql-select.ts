@@ -90,7 +90,12 @@ function sqlQuery(q: {
 }
 
 // - returns the SELECT clause for SQL queries
-function select(fields: Field[], collecs: Collection[] | false | null | undefined, table: boolean | string | null, action?: string) {
+function select(
+  fields: Field[],
+  collecs: Collection[] | false | null | undefined,
+  table: boolean | string | null,
+  action?: string,
+) {
   const sqlfs: string[] = [];
   const tQuote = table ? 't1."' : '"';
 
@@ -122,7 +127,10 @@ function select(fields: Field[], collecs: Collection[] | false | null | undefine
 
 // - returns lists of names, values, invalids (for Insert or Update)
 function namedValues(m: Model, req: Request, action: string) {
-  const fnName = columnName[action as keyof typeof columnName] as (f: Field, idx: number) => string | undefined;
+  const fnName = columnName[action as keyof typeof columnName] as (
+    f: Field,
+    idx: number,
+  ) => string | undefined;
   const ns: (string | undefined)[] = [];
   const vs: unknown[] = [];
   const invalids: { id: string; value: unknown; condition: string }[] = [];
@@ -183,6 +191,17 @@ function namedValues(m: Model, req: Request, action: string) {
       }
     }
   });
+  // - "who-is" columns: the logged-in user (never values from the request)
+  if (config.wWhoIs && req.user) {
+    const whoIs =
+      action === "insert" ? ["created_by", "updated_by"] : ["updated_by"];
+    whoIs.forEach((column) => {
+      vs.push(req.user!.id);
+      ns.push(
+        fnName({ id: column, column, type: "integer" } as Field, vs.length),
+      );
+    });
+  }
   if (m.collections) {
     m.collections.forEach(function (f) {
       const fv = (req.body as Record<string, unknown>)[f.id];

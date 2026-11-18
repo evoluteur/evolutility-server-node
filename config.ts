@@ -73,8 +73,10 @@ const config: Config = {
   // - Optional fields
   // - Timestamp columns "created_at" and "updated_at" w/ date of record creation and last update
   wTimestamp: true,
-  // - "WhoIs" columns "created_by" and "updated_by" w/ userid of creator and last modifier
-  wWhoIs: false,
+  // - "WhoIs" columns "created_by" and "updated_by" w/ the id of the user who
+  // - created and last updated the record (logged-in user). The tables need
+  // - these columns (created by evolutility-models, w/ the same option on).
+  wWhoIs: true,
   // - Comments & Ratings (community feature)
   wComments: false,
   wRating: false,

@@ -114,6 +114,7 @@ Configuration options are set in the file [config.ts](https://github.com/evolute
 | wComments         | Allow for user comments (not implemented yet). |
 | wRating           | Allow for user ratings (not implemented yet). |
 | wTimestamp        | Timestamp columns w/ date of record creation and last update. |
+| wWhoIs            | "Who-is" columns "created_by" and "updated_by", set to the logged-in user when records are created and updated (values sent by clients are ignored). Reading one record also returns the users' names ("created_by_txt", "updated_by_txt"). The tables need these columns: databases created w/ [Evolutility-Models](https://github.com/evoluteur/evolutility-models) have them; for older tables run `ALTER TABLE ... ADD COLUMN created_by integer, ADD COLUMN updated_by integer;`, or set `wWhoIs: false`. Default: `true`. |
 | createdDateColumn | Column containing created date (default "created_at"). |
 | updatedDateColumn | Column containing last update date (default "updated_at"). |
 | schemaQueries     | Enables endpoints to query for lists of tables and columns in the database schema. |

@@ -29,6 +29,12 @@ function SQLgetOne(id: string, m: Model) {
   systemFields.forEach(function (f) {
     sql += ", t1." + f.column;
   });
+  // - names of the users who created and last updated the record
+  if (config.wWhoIs && config.auth?.enabled !== false) {
+    ["created_by", "updated_by"].forEach((col) => {
+      sql += `, (SELECT coalesce(u.name, u.email) FROM ${schema}.evol_user u WHERE u.id = t1.${col}) AS ${col}_txt`;
+    });
+  }
   sql +=
     ` FROM ${m.schemaTable} AS t1` +
     sqls.sqlFromLOVs(m.fields, schema) +
