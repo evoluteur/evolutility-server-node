@@ -7,7 +7,7 @@
  */
 
 import config from "../../config.ts";
-import type { Field } from "../../models/types.ts";
+import type { Field } from "../types.ts";
 
 // - Field Types
 export const fieldTypes = {

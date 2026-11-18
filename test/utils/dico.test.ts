@@ -8,7 +8,7 @@ import {
   fieldChartable,
   fieldInCharts,
 } from "../../scripts/utils/dico.ts";
-import type { Field } from "../../models/types.ts";
+import type { Field } from "../../scripts/types.ts";
 
 const f = (type: string, extra: Partial<Field> = {}): Field =>
   ({ id: "f", label: "F", type, ...extra } as Field);

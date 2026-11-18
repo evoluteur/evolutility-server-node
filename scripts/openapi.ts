@@ -12,7 +12,7 @@ import { models } from "./utils/model-manager.ts";
 import { fieldTypes as ft, fieldInCharts } from "./utils/dico.ts";
 import config from "../config.ts";
 import logger from "./utils/logger.ts";
-import type { Field, Model } from "../models/types.ts";
+import type { Field, Model } from "./types.ts";
 
 // ---- field type → OpenAPI schema ------------------------------------------------
 

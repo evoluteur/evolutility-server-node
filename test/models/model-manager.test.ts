@@ -8,7 +8,7 @@ import mm, {
   setModels,
   removeModel,
 } from "../../scripts/utils/model-manager.ts";
-import type { Model } from "../../models/types.ts";
+import type { Model } from "../../scripts/types.ts";
 
 describe("model-manager (hot reload)", () => {
   after(() => setModels(fileModels));

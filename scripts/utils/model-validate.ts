@@ -9,7 +9,7 @@
  * (c) 2026 Olivier Giulieri
  */
 
-import type { Field, Model, Collection } from "../../models/types.ts";
+import type { Field, Model, Collection } from "../types.ts";
 
 export interface Invalid {
   id: string; // - path of the property (ex: "fields[2].column")

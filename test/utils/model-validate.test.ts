@@ -6,7 +6,7 @@ import {
   stripComputed,
 } from "../../scripts/utils/model-validate.ts";
 import { testModels } from "../fixtures/models/index.ts";
-import type { Model } from "../../models/types.ts";
+import type { Model } from "../../scripts/types.ts";
 
 const base = (): Model =>
   ({

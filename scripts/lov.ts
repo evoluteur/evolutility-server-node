@@ -13,7 +13,7 @@ import { badRequest } from "./utils/errors.ts";
 import { likeContains } from "./utils/sql-select.ts";
 import logger from "./utils/logger.ts";
 import config from "../config.ts";
-import type { Field } from "../models/types.ts";
+import type { Field } from "./types.ts";
 
 const schema = '"' + (config.schema || "evolutility") + '"',
   lovSize = config.lovSize || 100;

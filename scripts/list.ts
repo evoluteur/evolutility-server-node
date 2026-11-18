@@ -19,7 +19,7 @@ import { runQuery } from "./utils/query.ts";
 import { badRequest } from "./utils/errors.ts";
 import logger from "./utils/logger.ts";
 import config from "../config.ts";
-import type { Field, Model } from "../models/types.ts";
+import type { Field, Model } from "./types.ts";
 
 const schema = '"' + (config.schema || "evolutility") + '"';
 

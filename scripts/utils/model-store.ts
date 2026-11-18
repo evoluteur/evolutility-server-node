@@ -16,7 +16,7 @@ import {
   validateModel,
   type Invalid,
 } from "./model-validate.ts";
-import type { Model } from "../../models/types.ts";
+import type { Model } from "../types.ts";
 
 const T = `${schema}.evol_model`;
 const H = `${schema}.evol_model_history`;

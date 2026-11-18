@@ -18,7 +18,7 @@ import { sqlFilters } from "./list.ts";
 import { badRequest } from "./utils/errors.ts";
 import logger from "./utils/logger.ts";
 import config from "../config.ts";
-import type { Model } from "../models/types.ts";
+import type { Model } from "./types.ts";
 
 const schema = '"' + (config.schema || "evolutility") + '"',
   defaultPageSize = config.pageSize || 50;

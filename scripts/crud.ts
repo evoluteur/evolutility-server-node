@@ -14,7 +14,7 @@ import { runQuery, promiseQuery } from "./utils/query.ts";
 import { badRequest } from "./utils/errors.ts";
 import logger from "./utils/logger.ts";
 import config from "../config.ts";
-import type { Model, Collection, Field } from "../models/types.ts";
+import type { Model, Collection, Field } from "./types.ts";
 
 const schema = '"' + (config.schema || "evolutility") + '"',
   defaultPageSize = config.pageSize || 50;

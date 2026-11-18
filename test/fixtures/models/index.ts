@@ -4,7 +4,7 @@
 */
 
 import { setModels } from "../../../scripts/utils/model-manager.ts";
-import type { Model } from "../../../models/types.ts";
+import type { Model } from "../../../scripts/types.ts";
 import { album } from "./album.ts";
 import { artist } from "./artist.ts";
 import { track } from "./track.ts";

@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import sqls from "../../scripts/utils/sql-select.ts";
-import type { Field } from "../../models/types.ts";
+import type { Field } from "../../scripts/types.ts";
 
 const f = (id: string, column: string, type: string, extra: Partial<Field> = {}): Field =>
   ({ id, column, type, ...extra } as Field);

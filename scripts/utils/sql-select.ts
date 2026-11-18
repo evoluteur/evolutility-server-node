@@ -7,7 +7,7 @@
 
 import { fieldIsNumber, fieldTypes as ft } from "./dico.ts";
 import config from "../../config.ts";
-import type { Field, Model, Collection } from "../../models/types.ts";
+import type { Field, Model, Collection } from "../types.ts";
 import type { Request } from "express";
 
 const defaultPageSize = config.pageSize || 50;

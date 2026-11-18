@@ -8,7 +8,7 @@
 
 import config from "../../config.ts";
 import { fieldTypes as ft } from "./dico.ts";
-import type { Field, Model } from "../../models/types.ts";
+import type { Field, Model } from "../types.ts";
 
 export const schema = '"' + (config.schema || "evolutility") + '"';
 

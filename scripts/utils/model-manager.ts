@@ -8,7 +8,7 @@
 
 import config from "../../config.ts";
 import dico from "./dico.ts";
-import type { Model } from "../../models/types.ts";
+import type { Model } from "../types.ts";
 
 // - Live models, by id. Loaded from the database (table "evol_model") at
 // - startup, see model-store.ts. Always mutated in place (never re-assigned) because

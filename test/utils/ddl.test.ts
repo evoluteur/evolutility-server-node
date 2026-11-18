@@ -6,7 +6,7 @@ import {
   sqlAddColumn,
 } from "../../scripts/utils/ddl.ts";
 import { normalizeModel } from "../../scripts/utils/model-validate.ts";
-import type { Model } from "../../models/types.ts";
+import type { Model } from "../../scripts/types.ts";
 
 const book = (): Model =>
   normalizeModel({

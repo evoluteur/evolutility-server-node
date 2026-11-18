@@ -12,7 +12,7 @@ import logger from "./utils/logger.ts";
 import pkg from "../package.json" with { type: "json" };
 import { models } from "./utils/model-manager.ts";
 import config from "../config.ts";
-import type { Model } from "../models/types.ts";
+import type { Model } from "./types.ts";
 
 function getFieldsAPIs(model: Model, protocol: string, baseUrl: string) {
   const charts: string[] = [];

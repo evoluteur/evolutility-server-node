@@ -1,7 +1,7 @@
 /*!
- *  TypeScript declarations
- *  evolutility-models v0.3.0
- *  https://github.com/evoluteur/evolutility-models
+ *  evolutility-server-node :: types.ts
+ *  Types for the metamodel (models are stored in the database as JSON).
+ *  https://github.com/evoluteur/evolutility-server-node
  *  (c) 2026 Olivier Giulieri
  */
 
@@ -78,37 +78,6 @@ export interface FieldBase {
   unique?: boolean;
 }
 
-export interface FieldUI extends FieldBase {
-  labelShort?: string;
-  labelEdit?: string;
-  labelCharts?: string;
-  labelFalse?: string;
-  labelTrue?: string;
-  labelCards?: string;
-  width?: number | string;
-  height?: number | string;
-  chartType?: string;
-  help?: string;
-  css?: string;
-  placeholder?: string;
-  mini?: string;
-  format?: string;
-  img?: string;
-}
-
-export interface FieldDB extends FieldBase {
-  column?: string;
-  dbcolumn?: string;
-  lovTable?: string;
-  dbtablelov?: string;
-  lovColumn?: string;
-  lovKey?: string;
-  dbcolumnreadlov?: string;
-  deleteTrigger?: boolean;
-  inSearch?: boolean;
-  t2?: string;
-}
-
 export interface Field extends FieldBase {
   // UI properties
   labelShort?: string;
@@ -147,18 +116,6 @@ export interface CollectionBase {
   entity?: string;
 }
 
-export interface CollectionUI extends CollectionBase {
-  icon?: string;
-  fields?: (FieldUI | string)[];
-}
-
-export interface CollectionDB extends CollectionBase {
-  table?: string;
-  column?: string;
-  orderBy?: string;
-  fields?: (FieldDB | string)[];
-}
-
 export interface Collection extends CollectionBase {
   table?: string;
   column?: string;
@@ -181,24 +138,6 @@ export interface ModelBase {
   titleField?: string;
   noCharts?: boolean;
   noStats?: boolean;
-}
-
-export interface ModelUI extends ModelBase {
-  oid?: string | number;
-  position?: number;
-  defaultViewMany?: string;
-  defaultViewOne?: string;
-  titleFunction?: string | null | ((d: any) => string);
-  fields: FieldUI[];
-  groups?: unknown[];
-  collections?: CollectionUI[];
-}
-
-export interface ModelDB extends ModelBase {
-  pKey?: string;
-  table?: string;
-  fields: FieldDB[];
-  collections?: CollectionDB[];
 }
 
 export interface Model extends ModelBase {

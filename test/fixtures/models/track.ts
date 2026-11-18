@@ -4,7 +4,7 @@
   Powered by evolutility-models v.0.3.0 - https://github.com/evoluteur/evolutility-models
 */
 
-import type { ModelDB } from "../../../models/types.ts";
+import type { Model } from "../../../scripts/types.ts";
 
 export const track = {
   id: "track",
@@ -101,4 +101,4 @@ export const track = {
   ],
   collections: [],
   noStats: true,
-} satisfies ModelDB;
+} satisfies Model;

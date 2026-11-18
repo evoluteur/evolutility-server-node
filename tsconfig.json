@@ -16,7 +16,6 @@
     "app.ts",
     "bin/**/*.ts",
     "scripts/**/*.ts",
-    "models/types.ts",
     "test/fixtures/**/*.ts"
   ],
   "exclude": ["node_modules", "scripts/graphql-schema.js"]
