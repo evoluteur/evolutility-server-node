@@ -17,6 +17,8 @@ import { getChart } from "./charts.ts";
 import { getAPIs, getVersion } from "./info.ts";
 import { getOpenAPISpec } from "./openapi.ts";
 import designer from "./designer.ts";
+import authApi from "./auth-api.ts";
+import { authenticate, authorize } from "./utils/auth.ts";
 import dbStructure from "./utils/db-structure.ts";
 
 const apiPath = config.apiPath;
@@ -26,6 +28,16 @@ logger.startupMessage();
 
 // - Routes with fixed paths ("version", "meta/models"...) must be declared
 // - before the generic ":entity" routes, otherwise ":entity" matches them first.
+
+// #region ===== Login ====================================
+// - who is calling (session cookie), then is it allowed (role per route,
+// - see requiredRole in utils/auth.ts)
+router.use(authenticate);
+router.use(authorize);
+router.post(apiPath + "auth/login", authApi.loginLimiter, authApi.login);
+router.post(apiPath + "auth/logout", authApi.logout);
+router.get(apiPath + "auth/me", authApi.me);
+// #endregion
 
 // #region ===== OpenAPI spec ====================================
 router.get(apiPath + "openapi.json", getOpenAPISpec);

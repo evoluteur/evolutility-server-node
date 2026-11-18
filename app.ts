@@ -65,10 +65,22 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "./client", "public")));
 
-// - prevent denial of cross origin requests
-// TODO: REMOVE IF UNNECESSARY
+// - Cross origin requests: only from the sites in config.corsOrigins (w/
+// - their cookies). Writes from other sites are refused.
+const unsafeMethods = ["POST", "PUT", "PATCH", "DELETE"];
 app.use(function (req: Request, res: Response, next: NextFunction) {
-  res.header("Access-Control-Allow-Origin", "*");
+  const origin = req.headers.origin;
+  const allowed = config.corsOrigins || [];
+  const sameOrigin = origin === `${req.protocol}://${req.get("host")}`;
+  if (origin && allowed.includes(origin)) {
+    res.header("Access-Control-Allow-Origin", origin);
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header("Vary", "Origin");
+  } else if (allowed.includes("*")) {
+    res.header("Access-Control-Allow-Origin", "*");
+  } else if (origin && !sameOrigin && unsafeMethods.includes(req.method)) {
+    return res.status(403).json({ error: "Origin not allowed." });
+  }
   res.header(
     "Access-Control-Allow-Methods",
     "GET,PUT,POST,PATCH,DELETE,OPTIONS",

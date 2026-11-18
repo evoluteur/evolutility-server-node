@@ -14,6 +14,7 @@
   "bugs": "https://github.com/evoluteur/evolutility-server-node/issues",
   "scripts": {
     "start": "node --watch ./bin/www.ts",
+    "user:add": "node scripts/setup/user-add.ts",
     "test": "node --test \"test/**/*.test.ts\"",
     "test:watch": "node --test \"test/**/*.test.ts\" --watch",
     "typecheck": "tsc --noEmit",

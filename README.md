@@ -17,9 +17,10 @@ For a matching model-driven Web UI, use [Evolutility-UI-React](http://github.com
 3. [Configuration](#Configuration)
 4. [Models](#Models): [Object](#Object) - [Field](#Field) - [Collection](#Collection) - [Sample model](#SampleModel)
 5. [REST API](#API): [Get](#API_Get) - [Update](#API_Update) - [Charts](#API_Charts) - [More](#API_Extras)
-6. [API Documentation](#APIDocs)
-7. [Rate Limiting](#RateLimit)
-8. [License](#License)
+6. [Users and Login](#Auth)
+7. [API Documentation](#APIDocs)
+8. [Rate Limiting](#RateLimit)
+9. [License](#License)
 
 <a name="Installation"></a>
 ## Installation
@@ -57,6 +58,7 @@ psql -d evolutility -f dist/db/sql/001_create_db_{datetime}.sql   # demo tables
 psql -d evolutility -f dist/db/sql/002_seed_data_{datetime}.sql   # demo data
 psql -d evolutility -f dist/db/sql/003_create_models_{datetime}.sql   # tables for models
 psql -d evolutility -f dist/db/sql/004_seed_models_{datetime}.sql   # models
+psql -d evolutility -f dist/db/sql/005_create_users_{datetime}.sql   # users and sessions
 ```
 
 3. In the file [config.ts](https://github.com/evoluteur/evolutility-server-node/blob/main/config.ts) set the PostgreSQL connection string and the schema name to access your database.
@@ -68,6 +70,11 @@ psql -d evolutility -f dist/db/sql/004_seed_models_{datetime}.sql   # models
 ```bash
 # Install dependencies
 npm install
+
+# Create your user (the password is shown once), see "Users and Login"
+npm run user:add -- you@example.com admin
+# or with your name and password
+npm run user:add -- you@example.com admin --name="Your Name" --password=a-long-password
 
 # Run the node.js server
 npm start
@@ -113,6 +120,12 @@ Configuration options are set in the file [config.ts](https://github.com/evolute
 | apiDesigner       | Enables editing models through the API (POST, PUT, DELETE on [/meta/models](#API_Models)). Saving a model can add tables and columns to the database. Default: `true`. |
 | rateLimit         | Maximum number of API requests per IP per 15-minute window. Set to `0` to disable. Default: `500`. |
 | trustProxy        | Set to `true` when running behind a reverse proxy (nginx, Heroku, etc.) so the real client IP is used for rate limiting instead of the proxy's IP. Default: `false`. |
+| corsOrigins       | Web sites allowed to call the API from a browser (the url of the UI), with their login cookie. Writes from other sites are refused. Default: `["http://localhost:5173"]`. |
+| auth.enabled      | Require a [login](#Auth). Default: `true`. |
+| auth.anonymousRole | Role of visitors who are not logged in: `null` (login required) or `"viewer"` for a public read-only site. Default: `null`. |
+| auth.sessionDays  | Number of days before having to log in again. Default: `7`. |
+| auth.cookieSecure | Send the login cookie over HTTPS only. Default: `true` when `NODE_ENV` is "production". |
+| auth.cookieSameSite | `"Strict"` when the UI and the API are on the same site (default), `"None"` (with HTTPS) when they are on different sites. |
 
 <a name="Models"></a>
 ## Models
@@ -595,7 +608,7 @@ The answer to POST and PUT has the saved model, the SQL run, and warnings:
 }
 ```
 
-Note: POST, PUT, and DELETE must be enabled in the configuration with `{ apiDesigner: true }`. There is no authentication: disable it on servers open to the public.
+Note: POST, PUT, and DELETE must be enabled in the configuration with `{ apiDesigner: true }`, and need the admin role (see [Users and Login](#Auth)).
 
 #### Schema tables and columns
 
@@ -625,6 +638,49 @@ Returns the API version from package.json.
 ```
 GET /version
 ```
+
+<a name="Auth"></a>
+## Users and Login
+
+Users have a role:
+
+| Role   | Can                                                                 |
+|--------|---------------------------------------------------------------------|
+| viewer | Read records, models, charts, and stats.                            |
+| editor | Viewer, plus create, update, delete, and upload records.            |
+| admin  | Editor, plus edit models (Designer) and query the database structure. |
+
+Users and sessions are stored in the tables "evol_user" and "evol_session" (created by the SQL script `005_create_users` from [Evolutility-Models](https://github.com/evoluteur/evolutility-models)). Passwords are stored as scrypt hashes.
+
+Create a user, or set a new password (and role) for an existing one:
+
+```bash
+# Password generated and shown once
+npm run user:add -- you@example.com admin --name="Your Name"
+
+# Password given
+npm run user:add -- someone@example.com viewer --password=a-long-password
+```
+
+Setting a new password ends the sessions of the user.
+
+Log in (the answer sets the session cookie, "httpOnly" so scripts can't read it):
+
+```
+POST /auth/login
+{ "email": "you@example.com", "password": "..." }
+```
+
+Log out, or get the current user and role:
+
+```
+POST /auth/logout
+GET /auth/me
+```
+
+Requests without the role needed are refused with a 401 error (not logged in) or 403 (logged in, but role too low). After 10 failed logins in 15 minutes, logins from that IP address are refused for a while.
+
+To disable login (all requests are allowed), set `{ auth: { enabled: false } }` in the configuration.
 
 <a name="APIDocs"></a>
 ## API Documentation

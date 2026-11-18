@@ -28,6 +28,15 @@ export interface Config {
   schemaQueries: boolean;
   rateLimit: number;
   trustProxy: boolean;
+  corsOrigins: string[];
+  auth: {
+    enabled: boolean;
+    anonymousRole: "viewer" | "editor" | "admin" | null;
+    sessionDays: number;
+    cookieName?: string;
+    cookieSecure?: boolean;
+    cookieSameSite?: "Strict" | "Lax" | "None";
+  };
 }
 
 const config: Config = {
@@ -90,6 +99,27 @@ const config: Config = {
   // - If behind a reverse proxy, also set trustProxy: true
   rateLimit: 500,
   trustProxy: false,
+
+  // - Web sites allowed to call the API from a browser (the UI's url).
+  // - Login cookies are only sent by these sites.
+  corsOrigins: ["http://localhost:5173"],
+
+  // - Users and login (tables "evol_user" and "evol_session")
+  // - Roles: viewer (read), editor (+ write records), admin (+ edit models).
+  // - Create users w/ "npm run user:add -- you@example.com admin".
+  auth: {
+    enabled: true,
+    // - role of visitors who are not logged in: null (login required), or
+    // - "viewer" for a public read-only site
+    anonymousRole: null,
+    // - number of days before having to log in again
+    sessionDays: 7,
+    // - "Secure" cookies (HTTPS only): set to true in production
+    cookieSecure: process.env.NODE_ENV === "production",
+    // - "Strict" when the UI and the API are on the same site, "None" (w/
+    // - HTTPS) when they are on different sites
+    cookieSameSite: "Strict",
+  },
 };
 
 export default config;

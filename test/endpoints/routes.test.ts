@@ -14,6 +14,7 @@ describe("route order", () => {
   before(async () => {
     config.schemaQueries = true; // - enable "db/..." routes for this test
     config.apiDesigner = true;
+    config.auth.enabled = false; // - login is tested in auth.test.ts
     config.apiInfo = true;
     config.logToConsole = false;
     const { default: app } = await import("../../app.ts");

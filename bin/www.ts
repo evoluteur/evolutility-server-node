@@ -9,6 +9,7 @@ import config from "../config.ts";
 import http from "http";
 import Debug from "debug";
 import { initModels } from "../scripts/utils/model-store.ts";
+import { authConfig, countUsers } from "../scripts/utils/auth.ts";
 import { closeDb } from "../scripts/utils/query.ts";
 import { makeShutdown, handleShutdown } from "../scripts/utils/shutdown.ts";
 import logger from "../scripts/utils/logger.ts";
@@ -35,6 +36,18 @@ const server = http.createServer(app);
 try {
   const nb = await initModels();
   logger.logSuccess(`${nb} models loaded from the database.`);
+  if (authConfig().enabled) {
+    const nbUsers = await countUsers();
+    if (nbUsers === null) {
+      logger.logError(
+        'Table evol_user not found: login is not possible. Run the SQL script "005_create_users" from evolutility-models.',
+      );
+    } else if (nbUsers === 0) {
+      logger.logError(
+        'No users: create one w/ "npm run user:add -- you@example.com admin" (or add --name="Your Name" --password=a-long-password).',
+      );
+    }
+  }
 } catch (err) {
   logger.logError(
     "Could not load models from the database. " +
